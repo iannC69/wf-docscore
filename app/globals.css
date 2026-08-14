@@ -345,6 +345,18 @@ nextjs-portal,
 }
 
 /* ============================================================
+   3-COLUMN DOCS LAYOUT SYSTEM
+   ============================================================ */
+
+.docs-layout {
+  display: flex;
+  min-height: 100dvh;
+  padding-top: var(--header-height);
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
    SIDEBAR — Liquid Glass Sidebar & Navigation
    ============================================================ */
 
