@@ -12,6 +12,15 @@ import {
   Search,
   Sparkles,
   LayoutGrid,
+  Rocket,
+  Sliders,
+  Package,
+  Cloud,
+  Code2,
+  Webhook,
+  Database,
+  Compass,
+  FileText,
 } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
@@ -26,6 +35,28 @@ const GROUP_ICONS: Record<string, React.ReactNode> = {
   "Core Features": <Layers size={13} aria-hidden="true" />,
   "API Reference": <Terminal size={13} aria-hidden="true" />,
 };
+
+/**
+ * Returns a dedicated, representative Lucide icon for each doc route
+ */
+function getItemIcon(slug: string, title: string): React.ReactNode {
+  const s = slug.toLowerCase();
+  const t = title.toLowerCase();
+
+  if (s.includes("getting-started") && !s.includes("/") || t === "getting started") return <Rocket size={14} aria-hidden="true" />;
+  if (s.includes("config") || t.includes("configuration")) return <Sliders size={14} aria-hidden="true" />;
+  if (s.includes("install") || t.includes("installation")) return <Package size={14} aria-hidden="true" />;
+  if (s.includes("deploy") || t.includes("deployment")) return <Cloud size={14} aria-hidden="true" />;
+  if (s === "features" || t === "features overview") return <Sparkles size={14} aria-hidden="true" />;
+  if (s.includes("component") || s.includes("mdx")) return <Code2 size={14} aria-hidden="true" />;
+  if (s.includes("github") || s.includes("git")) return <GitBranch size={14} aria-hidden="true" />;
+  if (s.includes("search")) return <Search size={14} aria-hidden="true" />;
+  if (s === "api-reference" || t === "api reference") return <Terminal size={14} aria-hidden="true" />;
+  if (s.includes("webhook") || t.includes("webhook")) return <Webhook size={14} aria-hidden="true" />;
+  if (s.includes("schema") || s.includes("database") || s.includes("db")) return <Database size={14} aria-hidden="true" />;
+
+  return <FileText size={14} aria-hidden="true" />;
+}
 
 function NavItemRow({
   item,
@@ -45,6 +76,9 @@ function NavItemRow({
         aria-current={isExact ? "page" : undefined}
       >
         <span className="nav-item-indicator" aria-hidden="true" />
+        <span className="nav-item-icon">
+          {getItemIcon(item.slug, item.title)}
+        </span>
         <span className="nav-item-text">{item.title}</span>
         {item.badge && (
           <span className={`nav-item-badge badge--${item.badge.toLowerCase()}`}>
@@ -120,6 +154,9 @@ export function Sidebar({ nav }: SidebarProps) {
                     aria-current={pathname === "/docs" ? "page" : undefined}
                   >
                     <span className="nav-item-indicator" aria-hidden="true" />
+                    <span className="nav-item-icon">
+                      <Compass size={14} aria-hidden="true" />
+                    </span>
                     <span className="nav-item-text">Documentation Hub</span>
                   </Link>
                 </li>
@@ -171,7 +208,7 @@ export function Sidebar({ nav }: SidebarProps) {
           </div>
         </div>
 
-        {/* Seamless Liquid Fire Wave Container */}
+        {/* Seamless Molten Lava Tank */}
         <div className="sidebar-wave-container">
           <LiquidFireWave height={95} />
         </div>

@@ -540,6 +540,21 @@ nextjs-portal,
   width: 4px;
   border-radius: var(--radius-full);
 }
+.nav-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  width: 16px;
+  transition: color var(--transition-fast);
+}
+.nav-item:hover .nav-item-icon {
+  color: var(--color-primary);
+}
+.nav-item--active .nav-item-icon {
+  color: var(--color-primary) !important;
+}
 .nav-item-text {
   flex: 1;
   white-space: nowrap;
