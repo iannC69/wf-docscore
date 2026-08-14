@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Allow images from GitHub and our CDN
+  // Disable the Next.js dev indicator / watermark completely
+  devIndicators: false,
+
+  // Allow images from GitHub and CDN
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "raw.githubusercontent.com" },

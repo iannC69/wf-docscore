@@ -38,6 +38,14 @@ button { cursor: pointer; font-family: inherit; }
 a { color: inherit; }
 ul, ol { list-style: none; }
 
+/* Hide Next.js dev overlay indicator in development */
+nextjs-portal,
+#nextjs-dev-overlay,
+[data-nextjs-dev-tools],
+[data-nextjs-toast] {
+  display: none !important;
+}
+
 /* ============================================================
    HEADER — wildfire.ro style: flat dark bar, orange accent
    ============================================================ */
