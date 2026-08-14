@@ -1,8 +1,11 @@
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LayoutControls } from "@/components/ui/LayoutControls";
 import { MobileMenuToggle } from "@/components/layout/MobileMenuToggle";
+import { SearchModal } from "@/components/ui/SearchModal";
 
 function GithubIcon({ size = 17 }: { size?: number }) {
   return (
@@ -13,54 +16,91 @@ function GithubIcon({ size = 17 }: { size?: number }) {
 }
 
 export function Header() {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(typeof navigator !== "undefined" && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform));
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Open search on Ctrl+K or Cmd+K or / (when not in input)
+      if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      } else if (e.key === "/" && !["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
+
   return (
-    <header className="header" role="banner">
-      <div className="header-inner">
-        {/* Left: Logo + mobile menu */}
-        <div className="header-left">
-          <MobileMenuToggle />
-          <Link href="/docs" className="header-logo" aria-label="Go to docs home">
-            <span className="header-logo-icon" aria-hidden="true">
-              <BookOpen size={18} />
-            </span>
-            <span className="header-logo-text">
-              <span className="header-logo-name">Docs</span>
-              <span className="header-logo-badge">Platform</span>
-            </span>
-          </Link>
-        </div>
+    <>
+      <header className="header" role="banner">
+        <div className="header-inner">
+          {/* Left: Logo + mobile menu */}
+          <div className="header-left">
+            <MobileMenuToggle />
+            <Link href="/docs" className="header-logo" aria-label="Go to docs home">
+              <span className="header-logo-icon" aria-hidden="true">
+                <BookOpen size={17} />
+              </span>
+              <span className="header-logo-text">
+                <span className="header-logo-name">Docs</span>
+                <span className="header-logo-badge">Platform</span>
+              </span>
+            </Link>
+          </div>
 
-        {/* Center: Search hint */}
-        <div className="header-center">
-          <button className="header-search-btn" aria-label="Open search" id="search-trigger">
-            <span className="header-search-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-            </span>
-            <span className="header-search-text">Search documentation...</span>
-            <kbd className="header-search-kbd">⌘K</kbd>
-          </button>
-        </div>
+          {/* Center: Search input button */}
+          <div className="header-center">
+            <button
+              type="button"
+              className="header-search-btn"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Open search dialog"
+              id="search-trigger"
+            >
+              <span className="header-search-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+              </span>
+              <span className="header-search-text">Search documentation...</span>
+              <kbd className="header-search-kbd">
+                {isMac ? "⌘K" : "Ctrl K"}
+              </kbd>
+            </button>
+          </div>
 
-        {/* Right: Layout Controls + GitHub + Theme toggle */}
-        <div className="header-right">
-          <LayoutControls />
-          <div className="header-divider" aria-hidden="true" />
-          <a
-            href="https://github.com/iannC69/wf-docscore"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="header-icon-btn"
-            aria-label="View on GitHub"
-            title="GitHub Repository"
-          >
-            <GithubIcon size={17} />
-          </a>
-          <ThemeToggle />
+          {/* Right: Layout Controls + GitHub + Theme toggle */}
+          <div className="header-right">
+            <LayoutControls />
+            <div className="header-divider" aria-hidden="true" />
+            <a
+              href="https://github.com/iannC69/wf-docscore"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="header-icon-btn"
+              aria-label="View on GitHub"
+              title="GitHub Repository"
+            >
+              <GithubIcon size={17} />
+            </a>
+            <ThemeToggle />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Global Search Dialog Modal */}
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+    </>
   );
 }
