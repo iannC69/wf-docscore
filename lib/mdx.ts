@@ -6,15 +6,13 @@ import rehypePrettyCode from "rehype-pretty-code";
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import type { TocItem, PageFrontmatter } from "@/types/docs";
-
-// ─── MDX Components ────────────────────────────────────────────────────────────
-// Imported lazily to avoid circular deps
 import { mdxComponents } from "@/components/docs/MDXComponents";
 
 // ─── TOC Extraction ────────────────────────────────────────────────────────────
+// Extracts only h2 and h3 headings (skipping h1 so page title isn't duplicated)
 
 export function extractToc(markdown: string): TocItem[] {
-  const headingRegex = /^(#{1,4})\s+(.+)$/gm;
+  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
   const toc: TocItem[] = [];
   let match;
 
@@ -35,7 +33,7 @@ export function extractToc(markdown: string): TocItem[] {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-");
 
-    if (depth <= 3) {
+    if (depth === 2 || depth === 3) {
       toc.push({ id, title, depth });
     }
   }
@@ -68,7 +66,7 @@ export async function compileMdxContent(rawContent: string) {
     source: markdownBody,
     components: mdxComponents,
     options: {
-      parseFrontmatter: false, // We already parsed it with gray-matter
+      parseFrontmatter: false,
       mdxOptions: {
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
@@ -77,6 +75,7 @@ export async function compileMdxContent(rawContent: string) {
             rehypeAutolinkHeadings,
             {
               behavior: "append",
+              test: ["h2", "h3", "h4"],
               properties: {
                 className: ["heading-anchor"],
                 ariaLabel: "Link to section",
@@ -84,7 +83,7 @@ export async function compileMdxContent(rawContent: string) {
               content: {
                 type: "element",
                 tagName: "span",
-                properties: { ariaHidden: true },
+                properties: { ariaHidden: "true", className: ["anchor-icon"] },
                 children: [{ type: "text", value: "#" }],
               },
             },

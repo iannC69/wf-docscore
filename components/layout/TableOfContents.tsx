@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { AlignLeft } from "lucide-react";
 import type { TocItem } from "@/types/docs";
 
 interface TableOfContentsProps {
@@ -16,14 +17,13 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the topmost intersecting heading
         const visible = entries.filter(e => e.isIntersecting);
         if (visible.length > 0) {
           setActiveId(visible[0].target.id);
         }
       },
       {
-        rootMargin: "-64px 0% -80% 0%",
+        rootMargin: "-64px 0% -70% 0%",
         threshold: 0,
       }
     );
@@ -41,12 +41,16 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       const top = el.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: "smooth" });
       setActiveId(id);
+      window.history.pushState(null, "", `#${id}`);
     }
   };
 
   return (
-    <aside className="toc" aria-label="On this page">
-      <p className="toc-title">On this page</p>
+    <aside className="toc" aria-label="Table of contents">
+      <div className="toc-header">
+        <AlignLeft size={13} className="toc-header-icon" aria-hidden="true" />
+        <span className="toc-title">On this page</span>
+      </div>
       <nav>
         <ul role="list" className="toc-list">
           {items.map(item => (

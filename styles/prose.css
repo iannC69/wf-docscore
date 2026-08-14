@@ -16,6 +16,11 @@
   max-width: 100%;
 }
 
+/* If markdown contains a duplicate top-level h1 matching the header, hide it */
+.prose > h1:first-child {
+  display: none;
+}
+
 /* ── Headings ─────────────────────────────────────────────── */
 .prose :is(h1, h2, h3, h4, h5, h6) {
   color: var(--prose-headings);
@@ -23,48 +28,89 @@
   letter-spacing: -0.02em;
   line-height: var(--leading-tight);
   scroll-margin-top: calc(var(--header-height) + var(--space-6));
+  position: relative;
 }
 
-.prose h1 { font-size: var(--text-3xl); margin-top: 0; margin-bottom: var(--space-6); }
+.prose h1 {
+  font-size: var(--text-3xl);
+  margin-top: 0;
+  margin-bottom: var(--space-6);
+  font-weight: 750;
+}
+
 .prose h2 {
   font-size: var(--text-2xl);
-  margin-top: var(--space-12);
+  margin-top: var(--space-10);
   margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
 }
-.prose h3 { font-size: var(--text-xl); margin-top: var(--space-8); margin-bottom: var(--space-3); }
-.prose h4 { font-size: var(--text-lg); margin-top: var(--space-6); margin-bottom: var(--space-2); }
-.prose h5 { font-size: var(--text-base); margin-top: var(--space-6); margin-bottom: var(--space-2); }
 
-/* Anchor links on headings */
+.prose h3 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+}
+
+.prose h4 {
+  font-size: var(--text-lg);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+}
+
+.prose h5 {
+  font-size: var(--text-base);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-2);
+}
+
+/* ── Heading Anchor Links ─────────────────────────────────── */
 .prose :is(h2, h3, h4) .heading-anchor {
   opacity: 0;
   margin-left: var(--space-2);
-  color: var(--color-text-tertiary);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 400;
-  transition: opacity var(--transition-fast);
+  font-size: 0.85em;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
 }
-.prose :is(h2, h3, h4):hover .heading-anchor { opacity: 1; }
+
+.prose :is(h2, h3, h4):hover .heading-anchor {
+  opacity: 0.7;
+}
+
+.prose :is(h2, h3, h4) .heading-anchor:hover {
+  opacity: 1;
+  color: var(--color-primary-hover);
+}
 
 /* ── Paragraphs ───────────────────────────────────────────── */
 .prose p {
   margin-top: 0;
   margin-bottom: var(--space-5);
+  color: var(--color-text-secondary);
 }
 .prose p:last-child { margin-bottom: 0; }
 
 /* ── Links ────────────────────────────────────────────────── */
-.prose a {
-  color: var(--prose-links);
+.prose a:not(.heading-anchor) {
+  color: var(--color-primary);
   text-decoration: underline;
-  text-decoration-color: hsl(22 95% 55% / 0.35);
+  text-decoration-color: hsl(26 100% 52% / 0.35);
   text-underline-offset: 3px;
   font-weight: 500;
   transition: text-decoration-color var(--transition-fast), color var(--transition-fast);
 }
-.prose a:hover {
+.prose a:not(.heading-anchor):hover {
   color: var(--color-primary-hover);
   text-decoration-color: var(--color-primary);
 }
@@ -74,8 +120,9 @@
   margin-top: 0;
   margin-bottom: var(--space-5);
   padding-left: var(--space-6);
+  color: var(--color-text-secondary);
 }
-.prose li { margin-bottom: var(--space-1); }
+.prose li { margin-bottom: var(--space-2); }
 .prose ul { list-style-type: disc; }
 .prose ul ul { list-style-type: circle; }
 .prose ol { list-style-type: decimal; }
@@ -89,17 +136,18 @@
   border-radius: var(--radius-sm);
   color: var(--color-primary);
   font-family: var(--font-mono);
-  font-size: 0.875em;
-  padding: 0.125em 0.35em;
+  font-size: 0.85em;
+  padding: 0.15em 0.4em;
   font-weight: 500;
 }
+
 [data-theme="light"] .prose :not(pre) > code {
   background: hsl(26 100% 52% / 0.06);
   border-color: hsl(26 100% 52% / 0.15);
   color: hsl(26 100% 40%);
 }
 
-/* ── Code Blocks (handled by CodeBlock component) ──────────── */
+/* ── Code Blocks ──────────────────────────────────────────── */
 .prose pre {
   margin-top: 0;
   margin-bottom: var(--space-6);
@@ -108,38 +156,60 @@
 }
 
 /* ── Blockquotes ──────────────────────────────────────────── */
-.prose blockquote {
+.prose blockquote:not(.callout) {
   border-left: 3px solid var(--color-border-strong);
-  color: var(--prose-quote);
-  font-style: italic;
+  color: var(--color-text-secondary);
   margin: var(--space-6) 0;
   padding: var(--space-3) var(--space-5);
+  background: var(--color-surface);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
-.prose blockquote p { margin: 0; }
+.prose blockquote:not(.callout) p { margin: 0; }
 
 /* ── Tables ───────────────────────────────────────────────── */
 .prose table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: var(--text-sm);
   margin-bottom: var(--space-6);
   width: 100%;
-  display: block;
-  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
-.prose thead tr { background: var(--color-bg-subtle); }
+
+.prose thead tr {
+  background: var(--color-surface-raised);
+}
+
 .prose th {
-  border: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   font-weight: 600;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
   text-align: left;
-  white-space: nowrap;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
 }
+
+.prose th:not(:last-child),
+.prose td:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
 .prose td {
-  border: 1px solid var(--color-border);
-  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-4);
   vertical-align: top;
+  color: var(--color-text-secondary);
 }
-.prose tbody tr:nth-child(even) { background: var(--color-bg-subtle); }
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: var(--color-surface);
+}
 
 /* ── Horizontal Rule ──────────────────────────────────────── */
 .prose hr {
@@ -159,5 +229,11 @@
 }
 
 /* ── Strong & Em ──────────────────────────────────────────── */
-.prose strong { font-weight: 650; color: var(--color-text); }
-.prose em { font-style: italic; }
+.prose strong {
+  font-weight: 650;
+  color: var(--color-text);
+}
+.prose em {
+  font-style: italic;
+  color: var(--color-text-secondary);
+}

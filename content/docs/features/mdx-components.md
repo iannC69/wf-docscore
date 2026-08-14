@@ -86,13 +86,13 @@ Use cards for navigation sections on overview pages:
     title="Getting Started"
     href="/docs/getting-started"
     description="Install and configure in minutes."
-    icon="🚀"
+    tag="Guide"
   />
   <Card
     title="API Reference"
     href="/docs/api-reference"
     description="Full API documentation."
-    icon="📡"
+    tag="API"
   />
 </Cards>
 ```

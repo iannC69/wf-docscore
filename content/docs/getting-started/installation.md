@@ -81,11 +81,11 @@ docs-platform/
 
 ## Verify the installation
 
-After starting the dev server, you should be able to:
+After starting the dev server, verify that the following operations work:
 
-- ✅ Visit `http://localhost:3000/docs` and see the docs homepage
-- ✅ Navigate through the sidebar
-- ✅ Toggle dark/light mode
-- ✅ Search for content with `⌘K`
+- Visit `http://localhost:3000/docs` and confirm the documentation home renders.
+- Navigate across sidebar categories and verify active link indicators.
+- Test the dark and light theme toggle in the top-right header.
+- Use `⌘K` or `Ctrl+K` to open the search modal.
 
-If anything looks wrong, check the [troubleshooting guide](/docs/getting-started/troubleshooting).
+If you encounter any build errors or missing dependencies, consult the [configuration reference](/docs/getting-started/configuration).

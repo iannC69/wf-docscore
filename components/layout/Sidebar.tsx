@@ -1,54 +1,52 @@
+"use client";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ChevronRight, BookOpen, Layers, Terminal, Sparkles } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import type { NavGroup, NavItem } from "@/types/docs";
 
 interface SidebarProps {
   nav: NavGroup[];
-  currentSlug?: string;
 }
 
-function NavItemRow({ item, currentSlug, depth = 0 }: {
+const GROUP_ICONS: Record<string, React.ReactNode> = {
+  "Getting Started": <BookOpen size={13} aria-hidden="true" />,
+  "Core Features": <Layers size={13} aria-hidden="true" />,
+  "API Reference": <Terminal size={13} aria-hidden="true" />,
+};
+
+function NavItemRow({
+  item,
+  pathname,
+}: {
   item: NavItem;
-  currentSlug?: string;
-  depth?: number;
+  pathname: string;
 }) {
-  const isActive = item.slug === currentSlug ||
-    item.href === `/docs/${currentSlug}` ||
-    (currentSlug && currentSlug.startsWith(item.slug + "/"));
-  const isExact = item.slug === currentSlug || item.href === `/docs/${currentSlug}`;
-  const hasChildren = item.children && item.children.length > 0;
+  const isExact = pathname === item.href;
+  const isAncestor = !isExact && pathname.startsWith(`${item.href}/`);
 
   return (
     <li>
       <Link
         href={item.href}
-        className={`nav-item${isExact ? " nav-item--active" : ""}${isActive && !isExact ? " nav-item--ancestor" : ""}`}
-        data-depth={depth}
+        className={`nav-item${isExact ? " nav-item--active" : ""}${isAncestor ? " nav-item--ancestor" : ""}`}
         aria-current={isExact ? "page" : undefined}
       >
+        <span className="nav-item-indicator" aria-hidden="true" />
         <span className="nav-item-text">{item.title}</span>
         {item.badge && (
           <span className={`badge badge--${item.badge.toLowerCase()}`}>
             {item.badge}
           </span>
         )}
-        {hasChildren && !isExact && (
-          <ChevronRight size={12} className="nav-item-chevron" aria-hidden="true" />
-        )}
       </Link>
-      {hasChildren && isActive && (
-        <ul className="nav-children" role="list">
-          {item.children!.map(child => (
-            <NavItemRow key={child.slug} item={child} currentSlug={currentSlug} depth={depth + 1} />
-          ))}
-        </ul>
-      )}
     </li>
   );
 }
 
-export function Sidebar({ nav, currentSlug }: SidebarProps) {
+export function Sidebar({ nav }: SidebarProps) {
+  const pathname = usePathname();
+
   return (
     <>
       {/* Mobile overlay */}
@@ -61,13 +59,36 @@ export function Sidebar({ nav, currentSlug }: SidebarProps) {
         data-open="false"
       >
         <div className="sidebar-inner">
-          <nav>
+          <nav aria-label="Docs sections">
+            {/* Overview / Introduction Link */}
+            <div className="nav-group">
+              <p className="nav-group-title">Overview</p>
+              <ul role="list" className="nav-list">
+                <li>
+                  <Link
+                    href="/docs"
+                    className={`nav-item${pathname === "/docs" ? " nav-item--active" : ""}`}
+                    aria-current={pathname === "/docs" ? "page" : undefined}
+                  >
+                    <span className="nav-item-indicator" aria-hidden="true" />
+                    <span className="nav-item-text">Documentation Hub</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Categorized Groups */}
             {nav.map(group => (
               <div key={group.title} className="nav-group">
-                <p className="nav-group-title">{group.title}</p>
+                <p className="nav-group-title">
+                  {GROUP_ICONS[group.title] && (
+                    <span className="nav-group-icon">{GROUP_ICONS[group.title]}</span>
+                  )}
+                  <span>{group.title}</span>
+                </p>
                 <ul role="list" className="nav-list">
                   {group.items.map(item => (
-                    <NavItemRow key={item.slug} item={item} currentSlug={currentSlug} />
+                    <NavItemRow key={item.slug} item={item} pathname={pathname} />
                   ))}
                 </ul>
               </div>
@@ -75,8 +96,16 @@ export function Sidebar({ nav, currentSlug }: SidebarProps) {
           </nav>
         </div>
 
+        {/* System status pill at bottom */}
+        <div className="sidebar-footer">
+          <div className="system-status-indicator">
+            <span className="status-dot" aria-hidden="true" />
+            <span className="status-label">Engine v1.0.0</span>
+          </div>
+        </div>
+
         {/* Liquid Fire Wave at bottom of sidebar */}
-        <LiquidFireWave height={52} />
+        <LiquidFireWave height={44} />
       </aside>
     </>
   );

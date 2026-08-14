@@ -1,14 +1,24 @@
 import React from "react";
+import { Info, Lightbulb, AlertTriangle, AlertOctagon, Bookmark } from "lucide-react";
 
 type CalloutType = "note" | "tip" | "warning" | "danger" | "caution" | "important";
 
-const CALLOUT_CONFIG: Record<CalloutType, { icon: string; label: string }> = {
-  note:      { icon: "ℹ️", label: "Note" },
-  tip:       { icon: "💡", label: "Tip" },
-  warning:   { icon: "⚠️", label: "Warning" },
-  danger:    { icon: "🚨", label: "Danger" },
-  caution:   { icon: "🚨", label: "Caution" },
-  important: { icon: "📌", label: "Important" },
+const CALLOUT_ICONS: Record<CalloutType, React.ReactNode> = {
+  note:      <Info size={16} aria-hidden="true" />,
+  tip:       <Lightbulb size={16} aria-hidden="true" />,
+  warning:   <AlertTriangle size={16} aria-hidden="true" />,
+  danger:    <AlertOctagon size={16} aria-hidden="true" />,
+  caution:   <AlertOctagon size={16} aria-hidden="true" />,
+  important: <Bookmark size={16} aria-hidden="true" />,
+};
+
+const CALLOUT_LABELS: Record<CalloutType, string> = {
+  note:      "Note",
+  tip:       "Tip",
+  warning:   "Warning",
+  danger:    "Danger",
+  caution:   "Caution",
+  important: "Important",
 };
 
 interface CalloutProps {
@@ -18,13 +28,16 @@ interface CalloutProps {
 }
 
 export function Callout({ type = "note", title, children }: CalloutProps) {
-  const config = CALLOUT_CONFIG[type] ?? CALLOUT_CONFIG.note;
+  const icon = CALLOUT_ICONS[type] ?? CALLOUT_ICONS.note;
+  const defaultLabel = CALLOUT_LABELS[type] ?? "Note";
 
   return (
     <div className={`callout callout--${type}`} role="note">
-      <span className="callout-icon" aria-hidden="true">{config.icon}</span>
+      <div className="callout-icon-wrapper" aria-hidden="true">
+        {icon}
+      </div>
       <div className="callout-content">
-        <div className="callout-title">{title ?? config.label}</div>
+        <div className="callout-title">{title ?? defaultLabel}</div>
         <div className="callout-body">{children}</div>
       </div>
     </div>
