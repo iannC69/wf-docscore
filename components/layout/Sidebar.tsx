@@ -1,7 +1,18 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, BookOpen, Layers, Terminal, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import {
+  BookOpen,
+  Layers,
+  Terminal,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Flame,
+  GitBranch,
+  Search,
+  Sparkles,
+  LayoutGrid,
+} from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
@@ -36,7 +47,7 @@ function NavItemRow({
         <span className="nav-item-indicator" aria-hidden="true" />
         <span className="nav-item-text">{item.title}</span>
         {item.badge && (
-          <span className={`badge badge--${item.badge.toLowerCase()}`}>
+          <span className={`nav-item-badge badge--${item.badge.toLowerCase()}`}>
             {item.badge}
           </span>
         )}
@@ -63,7 +74,7 @@ export function Sidebar({ nav }: SidebarProps) {
           title="Expand Left Sidebar (Shortcut: [)"
           aria-label="Expand sidebar"
         >
-          <PanelLeftOpen size={16} />
+          <PanelLeftOpen size={15} />
           <span className="floating-toggle-label">Sidebar</span>
         </button>
       )}
@@ -75,9 +86,12 @@ export function Sidebar({ nav }: SidebarProps) {
         data-open="false"
         data-collapsed={!sidebarOpen}
       >
-        {/* Sidebar Header with Collapse action */}
+        {/* Sidebar Header with subtle glass branding & Collapse action */}
         <div className="sidebar-top-bar">
-          <span className="sidebar-top-title">Navigation</span>
+          <div className="sidebar-brand-sub">
+            <Flame size={13} className="brand-fire-icon" aria-hidden="true" />
+            <span className="sidebar-top-title">Navigation</span>
+          </div>
           <button
             type="button"
             onClick={toggleSidebar}
@@ -89,11 +103,15 @@ export function Sidebar({ nav }: SidebarProps) {
           </button>
         </div>
 
+        {/* Scrollable Navigation Area */}
         <div className="sidebar-inner">
           <nav aria-label="Docs sections">
             {/* Overview / Introduction Link */}
             <div className="nav-group">
-              <p className="nav-group-title">Overview</p>
+              <p className="nav-group-title">
+                <LayoutGrid size={12} className="nav-group-icon" aria-hidden="true" />
+                <span>Overview</span>
+              </p>
               <ul role="list" className="nav-list">
                 <li>
                   <Link
@@ -125,18 +143,38 @@ export function Sidebar({ nav }: SidebarProps) {
               </div>
             ))}
           </nav>
-        </div>
 
-        {/* System status pill at bottom */}
-        <div className="sidebar-footer">
-          <div className="system-status-indicator">
-            <span className="status-dot" aria-hidden="true" />
-            <span className="status-label">Engine v1.0.0</span>
+          {/* Liquid Glass Info Card in Sidebar */}
+          <div className="sidebar-liquid-card">
+            <div className="liquid-card-header">
+              <span className="liquid-card-dot" aria-hidden="true" />
+              <span className="liquid-card-title">Production Edge</span>
+            </div>
+            <p className="liquid-card-desc">
+              Next.js 15 SSG engine with instant global cache revalidation.
+            </p>
+            <div className="liquid-card-footer">
+              <span className="liquid-card-tag">
+                <GitBranch size={11} aria-hidden="true" />
+                <span>main</span>
+              </span>
+              <span className="liquid-card-status">99.9% ISR</span>
+            </div>
           </div>
         </div>
 
-        {/* Liquid Fire Wave at bottom of sidebar */}
-        <LiquidFireWave height={44} />
+        {/* System status at bottom */}
+        <div className="sidebar-footer">
+          <div className="system-status-indicator">
+            <span className="status-dot" aria-hidden="true" />
+            <span className="status-label">Wildfire Docs v1.0</span>
+          </div>
+        </div>
+
+        {/* Seamless Liquid Fire Wave Container */}
+        <div className="sidebar-wave-container">
+          <LiquidFireWave height={40} />
+        </div>
       </aside>
     </>
   );

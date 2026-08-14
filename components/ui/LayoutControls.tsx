@@ -1,35 +1,7 @@
 "use client";
 import React from "react";
-import { useLayout, LayoutMode } from "@/context/LayoutContext";
-import { PanelLeft, PanelRight } from "lucide-react";
-
-// Custom SVG Icons for the 3 distinct layout positions
-function IconStandardLayout() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-      <path d="M8 3v18" />
-      <path d="M16 3v18" />
-    </svg>
-  );
-}
-
-function IconFocusLayout() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-      <path d="M16 3v18" />
-    </svg>
-  );
-}
-
-function IconFullLayout() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-    </svg>
-  );
-}
+import { useLayout } from "@/context/LayoutContext";
+import { PanelLeft, PanelRight, Columns3, Columns2, Square } from "lucide-react";
 
 export function LayoutControls() {
   const { mode, setMode, sidebarOpen, toggleSidebar, tocOpen, toggleToc } = useLayout();
@@ -46,7 +18,7 @@ export function LayoutControls() {
           onClick={() => setMode("standard")}
           title="Standard Layout: Sidebar + Centered Content + Right TOC (Press [ to toggle sidebar)"
         >
-          <IconStandardLayout />
+          <Columns3 size={13} aria-hidden="true" />
           <span className="layout-btn-label">Standard</span>
         </button>
 
@@ -58,7 +30,7 @@ export function LayoutControls() {
           onClick={() => setMode("focus")}
           title="Focus Mode: Collapsed Sidebar + Centered Content + Right TOC"
         >
-          <IconFocusLayout />
+          <Columns2 size={13} aria-hidden="true" />
           <span className="layout-btn-label">Focus</span>
         </button>
 
@@ -68,9 +40,9 @@ export function LayoutControls() {
           aria-checked={mode === "full"}
           className={`layout-btn ${mode === "full" ? "layout-btn--active" : ""}`}
           onClick={() => setMode("full")}
-          title="Full Reading Mode: Collapsed Sidebar + Collapsed TOC (Max Width Content)"
+          title="Full Reading Mode: Max Width Content"
         >
-          <IconFullLayout />
+          <Square size={12} aria-hidden="true" />
           <span className="layout-btn-label">Full</span>
         </button>
       </div>
@@ -84,7 +56,7 @@ export function LayoutControls() {
           title={sidebarOpen ? "Collapse Left Sidebar (Shortcut: [)" : "Expand Left Sidebar (Shortcut: [)"}
           aria-label={sidebarOpen ? "Collapse left sidebar" : "Expand left sidebar"}
         >
-          <PanelLeft size={16} />
+          <PanelLeft size={15} />
         </button>
 
         <button
@@ -94,7 +66,7 @@ export function LayoutControls() {
           title={tocOpen ? "Collapse Right TOC (Shortcut: ])" : "Expand Right TOC (Shortcut: ])"}
           aria-label={tocOpen ? "Collapse right table of contents" : "Expand right table of contents"}
         >
-          <PanelRight size={16} />
+          <PanelRight size={15} />
         </button>
       </div>
     </div>
