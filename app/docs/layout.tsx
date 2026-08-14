@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { LiquidBackground } from "@/components/ui/LiquidEffects";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { LayoutProvider } from "@/context/LayoutContext";
 import { getNavigation } from "@/lib/navigation";
 
@@ -14,6 +15,9 @@ export default async function DocsLayout({
   return (
     <LayoutProvider>
       <div className="docs-layout">
+        {/* Instant scroll to top on page navigation */}
+        <ScrollToTop />
+
         {/* Liquid fire background */}
         <LiquidBackground />
 

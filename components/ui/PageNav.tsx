@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface PageNavProps {
   prev?: { title: string; href: string };
@@ -12,26 +12,31 @@ export function PageNav({ prev, next }: PageNavProps) {
   return (
     <nav className="page-nav" aria-label="Page navigation">
       {prev ? (
-        <Link href={prev.href} className="page-nav-item page-nav-prev">
-          <span className="page-nav-label">
-            <ChevronLeft size={14} aria-hidden="true" />
-            Previous
-          </span>
-          <span className="page-nav-title">{prev.title}</span>
+        <Link href={prev.href} className="page-nav-card page-nav-card--prev">
+          <div className="page-nav-icon-box">
+            <ArrowLeft size={16} className="page-nav-arrow" aria-hidden="true" />
+          </div>
+          <div className="page-nav-text-col">
+            <span className="page-nav-sub">Previous</span>
+            <span className="page-nav-title">{prev.title}</span>
+          </div>
         </Link>
       ) : (
-        <div />
+        <div className="page-nav-placeholder" aria-hidden="true" />
       )}
+
       {next ? (
-        <Link href={next.href} className="page-nav-item page-nav-next">
-          <span className="page-nav-label">
-            Next
-            <ChevronRight size={14} aria-hidden="true" />
-          </span>
-          <span className="page-nav-title">{next.title}</span>
+        <Link href={next.href} className="page-nav-card page-nav-card--next">
+          <div className="page-nav-text-col page-nav-text-col--right">
+            <span className="page-nav-sub">Next</span>
+            <span className="page-nav-title">{next.title}</span>
+          </div>
+          <div className="page-nav-icon-box">
+            <ArrowRight size={16} className="page-nav-arrow" aria-hidden="true" />
+          </div>
         </Link>
       ) : (
-        <div />
+        <div className="page-nav-placeholder" aria-hidden="true" />
       )}
     </nav>
   );
