@@ -173,7 +173,7 @@ export function Sidebar({ nav }: SidebarProps) {
 
         {/* Seamless Liquid Fire Wave Container */}
         <div className="sidebar-wave-container">
-          <LiquidFireWave height={40} />
+          <LiquidFireWave height={95} />
         </div>
       </aside>
     </>

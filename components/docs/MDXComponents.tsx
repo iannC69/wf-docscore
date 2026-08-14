@@ -7,32 +7,14 @@ import { CopyablePre } from "./CopyablePre";
 import Link from "next/link";
 
 export const mdxComponents: MDXComponents = {
-  // ── Overrides ────────────────────────────────────────────────────────────────
   // Intercept blockquotes to check for GitHub-style callouts (> [!NOTE])
   blockquote: SmartBlockquote,
 
-  // Code blocks — rehype-pretty-code wraps in <figure data-rehype-pretty-code-figure>
-  // We wrap <pre> with our client-side copy button
-  figure: ({ children, ...props }: any) => {
-    const hasPrettyCode = "data-rehype-pretty-code-figure" in props;
-    if (hasPrettyCode) {
-      return (
-        <div className="code-block-wrapper">
-          <div className="code-block-header">
-            <span className="code-block-lang">
-              {props["data-language"] ?? "code"}
-            </span>
-          </div>
-          {children}
-        </div>
-      );
-    }
-    return <figure {...props}>{children}</figure>;
-  },
+  // Figure pass-through (rehype-pretty-code wraps pre in figure)
+  figure: ({ children }: any) => <>{children}</>,
 
-  pre: ({ children, ...props }: any) => (
-    <CopyablePre {...props}>{children}</CopyablePre>
-  ),
+  // Wrap all pre blocks with our unified Aurora header and copy button
+  pre: (props: any) => <CopyablePre {...props} />,
 
   // Links — Next.js Link for internal, <a> for external
   a: ({ href, children, ...props }: any) => {
@@ -46,7 +28,7 @@ export const mdxComponents: MDXComponents = {
     );
   },
 
-  // ── Custom Components ────────────────────────────────────────────────────────
+  // Custom Components
   Callout,
   Steps,
   Step,
