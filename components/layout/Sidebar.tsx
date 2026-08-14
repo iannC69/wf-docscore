@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, BookOpen, Layers, Terminal, Sparkles } from "lucide-react";
+import { ChevronRight, BookOpen, Layers, Terminal, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
+import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
 
 interface SidebarProps {
@@ -46,18 +47,48 @@ function NavItemRow({
 
 export function Sidebar({ nav }: SidebarProps) {
   const pathname = usePathname();
+  const { sidebarOpen, toggleSidebar } = useLayout();
 
   return (
     <>
       {/* Mobile overlay */}
       <div id="sidebar-overlay" className="sidebar-overlay" aria-hidden="true" data-open="false" />
 
+      {/* Floating expand button when sidebar is collapsed */}
+      {!sidebarOpen && (
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="sidebar-floating-toggle"
+          title="Expand Left Sidebar (Shortcut: [)"
+          aria-label="Expand sidebar"
+        >
+          <PanelLeftOpen size={16} />
+          <span className="floating-toggle-label">Sidebar</span>
+        </button>
+      )}
+
       <aside
         id="docs-sidebar"
-        className="sidebar"
+        className={`sidebar ${sidebarOpen ? "sidebar--open" : "sidebar--collapsed"}`}
         aria-label="Documentation navigation"
         data-open="false"
+        data-collapsed={!sidebarOpen}
       >
+        {/* Sidebar Header with Collapse action */}
+        <div className="sidebar-top-bar">
+          <span className="sidebar-top-title">Navigation</span>
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            className="sidebar-collapse-btn"
+            title="Collapse Sidebar (Shortcut: [)"
+            aria-label="Collapse sidebar"
+          >
+            <PanelLeftClose size={15} />
+          </button>
+        </div>
+
         <div className="sidebar-inner">
           <nav aria-label="Docs sections">
             {/* Overview / Introduction Link */}

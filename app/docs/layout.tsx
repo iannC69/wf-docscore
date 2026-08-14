@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { LiquidBackground } from "@/components/ui/LiquidEffects";
+import { LayoutProvider } from "@/context/LayoutContext";
 import { getNavigation } from "@/lib/navigation";
 
 export default async function DocsLayout({
@@ -11,15 +12,17 @@ export default async function DocsLayout({
   const nav = await getNavigation();
 
   return (
-    <div className="docs-layout">
-      {/* Liquid fire background — stays behind everything */}
-      <LiquidBackground />
+    <LayoutProvider>
+      <div className="docs-layout">
+        {/* Liquid fire background */}
+        <LiquidBackground />
 
-      <Header />
-      <Sidebar nav={nav} />
-      <div className="docs-main">
-        {children}
+        <Header />
+        <Sidebar nav={nav} />
+        <div className="docs-main" id="docs-main-container">
+          {children}
+        </div>
       </div>
-    </div>
+    </LayoutProvider>
   );
 }

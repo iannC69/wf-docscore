@@ -53,8 +53,9 @@ export default async function DocPage({ params }: Props) {
     notFound();
   }
 
-  const showToc = page.frontmatter.showToc !== false && page.toc.length > 1;
+  const showToc = page.frontmatter.showToc !== false && page.toc.length > 0;
   const showFeedback = page.frontmatter.showFeedback !== false;
+  
   // Mark current breadcrumb
   const breadcrumbs = page.breadcrumbs.map((b, i) => ({
     ...b,
@@ -62,61 +63,63 @@ export default async function DocPage({ params }: Props) {
   }));
 
   return (
-    <>
-      <article className="docs-content" id="main-content">
-        <div className="docs-content-inner">
-          {/* Breadcrumbs */}
-          {breadcrumbs.length > 1 && (
-            <Breadcrumbs items={breadcrumbs} />
-          )}
+    <div className="docs-page-container">
+      <div className="docs-content-wrapper">
+        <article className="docs-content" id="main-content">
+          <div className="docs-content-inner">
+            {/* Breadcrumbs */}
+            {breadcrumbs.length > 1 && (
+              <Breadcrumbs items={breadcrumbs} />
+            )}
 
-          {/* Page header */}
-          <header className="page-header">
-            <h1>{page.frontmatter.title}</h1>
-            <div className="page-header-meta">
-              <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <Clock size={13} aria-hidden="true" />
-                {page.readingTime} min read
-              </span>
-              <span className="page-header-meta-sep" aria-hidden="true">·</span>
-              <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <BookOpen size={13} aria-hidden="true" />
-                {page.wordCount.toLocaleString()} words
-              </span>
+            {/* Page header */}
+            <header className="page-header">
+              <h1>{page.frontmatter.title}</h1>
+              <div className="page-header-meta">
+                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <Clock size={13} aria-hidden="true" />
+                  {page.readingTime} min read
+                </span>
+                <span className="page-header-meta-sep" aria-hidden="true">·</span>
+                <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <BookOpen size={13} aria-hidden="true" />
+                  {page.wordCount.toLocaleString()} words
+                </span>
+              </div>
+            </header>
+
+            {/* MDX Content */}
+            <div className="prose">
+              {page.mdxSource as React.ReactNode}
             </div>
-          </header>
 
-          {/* MDX Content */}
-          <div className="prose">
-            {page.mdxSource as React.ReactNode}
+            {/* Page footer */}
+            <footer className="page-footer">
+              <div className="page-footer-actions">
+                {showFeedback && <FeedbackWidget />}
+                {page.githubEditUrl && (
+                  <a
+                    href={page.githubEditUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="edit-page-link"
+                    style={{ marginLeft: "auto" }}
+                  >
+                    <Pencil size={13} aria-hidden="true" />
+                    Edit this page
+                  </a>
+                )}
+              </div>
+              <PageNav prev={page.prev} next={page.next} />
+            </footer>
           </div>
+        </article>
+      </div>
 
-          {/* Page footer */}
-          <footer className="page-footer">
-            <div className="page-footer-actions">
-              {showFeedback && <FeedbackWidget />}
-              {page.githubEditUrl && (
-                <a
-                  href={page.githubEditUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="edit-page-link"
-                  style={{ marginLeft: "auto" }}
-                >
-                  <Pencil size={13} aria-hidden="true" />
-                  Edit this page
-                </a>
-              )}
-            </div>
-            <PageNav prev={page.prev} next={page.next} />
-          </footer>
-        </div>
-      </article>
-
-      {/* Right TOC */}
+      {/* Right TOC — pinned to far right */}
       {showToc && (
         <TableOfContents items={page.toc} />
       )}
-    </>
+    </div>
   );
 }
