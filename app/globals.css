@@ -526,6 +526,7 @@ ul, ol { list-style: none; }
   margin-left: var(--sidebar-width);
   min-width: 0;
   width: calc(100% - var(--sidebar-width));
+  justify-content: center;
   transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1), width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

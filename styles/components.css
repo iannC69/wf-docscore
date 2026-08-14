@@ -423,12 +423,22 @@
 }
 
 /* ============================================================
-   DOCS HOMEPAGE STYLES
+   DOCS HOMEPAGE STYLES (Fluid Centered on Wide Screens)
    ============================================================ */
 
+.docs-home-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-10) var(--space-10) var(--space-20);
+}
+
 .docs-home {
-  padding: var(--space-10) var(--space-10) var(--space-16);
-  max-width: 960px;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
 }
 
 .docs-home-hero {
@@ -475,7 +485,7 @@
   color: var(--color-text-secondary);
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
-  max-width: 620px;
+  max-width: 680px;
   margin-bottom: var(--space-6);
 }
 
@@ -488,6 +498,7 @@
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   gap: var(--space-4);
+  max-width: 720px;
 }
 
 .search-hint-left {
@@ -552,10 +563,10 @@
   font-size: var(--text-xs);
 }
 
-/* Home Cards Grid (6 cards) */
+/* Home Cards Grid (Responsive 2 or 3 columns) */
 .home-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--space-4);
 }
 
@@ -638,7 +649,7 @@
 /* Feature List Section */
 .home-features-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--space-4);
 }
 
@@ -693,5 +704,8 @@
   .home-cards-grid,
   .home-features-list {
     grid-template-columns: 1fr;
+  }
+  .docs-home-wrapper {
+    padding: var(--space-6) var(--space-4) var(--space-12);
   }
 }
