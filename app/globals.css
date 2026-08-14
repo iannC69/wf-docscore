@@ -28,9 +28,13 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   min-height: 100dvh;
-  /* Very subtle noise texture for depth — matching wildfire.ro */
+  transition: background-color var(--transition-base), color var(--transition-base);
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+[data-theme="light"] body {
+  background-image: none;
 }
 
 img { max-width: 100%; display: block; }
@@ -47,7 +51,7 @@ nextjs-portal,
 }
 
 /* ============================================================
-   HEADER — wildfire.ro style: flat dark bar, orange accent
+   HEADER — wildfire.ro style: flat dark/light bar, orange accent
    ============================================================ */
 
 .header {
@@ -137,7 +141,7 @@ nextjs-portal,
 /* Polished Search Bar in Header */
 .header-search-btn {
   align-items: center;
-  background: hsl(0 0% 9% / 0.8);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-tertiary);
@@ -174,7 +178,7 @@ nextjs-portal,
   text-overflow: ellipsis;
 }
 .header-search-kbd {
-  background: var(--color-surface);
+  background: var(--color-surface-raised);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
@@ -262,6 +266,11 @@ nextjs-portal,
   gap: 1px;
 }
 
+[data-theme="light"] .layout-mode-group {
+  background: hsl(0 0% 94%);
+  border-color: hsl(0 0% 87%);
+}
+
 .layout-btn {
   display: flex;
   align-items: center;
@@ -283,7 +292,12 @@ nextjs-portal,
   background: var(--color-primary-dim) !important;
   color: var(--color-primary) !important;
   font-weight: 600;
-  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.2);
+  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.15);
+}
+
+[data-theme="light"] .layout-btn--active {
+  background: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
 .layout-btn-label {
@@ -343,7 +357,7 @@ nextjs-portal,
 
 /* ── Left Sidebar ─────────────────────────────────────────── */
 .sidebar {
-  background: hsl(0 0% 8% / 0.92);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-right: 1px solid var(--color-border);
@@ -360,7 +374,7 @@ nextjs-portal,
   z-index: var(--z-sidebar);
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), width 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .sidebar--collapsed {
@@ -374,7 +388,7 @@ nextjs-portal,
   justify-content: space-between;
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--color-border);
-  background: hsl(0 0% 7% / 0.5);
+  background: var(--color-surface-raised);
 }
 
 .sidebar-top-title {
@@ -409,7 +423,7 @@ nextjs-portal,
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-left: none;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
@@ -422,7 +436,7 @@ nextjs-portal,
   transition: all var(--transition-fast);
 }
 .sidebar-floating-toggle:hover {
-  background: var(--color-surface-overlay);
+  background: var(--color-surface-raised);
   border-color: var(--color-border-orange);
   color: var(--color-primary);
   transform: translateX(2px);
@@ -475,9 +489,11 @@ nextjs-portal,
   position: relative;
 }
 .nav-item:hover {
-  background: var(--color-surface);
+  background: var(--color-surface-raised);
   color: var(--color-text);
 }
+
+/* Active Nav Item — Full wildfire.ro pill */
 .nav-item--active {
   background: var(--color-primary) !important;
   color: #ffffff !important;
@@ -508,7 +524,7 @@ nextjs-portal,
 .sidebar-footer {
   padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-border);
-  background: hsl(0 0% 7% / 0.8);
+  background: var(--color-surface-raised);
 }
 .system-status-indicator {
   display: flex;
@@ -685,11 +701,13 @@ nextjs-portal,
   padding: var(--space-4);
   text-decoration: none;
   transition: all var(--transition-base);
+  box-shadow: var(--shadow-xs);
 }
 .page-nav-item:hover {
   border-color: var(--color-border-orange);
   background: var(--color-surface-raised);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .page-nav-label {
@@ -728,9 +746,13 @@ nextjs-portal,
   max-height: calc(100dvh - var(--header-height) - var(--space-6));
   overflow-y: auto;
   border-left: 1px solid var(--color-border);
-  background: hsl(0 0% 7% / 0.4);
+  background: var(--color-bg-subtle);
   border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, background-color var(--transition-base), border-color var(--transition-base);
+}
+
+[data-theme="light"] .toc {
+  background: hsl(0 0% 98% / 0.7);
 }
 
 .toc-header {
@@ -780,7 +802,7 @@ nextjs-portal,
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-right: none;
   border-radius: var(--radius-md) 0 0 var(--radius-md);
@@ -793,7 +815,7 @@ nextjs-portal,
   transition: all var(--transition-fast);
 }
 .toc-floating-toggle:hover {
-  background: var(--color-surface-overlay);
+  background: var(--color-surface-raised);
   border-color: var(--color-border-orange);
   color: var(--color-primary);
   transform: translateX(-2px);
@@ -830,7 +852,7 @@ nextjs-portal,
 }
 
 /* ============================================================
-   SEARCH MODAL / COMMAND PALETTE STYLES
+   SEARCH MODAL / COMMAND PALETTE STYLES (Dark & Light)
    ============================================================ */
 
 @keyframes searchBackdropFade {
@@ -862,10 +884,14 @@ nextjs-portal,
   animation: searchBackdropFade 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+[data-theme="light"] .search-modal-backdrop {
+  background: hsl(0 0% 0% / 0.35);
+}
+
 .search-modal-container {
   width: 100%;
   max-width: 640px;
-  background: hsl(0 0% 10% / 0.96);
+  background: hsl(0 0% 10% / 0.98);
   border: 1px solid var(--color-border-orange);
   border-radius: var(--radius-xl);
   box-shadow: 0 20px 60px hsl(0 0% 0% / 0.7), var(--glow-fire);
@@ -873,6 +899,13 @@ nextjs-portal,
   display: flex;
   flex-direction: column;
   animation: searchModalScale 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: background-color var(--transition-base), border-color var(--transition-base);
+}
+
+[data-theme="light"] .search-modal-container {
+  background: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 20px hsl(26 100% 48% / 0.15);
 }
 
 .search-input-header {
@@ -881,7 +914,7 @@ nextjs-portal,
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--color-border);
-  background: hsl(0 0% 8% / 0.9);
+  background: var(--color-surface-raised);
 }
 
 .search-input-icon {
@@ -918,7 +951,7 @@ nextjs-portal,
 }
 
 .search-esc-badge {
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   color: var(--color-text-tertiary);
@@ -1005,6 +1038,12 @@ nextjs-portal,
   border-color: var(--color-border-orange);
 }
 
+[data-theme="light"] .search-result-item:hover,
+[data-theme="light"] .search-result-item--selected {
+  background: hsl(26 100% 48% / 0.08);
+  border-color: hsl(26 100% 48% / 0.35);
+}
+
 .result-item-icon-box {
   display: flex;
   align-items: center;
@@ -1025,7 +1064,7 @@ nextjs-portal,
 }
 
 .result-icon-heading {
-  color: var(--color-ember);
+  color: var(--color-ember, var(--color-primary));
 }
 
 .result-item-content {
@@ -1088,7 +1127,7 @@ nextjs-portal,
   justify-content: space-between;
   padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-border);
-  background: hsl(0 0% 8% / 0.95);
+  background: var(--color-surface-raised);
   font-size: 0.7rem;
 }
 
@@ -1106,7 +1145,7 @@ nextjs-portal,
 }
 
 .shortcut-tag kbd {
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
@@ -1136,7 +1175,7 @@ nextjs-portal,
 
 @media (max-width: 1024px) {
   .docs-content-wrapper { padding: var(--space-6) var(--space-6) var(--space-12); }
-  .docs-home { padding: var(--space-6) var(--space-6) var(--space-12); }
+  .docs-home-wrapper { padding: var(--space-6) var(--space-6) var(--space-12); }
 }
 
 @media (max-width: 768px) {
@@ -1181,7 +1220,7 @@ nextjs-portal,
   .docs-content-wrapper {
     padding: var(--space-6) var(--space-4) var(--space-10);
   }
-  .docs-home {
+  .docs-home-wrapper {
     padding: var(--space-6) var(--space-4) var(--space-10);
   }
   .page-nav {

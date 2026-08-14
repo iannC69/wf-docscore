@@ -40,6 +40,19 @@ function injectStyles() {
       0%, 100% { d: path("M0,60 L0,50 C200,46 400,54 600,50 C800,46 1000,52 1200,48 C1300,46 1370,50 1440,48 L1440,60 Z"); }
       40%       { d: path("M0,60 L0,52 C200,48 400,50 600,54 C800,52 1000,48 1200,52 C1300,50 1370,52 1440,50 L1440,60 Z"); }
     }
+
+    [data-theme="light"] .liquid-vignette {
+      opacity: 0.15 !important;
+    }
+    [data-theme="light"] .liquid-blob-1 {
+      opacity: 0.45 !important;
+    }
+    [data-theme="light"] .liquid-blob-2 {
+      opacity: 0.30 !important;
+    }
+    [data-theme="light"] .liquid-blob-3 {
+      opacity: 0.25 !important;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -67,10 +80,11 @@ export function LiquidBackground() {
     >
       {/* ── Blob 1 — deep orange, bottom-left anchor ── */}
       <div
+        className="liquid-blob-1"
         style={{
           animation: "liquidDrift1 22s ease-in-out infinite",
           background:
-            "radial-gradient(ellipse 600px 500px at center, hsl(26 100% 52% / 0.09) 0%, transparent 70%)",
+            "radial-gradient(ellipse 600px 500px at center, hsl(26 100% 52% / 0.08) 0%, transparent 70%)",
           bottom: "-10%",
           left: "-5%",
           position: "absolute",
@@ -82,10 +96,11 @@ export function LiquidBackground() {
 
       {/* ── Blob 2 — ember red, top-right anchor ── */}
       <div
+        className="liquid-blob-2"
         style={{
           animation: "liquidDrift2 30s ease-in-out infinite 4s",
           background:
-            "radial-gradient(ellipse 500px 400px at center, hsl(8 90% 40% / 0.07) 0%, transparent 70%)",
+            "radial-gradient(ellipse 500px 400px at center, hsl(8 90% 45% / 0.06) 0%, transparent 70%)",
           right: "-10%",
           top: "5%",
           position: "absolute",
@@ -97,6 +112,7 @@ export function LiquidBackground() {
 
       {/* ── Blob 3 — amber, center ── */}
       <div
+        className="liquid-blob-3"
         style={{
           animation: "liquidDrift3 40s ease-in-out infinite 8s",
           background:
@@ -110,8 +126,9 @@ export function LiquidBackground() {
         }}
       />
 
-      {/* ── Vignette overlay — keeps edges very dark ── */}
+      {/* ── Vignette overlay — theme adaptive ── */}
       <div
+        className="liquid-vignette"
         style={{
           background:
             "radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, hsl(0 0% 7% / 0.6) 100%)",

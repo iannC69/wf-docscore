@@ -1,6 +1,5 @@
 /* ============================================================
-   DESIGN TOKENS — WildFire.ro Dark Theme
-   Exact match: near-black bg, vivid orange accent, minimal borders
+   DESIGN TOKENS — WildFire.ro Theme System (Dark & Light)
    ============================================================ */
 
 :root {
@@ -15,7 +14,7 @@
   --color-primary-border:  hsl(26 100% 52% / 0.25);
   --color-primary-fg:      #ffffff;
 
-  /* ── Accent palette (like wildfire.ro multi-color stats) ─ */
+  /* ── Accent palette (multi-color stats & highlights) ─── */
   --color-accent-orange:   hsl(26  100% 52%);
   --color-accent-teal:     hsl(168  80% 44%);
   --color-accent-purple:   hsl(258  75% 62%);
@@ -23,22 +22,22 @@
   --color-accent-red:      hsl(4    90% 52%);
   --color-accent-blue:     hsl(210  85% 56%);
 
-  /* ── Surfaces — near-black, layered ──────────────────── */
+  /* ── Surfaces — Dark Mode (Near-Black) ────────────────── */
   --color-bg:              hsl(0 0% 7%);      /* #121212 */
   --color-bg-subtle:       hsl(0 0% 9%);      /* #171717 */
   --color-surface:         hsl(0 0% 11%);     /* #1c1c1c */
   --color-surface-raised:  hsl(0 0% 13%);     /* #212121 */
   --color-surface-overlay: hsl(0 0% 15%);     /* #262626 */
 
-  /* ── Borders — ultra subtle ───────────────────────────── */
-  --color-border:          hsl(0 0% 100% / 0.07);
-  --color-border-strong:   hsl(0 0% 100% / 0.12);
-  --color-border-orange:   hsl(26 100% 52% / 0.30);
+  /* ── Borders — Dark Mode ──────────────────────────────── */
+  --color-border:          hsl(0 0% 100% / 0.08);
+  --color-border-strong:   hsl(0 0% 100% / 0.14);
+  --color-border-orange:   hsl(26 100% 52% / 0.35);
 
-  /* ── Text ─────────────────────────────────────────────── */
-  --color-text:            hsl(0 0% 92%);
-  --color-text-secondary:  hsl(0 0% 55%);
-  --color-text-tertiary:   hsl(0 0% 38%);
+  /* ── Text — Dark Mode ─────────────────────────────────── */
+  --color-text:            hsl(0 0% 93%);
+  --color-text-secondary:  hsl(0 0% 56%);
+  --color-text-tertiary:   hsl(0 0% 40%);
   --color-text-disabled:   hsl(0 0% 25%);
   --color-text-on-primary: #ffffff;
 
@@ -54,11 +53,11 @@
 
   /* ── Layout ───────────────────────────────────────────── */
   --sidebar-width:         260px;
-  --sidebar-bg:            hsl(0 0% 8%);      /* slightly lighter than bg */
+  --sidebar-bg:            hsl(0 0% 8% / 0.92);
   --sidebar-border:        var(--color-border);
   --header-height:         58px;
   --header-bg:             hsl(0 0% 7% / 0.95);
-  --toc-width:             224px;
+  --toc-width:             250px;
 
   /* ── Typography ───────────────────────────────────────── */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -113,7 +112,7 @@
   --transition-fast:   100ms ease;
   --transition-base:   180ms ease;
   --transition-slow:   320ms ease;
-  --transition-spring: 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-spring: 320ms cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ── Z-index ──────────────────────────────────────────── */
   --z-sidebar: 40;
@@ -123,40 +122,53 @@
   --z-toast:   80;
 }
 
-/* ─── Light mode override ──────────────────────────────────── */
-/* Site defaults to dark. Light mode is a lighter alternative. */
+/* ============================================================
+   LIGHT MODE TOKENS — Crisp, High-Contrast & Warm WildFire
+   ============================================================ */
+
 [data-theme="light"] {
-  --color-bg:              hsl(0 0% 97%);
-  --color-bg-subtle:       hsl(0 0% 94%);
-  --color-surface:         hsl(0 0% 100%);
-  --color-surface-raised:  hsl(0 0% 97%);
-  --color-surface-overlay: hsl(0 0% 100%);
+  /* ── Surfaces — Light Mode ────────────────────────────── */
+  --color-bg:              hsl(0 0% 98.5%);   /* #FAFAFA */
+  --color-bg-subtle:       hsl(0 0% 95%);     /* #F2F2F2 */
+  --color-surface:         #ffffff;           /* #FFFFFF */
+  --color-surface-raised:  hsl(0 0% 96%);     /* #F5F5F5 */
+  --color-surface-overlay: #ffffff;
 
-  --color-border:          hsl(0 0% 0% / 0.08);
-  --color-border-strong:   hsl(0 0% 0% / 0.14);
+  /* ── Borders — Light Mode ─────────────────────────────── */
+  --color-border:          hsl(0 0% 88%);     /* #E0E0E0 */
+  --color-border-strong:   hsl(0 0% 78%);     /* #C7C7C7 */
+  --color-border-orange:   hsl(26 100% 48% / 0.45);
 
-  --color-text:            hsl(0 0% 10%);
-  --color-text-secondary:  hsl(0 0% 40%);
-  --color-text-tertiary:   hsl(0 0% 58%);
-  --color-text-disabled:   hsl(0 0% 74%);
+  /* ── Text — Light Mode ────────────────────────────────── */
+  --color-text:            hsl(0 0% 12%);     /* #1F1F1F */
+  --color-text-secondary:  hsl(0 0% 38%);     /* #616161 */
+  --color-text-tertiary:   hsl(0 0% 54%);     /* #8A8A8A */
+  --color-text-disabled:   hsl(0 0% 72%);     /* #B8B8B8 */
 
-  --color-primary-subtle:  hsl(26 100% 52% / 0.08);
-  --color-primary-border:  hsl(26 100% 52% / 0.20);
+  /* ── Primary Orange (Slightly deeper for light bg readability) ── */
+  --color-primary:         hsl(26 100% 48%);
+  --color-primary-hover:   hsl(26 100% 42%);
+  --color-primary-dim:     hsl(26 100% 48% / 0.12);
+  --color-primary-subtle:  hsl(26 100% 48% / 0.08);
+  --color-primary-border:  hsl(26 100% 48% / 0.25);
 
-  --sidebar-bg:            hsl(0 0% 96%);
-  --header-bg:             hsl(0 0% 100% / 0.90);
+  /* ── Layout — Light Mode ──────────────────────────────── */
+  --sidebar-bg:            hsl(0 0% 97.5% / 0.95);
+  --header-bg:             hsl(0 0% 100% / 0.92);
 
-  --color-success-subtle:  hsl(142 72% 42% / 0.08);
-  --color-warning-subtle:  hsl(44 100% 52% / 0.08);
+  /* ── Semantic — Light Mode ────────────────────────────── */
+  --color-success-subtle:  hsl(142 72% 42% / 0.10);
+  --color-warning-subtle:  hsl(44 100% 46% / 0.10);
   --color-danger-subtle:   hsl(4 90% 52% / 0.08);
   --color-info-subtle:     hsl(210 85% 56% / 0.08);
 
-  --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.06);
-  --shadow-sm: 0 2px 6px hsl(0 0% 0% / 0.08);
-  --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0 8px 32px hsl(0 0% 0% / 0.12);
-  --shadow-xl: 0 16px 48px hsl(0 0% 0% / 0.14);
+  /* ── Shadows — Light Mode (Soft Natural Elevation) ────── */
+  --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.06);
+  --shadow-md: 0 4px 20px hsl(0 0% 0% / 0.08);
+  --shadow-lg: 0 10px 32px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0 20px 48px hsl(0 0% 0% / 0.12);
 
-  --glow-fire:  none;
-  --glow-ember: none;
+  --glow-fire:  0 0 16px hsl(26 100% 48% / 0.12);
+  --glow-ember: 0 0 8px hsl(26 100% 48% / 0.20);
 }
