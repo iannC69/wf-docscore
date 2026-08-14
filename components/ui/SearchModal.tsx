@@ -8,18 +8,36 @@ import {
   Hash,
   ArrowRight,
   Sparkles,
-  Command,
   CornerDownLeft,
+  BookOpen,
 } from "lucide-react";
-import type { SearchDocument } from "@/lib/search";
+import type { SearchChunk } from "@/lib/search";
 
-interface SearchResultItem {
-  id: string;
-  title: string;
-  subtitle?: string;
-  category: string;
-  href: string;
-  isHeading?: boolean;
+/**
+ * Highlights matching query terms within a string cleanly
+ */
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  if (!query.trim() || !text) {
+    return <span>{text}</span>;
+  }
+
+  const terms = query.trim().split(/\s+/).filter(Boolean);
+  const regex = new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+  const parts = text.split(regex);
+
+  return (
+    <span>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="search-match-highlight">
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </span>
+  );
 }
 
 export function SearchModal({
@@ -31,114 +49,129 @@ export function SearchModal({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [documents, setDocuments] = useState<SearchDocument[]>([]);
+  const [chunks, setChunks] = useState<SearchChunk[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch search index on first open
+  // Fetch deep search index on initial open
   useEffect(() => {
-    if (isOpen && documents.length === 0) {
+    if (isOpen && chunks.length === 0) {
       setLoading(true);
       fetch("/api/search")
         .then((res) => res.json())
         .then((data) => {
           if (data.results) {
-            setDocuments(data.results);
+            setChunks(data.results);
           }
           setLoading(false);
         })
         .catch(() => setLoading(false));
     }
-  }, [isOpen, documents.length]);
+  }, [isOpen, chunks.length]);
 
-  // Focus input when opened
+  // Auto-focus input when modal opens
   useEffect(() => {
     if (isOpen) {
       setQuery("");
       setSelectedIndex(0);
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
-  // Filter results based on query
-  const results = useMemo<SearchResultItem[]>(() => {
-    if (!query.trim()) {
-      // Default suggested items when query is empty
+  // Deep search scoring & filtering
+  const results = useMemo(() => {
+    const q = query.toLowerCase().trim();
+
+    if (!q) {
+      // Default curated quicklinks when query is empty
       return [
         {
           id: "quick-getting-started",
           title: "Getting Started",
-          subtitle: "Install and run the documentation platform locally",
+          sectionTitle: "Introduction & Setup",
           category: "Getting Started",
           href: "/docs/getting-started",
+          contentSnippet: "Step-by-step installation, environment setup, and verification guide.",
         },
         {
           id: "quick-config",
-          title: "Configuration Reference",
-          subtitle: "Environment variables, GitHub App credentials, and setup",
+          title: "Configuration",
+          sectionTitle: "Environment & Keys",
           category: "Getting Started",
           href: "/docs/getting-started/configuration",
+          contentSnippet: "Configure GitHub App tokens, Turso database connection, and theme presets.",
         },
         {
           id: "quick-features",
           title: "MDX Components",
-          subtitle: "Callouts, code blocks, steps, and interactive tabs",
+          sectionTitle: "Component Reference",
           category: "Core Features",
           href: "/docs/features/mdx-components",
+          contentSnippet: "Interactive callouts, code blocks, tabs, cards, and sequential steps.",
+        },
+        {
+          id: "quick-github",
+          title: "GitHub Sync",
+          sectionTitle: "GitOps Workflow",
+          category: "Core Features",
+          href: "/docs/features/github-integration",
+          contentSnippet: "Automated two-way GitHub synchronizer, commit-on-save, and webhooks.",
         },
         {
           id: "quick-api",
           title: "API Reference",
-          subtitle: "REST API endpoints for programmatic content access",
+          sectionTitle: "REST Endpoints",
           category: "API Reference",
           href: "/docs/api-reference",
+          contentSnippet: "Programmatic access to documentation content, navigation trees, and revalidation.",
         },
       ];
     }
 
-    const q = query.toLowerCase().trim();
-    const matches: SearchResultItem[] = [];
+    const words = q.split(/\s+/).filter(Boolean);
 
-    for (const doc of documents) {
-      const titleMatch = doc.title.toLowerCase().includes(q);
-      const descMatch = doc.description.toLowerCase().includes(q);
-      const catMatch = doc.category.toLowerCase().includes(q);
-      const keywordMatch = doc.keywords.some((k) => k.toLowerCase().includes(q));
+    const scored = chunks.map((item) => {
+      let score = 0;
+      const titleLower = item.title.toLowerCase();
+      const sectionLower = item.sectionTitle ? item.sectionTitle.toLowerCase() : "";
+      const snippetLower = item.contentSnippet.toLowerCase();
+      const catLower = item.category.toLowerCase();
+      const hrefLower = item.href.toLowerCase();
 
-      if (titleMatch || descMatch || catMatch || keywordMatch) {
-        matches.push({
-          id: doc.href,
-          title: doc.title,
-          subtitle: doc.description || doc.category,
-          category: doc.category,
-          href: doc.href,
-          isHeading: false,
-        });
+      // Exact phrase match in title
+      if (titleLower === q) score += 100;
+      else if (titleLower.startsWith(q)) score += 60;
+      else if (titleLower.includes(q)) score += 40;
+
+      // Section or category match
+      if (sectionLower.includes(q)) score += 30;
+      if (catLower.includes(q)) score += 20;
+      if (hrefLower.includes(q)) score += 25;
+
+      // Match each word in title/snippet
+      for (const w of words) {
+        if (titleLower.includes(w)) score += 15;
+        if (sectionLower.includes(w)) score += 10;
+        if (snippetLower.includes(w)) score += 8;
+        if (item.keywords.some(k => k.toLowerCase().includes(w))) score += 12;
       }
 
-      // Check headings inside document
-      for (const h of doc.headings) {
-        if (h.title.toLowerCase().includes(q)) {
-          matches.push({
-            id: `${doc.href}#${h.id}`,
-            title: h.title,
-            subtitle: `In ${doc.title}`,
-            category: doc.category,
-            href: `${doc.href}#${h.id}`,
-            isHeading: true,
-          });
-        }
-      }
-    }
+      return { item, score };
+    });
 
-    return matches.slice(0, 12); // Limit to top 12 results
-  }, [query, documents]);
+    return scored
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 16)
+      .map((s) => s.item);
+  }, [query, chunks]);
 
-  // Handle keyboard navigation inside search dialog
+  // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -188,14 +221,14 @@ export function SearchModal({
         className="search-modal-container"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Search Input Bar */}
+        {/* Spotlight-style Search Input Header */}
         <div className="search-input-header">
-          <Search size={18} className="search-input-icon" aria-hidden="true" />
+          <Search size={19} className="search-input-icon" aria-hidden="true" />
           <input
             ref={inputRef}
             type="text"
             className="search-input"
-            placeholder="Search documentation, guides, APIs..."
+            placeholder="Search documentation, guides, APIs, code..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -203,6 +236,8 @@ export function SearchModal({
             }}
             onKeyDown={handleKeyDown}
             aria-autocomplete="list"
+            autoComplete="off"
+            spellCheck="false"
           />
           {query && (
             <button
@@ -214,30 +249,35 @@ export function SearchModal({
               }}
               aria-label="Clear search query"
             >
-              <X size={14} />
+              <X size={15} />
             </button>
           )}
-          <kbd className="search-esc-badge" onClick={onClose}>
+          <button
+            type="button"
+            className="search-esc-badge"
+            onClick={onClose}
+            aria-label="Close search"
+          >
             ESC
-          </kbd>
+          </button>
         </div>
 
-        {/* Search Results List */}
+        {/* Search Results / Status */}
         <div className="search-results-wrapper" ref={resultsContainerRef}>
           {loading && (
             <div className="search-status-state">
               <div className="search-spinner" aria-hidden="true" />
-              <span>Indexing documentation...</span>
+              <span>Indexing documentation database...</span>
             </div>
           )}
 
           {!loading && results.length === 0 && (
             <div className="search-status-state">
               <p className="search-no-results">
-                No results found for &ldquo;<strong>{query}</strong>&rdquo;
+                No matching results found for &ldquo;<strong>{query}</strong>&rdquo;
               </p>
               <span className="search-no-results-hint">
-                Try searching for general keywords like &ldquo;setup&rdquo;, &ldquo;config&rdquo;, or &ldquo;api&rdquo;.
+                Search across all topics, variables, API routes, and code blocks.
               </span>
             </div>
           )}
@@ -245,11 +285,13 @@ export function SearchModal({
           {!loading && results.length > 0 && (
             <div className="search-results-list" role="listbox">
               <div className="search-section-label">
-                {!query.trim() ? "Suggested Quicklinks" : `Results (${results.length})`}
+                {!query.trim() ? "Suggested Quicklinks" : `Search Results (${results.length})`}
               </div>
 
               {results.map((item, idx) => {
                 const isSelected = idx === selectedIndex;
+                const isHeading = item.href.includes("#");
+
                 return (
                   <div
                     key={item.id}
@@ -261,28 +303,40 @@ export function SearchModal({
                     onMouseEnter={() => setSelectedIndex(idx)}
                   >
                     <div className="result-item-icon-box">
-                      {item.isHeading ? (
-                        <Hash size={15} className="result-icon-heading" aria-hidden="true" />
+                      {isHeading ? (
+                        <Hash size={14} className="result-icon-heading" aria-hidden="true" />
                       ) : (
-                        <FileText size={15} className="result-icon-doc" aria-hidden="true" />
+                        <FileText size={14} className="result-icon-doc" aria-hidden="true" />
                       )}
                     </div>
 
                     <div className="result-item-content">
                       <div className="result-item-title-row">
-                        <span className="result-item-title">{item.title}</span>
+                        <span className="result-item-title">
+                          <HighlightMatch text={item.title} query={query} />
+                        </span>
+                        {item.sectionTitle && item.sectionTitle !== item.title && (
+                          <span className="result-item-parent">
+                            in {item.sectionTitle}
+                          </span>
+                        )}
                         <span className="result-item-category">{item.category}</span>
                       </div>
-                      {item.subtitle && (
-                        <p className="result-item-subtitle">{item.subtitle}</p>
+
+                      {item.contentSnippet && (
+                        <p className="result-item-snippet">
+                          <HighlightMatch text={item.contentSnippet} query={query} />
+                        </p>
                       )}
                     </div>
 
-                    <CornerDownLeft
-                      size={14}
-                      className="result-item-enter-icon"
-                      aria-hidden="true"
-                    />
+                    <div className="result-item-action">
+                      <CornerDownLeft
+                        size={13}
+                        className="result-item-enter-icon"
+                        aria-hidden="true"
+                      />
+                    </div>
                   </div>
                 );
               })}
@@ -290,7 +344,7 @@ export function SearchModal({
           )}
         </div>
 
-        {/* Search Modal Footer */}
+        {/* Modal Keyboard Helper Footer */}
         <div className="search-modal-footer">
           <div className="search-shortcuts-help">
             <span className="shortcut-tag">
@@ -300,16 +354,16 @@ export function SearchModal({
             </span>
             <span className="shortcut-tag">
               <kbd>↵</kbd>
-              <span>Select</span>
+              <span>Open</span>
             </span>
             <span className="shortcut-tag">
               <kbd>ESC</kbd>
-              <span>Close</span>
+              <span>Dismiss</span>
             </span>
           </div>
 
           <div className="search-powered-by">
-            <span>Wildfire FastSearch</span>
+            <span>Wildfire DeepSearch</span>
           </div>
         </div>
       </div>

@@ -2,14 +2,13 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 
-export interface SearchDocument {
+export interface SearchChunk {
   id: string;
   title: string;
-  description: string;
+  sectionTitle?: string;
   category: string;
-  slug: string;
   href: string;
-  headings: { id: string; title: string; depth: number }[];
+  contentSnippet: string;
   keywords: string[];
 }
 
@@ -21,10 +20,27 @@ const CATEGORY_NAMES: Record<string, string> = {
   "api-reference": "API Reference",
 };
 
-export function getSearchIndex(): SearchDocument[] {
+/**
+ * Strips markdown syntax to get clean plain text for search indexing
+ */
+function cleanMarkdown(text: string): string {
+  return text
+    .replace(/```[\s\S]*?```/g, " ") // remove code blocks or keep words
+    .replace(/`([^`]+)`/g, "$1")     // inline code
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links
+    .replace(/#+\s+/g, "")           // headers
+    .replace(/[>*_~]/g, "")          // blockquotes, bold, italic
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Builds a deep search index containing whole documents and section chunks
+ */
+export function getSearchIndex(): SearchChunk[] {
   if (!fs.existsSync(/*turbopackIgnore: true*/ DOCS_PATH)) return [];
 
-  const index: SearchDocument[] = [];
+  const chunks: SearchChunk[] = [];
 
   function processDir(dirPath: string, parentCategory = "General", baseSlug = "") {
     const entries = fs.readdirSync(/*turbopackIgnore: true*/ dirPath, { withFileTypes: true });
@@ -44,61 +60,66 @@ export function getSearchIndex(): SearchDocument[] {
         const isSectionIndex = entry.name === "index.md" && baseSlug !== "";
         const fileSlug = entry.name.replace(/\.md$/, "");
 
-        let slug = "";
         let href = "/docs";
-
         if (isRootIndex) {
-          slug = "";
           href = "/docs";
         } else if (isSectionIndex) {
-          slug = baseSlug;
           href = `/docs/${baseSlug}`;
         } else {
-          slug = baseSlug ? `${baseSlug}/${fileSlug}` : fileSlug;
-          href = `/docs/${slug}`;
+          href = baseSlug ? `/docs/${baseSlug}/${fileSlug}` : `/docs/${fileSlug}`;
         }
 
-        // Extract headings
-        const headings: { id: string; title: string; depth: number }[] = [];
-        const headingRegex = /^(#{2,3})\s+(.+)$/gm;
-        let match;
-        while ((match = headingRegex.exec(content)) !== null) {
-          const depth = match[1].length;
-          const rawTitle = match[2]
-            .replace(/\*\*(.+?)\*\*/g, "$1")
-            .replace(/\*(.+?)\*/g, "$1")
-            .replace(/`(.+?)`/g, "$1")
-            .replace(/\[(.+?)\]\(.+?\)/g, "$1")
-            .trim();
+        const docTitle = data.title || path.basename(fullPath, ".md").replace(/-/g, " ");
+        const docDescription = data.description || "";
+        const docKeywords: string[] = Array.isArray(data.keywords) ? data.keywords : [];
 
-          const id = rawTitle
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/\s+/g, "-")
-            .replace(/-+/g, "-");
-
-          headings.push({ id, title: rawTitle, depth });
-        }
-
-        // Extract keywords from frontmatter or text
-        const keywords: string[] = Array.isArray(data.keywords)
-          ? data.keywords
-          : [];
-
-        index.push({
+        // 1. Add primary document chunk
+        chunks.push({
           id: href,
-          title: data.title || path.basename(fullPath, ".md").replace(/-/g, " "),
-          description: data.description || "",
+          title: docTitle,
           category: parentCategory,
-          slug,
           href,
-          headings,
-          keywords,
+          contentSnippet: docDescription || cleanMarkdown(content.slice(0, 240)),
+          keywords: docKeywords,
         });
+
+        // 2. Parse section chunks (split by headings ## or ###)
+        const sections = content.split(/(?=^#{2,3}\s+)/m);
+
+        for (const section of sections) {
+          const match = section.match(/^(#{2,3})\s+(.+)$/m);
+          if (match) {
+            const rawHeading = match[2]
+              .replace(/\*\*(.+?)\*\*/g, "$1")
+              .replace(/`(.+?)`/g, "$1")
+              .trim();
+
+            const headingId = rawHeading
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, "")
+              .replace(/\s+/g, "-")
+              .replace(/-+/g, "-");
+
+            const sectionBody = section.replace(/^(#{2,3})\s+.+$/m, "");
+            const cleanedBody = cleanMarkdown(sectionBody);
+
+            if (cleanedBody.length > 5) {
+              chunks.push({
+                id: `${href}#${headingId}`,
+                title: rawHeading,
+                sectionTitle: docTitle,
+                category: parentCategory,
+                href: `${href}#${headingId}`,
+                contentSnippet: cleanedBody.slice(0, 180),
+                keywords: docKeywords,
+              });
+            }
+          }
+        }
       }
     }
   }
 
   processDir(DOCS_PATH);
-  return index;
+  return chunks;
 }
