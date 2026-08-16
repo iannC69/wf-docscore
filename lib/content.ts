@@ -1,6 +1,8 @@
 import { getRawPage, getAdjacentPages, getNavigation } from "@/lib/navigation";
 import { compileMdxContent } from "@/lib/mdx";
+import { getFileGitInfo, getFileFirstCommitInfo } from "@/lib/git";
 import type { DocPage, Breadcrumb, NavItem } from "@/types/docs";
+import path from "path";
 
 // ─── Build breadcrumbs from slug ───────────────────────────────────────────────
 
@@ -32,7 +34,7 @@ async function buildBreadcrumbs(slug: string[]): Promise<Breadcrumb[]> {
 // ─── Main content fetcher ──────────────────────────────────────────────────────
 
 /**
- * Get a fully compiled doc page with MDX, TOC, adjacent pages, and breadcrumbs.
+ * Get a fully compiled doc page with MDX, TOC, adjacent pages, breadcrumbs, and git commit history.
  * This is the single source of truth for page data.
  */
 export async function getDocPage(slug: string[]): Promise<DocPage | null> {
@@ -46,20 +48,23 @@ export async function getDocPage(slug: string[]): Promise<DocPage | null> {
   const { prev, next } = await getAdjacentPages(slugStr);
   const breadcrumbs = await buildBreadcrumbs(slug);
 
-  // GitHub edit URL (populated in production)
-  const githubRepo = process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME
+  // Extract real Git commit & author history
+  const gitInfo = getFileGitInfo(raw.path);
+  const firstCommit = getFileFirstCommitInfo(raw.path);
+
+  // GitHub repo & edit URL
+  const githubRepo = (process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME)
     ? `${process.env.GITHUB_REPO_OWNER}/${process.env.GITHUB_REPO_NAME}`
-    : null;
+    : "iannC69/wf-docscore";
   const githubBranch = process.env.GITHUB_DOCS_BRANCH || "main";
-  const docsPath = process.env.GITHUB_DOCS_PATH || "docs/";
-  const githubPath = `${docsPath}${slugStr}.md`;
-  const githubEditUrl = githubRepo
-    ? `https://github.com/${githubRepo}/edit/${githubBranch}/${githubPath}`
-    : null;
+  
+  // Calculate relative repo path
+  const relPath = path.relative(process.cwd(), raw.path).replace(/\\/g, "/");
+  const githubEditUrl = `https://github.com/${githubRepo}/edit/${githubBranch}/${relPath}`;
 
   return {
     slug: slugStr,
-    href: `/docs/${slugStr}`,
+    href: slug.length === 0 ? "/docs" : `/docs/${slugStr}`,
     frontmatter,
     content: raw.content,
     mdxSource: compiledContent,
@@ -69,7 +74,10 @@ export async function getDocPage(slug: string[]): Promise<DocPage | null> {
     prev: prev ? { title: prev.title, href: prev.href } : undefined,
     next: next ? { title: next.title, href: next.href } : undefined,
     breadcrumbs,
-    githubPath,
-    githubEditUrl: githubEditUrl ?? undefined,
+    githubPath: relPath,
+    githubEditUrl,
+    lastModified: gitInfo.date,
+    gitInfo,
+    firstCommit,
   };
 }

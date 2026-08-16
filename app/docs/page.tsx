@@ -12,9 +12,16 @@ import {
   BookOpen,
   ArrowRight,
   Code2,
+  Clock,
+  Sparkles,
+  GitCommit,
+  Flame,
 } from "lucide-react";
+import { getRecentlyUpdatedDocs } from "@/lib/git";
 
 export default function DocsHomePage() {
+  const recentDocs = getRecentlyUpdatedDocs(6);
+
   return (
     <div className="docs-home-wrapper">
       <main className="docs-home" id="main-content">
@@ -45,11 +52,79 @@ export default function DocsHomePage() {
           </div>
         </section>
 
-        {/* ── Main Navigation Cards ─────────────────────────────────────── */}
+        {/* ── Recently Updated Section (Dynamic Commit / File Tracking) ── */}
+        {recentDocs.length > 0 && (
+          <section className="docs-home-section">
+            <div className="section-header section-header--flex">
+              <div>
+                <div className="section-title-badge-row">
+                  <h2 className="docs-home-section-title">Recently Updated</h2>
+                  <span className="live-pulse-badge">
+                    <span className="pulse-dot" aria-hidden="true" />
+                    <span>Live Git Sync</span>
+                  </span>
+                </div>
+                <span className="section-sub">Latest changes, updated guides, and revised API docs</span>
+              </div>
+            </div>
+
+            <div className="recent-updates-grid">
+              {recentDocs.map((doc) => (
+                <Link key={doc.slug} href={doc.href} className="recent-update-card">
+                  {/* Top Bar: Category Pill + Relative Time */}
+                  <div className="recent-card-top">
+                    <span className="recent-card-category">{doc.category}</span>
+                    <span className="recent-card-time">
+                      <Clock size={11} aria-hidden="true" />
+                      <span>{doc.relativeTime}</span>
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <div className="recent-card-title-row">
+                    <h3 className="recent-card-title">{doc.title}</h3>
+                    <ArrowRight size={14} className="recent-card-arrow" aria-hidden="true" />
+                  </div>
+
+                  {/* Excerpt Description */}
+                  <p className="recent-card-desc">{doc.description}</p>
+
+                  {/* Bottom Footer: Author Avatar + Commit Hash + Read Time */}
+                  <div className="recent-card-footer">
+                    <div className="recent-card-author">
+                      <img
+                        src={doc.authorAvatar}
+                        alt={doc.authorName}
+                        className="recent-author-avatar"
+                        width={18}
+                        height={18}
+                      />
+                      <span className="recent-author-name">
+                        <span className="recent-author-by">by</span> {doc.authorName}
+                      </span>
+                    </div>
+
+                    <div className="recent-card-meta-right">
+                      {doc.commitHash && doc.commitHash !== "HEAD" && (
+                        <span className="recent-commit-badge" title={`Commit ${doc.commitHash}`}>
+                          <GitCommit size={11} aria-hidden="true" />
+                          <span>#{doc.commitHash.slice(0, 7)}</span>
+                        </span>
+                      )}
+                      <span className="recent-read-time">{doc.readingTime}m read</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ── Core Modules Navigation Cards ─────────────────────────────── */}
         <section className="docs-home-section">
           <div className="section-header">
             <h2 className="docs-home-section-title">Core Sections</h2>
-            <span className="section-sub">Explore the foundational modules</span>
+            <span className="section-sub">Explore the foundational architecture modules</span>
           </div>
 
           <div className="home-cards-grid">
@@ -152,7 +227,7 @@ export default function DocsHomePage() {
                 <Cpu size={16} aria-hidden="true" />
               </div>
               <div className="feature-item-content">
-                <h3 className="feature-item-title">Next.js 15 App Router &amp; SSG</h3>
+                <h3 className="feature-item-title">Next.js 16 App Router &amp; Turbopack</h3>
                 <p className="feature-item-desc">
                   Static Site Generation pre-renders all documentation pages at build time for sub-millisecond TTFB.
                 </p>

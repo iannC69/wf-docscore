@@ -33,6 +33,18 @@ export interface PageFrontmatter {
   authors?: string[];
 }
 
+export interface GitCommitInfo {
+  authorName: string;
+  authorEmail: string;
+  authorUsername: string;
+  authorAvatar: string;
+  date: string;
+  relativeTime: string;
+  commitHash: string;
+  commitMessage: string;
+  commitUrl?: string;
+}
+
 export interface DocPage {
   slug: string;
   href: string;
@@ -48,6 +60,8 @@ export interface DocPage {
   githubPath?: string;
   githubEditUrl?: string;
   lastModified?: string;
+  gitInfo?: GitCommitInfo;
+  firstCommit?: GitCommitInfo;
 }
 
 // ─── Table of Contents ────────────────────────────────────────────────────────
