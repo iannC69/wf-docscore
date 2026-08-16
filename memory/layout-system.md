@@ -53,13 +53,20 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
 ## 📐 2. Left Sidebar Navigation (`components/layout/Sidebar.tsx`)
 
 - Fixed width: `268px` (`--sidebar-width`).
-- Position: `fixed`, top: `var(--header-height)`, left: `0`, height: `calc(100vh - var(--header-height))`.
+- Position: `fixed`, top: `var(--header-height)`, left: `0`, height: `calc(100vh - var(--header-height))`, `overflow: hidden`.
 - Background: `var(--glass-bg)` with `backdrop-filter: blur(16px)` and `border-right: 1px solid var(--glass-border)`.
+- **Three-Tier Architecture**:
+  1. **Pinned Top Bar**: Brand fire icon, navigation title, and sidebar collapse button `[`.
+  2. **Independent Scroll Area (`.sidebar-scroll-wrapper`)**:
+     - Middle navigation tree scrolls independently with smooth thin scrollbar.
+     - **Fade-Down Gradient Overlay (`.sidebar-fade-down`)**: Smooth mask gradient (`height: 36px`) that cleanly dissolves long section lists as they scroll behind the bottom dock.
+  3. **Pinned Bottom Dock (`.sidebar-bottom-dock`)**:
+     - **Always visible** at the bottom of the sidebar (never gets pushed off-screen).
+     - Houses the **Production Edge status card**, the **system status indicator** ("Wildfire Docs v1.0"), and the **seamless Molten Lava Wave Tank** (`LiquidFireWave`, `height: 60px`).
 - **Collapsible Hierarchies**:
   - **Category Groups** (`CollapsibleNavGroup`): Clicking group titles (e.g. `GETTING STARTED`, `CORE FEATURES`, `API REFERENCE`) collapses/expands the section with smooth chevron rotation.
   - **Nested Sections & Sub-Pages** (`NavItemRow`): Any document item with child files or companion subfolders (e.g., `Installation` → `Quickstart Guide`, `Docker Deployment`) renders an interactive expand/collapse toggle (`ChevronRight`) and an indented sub-list with a subtle vertical connector tree line (`border-left: 1px solid var(--color-border)`).
   - **Auto-Expansion**: When visiting any child page or parent page, active sections automatically expand to display the active route.
-- **Molten Lava Tank**: Fixed at the bottom containing `LiquidFireWave` (`height: 95px`) seamlessly anchored below system status.
 
 ---
 
