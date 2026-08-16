@@ -11,9 +11,10 @@ interface TableOfContentsProps {
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [nodeMetrics, setNodeMetrics] = useState<{ top: number; height: number }[]>([]);
+  const [nodeMetrics, setNodeMetrics] = useState<{ top: number; height: number }[]>(() =>
+    items.map((_, idx) => ({ top: idx * 28, height: 28 }))
+  );
   const activeIdRef = useRef<string>(items[0]?.id || "");
-  const prevActiveIdxRef = useRef<number>(0);
   const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const listRef = useRef<HTMLUListElement>(null);
@@ -150,12 +151,8 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
 
-  // 3. Adaptive Dynamic Velocity (Adapts transition speed based on scroll velocity)
-  const delta = Math.abs(activeIdx - prevActiveIdxRef.current);
+  // Auto-scroll TOC container if heading goes out of view
   useEffect(() => {
-    prevActiveIdxRef.current = activeIdx;
-
-    // Auto-scroll TOC container if heading goes out of card view during rapid scrolling
     if (itemRefs.current[activeIdx] && tocAsideRef.current) {
       const itemEl = itemRefs.current[activeIdx]!;
       const asideEl = tocAsideRef.current;
@@ -163,14 +160,10 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       const itemRect = itemEl.getBoundingClientRect();
 
       if (itemRect.bottom > asideRect.bottom - 16 || itemRect.top < asideRect.top + 16) {
-        itemEl.scrollIntoView({ block: "nearest", behavior: delta > 2 ? "auto" : "smooth" });
+        itemEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     }
-  }, [activeIdx, delta]);
-
-  // Motion physics timing
-  const motionDuration = delta >= 3 ? "0.12s" : delta === 2 ? "0.18s" : "0.26s";
-  const motionEasing = delta >= 3 ? "cubic-bezier(0.1, 0.9, 0.2, 1)" : "cubic-bezier(0.16, 1, 0.3, 1)";
+  }, [activeIdx]);
 
   // Synchronously derived capsule coordinates
   const activeCapsuleMetrics = nodeMetrics[activeIdx] || {
@@ -229,14 +222,12 @@ export function TableOfContents({ items }: TableOfContentsProps) {
         {/* Clean, Orderly, Ultra-Refined TOC Navigation */}
         <nav className="toc-clean-nav">
           <div className="toc-clean-list-wrapper">
-            {/* GPU-Accelerated Gliding Frosted Glass Capsule (Sidebar-matching aesthetic) */}
+            {/* GPU-Accelerated Gliding Frosted Glass Capsule */}
             <div
               className="toc-gliding-capsule"
               style={{
                 transform: `translate3d(0, ${activeCapsuleMetrics.top}px, 0)`,
                 height: `${activeCapsuleMetrics.height}px`,
-                opacity: nodeMetrics.length > 0 ? 1 : 0,
-                transition: `transform ${motionDuration} ${motionEasing}, height ${motionDuration} ${motionEasing}, opacity 0.2s ease`,
               }}
               aria-hidden="true"
             />
