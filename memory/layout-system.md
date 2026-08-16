@@ -50,16 +50,16 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
 
 ---
 
-## 📑 Sidebar Navigation
+## 📐 2. Left Sidebar Navigation (`components/layout/Sidebar.tsx`)
 
-- **Width**: `268px` (collapsible to 0px with slide animation)
-- **Background**: `hsl(0 0% 7.5% / 0.94)`
-- **Components**:
-  1. **Top Bar**: Navigation brand title + Panel collapse button
-  2. **Group Headers**: Categorized sections (`Getting Started`, `Core Features`, `API Reference`)
-  3. **Nav Rows**: Each route has a dedicated Lucide icon (e.g. `Rocket` for Getting Started, `Sliders` for Config, `Terminal` for API, `GitBranch` for GitOps) + Active pill indicator
-  4. **Glass Status Card**: Production Edge status with branch info
-  5. **Molten Lava Tank Wave**: Seamless animated SVG wave tank anchored to the bottom
+- Fixed width: `268px` (`--sidebar-width`).
+- Position: `fixed`, top: `var(--header-height)`, left: `0`, height: `calc(100vh - var(--header-height))`.
+- Background: `var(--glass-bg)` with `backdrop-filter: blur(16px)` and `border-right: 1px solid var(--glass-border)`.
+- **Collapsible Hierarchies**:
+  - **Category Groups** (`CollapsibleNavGroup`): Clicking group titles (e.g. `GETTING STARTED`, `CORE FEATURES`, `API REFERENCE`) collapses/expands the section with smooth chevron rotation.
+  - **Nested Sections & Sub-Pages** (`NavItemRow`): Any document item with child files or companion subfolders (e.g., `Installation` → `Quickstart Guide`, `Docker Deployment`) renders an interactive expand/collapse toggle (`ChevronRight`) and an indented sub-list with a subtle vertical connector tree line (`border-left: 1px solid var(--color-border)`).
+  - **Auto-Expansion**: When visiting any child page or parent page, active sections automatically expand to display the active route.
+- **Molten Lava Tank**: Fixed at the bottom containing `LiquidFireWave` (`height: 95px`) seamlessly anchored below system status.
 
 ---
 
