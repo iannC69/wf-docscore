@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { AlignLeft, PanelRightClose, PanelRightOpen, Flame } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
 
@@ -10,16 +10,36 @@ interface TableOfContentsProps {
 
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
   const { tocOpen, toggleToc } = useLayout();
 
+  // Scroll Progress Calculator
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const current = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(Math.min(100, Math.max(0, Math.round(current))));
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Intersection Observer for Active Heading
   useEffect(() => {
     if (items.length === 0) return;
 
-    const headings = items.map(item => document.getElementById(item.id)).filter(Boolean);
+    const headings = items
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean);
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter(e => e.isIntersecting);
+        const visible = entries.filter((e) => e.isIntersecting);
         if (visible.length > 0) {
           setActiveId(visible[0].target.id);
         }
@@ -30,7 +50,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       }
     );
 
-    headings.forEach(h => h && observer.observe(h));
+    headings.forEach((h) => h && observer.observe(h));
     return () => observer.disconnect();
   }, [items]);
 
@@ -69,34 +89,77 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           aria-label="Table of contents"
           data-collapsed={!tocOpen}
         >
+          {/* Curved Glass Header */}
           <div className="toc-header">
-            <AlignLeft size={13} className="toc-header-icon" aria-hidden="true" />
-            <span className="toc-title">On this page</span>
-            <button
-              type="button"
-              onClick={toggleToc}
-              className="toc-collapse-btn"
-              title="Collapse Table of Contents (Shortcut: ])"
-              aria-label="Collapse table of contents"
-            >
-              <PanelRightClose size={14} />
-            </button>
+            <div className="toc-header-left">
+              <span className="toc-header-icon-box">
+                <AlignLeft size={12} className="toc-header-icon" aria-hidden="true" />
+              </span>
+              <span className="toc-title">On this page</span>
+            </div>
+
+            <div className="toc-header-right">
+              {scrollProgress > 0 && (
+                <span className="toc-progress-chip" title="Reading Progress">
+                  {scrollProgress}%
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={toggleToc}
+                className="toc-collapse-btn"
+                title="Collapse Table of Contents (Shortcut: ])"
+                aria-label="Collapse table of contents"
+              >
+                <PanelRightClose size={13} />
+                <kbd className="toc-collapse-kbd" aria-hidden="true">]</kbd>
+              </button>
+            </div>
           </div>
-          <nav>
+
+          {/* Curved Reading Progress Gauge Line */}
+          <div className="toc-progress-track">
+            <div
+              className="toc-progress-fill"
+              style={{ width: `${scrollProgress}%` }}
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Curved Tree Navigation */}
+          <nav className="toc-tree-container">
+            <div className="toc-spine-line" aria-hidden="true" />
             <ul role="list" className="toc-list">
-              {items.map(item => (
-                <li key={item.id} data-depth={item.depth}>
-                  <a
-                    href={`#${item.id}`}
-                    onClick={handleClick(item.id)}
-                    className={`toc-item${activeId === item.id ? " toc-item--active" : ""}`}
-                    data-depth={item.depth}
-                    aria-current={activeId === item.id ? "location" : undefined}
+              {items.map((item) => {
+                const isActive = activeId === item.id;
+                const isNested = item.depth === 3;
+
+                return (
+                  <li
+                    key={item.id}
+                    className={`toc-item-wrapper ${isNested ? "toc-item-wrapper--nested" : ""}`}
                   >
-                    {item.title}
-                  </a>
-                </li>
-              ))}
+                    {isNested && (
+                      <span
+                        className={`toc-curved-branch ${isActive ? "toc-curved-branch--active" : ""}`}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <a
+                      href={`#${item.id}`}
+                      onClick={handleClick(item.id)}
+                      className={`toc-item ${isActive ? "toc-item--active" : ""} ${isNested ? "toc-item--nested" : ""}`}
+                      aria-current={isActive ? "location" : undefined}
+                    >
+                      <span
+                        className={`toc-node-dot ${isActive ? "toc-node-dot--active" : ""}`}
+                        aria-hidden="true"
+                      />
+                      <span className="toc-item-text">{item.title}</span>
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         </aside>
