@@ -175,18 +175,16 @@ export function Sidebar({ nav }: SidebarProps) {
       <div id="sidebar-overlay" className="sidebar-overlay" aria-hidden="true" data-open="false" />
 
       {/* Floating expand button when sidebar is collapsed */}
-      {!sidebarOpen && (
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          className="sidebar-floating-toggle"
-          title="Expand Left Sidebar (Shortcut: [)"
-          aria-label="Expand sidebar"
-        >
-          <PanelLeftOpen size={15} />
-          <span className="floating-toggle-label">Sidebar</span>
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        className={`sidebar-floating-toggle ${!sidebarOpen ? "sidebar-floating-toggle--visible" : ""}`}
+        title="Expand Left Sidebar (Shortcut: [)"
+        aria-label="Expand sidebar"
+      >
+        <PanelLeftOpen size={15} />
+        <span className="floating-toggle-label">Sidebar</span>
+      </button>
 
       <aside
         id="docs-sidebar"

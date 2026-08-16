@@ -426,11 +426,18 @@ nextjs-portal,
   z-index: var(--z-sidebar);
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), width 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--transition-base), border-color var(--transition-base);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease, background-color var(--transition-base), border-color var(--transition-base);
+}
+
+.sidebar--open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .sidebar--collapsed {
   transform: translateX(-100%);
+  opacity: 0;
   pointer-events: none;
 }
 
@@ -528,8 +535,18 @@ nextjs-portal,
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
+
+.sidebar-floating-toggle--visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
 .sidebar-floating-toggle:hover {
   background: var(--color-surface-raised);
   border-color: var(--color-border-orange);
@@ -1262,8 +1279,30 @@ nextjs-portal,
   flex-shrink: 0;
   margin-top: 14px;
   margin-right: 12px;
-  transition: opacity 0.2s ease, background-color var(--transition-base), border-color var(--transition-base);
   scrollbar-width: thin;
+  transform-origin: top right;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease, margin-right 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--transition-base), border-color var(--transition-base);
+}
+
+@media (min-width: 1200px) {
+  .toc {
+    display: block;
+  }
+}
+
+.toc--open {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.toc--collapsed {
+  opacity: 0;
+  transform: translateX(24px) scale(0.96);
+  pointer-events: none;
+  visibility: hidden;
+  margin-right: -220px;
 }
 
 [data-theme="light"] .toc {
@@ -1478,8 +1517,18 @@ nextjs-portal,
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
+  opacity: 0;
+  transform: translateX(100%);
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
+
+.toc-floating-toggle--visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
 .toc-floating-toggle:hover {
   background: var(--color-surface-raised);
   border-color: var(--color-border-orange);

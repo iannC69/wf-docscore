@@ -199,25 +199,22 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   return (
     <>
       {/* Floating reopen button if TOC is closed on wide screens */}
-      {!tocOpen && (
-        <button
-          type="button"
-          onClick={toggleToc}
-          className="toc-floating-toggle"
-          title="Expand Right Table of Contents (Shortcut: ])"
-          aria-label="Expand table of contents"
-        >
-          <PanelRightOpen size={15} />
-          <span className="floating-toggle-label">Contents</span>
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={toggleToc}
+        className={`toc-floating-toggle ${!tocOpen ? "toc-floating-toggle--visible" : ""}`}
+        title="Expand Right Table of Contents (Shortcut: ])"
+        aria-label="Expand table of contents"
+      >
+        <PanelRightOpen size={15} />
+        <span className="floating-toggle-label">Contents</span>
+      </button>
 
-      {tocOpen && (
-        <aside
-          className="toc"
-          aria-label="Table of contents"
-          data-collapsed={!tocOpen}
-        >
+      <aside
+        className={`toc ${tocOpen ? "toc--open" : "toc--collapsed"}`}
+        aria-label="Table of contents"
+        data-collapsed={!tocOpen}
+      >
           {/* Header */}
           <div className="toc-header">
             <div className="toc-header-left">
@@ -362,7 +359,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             </ul>
           </nav>
         </aside>
-      )}
     </>
   );
 }
