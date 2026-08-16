@@ -46,7 +46,13 @@ export function Header() {
             <MobileMenuToggle />
             <Link href="/docs" className="header-logo" aria-label="Go to docs home">
               <span className="header-logo-icon" aria-hidden="true">
-                <Flame size={15} />
+                <img
+                  src="/logo.png"
+                  alt="Wildfire Logo"
+                  className="header-logo-img"
+                  width={20}
+                  height={20}
+                />
               </span>
               <span className="header-logo-text">
                 <span className="header-logo-name">WILDFIRE</span>

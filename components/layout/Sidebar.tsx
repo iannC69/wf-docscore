@@ -186,7 +186,13 @@ export function Sidebar({ nav }: SidebarProps) {
         <div className="sidebar-top-bar">
           <div className="sidebar-brand-sub">
             <span className="sidebar-brand-icon-box">
-              <Flame size={12} className="brand-fire-icon" aria-hidden="true" />
+              <img
+                src="/logo.png"
+                alt="Wildfire Logo"
+                className="sidebar-brand-logo-img"
+                width={14}
+                height={14}
+              />
             </span>
             <span className="sidebar-top-title">Navigation</span>
             <span className="sidebar-top-badge">Explorer</span>

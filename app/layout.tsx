@@ -3,11 +3,22 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Docs Platform",
-    template: "%s — Docs Platform",
+    default: "Wildfire Docs — Developer Documentation Engine",
+    template: "%s — Wildfire Docs",
   },
-  description: "A powerful, custom-built documentation platform with GitHub integration and visual admin panel.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  description:
+    "Ultra-fast Next.js documentation engine with live Git synchronization and liquid glass aesthetics.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+  ),
+  icons: {
+    icon: [
+      { url: "/logo.png", type: "image/png" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: "/logo.png",
+    shortcut: "/logo.png",
+  },
 };
 
 export default function RootLayout({
