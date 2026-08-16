@@ -1,4 +1,5 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,23 +10,13 @@ import {
   PanelLeftOpen,
   Flame,
   GitBranch,
-  Search,
-  Sparkles,
   LayoutGrid,
-  Rocket,
-  Sliders,
-  Package,
-  Cloud,
-  Code2,
-  Webhook,
-  Database,
+  ChevronRight,
   Compass,
-  FileText,
 } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
-
 import { getDocIcon } from "@/lib/icons";
 
 interface SidebarProps {
@@ -38,35 +29,130 @@ const GROUP_ICONS: Record<string, React.ReactNode> = {
   "API Reference": <Terminal size={13} aria-hidden="true" />,
 };
 
+/**
+ * Collapsible NavItemRow with support for nested children sub-sections
+ */
 function NavItemRow({
   item,
   pathname,
+  depth = 0,
 }: {
   item: NavItem;
   pathname: string;
+  depth?: number;
 }) {
+  const hasChildren = item.children && item.children.length > 0;
   const isExact = pathname === item.href;
-  const isAncestor = !isExact && pathname.startsWith(`${item.href}/`);
+  const isAncestor = !isExact && (pathname.startsWith(`${item.href}/`) || pathname.startsWith(`${item.href}?`));
+  const isChildActive = hasChildren && item.children?.some(c => pathname === c.href || pathname.startsWith(`${c.href}/`));
+
+  // Expand automatically if current route is this item or a child of this item
+  const [isOpen, setIsOpen] = useState(isExact || isAncestor || isChildActive || false);
+
+  useEffect(() => {
+    if (isExact || isAncestor || isChildActive) {
+      setIsOpen(true);
+    }
+  }, [pathname, isExact, isAncestor, isChildActive]);
+
+  const toggleOpen = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(prev => !prev);
+  };
 
   return (
-    <li>
-      <Link
-        href={item.href}
-        className={`nav-item${isExact ? " nav-item--active" : ""}${isAncestor ? " nav-item--ancestor" : ""}`}
-        aria-current={isExact ? "page" : undefined}
-      >
-        <span className="nav-item-indicator" aria-hidden="true" />
-        <span className="nav-item-icon">
-          {getDocIcon(item.slug, item.title, 14)}
-        </span>
-        <span className="nav-item-text">{item.title}</span>
-        {item.badge && (
-          <span className={`nav-item-badge badge--${item.badge.toLowerCase()}`}>
-            {item.badge}
+    <li className={`nav-item-wrapper ${hasChildren ? "nav-item-wrapper--has-children" : ""}`}>
+      <div className="nav-item-row-container">
+        <Link
+          href={item.href}
+          className={`nav-item${isExact ? " nav-item--active" : ""}${isAncestor ? " nav-item--ancestor" : ""}${depth > 0 ? " nav-item--nested" : ""}`}
+          aria-current={isExact ? "page" : undefined}
+        >
+          <span className="nav-item-indicator" aria-hidden="true" />
+          <span className="nav-item-icon">
+            {getDocIcon(item.slug, item.title, depth > 0 ? 12 : 14)}
           </span>
+          <span className="nav-item-text">{item.title}</span>
+          {item.badge && (
+            <span className={`nav-item-badge badge--${item.badge.toLowerCase()}`}>
+              {item.badge}
+            </span>
+          )}
+        </Link>
+
+        {/* Chevron toggle button for sections with children */}
+        {hasChildren && (
+          <button
+            type="button"
+            className={`nav-item-collapse-btn ${isOpen ? "nav-item-collapse-btn--open" : ""}`}
+            onClick={toggleOpen}
+            aria-label={isOpen ? `Collapse ${item.title} section` : `Expand ${item.title} section`}
+            title={isOpen ? "Collapse section" : "Expand section"}
+          >
+            <ChevronRight size={13} aria-hidden="true" />
+          </button>
         )}
-      </Link>
+      </div>
+
+      {/* Nested Children Sublist */}
+      {hasChildren && isOpen && (
+        <ul role="list" className="nav-sublist" data-open={isOpen}>
+          {item.children!.map((child) => (
+            <NavItemRow
+              key={child.slug}
+              item={child}
+              pathname={pathname}
+              depth={depth + 1}
+            />
+          ))}
+        </ul>
+      )}
     </li>
+  );
+}
+
+/**
+ * Collapsible NavGroup component for top-level groups
+ */
+function CollapsibleNavGroup({
+  group,
+  pathname,
+}: {
+  group: NavGroup;
+  pathname: string;
+}) {
+  const isGroupActive = group.items.some(
+    item => pathname === item.href || pathname.startsWith(`${item.href}/`) || item.children?.some(c => pathname === c.href || pathname.startsWith(`${c.href}/`))
+  );
+
+  const [isGroupOpen, setIsGroupOpen] = useState(true);
+
+  return (
+    <div className="nav-group">
+      <button
+        type="button"
+        className={`nav-group-header-btn ${isGroupOpen ? "nav-group-header-btn--open" : ""}`}
+        onClick={() => setIsGroupOpen(prev => !prev)}
+        aria-expanded={isGroupOpen}
+      >
+        <span className="nav-group-header-left">
+          {GROUP_ICONS[group.title] && (
+            <span className="nav-group-icon">{GROUP_ICONS[group.title]}</span>
+          )}
+          <span>{group.title}</span>
+        </span>
+        <ChevronRight size={12} className="nav-group-chevron" aria-hidden="true" />
+      </button>
+
+      {isGroupOpen && (
+        <ul role="list" className="nav-list">
+          {group.items.map(item => (
+            <NavItemRow key={item.slug} item={item} pathname={pathname} />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -143,21 +229,13 @@ export function Sidebar({ nav }: SidebarProps) {
               </ul>
             </div>
 
-            {/* Categorized Groups */}
+            {/* Categorized Collapsible Groups */}
             {nav.map(group => (
-              <div key={group.title} className="nav-group">
-                <p className="nav-group-title">
-                  {GROUP_ICONS[group.title] && (
-                    <span className="nav-group-icon">{GROUP_ICONS[group.title]}</span>
-                  )}
-                  <span>{group.title}</span>
-                </p>
-                <ul role="list" className="nav-list">
-                  {group.items.map(item => (
-                    <NavItemRow key={item.slug} item={item} pathname={pathname} />
-                  ))}
-                </ul>
-              </div>
+              <CollapsibleNavGroup
+                key={group.title}
+                group={group}
+                pathname={pathname}
+              />
             ))}
           </nav>
 
@@ -168,7 +246,7 @@ export function Sidebar({ nav }: SidebarProps) {
               <span className="liquid-card-title">Production Edge</span>
             </div>
             <p className="liquid-card-desc">
-              Next.js 15 SSG engine with instant global cache revalidation.
+              Next.js 16 Turbopack engine with instant global cache revalidation.
             </p>
             <div className="liquid-card-footer">
               <span className="liquid-card-tag">

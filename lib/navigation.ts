@@ -63,13 +63,44 @@ function buildNavItemsForDir(dirPath: string, baseSlug: string): NavItem[] {
       const slug = `${baseSlug}/${fileSlug}`;
       const { title, order, badge } = readFrontmatterTitle(fullPath);
 
+      // Check if there is a companion subfolder with the same name (e.g. installation/)
+      const subDirPath = path.join(dirPath, fileSlug);
+      let children: NavItem[] | undefined = undefined;
+      if (fs.existsSync(/*turbopackIgnore: true*/ subDirPath) && fs.statSync(/*turbopackIgnore: true*/ subDirPath).isDirectory()) {
+        const nested = buildNavItemsForDir(subDirPath, slug);
+        children = nested.filter(n => n.href !== `/docs/${slug}`);
+      }
+
       items.push({
         title,
         slug,
         href: `/docs/${slug}`,
         order,
         badge,
+        children: children && children.length > 0 ? children : undefined,
       });
+    } else if (entry.isDirectory()) {
+      // Check if not already handled as companion to a .md file
+      const companionMd = path.join(dirPath, `${entry.name}.md`);
+      if (!fs.existsSync(/*turbopackIgnore: true*/ companionMd)) {
+        const slug = `${baseSlug}/${entry.name}`;
+        const subItems = buildNavItemsForDir(fullPath, slug);
+        const subIndexPath = path.join(fullPath, "index.md");
+        const { title, order, badge } = fs.existsSync(/*turbopackIgnore: true*/ subIndexPath)
+          ? readFrontmatterTitle(subIndexPath)
+          : { title: entry.name.replace(/-/g, " "), order: 99, badge: undefined };
+
+        const children = subItems.filter(n => n.href !== `/docs/${slug}`);
+
+        items.push({
+          title,
+          slug,
+          href: `/docs/${slug}`,
+          order,
+          badge,
+          children: children.length > 0 ? children : undefined,
+        });
+      }
     }
   }
 
@@ -137,7 +168,18 @@ export async function getAllSlugs(): Promise<string[][]> {
   slugs.push([]);
   collectSlugs(DOCS_PATH);
 
-  return slugs;
+  // Deduplicate slugs
+  const seen = new Set<string>();
+  const uniqueSlugs: string[][] = [];
+  for (const s of slugs) {
+    const key = s.join("/");
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueSlugs.push(s);
+    }
+  }
+
+  return uniqueSlugs;
 }
 
 /**
