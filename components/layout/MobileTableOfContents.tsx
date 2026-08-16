@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { AlignLeft, ChevronDown } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 import type { TocItem } from "@/types/docs";
 
 interface MobileTableOfContentsProps {
@@ -10,6 +11,7 @@ interface MobileTableOfContentsProps {
 export function MobileTableOfContents({ items }: MobileTableOfContentsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeId, setActiveId] = useState<string>("");
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (items.length === 0) return;
@@ -63,7 +65,7 @@ export function MobileTableOfContents({ items }: MobileTableOfContentsProps) {
         <span className="mobile-toc-left">
           <AlignLeft size={13} className="mobile-toc-icon" aria-hidden="true" />
           <span className="mobile-toc-label">
-            On this page{activeItem ? `: ` : ""}
+            {t.docPage.onThisPage}{activeItem ? `: ` : ""}
             {activeItem && <span className="mobile-toc-active-title">{activeItem.title}</span>}
           </span>
         </span>

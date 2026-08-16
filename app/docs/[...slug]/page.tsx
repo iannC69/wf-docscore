@@ -7,24 +7,30 @@ import { MobileTableOfContents } from "@/components/layout/MobileTableOfContents
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { PageNav } from "@/components/ui/PageNav";
 import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
+import { translations, type Locale } from "@/lib/i18n";
 import {
   Pencil,
   Clock,
   BookOpen,
   GitCommit,
-  Sparkles,
   ExternalLink,
-  UserCheck,
 } from "lucide-react";
 
 interface Props {
   params: Promise<{ slug?: string[] }>;
 }
 
-const CATEGORY_NAMES: Record<string, string> = {
-  "getting-started": "Getting Started",
-  "features": "Core Features",
-  "api-reference": "API Reference",
+const CATEGORY_NAMES: Record<Locale, Record<string, string>> = {
+  en: {
+    "getting-started": "Getting Started",
+    "features": "Core Features",
+    "api-reference": "API Reference",
+  },
+  ro: {
+    "getting-started": "Ghid de Pornire",
+    "features": "Funcționalități Principale",
+    "api-reference": "Referință API",
+  },
 };
 
 // ─── Static params ────────────────────────────────────────────────────────────
@@ -68,12 +74,20 @@ export default async function DocPage({ params }: Props) {
     notFound();
   }
 
+  const locale: Locale = slug[0] === "ro" ? "ro" : "en";
+  const t = translations[locale] || translations.en;
+
   const showToc = page.frontmatter.showToc !== false && page.toc.length > 0;
   const showFeedback = page.frontmatter.showFeedback !== false;
   
   // Category label derived from top slug
-  const rootSlug = slug[0] || "";
-  const categoryLabel = CATEGORY_NAMES[rootSlug] || (rootSlug ? rootSlug.replace(/-/g, " ") : "Documentation");
+  let cleanSlug = [...slug];
+  if (cleanSlug[0] === "ro" || cleanSlug[0] === "en") {
+    cleanSlug = cleanSlug.slice(1);
+  }
+  const rootCategoryKey = cleanSlug[0] || "";
+  const catMap = CATEGORY_NAMES[locale] || CATEGORY_NAMES.en;
+  const categoryLabel = catMap[rootCategoryKey] || (rootCategoryKey ? rootCategoryKey.replace(/-/g, " ") : (locale === "ro" ? "Documentație" : "Documentation"));
 
   // Mark current breadcrumb
   const breadcrumbs = page.breadcrumbs.map((b, i) => ({
@@ -84,8 +98,7 @@ export default async function DocPage({ params }: Props) {
   const git = page.gitInfo;
   const authorName = page.frontmatter.authors?.[0] || git?.authorUsername || "iannC69";
   const authorAvatar = git?.authorAvatar || `https://github.com/${authorName}.png`;
-  const relativeTime = git?.relativeTime || "Recently";
-  const commitHash = git?.commitHash || "HEAD";
+  const relativeTime = git?.relativeTime || (locale === "ro" ? "Recent" : "Recently");
 
   return (
     <div className="docs-page-container">
@@ -118,10 +131,10 @@ export default async function DocPage({ params }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="page-top-edit-btn"
-                  title={`Edit ${page.frontmatter.title} on GitHub`}
+                  title={`${t.docPage.editPage}: ${page.frontmatter.title}`}
                 >
                   <Pencil size={12} aria-hidden="true" />
-                  <span>Edit Page</span>
+                  <span>{t.docPage.editPage}</span>
                   <ExternalLink size={10} className="edit-btn-ext" aria-hidden="true" />
                 </a>
               )}
@@ -155,7 +168,7 @@ export default async function DocPage({ params }: Props) {
                     loading="lazy"
                   />
                   <span className="author-text-wrap">
-                    <span className="author-action-label">Updated by</span>
+                    <span className="author-action-label">{t.docPage.updatedBy}</span>
                     <a
                       href={`https://github.com/${authorName}`}
                       target="_blank"
@@ -189,14 +202,14 @@ export default async function DocPage({ params }: Props) {
                   {/* Reading Time */}
                   <span className="page-meta-item">
                     <Clock size={12} aria-hidden="true" />
-                    <span>{page.readingTime} min read</span>
+                    <span>{page.readingTime} {t.docPage.minRead}</span>
                   </span>
                   <span className="page-header-meta-sep" aria-hidden="true">·</span>
 
                   {/* Word Count */}
                   <span className="page-meta-item">
                     <BookOpen size={12} aria-hidden="true" />
-                    <span>{page.wordCount.toLocaleString()} words</span>
+                    <span>{page.wordCount.toLocaleString()} {t.docPage.words}</span>
                   </span>
                   <span className="page-header-meta-sep" aria-hidden="true">·</span>
 
@@ -224,7 +237,7 @@ export default async function DocPage({ params }: Props) {
                     style={{ marginLeft: "auto" }}
                   >
                     <Pencil size={13} aria-hidden="true" />
-                    Edit this page on GitHub
+                    {locale === "ro" ? "Editează pagina pe GitHub" : "Edit this page on GitHub"}
                   </a>
                 )}
               </div>

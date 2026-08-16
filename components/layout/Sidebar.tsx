@@ -8,7 +8,6 @@ import {
   Terminal,
   PanelLeftClose,
   PanelLeftOpen,
-  Flame,
   GitBranch,
   LayoutGrid,
   ChevronRight,
@@ -16,17 +15,24 @@ import {
 } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import type { NavGroup, NavItem } from "@/types/docs";
+import type { Locale } from "@/lib/i18n";
 import { getDocIcon } from "@/lib/icons";
 
 interface SidebarProps {
-  nav: NavGroup[];
+  nav?: NavGroup[];
+  navMap?: Record<Locale, NavGroup[]>;
 }
 
 const GROUP_ICONS: Record<string, React.ReactNode> = {
   "Getting Started": <BookOpen size={13} aria-hidden="true" />,
+  "Ghid de Pornire": <BookOpen size={13} aria-hidden="true" />,
   "Core Features": <Layers size={13} aria-hidden="true" />,
+  "Funcționalități Principale": <Layers size={13} aria-hidden="true" />,
   "API Reference": <Terminal size={13} aria-hidden="true" />,
+  "Referință API": <Terminal size={13} aria-hidden="true" />,
 };
 
 function closeMobileSidebar() {
@@ -109,7 +115,7 @@ function NavItemRow({
       {/* Nested Children Sublist */}
       {hasChildren && isOpen && (
         <ul role="list" className="nav-sublist" data-open={isOpen}>
-          {item.children!.map((child) => (
+          {item.children!.map(child => (
             <NavItemRow
               key={child.slug}
               item={child}
@@ -124,7 +130,7 @@ function NavItemRow({
 }
 
 /**
- * Collapsible NavGroup component for top-level groups
+ * Collapsible NavGroup component
  */
 function CollapsibleNavGroup({
   group,
@@ -133,20 +139,34 @@ function CollapsibleNavGroup({
   group: NavGroup;
   pathname: string;
 }) {
+  const isAnyItemActive = group.items.some(
+    item =>
+      pathname === item.href ||
+      pathname.startsWith(`${item.href}/`) ||
+      item.children?.some(c => pathname === c.href || pathname.startsWith(`${c.href}/`))
+  );
+
   const [isGroupOpen, setIsGroupOpen] = useState(true);
+
+  const toggleGroup = () => {
+    setIsGroupOpen(prev => !prev);
+  };
+
+  const groupIcon = GROUP_ICONS[group.title] || (
+    <Layers size={13} className="nav-group-icon" aria-hidden="true" />
+  );
 
   return (
     <div className="nav-group">
       <button
         type="button"
-        className={`nav-group-header-btn ${isGroupOpen ? "nav-group-header-btn--open" : ""}`}
-        onClick={() => setIsGroupOpen(prev => !prev)}
+        onClick={toggleGroup}
+        className={`nav-group-header-btn ${isGroupOpen ? "nav-group-header-btn--open" : ""} ${isAnyItemActive ? "nav-group-header-btn--has-active" : ""}`}
         aria-expanded={isGroupOpen}
+        aria-label={`Toggle ${group.title} category`}
       >
         <span className="nav-group-header-left">
-          {GROUP_ICONS[group.title] && (
-            <span className="nav-group-icon">{GROUP_ICONS[group.title]}</span>
-          )}
+          <span className="nav-group-icon">{groupIcon}</span>
           <span>{group.title}</span>
         </span>
         <ChevronRight size={12} className="nav-group-chevron" aria-hidden="true" />
@@ -163,9 +183,13 @@ function CollapsibleNavGroup({
   );
 }
 
-export function Sidebar({ nav }: SidebarProps) {
+export function Sidebar({ nav = [], navMap }: SidebarProps) {
   const pathname = usePathname();
   const { sidebarOpen, toggleSidebar } = useLayout();
+  const { locale, t } = useLanguage();
+
+  const currentNav = navMap ? (navMap[locale] || navMap.en || nav) : nav;
+  const homeHref = locale === "ro" ? "/docs/ro" : "/docs";
 
   return (
     <>
@@ -178,18 +202,18 @@ export function Sidebar({ nav }: SidebarProps) {
           type="button"
           onClick={toggleSidebar}
           className="sidebar-floating-toggle"
-          title="Expand Left Sidebar (Shortcut: [)"
-          aria-label="Expand sidebar"
+          title={t.sidebar.expandSidebar}
+          aria-label={t.sidebar.expandSidebar}
         >
           <PanelLeftOpen size={15} />
-          <span className="floating-toggle-label">Sidebar</span>
+          <span className="floating-toggle-label">{t.sidebar.navigation}</span>
         </button>
       )}
 
       <aside
         id="docs-sidebar"
         className={`sidebar ${sidebarOpen ? "sidebar--open" : "sidebar--collapsed"}`}
-        aria-label="Documentation navigation"
+        aria-label={t.sidebar.navigation}
         data-open="false"
         data-collapsed={!sidebarOpen}
       >
@@ -205,15 +229,15 @@ export function Sidebar({ nav }: SidebarProps) {
                 height={14}
               />
             </span>
-            <span className="sidebar-top-title">Navigation</span>
-            <span className="sidebar-top-badge">Explorer</span>
+            <span className="sidebar-top-title">{t.sidebar.navigation}</span>
+            <span className="sidebar-top-badge">{t.sidebar.explorerBadge}</span>
           </div>
           <button
             type="button"
             onClick={toggleSidebar}
             className="sidebar-collapse-btn"
-            title="Collapse Sidebar (Shortcut: [)"
-            aria-label="Collapse sidebar"
+            title={t.sidebar.collapseSidebar}
+            aria-label={t.sidebar.collapseSidebar}
           >
             <PanelLeftClose size={14} />
             <kbd className="sidebar-collapse-kbd" aria-hidden="true">[</kbd>
@@ -223,33 +247,33 @@ export function Sidebar({ nav }: SidebarProps) {
         {/* Scrollable Navigation Area with Smooth Fade-down Mask */}
         <div className="sidebar-scroll-wrapper">
           <div className="sidebar-inner">
-            <nav aria-label="Docs sections">
+            <nav aria-label={t.sidebar.navigation}>
               {/* Overview / Introduction Link */}
               <div className="nav-group">
                 <p className="nav-group-title">
                   <LayoutGrid size={12} className="nav-group-icon" aria-hidden="true" />
-                  <span>Overview</span>
+                  <span>{t.sidebar.overview}</span>
                 </p>
                 <ul role="list" className="nav-list">
                   <li>
                     <Link
-                      href="/docs"
+                      href={homeHref}
                       onClick={closeMobileSidebar}
-                      className={`nav-item${pathname === "/docs" ? " nav-item--active" : ""}`}
-                      aria-current={pathname === "/docs" ? "page" : undefined}
+                      className={`nav-item${pathname === homeHref || (locale === "en" && pathname === "/docs") ? " nav-item--active" : ""}`}
+                      aria-current={pathname === homeHref ? "page" : undefined}
                     >
                       <span className="nav-item-indicator" aria-hidden="true" />
                       <span className="nav-item-icon">
                         <Compass size={14} aria-hidden="true" />
                       </span>
-                      <span className="nav-item-text">Documentation Hub</span>
+                      <span className="nav-item-text">{t.sidebar.documentationHub}</span>
                     </Link>
                   </li>
                 </ul>
               </div>
 
               {/* Categorized Collapsible Groups */}
-              {nav.map(group => (
+              {currentNav.map(group => (
                 <CollapsibleNavGroup
                   key={group.title}
                   group={group}
@@ -265,14 +289,21 @@ export function Sidebar({ nav }: SidebarProps) {
 
         {/* Pinned Bottom Dock: Always visible */}
         <div className="sidebar-bottom-dock">
+          {/* Mobile Language Switcher Row */}
+          <div className="sidebar-lang-row">
+            <LanguageSwitcher variant="sidebar" />
+          </div>
+
           {/* Liquid Glass Info Card */}
           <div className="sidebar-liquid-card">
             <div className="liquid-card-header">
               <span className="liquid-card-dot" aria-hidden="true" />
-              <span className="liquid-card-title">Production Edge</span>
+              <span className="liquid-card-title">{t.sidebar.productionEdge}</span>
             </div>
             <p className="liquid-card-desc">
-              Next.js 16 Turbopack engine with instant global cache revalidation.
+              {locale === "ro"
+                ? "Motor Next.js 16 Turbopack cu revalidare instantanee din cache."
+                : "Next.js 16 Turbopack engine with instant global cache revalidation."}
             </p>
             <div className="liquid-card-footer">
               <span className="liquid-card-tag">
@@ -287,7 +318,7 @@ export function Sidebar({ nav }: SidebarProps) {
           <div className="sidebar-footer">
             <div className="system-status-indicator">
               <span className="status-dot" aria-hidden="true" />
-              <span className="status-label">Wildfire Docs v1.0</span>
+              <span className="status-label">{t.sidebar.systemStatus}</span>
             </div>
           </div>
 

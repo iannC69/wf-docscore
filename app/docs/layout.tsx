@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { LiquidBackground } from "@/components/ui/LiquidEffects";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { LayoutProvider } from "@/context/LayoutContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { getNavigation } from "@/lib/navigation";
 
 export default async function DocsLayout({
@@ -10,23 +11,26 @@ export default async function DocsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const nav = await getNavigation();
+  const enNav = await getNavigation("en");
+  const roNav = await getNavigation("ro");
 
   return (
-    <LayoutProvider>
-      <div className="docs-layout">
-        {/* Instant scroll to top on page navigation */}
-        <ScrollToTop />
+    <LanguageProvider>
+      <LayoutProvider>
+        <div className="docs-layout">
+          {/* Instant scroll to top on page navigation */}
+          <ScrollToTop />
 
-        {/* Liquid fire background */}
-        <LiquidBackground />
+          {/* Liquid fire background */}
+          <LiquidBackground />
 
-        <Header />
-        <Sidebar nav={nav} />
-        <div className="docs-main" id="docs-main-container">
-          {children}
+          <Header />
+          <Sidebar navMap={{ en: enNav, ro: roNav }} />
+          <div className="docs-main" id="docs-main-container">
+            {children}
+          </div>
         </div>
-      </div>
-    </LayoutProvider>
+      </LayoutProvider>
+    </LanguageProvider>
   );
 }
