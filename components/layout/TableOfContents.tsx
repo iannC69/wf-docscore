@@ -235,7 +235,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 ref={pathRef}
                 d={fullPathD}
                 stroke="url(#toc-lava-stroke)"
-                strokeWidth="2.5"
+                strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
@@ -243,7 +243,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                   strokeDasharray: pathTotalLength > 0 ? pathTotalLength : 1000,
                   strokeDashoffset: dashOffset,
                   transition: "stroke-dashoffset 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
-                  filter: "drop-shadow(0 0 4px hsl(26 100% 52% / 0.6))",
                 }}
               />
 
@@ -255,7 +254,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     key={pt.id}
                     cx={pt.x}
                     cy={pt.y}
-                    r={pt.depth >= 3 ? "2" : "2.5"}
+                    r={pt.depth >= 3 ? "1.8" : "2.2"}
                     fill={
                       isPassed
                         ? "hsl(26 100% 52%)"
@@ -263,7 +262,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     }
                     stroke={
                       isPassed
-                        ? "hsl(26 100% 52% / 0.5)"
+                        ? "hsl(26 100% 52% / 0.4)"
                         : "var(--color-border-strong)"
                     }
                     strokeWidth="1"
@@ -272,28 +271,18 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 );
               })}
 
-              {/* Smooth Gliding Active Ember Bead */}
+              {/* Smooth Gliding Active Node */}
               <g
                 style={{
                   transform: `translate(${activePoint.x}px, ${activePoint.y}px)`,
                   transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
               >
-                {/* Outer Glow Halo */}
-                <circle
-                  r="6"
-                  fill="hsl(26 100% 52% / 0.25)"
-                  className="toc-ping-halo"
-                />
-                {/* Core Glowing Ember Node */}
                 <circle
                   r="3.5"
-                  fill="hsl(44 100% 60%)"
-                  stroke="hsl(26 100% 52%)"
+                  fill="hsl(26 100% 52%)"
+                  stroke="var(--color-bg)"
                   strokeWidth="1.5"
-                  style={{
-                    filter: "drop-shadow(0 0 5px hsl(26 100% 52%))",
-                  }}
                 />
               </g>
             </svg>

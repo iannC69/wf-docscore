@@ -46,26 +46,6 @@ function injectStyles() {
       50%       { d: path("M0,100 L0,68 C300,78 600,65 900,78 C1100,72 1300,66 1440,74 L1440,100 Z"); }
     }
 
-    /* Floating Molten Ember Particles */
-    @keyframes emberRise1 {
-      0%   { transform: translateY(0px) translateX(0px) scale(0.8); opacity: 0; }
-      30%  { opacity: 0.8; }
-      80%  { opacity: 0.6; }
-      100% { transform: translateY(-55px) translateX(12px) scale(0.3); opacity: 0; }
-    }
-    @keyframes emberRise2 {
-      0%   { transform: translateY(0px) translateX(0px) scale(0.9); opacity: 0; }
-      25%  { opacity: 0.9; }
-      75%  { opacity: 0.5; }
-      100% { transform: translateY(-65px) translateX(-14px) scale(0.2); opacity: 0; }
-    }
-    @keyframes emberRise3 {
-      0%   { transform: translateY(0px) translateX(0px) scale(0.7); opacity: 0; }
-      40%  { opacity: 0.85; }
-      85%  { opacity: 0.4; }
-      100% { transform: translateY(-48px) translateX(8px) scale(0.2); opacity: 0; }
-    }
-
     [data-theme="light"] .liquid-vignette {
       opacity: 0.15 !important;
     }
@@ -195,53 +175,6 @@ export function LiquidFireWave({
           height: "24px",
           background: "linear-gradient(180deg, var(--sidebar-bg) 0%, transparent 100%)",
           zIndex: 3,
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Floating Ember Particles */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "35px",
-          left: "25%",
-          width: "4px",
-          height: "4px",
-          borderRadius: "50%",
-          background: "hsl(44 100% 60%)",
-          boxShadow: "0 0 6px hsl(44 100% 60%)",
-          animation: "emberRise1 3.5s ease-out infinite 0.2s",
-          zIndex: 2,
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: "40px",
-          left: "60%",
-          width: "5px",
-          height: "5px",
-          borderRadius: "50%",
-          background: "hsl(26 100% 55%)",
-          boxShadow: "0 0 6px hsl(26 100% 55%)",
-          animation: "emberRise2 4.2s ease-out infinite 1.4s",
-          zIndex: 2,
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: "28px",
-          left: "80%",
-          width: "3px",
-          height: "3px",
-          borderRadius: "50%",
-          background: "hsl(38 100% 65%)",
-          boxShadow: "0 0 5px hsl(38 100% 65%)",
-          animation: "emberRise3 3.8s ease-out infinite 2.1s",
-          zIndex: 2,
           pointerEvents: "none",
         }}
       />
