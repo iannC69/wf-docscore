@@ -122,10 +122,6 @@ function CollapsibleNavGroup({
   group: NavGroup;
   pathname: string;
 }) {
-  const isGroupActive = group.items.some(
-    item => pathname === item.href || pathname.startsWith(`${item.href}/`) || item.children?.some(c => pathname === c.href || pathname.startsWith(`${c.href}/`))
-  );
-
   const [isGroupOpen, setIsGroupOpen] = useState(true);
 
   return (
@@ -186,7 +182,7 @@ export function Sidebar({ nav }: SidebarProps) {
         data-open="false"
         data-collapsed={!sidebarOpen}
       >
-        {/* Sidebar Header with subtle glass branding & Collapse action */}
+        {/* Pinned Top Bar with subtle glass branding & Collapse action */}
         <div className="sidebar-top-bar">
           <div className="sidebar-brand-sub">
             <Flame size={13} className="brand-fire-icon" aria-hidden="true" />
@@ -203,43 +199,51 @@ export function Sidebar({ nav }: SidebarProps) {
           </button>
         </div>
 
-        {/* Scrollable Navigation Area */}
-        <div className="sidebar-inner">
-          <nav aria-label="Docs sections">
-            {/* Overview / Introduction Link */}
-            <div className="nav-group">
-              <p className="nav-group-title">
-                <LayoutGrid size={12} className="nav-group-icon" aria-hidden="true" />
-                <span>Overview</span>
-              </p>
-              <ul role="list" className="nav-list">
-                <li>
-                  <Link
-                    href="/docs"
-                    className={`nav-item${pathname === "/docs" ? " nav-item--active" : ""}`}
-                    aria-current={pathname === "/docs" ? "page" : undefined}
-                  >
-                    <span className="nav-item-indicator" aria-hidden="true" />
-                    <span className="nav-item-icon">
-                      <Compass size={14} aria-hidden="true" />
-                    </span>
-                    <span className="nav-item-text">Documentation Hub</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+        {/* Scrollable Navigation Area with Smooth Fade-down Mask */}
+        <div className="sidebar-scroll-wrapper">
+          <div className="sidebar-inner">
+            <nav aria-label="Docs sections">
+              {/* Overview / Introduction Link */}
+              <div className="nav-group">
+                <p className="nav-group-title">
+                  <LayoutGrid size={12} className="nav-group-icon" aria-hidden="true" />
+                  <span>Overview</span>
+                </p>
+                <ul role="list" className="nav-list">
+                  <li>
+                    <Link
+                      href="/docs"
+                      className={`nav-item${pathname === "/docs" ? " nav-item--active" : ""}`}
+                      aria-current={pathname === "/docs" ? "page" : undefined}
+                    >
+                      <span className="nav-item-indicator" aria-hidden="true" />
+                      <span className="nav-item-icon">
+                        <Compass size={14} aria-hidden="true" />
+                      </span>
+                      <span className="nav-item-text">Documentation Hub</span>
+                    </Link>
+                  </li>
+                </ul>
+              </div>
 
-            {/* Categorized Collapsible Groups */}
-            {nav.map(group => (
-              <CollapsibleNavGroup
-                key={group.title}
-                group={group}
-                pathname={pathname}
-              />
-            ))}
-          </nav>
+              {/* Categorized Collapsible Groups */}
+              {nav.map(group => (
+                <CollapsibleNavGroup
+                  key={group.title}
+                  group={group}
+                  pathname={pathname}
+                />
+              ))}
+            </nav>
+          </div>
 
-          {/* Liquid Glass Info Card in Sidebar */}
+          {/* Smooth Fade Down Gradient Overlay */}
+          <div className="sidebar-fade-down" aria-hidden="true" />
+        </div>
+
+        {/* Pinned Bottom Dock: Always visible */}
+        <div className="sidebar-bottom-dock">
+          {/* Liquid Glass Info Card */}
           <div className="sidebar-liquid-card">
             <div className="liquid-card-header">
               <span className="liquid-card-dot" aria-hidden="true" />
@@ -256,19 +260,19 @@ export function Sidebar({ nav }: SidebarProps) {
               <span className="liquid-card-status">99.9% ISR</span>
             </div>
           </div>
-        </div>
 
-        {/* System status at bottom */}
-        <div className="sidebar-footer">
-          <div className="system-status-indicator">
-            <span className="status-dot" aria-hidden="true" />
-            <span className="status-label">Wildfire Docs v1.0</span>
+          {/* System status */}
+          <div className="sidebar-footer">
+            <div className="system-status-indicator">
+              <span className="status-dot" aria-hidden="true" />
+              <span className="status-label">Wildfire Docs v1.0</span>
+            </div>
           </div>
-        </div>
 
-        {/* Seamless Molten Lava Tank */}
-        <div className="sidebar-wave-container">
-          <LiquidFireWave height={95} />
+          {/* Seamless Molten Lava Tank */}
+          <div className="sidebar-wave-container">
+            <LiquidFireWave height={75} />
+          </div>
         </div>
       </aside>
     </>

@@ -368,11 +368,8 @@ nextjs-portal,
   bottom: 0;
   flex-shrink: 0;
   left: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
   position: fixed;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-surface-overlay) transparent;
   top: var(--header-height);
   width: var(--sidebar-width);
   z-index: var(--z-sidebar);
@@ -393,6 +390,7 @@ nextjs-portal,
   padding: 10px 14px;
   border-bottom: 1px solid var(--color-border);
   background: var(--glass-bg);
+  flex-shrink: 0;
 }
 
 .sidebar-brand-sub {
@@ -457,11 +455,40 @@ nextjs-portal,
   transform: translateX(2px);
 }
 
-.sidebar-inner {
-  padding: var(--space-4) var(--space-3);
+/* Scrollable Navigation Area with Bottom Fade Down */
+.sidebar-scroll-wrapper {
+  position: relative;
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-inner {
+  padding: var(--space-3) var(--space-3) var(--space-6);
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-overlay) transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Smooth Fade Down Gradient Overlay */
+.sidebar-fade-down {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  background: linear-gradient(to bottom, transparent 0%, hsl(0 0% 7.5% / 0.95) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+[data-theme="light"] .sidebar-fade-down {
+  background: linear-gradient(to bottom, transparent 0%, hsl(0 0% 98% / 0.95) 100%);
 }
 
 .nav-group {
@@ -664,10 +691,23 @@ nextjs-portal,
   padding: 5px var(--space-2-5, 10px);
 }
 
+/* Sidebar Pinned Bottom Dock (Permanently Visible) */
+.sidebar-bottom-dock {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 6;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
 /* Sidebar Liquid Glass Info Card */
 .sidebar-liquid-card {
-  margin: auto 2px var(--space-3);
-  padding: 11px 13px;
+  margin: var(--space-2) var(--space-3) var(--space-1-5, 6px);
+  padding: 10px 12px;
   background: linear-gradient(135deg, hsl(0 0% 100% / 0.035) 0%, hsl(26 100% 52% / 0.04) 100%);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -688,7 +728,7 @@ nextjs-portal,
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .liquid-card-dot {
   width: 5px;
@@ -704,9 +744,9 @@ nextjs-portal,
 }
 .liquid-card-desc {
   color: var(--color-text-tertiary);
-  font-size: 0.68rem;
-  line-height: 1.4;
-  margin-bottom: 8px;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  margin-bottom: 6px;
 }
 .liquid-card-footer {
   display: flex;
@@ -732,9 +772,9 @@ nextjs-portal,
 }
 
 .sidebar-footer {
-  padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--color-border);
-  background: var(--glass-bg);
+  padding: 5px var(--space-3) 4px;
+  border-top: 1px solid var(--color-border-subtle, hsl(0 0% 100% / 0.05));
+  background: transparent;
 }
 .system-status-indicator {
   display: flex;
@@ -757,6 +797,7 @@ nextjs-portal,
   position: relative;
   overflow: hidden;
   line-height: 0;
+  height: 60px;
 }
 .sidebar-wave-container::before {
   content: '';
