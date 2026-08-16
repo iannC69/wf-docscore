@@ -34,8 +34,84 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
-    version: "v1.2.0",
+    version: "v1.3.0",
     isLatest: true,
+    date: "August 16, 2026",
+    title: "Ultra-Smooth Table of Contents Engine, Frosted Glass Aesthetic & Layout Architecture",
+    summary:
+      "Version 1.3.0 introduces a state-of-the-art 120 FPS hardware-accelerated Table of Contents engine with magnetic frosted glass gliding pill, uninterrupted GPU transitions, refined layout mode controls (Standard, Full, Focus), and official WILDFIRE DOCS primary branding.",
+    author: {
+      name: "iannC69",
+      username: "iannC69",
+      avatar: "https://github.com/iannC69.png",
+    },
+    git: {
+      commitHash: "892fa56",
+      commitUrl: "https://github.com/iannC69/wf-docscore/commit/892fa56",
+      tagUrl: "https://github.com/iannC69/wf-docscore/releases/tag/v1.3.0",
+    },
+    changes: [
+      {
+        type: "feature",
+        title: "Deterministic 120 FPS Table of Contents Scroll Spy",
+        description:
+          "Pre-caches document heading offsets into memory to eliminate forced layout reflows and deliver butter-smooth 120 FPS scrolling.",
+      },
+      {
+        type: "feature",
+        title: "Magnetic Frosted Glass Gliding Capsule",
+        description:
+          "Single dedicated frosted capsule with unbroken GPU compositor interpolation and integrated glowing amber vertical indicator pip.",
+      },
+      {
+        type: "feature",
+        title: "Orderly Typographical Heading Hierarchy",
+        description:
+          "Replaced messy bracket lines and beaded curves with clean typographical indentation for ##, ###, and #### sections.",
+      },
+      {
+        type: "feature",
+        title: "Silky Smooth Panel Collapse & Expand Transitions",
+        description:
+          "Added physics-based cubic-bezier transitions for Sidebar ([) and Table of Contents (]) with floating expand buttons.",
+      },
+      {
+        type: "improvement",
+        title: "Reordered Layout Mode Switcher",
+        description:
+          "Reordered header layout controls to Standard -> Full -> Focus for optimal developer reading ergonomics.",
+      },
+      {
+        type: "improvement",
+        title: "Harmonized Frosted Liquid Glass Tokens",
+        description:
+          "Synchronized backdrop blur, hairline borders, and specular highlight reflections across Sidebar and Table of Contents.",
+      },
+      {
+        type: "improvement",
+        title: "Official WILDFIRE DOCS Branding & Subtle Engine Watermark",
+        description:
+          "Prominently displays WILDFIRE DOCS in top navbar header while maintaining WF-DOCSCORE engine watermark in footer and status dock.",
+      },
+      {
+        type: "fix",
+        title: "Next.js Scroll Warning & SVG Path Syntax Fixes",
+        description:
+          "Resolved data-scroll-behavior Next.js console warning and recalculated cubic bezier coordinate pairs in liquid effects.",
+      },
+    ],
+    highlights: [
+      "Ultra-Smooth 120 FPS Table of Contents with magnetic frosted glass sliding capsule",
+      "Silky smooth collapse / expand panel transitions with floating toggle controls",
+      "Synchronized frosted glass aesthetic across Sidebar and Navigation components",
+      "Reordered header layout switcher to Standard -> Full -> Focus",
+      "Full release packaging for v1.3.0 with live Git commit tracking",
+    ],
+    slug: "v1-3-0",
+  },
+  {
+    version: "v1.2.0",
+    isLatest: false,
     date: "August 16, 2026",
     title: "Mobile & Tablet Optimization, Liquid Glass Header & Official Logo",
     summary:
