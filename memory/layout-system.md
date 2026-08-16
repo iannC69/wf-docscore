@@ -40,13 +40,19 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
 
 ## 🧭 Header Dimensions & Elements
 
-- **Height**: `58px`
-- **Position**: `sticky top: 0`, `z-index: 50`
-- **Background**: `hsl(0 0% 6.5% / 0.92)` with `backdrop-filter: blur(12px)`
-- **Border**: `1px solid var(--color-border)`
-- **Left**: Mobile menu toggle (`display: none` on desktop) + Wildfire Brand logo with flame icon
-- **Center**: Frosted search trigger input with icon + shortcut indicator badge
-- **Right**: Tri-mode Segmented control (`Standard` | `Focus` | `Full`) + Quick toggle icons + GitHub icon link + Dark/Light Theme toggle
+## 📐 1. Fixed Top Navigation Bar (`components/layout/Header.tsx`)
+
+- Height: `58px` (`--header-height`).
+- Background: `var(--glass-bg)` with `backdrop-filter: blur(18px)` and hairline bottom border.
+- **Brand Identity**:
+  - Liquid glass flame icon with ambient warm ember reflection.
+  - Bold uppercase typography: `WILDFIRE` with amber `DOCS` badge and a frosted `v1.0` version pill tag.
+- **Center Search Dialog Trigger**:
+  - Frosted glass input pill (`max-width: 440px`) with animated search icon and keyboard shortcut key (`⌘K` on Mac, `Ctrl K` on Windows/Linux) that glows with an amber border on hover.
+- **Right Controls**:
+  - Segmented tri-mode glass switcher (`Standard`, `Focus`, `Full`).
+  - GitHub repository icon button with subtle frosted hover ring.
+  - Smooth light/dark theme toggle button.
 
 ---
 
@@ -56,7 +62,7 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
 - Position: `fixed`, top: `var(--header-height)`, left: `0`, height: `calc(100vh - var(--header-height))`, `overflow: hidden`.
 - Background: `var(--glass-bg)` with `backdrop-filter: blur(16px)` and `border-right: 1px solid var(--glass-border)`.
 - **Three-Tier Architecture**:
-  1. **Pinned Top Bar**: Brand fire icon, navigation title, and sidebar collapse button `[`.
+  1. **Pinned Top Bar**: Frosted glass flame icon box (`22px`), uppercase `NAVIGATION` title, amber `EXPLORER` badge, and sidebar collapse button with `[` shortcut hint.
   2. **Independent Scroll Area (`.sidebar-scroll-wrapper`)**:
      - Middle navigation tree scrolls independently with smooth thin scrollbar.
      - **Fade-Down Gradient Overlay (`.sidebar-fade-down`)**: Smooth mask gradient (`height: 36px`) that cleanly dissolves long section lists as they scroll behind the bottom dock.
