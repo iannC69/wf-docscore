@@ -8,8 +8,8 @@ interface TableOfContentsProps {
   items: TocItem[];
 }
 
-const ITEM_ROW_HEIGHT = 28;
-const START_OFFSET_Y = 14;
+const ITEM_ROW_HEIGHT = 26;
+const START_OFFSET_Y = 13;
 
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
@@ -18,7 +18,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const pathRef = useRef<SVGPathElement>(null);
   const { tocOpen, toggleToc } = useLayout();
 
-  // Scroll Progress Calculator
+  // Scroll Progress Calculator & Bottom-of-page detector
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight =
@@ -26,13 +26,20 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       if (totalHeight > 0) {
         const current = (window.scrollY / totalHeight) * 100;
         setScrollProgress(Math.min(100, Math.max(0, Math.round(current))));
+
+        // If user scrolled to the bottom of the page, highlight the last item
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 60) {
+          if (items.length > 0) {
+            setActiveId(items[items.length - 1].id);
+          }
+        }
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [items]);
 
   // Intersection Observer for Active Heading
   useEffect(() => {
@@ -50,7 +57,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
         }
       },
       {
-        rootMargin: "-64px 0% -70% 0%",
+        rootMargin: "-64px 0% -60% 0%",
         threshold: 0,
       }
     );
@@ -63,16 +70,23 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const nodePoints = useMemo(() => {
     return items.map((item, index) => {
       const isNested = item.depth >= 3;
-      const x = isNested ? 20 : 8;
+      const x = isNested ? 18 : 7;
       const y = START_OFFSET_Y + index * ITEM_ROW_HEIGHT;
       return { x, y, id: item.id, depth: item.depth, title: item.title, index };
     });
   }, [items]);
 
-  // Construct continuous flowing S-curve path (Fixed geometry, animated via dashoffset)
+  // Construct continuous flowing S-curve path
   const { fullPathD, totalSvgHeight } = useMemo(() => {
     if (nodePoints.length === 0)
-      return { fullPathD: "", totalSvgHeight: 100 };
+      return { fullPathD: "", totalSvgHeight: 60 };
+
+    if (nodePoints.length === 1) {
+      return {
+        fullPathD: `M ${nodePoints[0].x} ${nodePoints[0].y} L ${nodePoints[0].x} ${nodePoints[0].y + 1}`,
+        totalSvgHeight: 40,
+      };
+    }
 
     let fullD = `M ${nodePoints[0].x} ${nodePoints[0].y}`;
 
@@ -88,7 +102,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
     return {
       fullPathD: fullD,
-      totalSvgHeight: Math.max(totalHeight, 100),
+      totalSvgHeight: Math.max(totalHeight, 40),
     };
   }, [nodePoints]);
 
@@ -106,7 +120,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - 75;
       window.scrollTo({ top, behavior: "smooth" });
       setActiveId(id);
       window.history.pushState(null, "", `#${id}`);
@@ -115,13 +129,17 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
-  const activePoint = nodePoints[activeIdx] || nodePoints[0] || { x: 8, y: 14 };
+  const activePoint = nodePoints[activeIdx] || nodePoints[0] || { x: 7, y: 13 };
 
-  // Calculate active path length for smooth dashoffset liquid transition
-  const activeLength =
-    pathTotalLength > 0 && nodePoints.length > 1
-      ? (activeIdx / (nodePoints.length - 1)) * pathTotalLength
-      : 0;
+  // Calculate active path length to reach exact node coordinate
+  let activeLength = 0;
+  if (pathTotalLength > 0 && nodePoints.length > 1) {
+    if (activeIdx === nodePoints.length - 1) {
+      activeLength = pathTotalLength; // Go 100% to the bottom
+    } else {
+      activeLength = (activeIdx / (nodePoints.length - 1)) * pathTotalLength;
+    }
+  }
 
   const dashOffset =
     pathTotalLength > 0 ? Math.max(0, pathTotalLength - activeLength) : 0;
@@ -137,7 +155,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           title="Expand Right Table of Contents (Shortcut: ])"
           aria-label="Expand table of contents"
         >
-          <PanelRightOpen size={16} />
+          <PanelRightOpen size={15} />
           <span className="floating-toggle-label">Contents</span>
         </button>
       )}
@@ -152,7 +170,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           <div className="toc-header">
             <div className="toc-header-left">
               <span className="toc-header-icon-box">
-                <AlignLeft size={12} className="toc-header-icon" aria-hidden="true" />
+                <AlignLeft size={11} className="toc-header-icon" aria-hidden="true" />
               </span>
               <span className="toc-title">On this page</span>
             </div>
@@ -170,7 +188,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 title="Collapse Table of Contents (Shortcut: ])"
                 aria-label="Collapse table of contents"
               >
-                <PanelRightClose size={13} />
+                <PanelRightClose size={12} />
                 <kbd className="toc-collapse-kbd" aria-hidden="true">]</kbd>
               </button>
             </div>
@@ -181,9 +199,9 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             {/* SVG Flow River Curves */}
             <svg
               className="toc-flow-svg"
-              width="30"
+              width="26"
               height={totalSvgHeight}
-              viewBox={`0 0 30 ${totalSvgHeight}`}
+              viewBox={`0 0 26 ${totalSvgHeight}`}
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
@@ -224,7 +242,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 style={{
                   strokeDasharray: pathTotalLength > 0 ? pathTotalLength : 1000,
                   strokeDashoffset: dashOffset,
-                  transition: "stroke-dashoffset 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  transition: "stroke-dashoffset 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
                   filter: "drop-shadow(0 0 4px hsl(26 100% 52% / 0.6))",
                 }}
               />
@@ -245,11 +263,11 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     }
                     stroke={
                       isPassed
-                        ? "hsl(26 100% 52% / 0.4)"
+                        ? "hsl(26 100% 52% / 0.5)"
                         : "var(--color-border-strong)"
                     }
                     strokeWidth="1"
-                    style={{ transition: "fill 0.3s ease, stroke 0.3s ease" }}
+                    style={{ transition: "fill 0.25s ease, stroke 0.25s ease" }}
                   />
                 );
               })}
@@ -258,23 +276,23 @@ export function TableOfContents({ items }: TableOfContentsProps) {
               <g
                 style={{
                   transform: `translate(${activePoint.x}px, ${activePoint.y}px)`,
-                  transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
               >
                 {/* Outer Glow Halo */}
                 <circle
-                  r="7"
-                  fill="hsl(26 100% 52% / 0.2)"
+                  r="6"
+                  fill="hsl(26 100% 52% / 0.25)"
                   className="toc-ping-halo"
                 />
                 {/* Core Glowing Ember Node */}
                 <circle
-                  r="4"
+                  r="3.5"
                   fill="hsl(44 100% 60%)"
                   stroke="hsl(26 100% 52%)"
                   strokeWidth="1.5"
                   style={{
-                    filter: "drop-shadow(0 0 6px hsl(26 100% 52%))",
+                    filter: "drop-shadow(0 0 5px hsl(26 100% 52%))",
                   }}
                 />
               </g>
@@ -282,7 +300,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
             {/* List of Titles */}
             <ul role="list" className="toc-flow-list">
-              {items.map((item, index) => {
+              {items.map((item) => {
                 const isActive = activeId === item.id;
                 const isNested = item.depth >= 3;
 

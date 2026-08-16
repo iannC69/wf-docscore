@@ -1223,32 +1223,36 @@ nextjs-portal,
 }
 
 /* ============================================================
-   TABLE OF CONTENTS (Curved Tree Spine & Liquid Ember Accents)
+   TABLE OF CONTENTS (Floating Mini Card & Smooth River Flow)
    ============================================================ */
 
 .toc {
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-left: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-  bottom: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 20px hsl(0 0% 0% / 0.15);
   display: none;
   font-size: var(--text-xs);
-  height: calc(100vh - var(--header-height));
+  height: auto;
+  max-height: calc(100vh - var(--header-height) - 48px);
   overflow-y: auto;
-  padding: var(--space-4) var(--space-4) var(--space-8);
+  padding: 12px 14px 14px;
   position: sticky;
-  top: var(--header-height);
-  width: var(--toc-width);
+  top: calc(var(--header-height) + 24px);
+  width: 220px;
   flex-shrink: 0;
+  margin-top: 16px;
+  margin-right: 12px;
   transition: opacity 0.2s ease, background-color var(--transition-base), border-color var(--transition-base);
   scrollbar-width: thin;
 }
 
 [data-theme="light"] .toc {
-  background: hsl(0 0% 98% / 0.85);
-  border-left-color: hsl(0 0% 88%);
+  background: hsl(0 0% 98% / 0.88);
+  border-color: hsl(0 0% 88%);
+  box-shadow: 0 4px 16px hsl(0 0% 0% / 0.06);
 }
 
 .toc-header {
