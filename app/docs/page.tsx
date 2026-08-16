@@ -73,10 +73,10 @@ export default function DocsHomePage() {
 
                 return (
                   <Link key={doc.slug} href={doc.href} className="recent-update-card">
-                    {/* Top Bar: Category Pill with Icon + Relative Time */}
+                    {/* Top Bar: Category Pill + Relative Time */}
                     <div className="recent-card-top">
-                      <span className={`recent-card-category recent-card-category--${color}`}>
-                        <span className="recent-card-cat-icon">{getCategoryIcon(doc.category, 12)}</span>
+                      <span className="recent-card-category">
+                        <span className="recent-card-cat-icon">{getCategoryIcon(doc.category, 11)}</span>
                         <span>{doc.category}</span>
                       </span>
                       <span className="recent-card-time">
