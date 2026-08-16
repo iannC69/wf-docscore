@@ -172,7 +172,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const motionDuration = delta >= 3 ? "0.12s" : delta === 2 ? "0.18s" : "0.26s";
   const motionEasing = delta >= 3 ? "cubic-bezier(0.1, 0.9, 0.2, 1)" : "cubic-bezier(0.16, 1, 0.3, 1)";
 
-  // Synchronously derived capsule coordinates (Zero delayed effect frames)
+  // Synchronously derived capsule coordinates
   const activeCapsuleMetrics = nodeMetrics[activeIdx] || {
     top: activeIdx * 28,
     height: 28,
@@ -226,24 +226,10 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           </div>
         </div>
 
-        {/* Deep Recessed Liquid Glass Spine & Navigation */}
-        <nav className="toc-deep-nav">
-          {/* Deep Recessed Trench Rail on the Left */}
-          <div className="toc-deep-trench" aria-hidden="true">
-            {/* Glowing Liquid Droplet Pill Gliding Inside the Trench */}
-            <div
-              className="toc-trench-liquid-core"
-              style={{
-                transform: `translate3d(0, ${activeCapsuleMetrics.top + 4}px, 0)`,
-                height: `${Math.max(16, activeCapsuleMetrics.height - 8)}px`,
-                transition: `transform ${motionDuration} ${motionEasing}, height ${motionDuration} ${motionEasing}`,
-              }}
-            />
-          </div>
-
-          {/* List of Titles with Gliding Magnetic Frosted Glass Capsule */}
-          <div className="toc-deep-list-wrapper">
-            {/* GPU-Accelerated Gliding Frosted Glass Pill */}
+        {/* Clean, Orderly, Ultra-Refined TOC Navigation */}
+        <nav className="toc-clean-nav">
+          <div className="toc-clean-list-wrapper">
+            {/* GPU-Accelerated Gliding Frosted Glass Capsule (Sidebar-matching aesthetic) */}
             <div
               className="toc-gliding-capsule"
               style={{
@@ -255,7 +241,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
               aria-hidden="true"
             />
 
-            <ul role="list" className="toc-deep-list" ref={listRef}>
+            <ul role="list" className="toc-clean-list" ref={listRef}>
               {items.map((item, index) => {
                 const isActive = activeId === item.id;
                 const depth = item.depth || 2;
@@ -266,23 +252,15 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     ref={(el) => {
                       itemRefs.current[index] = el;
                     }}
-                    className={`toc-deep-row toc-deep-row--${depth}`}
+                    className={`toc-clean-row toc-clean-row--${depth}`}
                   >
-                    {/* Delicate Glass Branch Elbow for Nested Subsections */}
-                    {depth >= 3 && (
-                      <span
-                        className={`toc-branch-connector ${isActive ? "toc-branch-connector--active" : ""}`}
-                        aria-hidden="true"
-                      />
-                    )}
-
                     <a
                       href={`#${item.id}`}
                       onClick={handleClick(item.id)}
-                      className={`toc-deep-link ${isActive ? "toc-deep-link--active" : ""} ${depth >= 3 ? "toc-deep-link--nested" : ""}`}
+                      className={`toc-clean-link ${isActive ? "toc-clean-link--active" : ""} ${depth >= 3 ? "toc-clean-link--nested" : ""}`}
                       aria-current={isActive ? "location" : undefined}
                     >
-                      <span className="toc-deep-text">{item.title}</span>
+                      <span className="toc-clean-text">{item.title}</span>
                     </a>
                   </li>
                 );
