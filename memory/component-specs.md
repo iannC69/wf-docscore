@@ -4,6 +4,23 @@ This document outlines the React components, properties, and styling guidelines 
 
 ---
 
+## 📜 7. Changelog & Release Timeline (`app/changelog/page.tsx` & `lib/changelog.ts`)
+
+- **Route**: `/changelog`
+- **Data Model**: `ReleaseEntry` containing `version`, `date`, `title`, `summary`, `author`, `git` (`commitHash`, `commitUrl`, `tagUrl`), `changes` array, and `highlights`.
+- **Categorized Change Badges**:
+  - `✨ Feature` (Green/Emerald badge `change-badge--feature`)
+  - `⚡ Improvement` (Blue/Cyan badge `change-badge--improvement`)
+  - `⚠️ Breaking Change` (Red/Rose badge `change-badge--breaking`)
+  - `🐛 Bug Fix` (Amber/Orange badge `change-badge--fix`)
+- **Visual Design**:
+  - Continuous vertical ember timeline stem (`.timeline-line-stem`) with animated pulsing node dots on the latest release (`.node-pulse`).
+  - Frosted liquid glass release cards with backdrop blur.
+  - Linked to real GitHub commit hashes (`@iannC69`) and GitHub release tags.
+  - Pinned sidebar navigation entry with `v1.2` badge.
+
+---
+
 ## 📢 1. Callout Component ([`components/docs/Callout.tsx`](file:///c:/Users/iannc/Documents/wf-docscore/components/docs/Callout.tsx))
 
 Used for alerts, tips, warnings, and notes in Markdown documentation.
