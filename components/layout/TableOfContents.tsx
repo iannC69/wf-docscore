@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
@@ -8,21 +8,48 @@ interface TableOfContentsProps {
   items: TocItem[];
 }
 
+function getDepthX(depth: number): number {
+  if (depth <= 1) return 8;
+  if (depth === 2) return 10;
+  if (depth === 3) return 22;
+  return 30; // depth >= 4
+}
+
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [nodePositions, setNodePositions] = useState<{ y: number }[]>([]);
   const activeIdRef = useRef<string>(items[0]?.id || "");
   const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number; opacity: number }>({
-    top: 0,
-    height: 24,
-    opacity: 0,
-  });
   const { tocOpen, toggleToc } = useLayout();
 
-  // 1. Cache heading offsets on load & on resize (Zero layout thrashing during scroll)
+  // 1. Measure real DOM item centers (0 glitch, 100% accurate alignment)
+  const measureNodes = useCallback(() => {
+    if (!containerRef.current || items.length === 0) return;
+    const containerTop = containerRef.current.getBoundingClientRect().top;
+
+    const positions = items.map((_, idx) => {
+      const el = itemRefs.current[idx];
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const y = rect.top - containerTop + rect.height / 2;
+        return { y: Math.round(y) };
+      }
+      return { y: 13 + idx * 26 };
+    });
+
+    setNodePositions(positions);
+  }, [items]);
+
+  useEffect(() => {
+    measureNodes();
+    window.addEventListener("resize", measureNodes, { passive: true });
+    return () => window.removeEventListener("resize", measureNodes);
+  }, [measureNodes]);
+
+  // 2. High-Performance Deterministic Scroll Spy (0 Layout Thrashing, 120 FPS Locked)
   const updateHeadingOffsets = useCallback(() => {
     if (typeof window === "undefined" || items.length === 0) return;
 
@@ -40,7 +67,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   }, [items]);
 
   useEffect(() => {
-    // Initial measure after DOM paints
     const timer = setTimeout(updateHeadingOffsets, 100);
     window.addEventListener("resize", updateHeadingOffsets, { passive: true });
     return () => {
@@ -49,7 +75,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     };
   }, [updateHeadingOffsets]);
 
-  // 2. Ultra-Lightweight Passive Scroll Listener (Pure arithmetic, 120 FPS GPU locked)
   useEffect(() => {
     if (items.length === 0) return;
 
@@ -110,23 +135,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
 
-  // 3. Update Hardware-Accelerated Indicator Position
-  useEffect(() => {
-    const activeIdx = items.findIndex((item) => item.id === activeId);
-    if (activeIdx >= 0 && itemRefs.current[activeIdx] && containerRef.current) {
-      const itemEl = itemRefs.current[activeIdx]!;
-      const containerEl = containerRef.current;
-      const itemRect = itemEl.getBoundingClientRect();
-      const containerRect = containerEl.getBoundingClientRect();
-
-      setIndicatorStyle({
-        top: itemRect.top - containerRect.top,
-        height: itemRect.height,
-        opacity: 1,
-      });
-    }
-  }, [activeId, items]);
-
   if (items.length === 0) return null;
 
   const handleClick = (id: string) => (e: React.MouseEvent) => {
@@ -140,6 +148,53 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       window.history.pushState(null, "", `#${id}`);
     }
   };
+
+  const activeIndex = items.findIndex((i) => i.id === activeId);
+  const activeIdx = activeIndex >= 0 ? activeIndex : 0;
+
+  // 3. Compute Coordinates for every Depth Level (#, ##, ###, ####)
+  const points = useMemo(() => {
+    return items.map((item, idx) => {
+      const x = getDepthX(item.depth);
+      const measuredY = nodePositions[idx]?.y;
+      const y = measuredY !== undefined ? measuredY : 13 + idx * 26;
+      return { x, y, id: item.id, depth: item.depth };
+    });
+  }, [items, nodePositions]);
+
+  const activePoint = points[activeIdx] || points[0] || { x: 10, y: 13 };
+
+  // 4. Generate S-Curves that smoothly snake and bend between #, ##, and ###
+  const { fullPathD, activePathD, totalSvgHeight } = useMemo(() => {
+    if (points.length === 0) return { fullPathD: "", activePathD: "", totalSvgHeight: 60 };
+
+    let fullD = `M ${points[0].x} ${points[0].y}`;
+    let activeD = `M ${points[0].x} ${points[0].y}`;
+
+    for (let i = 1; i < points.length; i++) {
+      const p0 = points[i - 1];
+      const p1 = points[i];
+      const midY = (p0.y + p1.y) / 2;
+
+      // If x values are identical, straight vertical link; if different depths, organic S-curve!
+      const segment =
+        p0.x === p1.x
+          ? ` L ${p1.x} ${p1.y}`
+          : ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
+
+      fullD += segment;
+      if (i <= activeIdx) {
+        activeD += segment;
+      }
+    }
+
+    const totalHeight = points[points.length - 1].y + 16;
+    return {
+      fullPathD: fullD,
+      activePathD: activeD,
+      totalSvgHeight: Math.max(totalHeight, 60),
+    };
+  }, [points, activeIdx]);
 
   return (
     <>
@@ -191,27 +246,99 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             </div>
           </div>
 
-          {/* Ultra-Smooth Tree Navigation with Hardware-Accelerated Indicator */}
-          <nav className="toc-tree-nav" ref={containerRef}>
-            {/* Background Rail */}
-            <div className="toc-rail-track" aria-hidden="true" />
-
-            {/* GPU-Accelerated Sliding Indicator Slug */}
-            <div
-              className="toc-active-indicator-slug"
-              style={{
-                transform: `translate3d(0, ${indicatorStyle.top}px, 0)`,
-                height: `${indicatorStyle.height}px`,
-                opacity: indicatorStyle.opacity,
-              }}
+          {/* Depth-Aware Continuous S-Curve Navigation */}
+          <nav className="toc-depth-nav" ref={containerRef}>
+            {/* SVG Depth-Flowing S-Curve */}
+            <svg
+              className="toc-depth-svg"
+              width="36"
+              height={totalSvgHeight}
+              viewBox={`0 0 36 ${totalSvgHeight}`}
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
-            />
+            >
+              <defs>
+                <linearGradient
+                  id="toc-depth-lava-stroke"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="hsl(26 100% 52%)" />
+                  <stop offset="100%" stopColor="hsl(38 100% 55%)" />
+                </linearGradient>
+              </defs>
 
-            {/* List of Headings */}
-            <ul role="list" className="toc-list-items">
+              {/* Base River Spine */}
+              {fullPathD && (
+                <path
+                  d={fullPathD}
+                  stroke="var(--color-border)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                  opacity="0.75"
+                />
+              )}
+
+              {/* Active Flowing River Stroke */}
+              {activePathD && (
+                <path
+                  d={activePathD}
+                  stroke="url(#toc-depth-lava-stroke)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              )}
+
+              {/* Static Depth Nodes on Curve */}
+              {points.map((pt, idx) => {
+                const isPassed = idx <= activeIdx;
+                return (
+                  <circle
+                    key={items[idx]?.id || idx}
+                    cx={pt.x}
+                    cy={pt.y}
+                    r={pt.depth >= 3 ? "1.8" : "2.2"}
+                    fill={
+                      isPassed
+                        ? "hsl(26 100% 52%)"
+                        : "var(--color-surface-raised)"
+                    }
+                    stroke={
+                      isPassed
+                        ? "hsl(26 100% 52% / 0.5)"
+                        : "var(--color-border-strong)"
+                    }
+                    strokeWidth="1"
+                  />
+                );
+              })}
+
+              {/* Smooth Gliding Active Head Indicator */}
+              <circle
+                cx={activePoint.x}
+                cy={activePoint.y}
+                r="3.5"
+                fill="hsl(26 100% 52%)"
+                stroke="var(--sidebar-bg)"
+                strokeWidth="1.5"
+                style={{
+                  transition: "cx 0.2s cubic-bezier(0.2, 0, 0, 1), cy 0.2s cubic-bezier(0.2, 0, 0, 1)",
+                }}
+              />
+            </svg>
+
+            {/* List of Titles with Depth Padding */}
+            <ul role="list" className="toc-depth-list">
               {items.map((item, index) => {
                 const isActive = activeId === item.id;
-                const isNested = item.depth >= 3;
+                const depth = item.depth || 2;
 
                 return (
                   <li
@@ -219,27 +346,15 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     ref={(el) => {
                       itemRefs.current[index] = el;
                     }}
-                    className={`toc-node-row ${isNested ? "toc-node-row--nested" : ""}`}
+                    className={`toc-depth-row toc-depth-row--${depth}`}
                   >
-                    {/* Curved Connector Elbow for Nested Subsections */}
-                    {isNested && (
-                      <span
-                        className={`toc-curved-elbow ${isActive ? "toc-curved-elbow--active" : ""}`}
-                        aria-hidden="true"
-                      />
-                    )}
-
                     <a
                       href={`#${item.id}`}
                       onClick={handleClick(item.id)}
-                      className={`toc-node-link ${isActive ? "toc-node-link--active" : ""} ${isNested ? "toc-node-link--nested" : ""}`}
+                      className={`toc-depth-link ${isActive ? "toc-depth-link--active" : ""}`}
                       aria-current={isActive ? "location" : undefined}
                     >
-                      <span
-                        className={`toc-node-pip ${isActive ? "toc-node-pip--active" : ""}`}
-                        aria-hidden="true"
-                      />
-                      <span className="toc-node-label">{item.title}</span>
+                      <span className="toc-depth-text">{item.title}</span>
                     </a>
                   </li>
                 );
