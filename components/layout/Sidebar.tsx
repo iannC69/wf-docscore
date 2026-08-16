@@ -46,8 +46,8 @@ function NavItemRow({
   const isAncestor = !isExact && (pathname.startsWith(`${item.href}/`) || pathname.startsWith(`${item.href}?`));
   const isChildActive = hasChildren && item.children?.some(c => pathname === c.href || pathname.startsWith(`${c.href}/`));
 
-  // Expand automatically if current route is this item or a child of this item
-  const [isOpen, setIsOpen] = useState(isExact || isAncestor || isChildActive || false);
+  // Default to expanded so sub-pages are immediately accessible, but user can collapse at will
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     if (isExact || isAncestor || isChildActive) {
