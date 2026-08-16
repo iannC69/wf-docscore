@@ -29,6 +29,16 @@ const GROUP_ICONS: Record<string, React.ReactNode> = {
   "API Reference": <Terminal size={13} aria-hidden="true" />,
 };
 
+function closeMobileSidebar() {
+  if (typeof window !== "undefined" && window.innerWidth <= 1024) {
+    const sidebar = document.getElementById("docs-sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    if (sidebar) sidebar.setAttribute("data-open", "false");
+    if (overlay) overlay.setAttribute("data-open", "false");
+    document.body.style.overflow = "";
+  }
+}
+
 /**
  * Collapsible NavItemRow with support for nested children sub-sections
  */
@@ -66,6 +76,7 @@ function NavItemRow({
       <div className="nav-item-row-container">
         <Link
           href={item.href}
+          onClick={closeMobileSidebar}
           className={`nav-item${isExact ? " nav-item--active" : ""}${isAncestor ? " nav-item--ancestor" : ""}${depth > 0 ? " nav-item--nested" : ""}`}
           aria-current={isExact ? "page" : undefined}
         >
@@ -223,6 +234,7 @@ export function Sidebar({ nav }: SidebarProps) {
                   <li>
                     <Link
                       href="/docs"
+                      onClick={closeMobileSidebar}
                       className={`nav-item${pathname === "/docs" ? " nav-item--active" : ""}`}
                       aria-current={pathname === "/docs" ? "page" : undefined}
                     >

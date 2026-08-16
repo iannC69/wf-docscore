@@ -81,8 +81,17 @@ export function Header() {
             </button>
           </div>
 
-          {/* Right: Layout Switcher + GitHub Link + Theme toggle */}
+          {/* Right: Layout Switcher + Mobile Search + GitHub Link + Theme toggle */}
           <div className="header-right">
+            <button
+              type="button"
+              className="header-mobile-search-btn"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Open search dialog"
+              title="Search documentation"
+            >
+              <Search size={16} />
+            </button>
             <LayoutControls />
             <div className="header-divider" aria-hidden="true" />
             <a

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAllSlugs } from "@/lib/navigation";
 import { getDocPage } from "@/lib/content";
 import { TableOfContents } from "@/components/layout/TableOfContents";
+import { MobileTableOfContents } from "@/components/layout/MobileTableOfContents";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { PageNav } from "@/components/ui/PageNav";
 import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
@@ -125,6 +126,9 @@ export default async function DocPage({ params }: Props) {
                 </a>
               )}
             </div>
+
+            {/* Mobile Table of Contents Accordion (Visible on <= 1200px) */}
+            {showToc && <MobileTableOfContents items={page.toc} />}
 
             {/* Page Header: Title, Description, Author Meta, & Commit Chips */}
             <header className="page-header">
