@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "WF-DOCSCORE — Documentation & Architecture Engine",
-    template: "%s — WF-DOCSCORE",
+    default: "Wildfire Docs — Powered by WF-DOCSCORE",
+    template: "%s — Wildfire Docs",
   },
   description:
-    "WF-DOCSCORE — Next-Generation developer documentation and architecture platform with live Git synchronization and liquid aesthetics.",
+    "Wildfire Docs — Ultra-fast documentation platform powered by WF-DOCSCORE Engine with live Git synchronization and liquid aesthetics.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),

@@ -29,14 +29,14 @@ export default function DocsHomePage() {
         <section className="docs-home-hero">
           <div className="docs-home-badge">
             <span className="docs-badge-dot" aria-hidden="true" />
-            <span>WF-DOCSCORE ARCHITECTURE ENGINE</span>
+            <span>Powered by WF-DOCSCORE Engine</span>
           </div>
           <h1 className="docs-home-title">
-            WF-DOCSCORE Engine Developer Hub
+            Wildfire Documentation &amp; Developer Hub
           </h1>
           <p className="docs-home-desc">
             Complete guides, architecture blueprints, API specifications, and
-            component references for the custom documentation platform.
+            component references for the documentation platform.
           </p>
 
           {/* Quick Search / Command hint */}

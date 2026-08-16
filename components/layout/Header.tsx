@@ -56,10 +56,10 @@ export function Header() {
                 />
               </span>
               <span className="header-logo-text">
-                <span className="header-logo-name">WF-DOCSCORE</span>
-                <span className="header-logo-badge">ENGINE</span>
+                <span className="header-logo-name">WILDFIRE</span>
+                <span className="header-logo-badge">DOCS</span>
               </span>
-              <span className="header-version-pill" aria-label="Engine Version">
+              <span className="header-version-pill" aria-label="Platform Version">
                 v{CURRENT_VERSION}
               </span>
             </Link>
