@@ -8,7 +8,7 @@ export function LayoutControls() {
 
   return (
     <div className="layout-controls-wrapper" aria-label="Layout position options">
-      {/* 3 Layout Mode Segmented Control */}
+      {/* 3 Layout Mode Segmented Control: Standard -> Full -> Focus */}
       <div className="layout-mode-group" role="radiogroup" aria-label="Page layout modes">
         <button
           type="button"
@@ -25,18 +25,6 @@ export function LayoutControls() {
         <button
           type="button"
           role="radio"
-          aria-checked={mode === "focus"}
-          className={`layout-btn ${mode === "focus" ? "layout-btn--active" : ""}`}
-          onClick={() => setMode("focus")}
-          title="Focus Mode: Collapsed Sidebar + Centered Content + Right TOC"
-        >
-          <Columns2 size={13} aria-hidden="true" />
-          <span className="layout-btn-label">Focus</span>
-        </button>
-
-        <button
-          type="button"
-          role="radio"
           aria-checked={mode === "full"}
           className={`layout-btn ${mode === "full" ? "layout-btn--active" : ""}`}
           onClick={() => setMode("full")}
@@ -44,6 +32,18 @@ export function LayoutControls() {
         >
           <Square size={12} aria-hidden="true" />
           <span className="layout-btn-label">Full</span>
+        </button>
+
+        <button
+          type="button"
+          role="radio"
+          aria-checked={mode === "focus"}
+          className={`layout-btn ${mode === "focus" ? "layout-btn--active" : ""}`}
+          onClick={() => setMode("focus")}
+          title="Focus Mode: Collapsed Sidebar + Centered Content + Right TOC"
+        >
+          <Columns2 size={13} aria-hidden="true" />
+          <span className="layout-btn-label">Focus</span>
         </button>
       </div>
 
