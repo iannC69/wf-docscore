@@ -1171,20 +1171,62 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary);
-  background: var(--color-primary-subtle);
-  border: 1px solid var(--color-primary-border);
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-md);
   flex-shrink: 0;
+  box-shadow: none;
   transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
+/* Dynamic Color Variants for Recently Updated Icons (Clean Frosted Without Glow) */
+.recent-card-item-icon--orange {
+  background: hsl(26 100% 52% / 0.12);
+  border: 1px solid hsl(26 100% 52% / 0.25);
+  color: hsl(26 100% 54%);
+}
+.recent-card-item-icon--yellow {
+  background: hsl(44 100% 52% / 0.12);
+  border: 1px solid hsl(44 100% 52% / 0.25);
+  color: hsl(44 100% 52%);
+}
+.recent-card-item-icon--purple {
+  background: hsl(258 75% 62% / 0.12);
+  border: 1px solid hsl(258 75% 62% / 0.25);
+  color: hsl(258 75% 65%);
+}
+.recent-card-item-icon--teal {
+  background: hsl(168 80% 44% / 0.12);
+  border: 1px solid hsl(168 80% 44% / 0.25);
+  color: hsl(168 80% 45%);
+}
+.recent-card-item-icon--blue {
+  background: hsl(210 85% 56% / 0.12);
+  border: 1px solid hsl(210 85% 56% / 0.25);
+  color: hsl(210 85% 60%);
+}
+.recent-card-item-icon--green {
+  background: hsl(142 72% 42% / 0.12);
+  border: 1px solid hsl(142 72% 42% / 0.25);
+  color: hsl(142 72% 45%);
+}
+.recent-card-item-icon--red {
+  background: hsl(4 90% 52% / 0.12);
+  border: 1px solid hsl(4 90% 52% / 0.25);
+  color: hsl(4 90% 55%);
+}
+
+/* Category Pill dynamic accents */
+.recent-card-category--orange { background: hsl(26 100% 52% / 0.10); border-color: hsl(26 100% 52% / 0.22); color: hsl(26 100% 54%); }
+.recent-card-category--yellow { background: hsl(44 100% 52% / 0.10); border-color: hsl(44 100% 52% / 0.22); color: hsl(44 100% 50%); }
+.recent-card-category--purple { background: hsl(258 75% 62% / 0.10); border-color: hsl(258 75% 62% / 0.22); color: hsl(258 75% 65%); }
+.recent-card-category--teal   { background: hsl(168 80% 44% / 0.10); border-color: hsl(168 80% 44% / 0.22); color: hsl(168 80% 44%); }
+.recent-card-category--blue   { background: hsl(210 85% 56% / 0.10); border-color: hsl(210 85% 56% / 0.22); color: hsl(210 85% 58%); }
+.recent-card-category--green  { background: hsl(142 72% 42% / 0.10); border-color: hsl(142 72% 42% / 0.22); color: hsl(142 72% 44%); }
+.recent-card-category--red    { background: hsl(4 90% 52% / 0.10);   border-color: hsl(4 90% 52% / 0.22);   color: hsl(4 90% 54%); }
+
 .recent-update-card:hover .recent-card-item-icon {
-  background: hsl(26 100% 52% / 0.16);
-  border-color: hsl(26 100% 52% / 0.35);
-  transform: scale(1.04);
+  transform: scale(1.06);
 }
 
 .recent-card-title {
