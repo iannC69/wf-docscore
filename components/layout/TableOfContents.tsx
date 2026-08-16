@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
@@ -11,90 +11,121 @@ interface TableOfContentsProps {
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [nodePositions, setNodePositions] = useState<{ x: number; y: number }[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const activeIdRef = useRef<string>(items[0]?.id || "");
+  const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number; opacity: number }>({
+    top: 0,
+    height: 24,
+    opacity: 0,
+  });
   const { tocOpen, toggleToc } = useLayout();
 
-  // 1. Measure real DOM item centers (0 glitch, 100% accurate alignment)
-  const measureNodes = useCallback(() => {
-    if (!containerRef.current || items.length === 0) return;
-    const containerTop = containerRef.current.getBoundingClientRect().top;
+  // 1. Cache heading offsets on load & on resize (Zero layout thrashing during scroll)
+  const updateHeadingOffsets = useCallback(() => {
+    if (typeof window === "undefined" || items.length === 0) return;
 
-    const positions = items.map((item, idx) => {
-      const el = itemRefs.current[idx];
-      const isNested = item.depth >= 3;
-      const x = isNested ? 18 : 7;
-      if (el) {
+    cachedHeadings.current = items
+      .map((item) => {
+        const el = document.getElementById(item.id);
+        if (!el) return null;
         const rect = el.getBoundingClientRect();
-        const y = rect.top - containerTop + rect.height / 2;
-        return { x, y: Math.round(y) };
-      }
-      return { x, y: 13 + idx * 26 };
-    });
-
-    setNodePositions(positions);
+        return {
+          id: item.id,
+          top: rect.top + window.scrollY,
+        };
+      })
+      .filter(Boolean) as { id: string; top: number }[];
   }, [items]);
 
   useEffect(() => {
-    measureNodes();
-    window.addEventListener("resize", measureNodes, { passive: true });
-    return () => window.removeEventListener("resize", measureNodes);
-  }, [measureNodes]);
+    // Initial measure after DOM paints
+    const timer = setTimeout(updateHeadingOffsets, 100);
+    window.addEventListener("resize", updateHeadingOffsets, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateHeadingOffsets);
+    };
+  }, [updateHeadingOffsets]);
 
-  // 2. High-Performance Deterministic Scroll Spy (0 Jitter, 0 Spike, 0 Delay)
+  // 2. Ultra-Lightweight Passive Scroll Listener (Pure arithmetic, 120 FPS GPU locked)
   useEffect(() => {
     if (items.length === 0) return;
 
-    let rafId: number;
+    let ticking = false;
 
-    const handleScroll = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        const windowH = window.innerHeight;
-        const docH = document.documentElement.scrollHeight;
-        const totalHeight = docH - windowH;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const windowH = window.innerHeight;
+          const docH = document.documentElement.scrollHeight;
+          const totalHeight = docH - windowH;
 
-        // Reading progress percentage
-        if (totalHeight > 0) {
-          const current = (scrollY / totalHeight) * 100;
-          setScrollProgress(Math.min(100, Math.max(0, Math.round(current))));
-        }
+          // Reading progress
+          if (totalHeight > 0) {
+            setScrollProgress(Math.min(100, Math.max(0, Math.round((scrollY / totalHeight) * 100))));
+          }
 
-        // Bottom of page lock
-        if (scrollY + windowH >= docH - 50) {
-          setActiveId(items[items.length - 1].id);
-          return;
-        }
+          // Bottom of page lock
+          if (scrollY + windowH >= docH - 40) {
+            const lastId = items[items.length - 1].id;
+            if (activeIdRef.current !== lastId) {
+              activeIdRef.current = lastId;
+              setActiveId(lastId);
+            }
+            ticking = false;
+            return;
+          }
 
-        // Find currently active heading closest to top viewport trigger
-        const offsetTrigger = 110;
-        let matchedId = items[0].id;
+          // Fast arithmetic search in cached offsets
+          const offsets = cachedHeadings.current;
+          if (offsets.length > 0) {
+            const triggerY = scrollY + 110;
+            let currentId = offsets[0].id;
 
-        for (let i = 0; i < items.length; i++) {
-          const el = document.getElementById(items[i].id);
-          if (el) {
-            const rect = el.getBoundingClientRect();
-            if (rect.top <= offsetTrigger) {
-              matchedId = items[i].id;
-            } else {
-              break;
+            for (let i = 0; i < offsets.length; i++) {
+              if (triggerY >= offsets[i].top) {
+                currentId = offsets[i].id;
+              } else {
+                break;
+              }
+            }
+
+            if (currentId !== activeIdRef.current) {
+              activeIdRef.current = currentId;
+              setActiveId(currentId);
             }
           }
-        }
 
-        setActiveId(matchedId);
-      });
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(rafId);
-    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
+
+  // 3. Update Hardware-Accelerated Indicator Position
+  useEffect(() => {
+    const activeIdx = items.findIndex((item) => item.id === activeId);
+    if (activeIdx >= 0 && itemRefs.current[activeIdx] && containerRef.current) {
+      const itemEl = itemRefs.current[activeIdx]!;
+      const containerEl = containerRef.current;
+      const itemRect = itemEl.getBoundingClientRect();
+      const containerRect = containerEl.getBoundingClientRect();
+
+      setIndicatorStyle({
+        top: itemRect.top - containerRect.top,
+        height: itemRect.height,
+        opacity: 1,
+      });
+    }
+  }, [activeId, items]);
 
   if (items.length === 0) return null;
 
@@ -104,48 +135,11 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 75;
       window.scrollTo({ top, behavior: "smooth" });
+      activeIdRef.current = id;
       setActiveId(id);
       window.history.pushState(null, "", `#${id}`);
     }
   };
-
-  const activeIndex = items.findIndex((i) => i.id === activeId);
-  const activeIdx = activeIndex >= 0 ? activeIndex : 0;
-
-  // Use measured positions or calculated fallbacks
-  const points = nodePositions.length === items.length
-    ? nodePositions
-    : items.map((item, idx) => ({
-        x: item.depth >= 3 ? 18 : 7,
-        y: 13 + idx * 26,
-      }));
-
-  const activePoint = points[activeIdx] || points[0] || { x: 7, y: 13 };
-  const totalSvgHeight = points.length > 0 ? points[points.length - 1].y + 16 : 60;
-
-  // Construct full background curve
-  let fullPathD = "";
-  if (points.length > 0) {
-    fullPathD = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 1; i < points.length; i++) {
-      const p0 = points[i - 1];
-      const p1 = points[i];
-      const midY = (p0.y + p1.y) / 2;
-      fullPathD += ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
-    }
-  }
-
-  // Construct active flowing curve up to active index
-  let activePathD = "";
-  if (points.length > 0 && activeIdx >= 0) {
-    activePathD = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 1; i <= activeIdx; i++) {
-      const p0 = points[i - 1];
-      const p1 = points[i];
-      const midY = (p0.y + p1.y) / 2;
-      activePathD += ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
-    }
-  }
 
   return (
     <>
@@ -197,96 +191,24 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             </div>
           </div>
 
-          {/* Continuous Flowing Curved S-Track Navigation */}
-          <nav className="toc-river-container" ref={containerRef}>
-            {/* SVG Flow River Curves */}
-            <svg
-              className="toc-flow-svg"
-              width="26"
-              height={totalSvgHeight}
-              viewBox={`0 0 26 ${totalSvgHeight}`}
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+          {/* Ultra-Smooth Tree Navigation with Hardware-Accelerated Indicator */}
+          <nav className="toc-tree-nav" ref={containerRef}>
+            {/* Background Rail */}
+            <div className="toc-rail-track" aria-hidden="true" />
+
+            {/* GPU-Accelerated Sliding Indicator Slug */}
+            <div
+              className="toc-active-indicator-slug"
+              style={{
+                transform: `translate3d(0, ${indicatorStyle.top}px, 0)`,
+                height: `${indicatorStyle.height}px`,
+                opacity: indicatorStyle.opacity,
+              }}
               aria-hidden="true"
-            >
-              <defs>
-                <linearGradient
-                  id="toc-clean-lava"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="hsl(26 100% 52%)" />
-                  <stop offset="100%" stopColor="hsl(38 100% 55%)" />
-                </linearGradient>
-              </defs>
+            />
 
-              {/* Inactive Base River Spine */}
-              {fullPathD && (
-                <path
-                  d={fullPathD}
-                  stroke="var(--color-border)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  opacity="0.8"
-                />
-              )}
-
-              {/* Active Clean Liquid Flow Line */}
-              {activePathD && (
-                <path
-                  d={activePathD}
-                  stroke="url(#toc-clean-lava)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              )}
-
-              {/* Background Node Markers */}
-              {points.map((pt, idx) => {
-                const isPassed = idx <= activeIdx;
-                return (
-                  <circle
-                    key={items[idx]?.id || idx}
-                    cx={pt.x}
-                    cy={pt.y}
-                    r={items[idx]?.depth >= 3 ? "1.8" : "2.2"}
-                    fill={
-                      isPassed
-                        ? "hsl(26 100% 52%)"
-                        : "var(--color-surface-raised)"
-                    }
-                    stroke={
-                      isPassed
-                        ? "hsl(26 100% 52% / 0.5)"
-                        : "var(--color-border-strong)"
-                    }
-                    strokeWidth="1"
-                  />
-                );
-              })}
-
-              {/* Gliding Active Indicator Dot */}
-              <circle
-                cx={activePoint.x}
-                cy={activePoint.y}
-                r="3.5"
-                fill="hsl(26 100% 52%)"
-                stroke="var(--color-bg)"
-                strokeWidth="1.5"
-                style={{
-                  transition: "cx 0.22s cubic-bezier(0.2, 0, 0, 1), cy 0.22s cubic-bezier(0.2, 0, 0, 1)",
-                }}
-              />
-            </svg>
-
-            {/* List of Titles */}
-            <ul role="list" className="toc-flow-list">
+            {/* List of Headings */}
+            <ul role="list" className="toc-list-items">
               {items.map((item, index) => {
                 const isActive = activeId === item.id;
                 const isNested = item.depth >= 3;
@@ -297,15 +219,27 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     ref={(el) => {
                       itemRefs.current[index] = el;
                     }}
-                    className={`toc-flow-item-wrap ${isNested ? "toc-flow-item-wrap--nested" : ""}`}
+                    className={`toc-node-row ${isNested ? "toc-node-row--nested" : ""}`}
                   >
+                    {/* Curved Connector Elbow for Nested Subsections */}
+                    {isNested && (
+                      <span
+                        className={`toc-curved-elbow ${isActive ? "toc-curved-elbow--active" : ""}`}
+                        aria-hidden="true"
+                      />
+                    )}
+
                     <a
                       href={`#${item.id}`}
                       onClick={handleClick(item.id)}
-                      className={`toc-flow-link ${isActive ? "toc-flow-link--active" : ""} ${isNested ? "toc-flow-link--nested" : ""}`}
+                      className={`toc-node-link ${isActive ? "toc-node-link--active" : ""} ${isNested ? "toc-node-link--nested" : ""}`}
                       aria-current={isActive ? "location" : undefined}
                     >
-                      <span className="toc-flow-text">{item.title}</span>
+                      <span
+                        className={`toc-node-pip ${isActive ? "toc-node-pip--active" : ""}`}
+                        aria-hidden="true"
+                      />
+                      <span className="toc-node-label">{item.title}</span>
                     </a>
                   </li>
                 );
