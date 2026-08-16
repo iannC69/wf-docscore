@@ -147,7 +147,8 @@ Interactive link cards for documentation navigation and external resources.
 - Powered by `getRecentlyUpdatedDocs()` in `lib/git.ts` and `getDocColorVariant()` in `lib/icons.tsx`.
 - Features:
   - **Pure Frosted Glass Surface**: `backdrop-filter: blur(14px)` over `var(--glass-bg)` with **zero glow**.
-  - **Dynamic Route-Specific Accent Colors**:
+  - **Clean Unified Category Pill**: Subtle frosted translucent badge with category icon, keeping text harmonious across all cards.
+  - **Dynamic Route-Specific Accent Colors on Icon Box Only**:
     - 🟢 **Green** (`hsl(142 72% 42%)`): Database schemas & tables (`<Database />`)
     - 🔵 **Blue** (`hsl(210 85% 56%)`): API Reference & Webhooks (`<Terminal />`, `<Webhook />`)
     - 🟣 **Purple** (`hsl(258 75% 62%)`): MDX Components & Core Features (`<Code2 />`, `<Sparkles />`)
@@ -155,6 +156,6 @@ Interactive link cards for documentation navigation and external resources.
     - 🟡 **Yellow** (`hsl(44 100% 52%)`): Setup & Configuration (`<Sliders />`)
     - 🟠 **Orange** (`hsl(26 100% 52%)`): Getting Started & Installation (`<Rocket />`, `<Package />`)
     - 🔴 **Red** (`hsl(4 90% 52%)`): Deployment & Production (`<Cloud />`)
-  - Category pill + relative time badge (`Clock` icon + `2h ago`).
+  - Relative time badge (`Clock` icon + `2h ago`).
   - Document title and excerpt description.
   - Footer with author avatar, author name, commit hash badge, and reading time.
