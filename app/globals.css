@@ -93,7 +93,7 @@ nextjs-portal,
   transition: opacity var(--transition-fast);
 }
 .header-logo:hover {
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 .header-logo-icon {
@@ -108,6 +108,11 @@ nextjs-portal,
   width: 28px;
   flex-shrink: 0;
   box-shadow: 0 2px 8px hsl(26 100% 52% / 0.25);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.header-logo:hover .header-logo-icon {
+  transform: scale(1.04);
+  box-shadow: 0 3px 12px hsl(26 100% 52% / 0.35);
 }
 
 .header-logo-text {
@@ -132,6 +137,28 @@ nextjs-portal,
   text-transform: uppercase;
 }
 
+.header-version-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-tertiary);
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  margin-left: 4px;
+  letter-spacing: 0.04em;
+  transition: all var(--transition-fast);
+}
+.header-logo:hover .header-version-pill {
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+}
+
 .header-center {
   flex: 1;
   display: flex;
@@ -143,6 +170,8 @@ nextjs-portal,
 .header-search-btn {
   align-items: center;
   background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
   color: var(--color-text-tertiary);
@@ -159,7 +188,7 @@ nextjs-portal,
 }
 .header-search-btn:hover {
   background: var(--glass-bg-hover);
-  border-color: var(--glass-border-hover);
+  border-color: var(--color-border-orange);
   color: var(--color-text-secondary);
 }
 .header-search-icon {
@@ -178,8 +207,8 @@ nextjs-portal,
   text-overflow: ellipsis;
 }
 .header-search-kbd {
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   display: flex;
@@ -190,6 +219,11 @@ nextjs-portal,
   padding: 0 6px;
   align-items: center;
   letter-spacing: 0.02em;
+  transition: all var(--transition-fast);
+}
+.header-search-btn:hover .header-search-kbd {
+  border-color: var(--color-border-orange);
+  color: var(--color-primary);
 }
 
 .header-right {
@@ -387,16 +421,29 @@ nextjs-portal,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--color-border);
   background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   flex-shrink: 0;
 }
 
 .sidebar-brand-sub {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+}
+
+.sidebar-brand-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background: hsl(26 100% 52% / 0.12);
+  border: 1px solid hsl(26 100% 52% / 0.25);
 }
 
 .brand-fire-icon {
@@ -404,28 +451,46 @@ nextjs-portal,
 }
 
 .sidebar-top-title {
-  color: var(--color-text-tertiary);
-  font-size: 0.625rem;
+  color: var(--color-text-secondary);
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.10em;
   text-transform: uppercase;
 }
 
+.sidebar-top-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  border: 1px solid var(--color-primary-border);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}
+
 .sidebar-collapse-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--color-text-tertiary);
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 4px;
+  gap: 3px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-tertiary);
+  padding: 3px 6px;
   border-radius: var(--radius-sm);
+  cursor: pointer;
   transition: all var(--transition-fast);
 }
 .sidebar-collapse-btn:hover {
   color: var(--color-primary);
   background: var(--glass-bg-hover);
   border-color: var(--color-border);
+}
+.sidebar-collapse-kbd {
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
 }
 
 .sidebar-floating-toggle {

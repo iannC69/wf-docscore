@@ -182,11 +182,14 @@ export function Sidebar({ nav }: SidebarProps) {
         data-open="false"
         data-collapsed={!sidebarOpen}
       >
-        {/* Pinned Top Bar with subtle glass branding & Collapse action */}
+        {/* Pinned Top Bar with sleek frosted glass branding & Collapse action */}
         <div className="sidebar-top-bar">
           <div className="sidebar-brand-sub">
-            <Flame size={13} className="brand-fire-icon" aria-hidden="true" />
+            <span className="sidebar-brand-icon-box">
+              <Flame size={12} className="brand-fire-icon" aria-hidden="true" />
+            </span>
             <span className="sidebar-top-title">Navigation</span>
+            <span className="sidebar-top-badge">Explorer</span>
           </div>
           <button
             type="button"
@@ -195,7 +198,8 @@ export function Sidebar({ nav }: SidebarProps) {
             title="Collapse Sidebar (Shortcut: [)"
             aria-label="Collapse sidebar"
           >
-            <PanelLeftClose size={15} />
+            <PanelLeftClose size={14} />
+            <kbd className="sidebar-collapse-kbd" aria-hidden="true">[</kbd>
           </button>
         </div>
 

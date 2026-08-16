@@ -52,6 +52,9 @@ export function Header() {
                 <span className="header-logo-name">WILDFIRE</span>
                 <span className="header-logo-badge">DOCS</span>
               </span>
+              <span className="header-version-pill" aria-label="Platform Version">
+                v1.0
+              </span>
             </Link>
           </div>
 
