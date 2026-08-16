@@ -2,21 +2,13 @@ import { getRawPage, getAdjacentPages, getNavigation } from "@/lib/navigation";
 import { compileMdxContent } from "@/lib/mdx";
 import { getFileGitInfo, getFileFirstCommitInfo } from "@/lib/git";
 import type { DocPage, Breadcrumb, NavItem } from "@/types/docs";
-import type { Locale } from "@/lib/i18n";
 import path from "path";
 
-// ─── Build breadcrumbs from slug & locale ─────────────────────────────────────
+// ─── Build breadcrumbs from slug ───────────────────────────────────────────────
 
-async function buildBreadcrumbs(slug: string[], locale: Locale = "en"): Promise<Breadcrumb[]> {
-  const nav = await getNavigation(locale);
-  const homeHref = locale === "ro" ? "/docs/ro" : "/docs";
-  const homeTitle = locale === "ro" ? "Documentație" : "Docs";
-  const breadcrumbs: Breadcrumb[] = [{ title: homeTitle, href: homeHref }];
-
-  let cleanSlug = [...slug];
-  if (cleanSlug[0] === "ro" || cleanSlug[0] === "en") {
-    cleanSlug = cleanSlug.slice(1);
-  }
+async function buildBreadcrumbs(slug: string[]): Promise<Breadcrumb[]> {
+  const nav = await getNavigation();
+  const breadcrumbs: Breadcrumb[] = [{ title: "Docs", href: "/docs" }];
 
   // Walk the slug to build breadcrumb trail
   const flat: NavItem[] = [];
@@ -28,11 +20,9 @@ async function buildBreadcrumbs(slug: string[], locale: Locale = "en"): Promise<
   }
   nav.forEach(g => flatten(g.items));
 
-  for (let i = 0; i < cleanSlug.length - 1; i++) {
-    const partialSlug = cleanSlug.slice(0, i + 1).join("/");
-    const match = flat.find(
-      item => item.slug === partialSlug || item.href.endsWith(`/${partialSlug}`)
-    );
+  for (let i = 0; i < slug.length - 1; i++) {
+    const partialSlug = slug.slice(0, i + 1).join("/");
+    const match = flat.find(item => item.slug === partialSlug);
     if (match) {
       breadcrumbs.push({ title: match.title, href: match.href });
     }
@@ -51,13 +41,12 @@ export async function getDocPage(slug: string[]): Promise<DocPage | null> {
   const raw = await getRawPage(slug);
   if (!raw) return null;
 
-  const locale = raw.locale;
   const { content: compiledContent, frontmatter, readingTime, wordCount, toc } =
     await compileMdxContent(raw.content);
 
   const slugStr = slug.join("/") || "index";
-  const { prev, next } = await getAdjacentPages(slugStr, locale);
-  const breadcrumbs = await buildBreadcrumbs(slug, locale);
+  const { prev, next } = await getAdjacentPages(slugStr);
+  const breadcrumbs = await buildBreadcrumbs(slug);
 
   // Extract real Git commit & author history
   const gitInfo = getFileGitInfo(raw.path);
@@ -73,11 +62,9 @@ export async function getDocPage(slug: string[]): Promise<DocPage | null> {
   const relPath = path.relative(process.cwd(), raw.path).replace(/\\/g, "/");
   const githubEditUrl = `https://github.com/${githubRepo}/edit/${githubBranch}/${relPath}`;
 
-  const href = slug.length === 0 ? "/docs" : `/docs/${slugStr}`;
-
   return {
     slug: slugStr,
-    href,
+    href: slug.length === 0 ? "/docs" : `/docs/${slugStr}`,
     frontmatter,
     content: raw.content,
     mdxSource: compiledContent,

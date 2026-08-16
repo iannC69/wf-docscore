@@ -36,5 +36,4 @@ export const mdxComponents: MDXComponents = {
   Tab,
   Card,
   Cards,
-  CardGrid: Cards,
 };

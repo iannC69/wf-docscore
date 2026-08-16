@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
 import { ThumbsUp, ThumbsDown, CheckCircle2, MessageSquare } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
 
 export function FeedbackWidget() {
   const [voted, setVoted] = useState<"yes" | "no" | null>(null);
-  const { t, locale } = useLanguage();
 
   if (voted) {
     return (
@@ -13,14 +11,12 @@ export function FeedbackWidget() {
         {voted === "yes" ? (
           <span className="feedback-thanks">
             <CheckCircle2 size={15} className="feedback-thanks-icon" aria-hidden="true" />
-            {t.feedback.thankYou}
+            Thank you for your feedback!
           </span>
         ) : (
           <span className="feedback-thanks">
             <MessageSquare size={15} className="feedback-thanks-icon" aria-hidden="true" />
-            {locale === "ro"
-              ? "Îți mulțumim. Vom lucra la îmbunătățirea acestui ghid."
-              : "Thank you. We will work on improving this guide."}
+            Thank you. We will work on improving this guide.
           </span>
         )}
       </div>
@@ -29,7 +25,7 @@ export function FeedbackWidget() {
 
   return (
     <div className="feedback">
-      <span className="feedback-label">{t.feedback.wasHelpful}</span>
+      <span className="feedback-label">Was this page helpful?</span>
       <div className="feedback-btns">
         <button
           type="button"
@@ -38,7 +34,7 @@ export function FeedbackWidget() {
           aria-label="Mark page as helpful"
         >
           <ThumbsUp size={13} aria-hidden="true" />
-          <span>{t.feedback.yes}</span>
+          <span>Yes</span>
         </button>
         <button
           type="button"
@@ -47,7 +43,7 @@ export function FeedbackWidget() {
           aria-label="Mark page as not helpful"
         >
           <ThumbsDown size={13} aria-hidden="true" />
-          <span>{t.feedback.no}</span>
+          <span>No</span>
         </button>
       </div>
     </div>

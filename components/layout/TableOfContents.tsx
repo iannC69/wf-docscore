@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
-import { useLanguage } from "@/context/LanguageContext";
 import type { TocItem } from "@/types/docs";
 
 interface TableOfContentsProps {
@@ -12,7 +11,6 @@ interface TableOfContentsProps {
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
   const { tocOpen, toggleToc } = useLayout();
-  const { t } = useLanguage();
 
   useEffect(() => {
     if (items.length === 0) return;
@@ -73,7 +71,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
         >
           <div className="toc-header">
             <AlignLeft size={13} className="toc-header-icon" aria-hidden="true" />
-            <span className="toc-title">{t.docPage.onThisPage}</span>
+            <span className="toc-title">On this page</span>
             <button
               type="button"
               onClick={toggleToc}

@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import type { Locale } from "@/lib/i18n";
 
 export interface SearchChunk {
   id: string;
@@ -11,22 +10,14 @@ export interface SearchChunk {
   href: string;
   contentSnippet: string;
   keywords: string[];
-  locale?: Locale;
 }
 
-const ROOT_DOCS_PATH = path.join(process.cwd(), "content", "docs");
+const DOCS_PATH = path.join(process.cwd(), "content", "docs");
 
-const CATEGORY_NAMES: Record<Locale, Record<string, string>> = {
-  en: {
-    "getting-started": "Getting Started",
-    "features": "Core Features",
-    "api-reference": "API Reference",
-  },
-  ro: {
-    "getting-started": "Ghid de Pornire",
-    "features": "Funcționalități Principale",
-    "api-reference": "Referință API",
-  },
+const CATEGORY_NAMES: Record<string, string> = {
+  "getting-started": "Getting Started",
+  "features": "Core Features",
+  "api-reference": "API Reference",
 };
 
 /**
@@ -34,8 +25,7 @@ const CATEGORY_NAMES: Record<Locale, Record<string, string>> = {
  */
 function cleanMarkdown(text: string): string {
   return text
-    .replace(/```[\s\S]*?```/g, " ") // remove code blocks
-    .replace(/<[^>]+>/g, " ")        // remove JSX/HTML tags
+    .replace(/```[\s\S]*?```/g, " ") // remove code blocks or keep words
     .replace(/`([^`]+)`/g, "$1")     // inline code
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links
     .replace(/#+\s+/g, "")           // headers
@@ -45,19 +35,12 @@ function cleanMarkdown(text: string): string {
 }
 
 /**
- * Builds a deep search index containing whole documents and section chunks for a given locale
+ * Builds a deep search index containing whole documents and section chunks
  */
-export function getSearchIndex(locale: Locale = "en"): SearchChunk[] {
-  const localizedPath = path.join(ROOT_DOCS_PATH, locale);
-  const searchRoot = fs.existsSync(/*turbopackIgnore: true*/ localizedPath)
-    ? localizedPath
-    : ROOT_DOCS_PATH;
-
-  if (!fs.existsSync(/*turbopackIgnore: true*/ searchRoot)) return [];
+export function getSearchIndex(): SearchChunk[] {
+  if (!fs.existsSync(/*turbopackIgnore: true*/ DOCS_PATH)) return [];
 
   const chunks: SearchChunk[] = [];
-  const prefix = locale === "ro" ? "/ro" : "";
-  const catMap = CATEGORY_NAMES[locale] || CATEGORY_NAMES.en;
 
   function processDir(dirPath: string, parentCategory = "General", baseSlug = "") {
     const entries = fs.readdirSync(/*turbopackIgnore: true*/ dirPath, { withFileTypes: true });
@@ -65,8 +48,8 @@ export function getSearchIndex(locale: Locale = "en"): SearchChunk[] {
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
 
-      if (entry.isDirectory() && entry.name !== "ro" && entry.name !== "en") {
-        const catName = catMap[entry.name] || entry.name.replace(/-/g, " ");
+      if (entry.isDirectory()) {
+        const catName = CATEGORY_NAMES[entry.name] || entry.name.replace(/-/g, " ");
         const newBaseSlug = baseSlug ? `${baseSlug}/${entry.name}` : entry.name;
         processDir(fullPath, catName, newBaseSlug);
       } else if (entry.isFile() && entry.name.endsWith(".md")) {
@@ -77,13 +60,13 @@ export function getSearchIndex(locale: Locale = "en"): SearchChunk[] {
         const isSectionIndex = entry.name === "index.md" && baseSlug !== "";
         const fileSlug = entry.name.replace(/\.md$/, "");
 
-        let href = `/docs${prefix}`;
+        let href = "/docs";
         if (isRootIndex) {
-          href = `/docs${prefix}`;
+          href = "/docs";
         } else if (isSectionIndex) {
-          href = `/docs${prefix}/${baseSlug}`;
+          href = `/docs/${baseSlug}`;
         } else {
-          href = baseSlug ? `/docs${prefix}/${baseSlug}/${fileSlug}` : `/docs${prefix}/${fileSlug}`;
+          href = baseSlug ? `/docs/${baseSlug}/${fileSlug}` : `/docs/${fileSlug}`;
         }
 
         const docTitle = data.title || path.basename(fullPath, ".md").replace(/-/g, " ");
@@ -98,7 +81,6 @@ export function getSearchIndex(locale: Locale = "en"): SearchChunk[] {
           href,
           contentSnippet: docDescription || cleanMarkdown(content.slice(0, 240)),
           keywords: docKeywords,
-          locale,
         });
 
         // 2. Parse section chunks (split by headings ## or ###)
@@ -130,7 +112,6 @@ export function getSearchIndex(locale: Locale = "en"): SearchChunk[] {
                 href: `${href}#${headingId}`,
                 contentSnippet: cleanedBody.slice(0, 180),
                 keywords: docKeywords,
-                locale,
               });
             }
           }
@@ -139,6 +120,6 @@ export function getSearchIndex(locale: Locale = "en"): SearchChunk[] {
     }
   }
 
-  processDir(searchRoot);
+  processDir(DOCS_PATH);
   return chunks;
 }
