@@ -304,7 +304,7 @@ export function Sidebar({ nav }: SidebarProps) {
           <div className="sidebar-footer">
             <div className="system-status-indicator">
               <span className="status-dot" aria-hidden="true" />
-              <span className="status-label">Wildfire Docs v1.0</span>
+              <span className="status-label">WF-DOCSCORE v{CURRENT_VERSION}</span>
             </div>
           </div>
 

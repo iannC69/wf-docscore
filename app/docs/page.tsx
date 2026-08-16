@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { getRecentlyUpdatedDocs } from "@/lib/git";
 import { getDocIcon, getCategoryIcon, getDocColorVariant } from "@/lib/icons";
+import { CURRENT_VERSION } from "@/lib/version";
 
 export default function DocsHomePage() {
   const recentDocs = getRecentlyUpdatedDocs(6);
@@ -28,14 +29,14 @@ export default function DocsHomePage() {
         <section className="docs-home-hero">
           <div className="docs-home-badge">
             <span className="docs-badge-dot" aria-hidden="true" />
-            <span>Documentation Portal</span>
+            <span>WF-DOCSCORE ARCHITECTURE ENGINE</span>
           </div>
           <h1 className="docs-home-title">
-            Wildfire Documentation &amp; Developer Hub
+            WF-DOCSCORE Engine Developer Hub
           </h1>
           <p className="docs-home-desc">
             Complete guides, architecture blueprints, API specifications, and
-            component references for the custom documentation engine.
+            component references for the custom documentation platform.
           </p>
 
           {/* Quick Search / Command hint */}
@@ -282,6 +283,20 @@ export default function DocsHomePage() {
             </div>
           </div>
         </section>
+
+        {/* ── Engine Watermark Footer ── */}
+        <footer className="docs-home-footer">
+          <div className="docs-footer-inner">
+            <div className="docs-footer-brand">
+              <span className="docs-footer-logo-dot" aria-hidden="true" />
+              <span className="docs-footer-title">WF-DOCSCORE ENGINE</span>
+              <span className="docs-footer-version">v{CURRENT_VERSION}</span>
+            </div>
+            <p className="docs-footer-copyright">
+              Next.js 16 Turbopack &amp; Liquid Theme Architecture • Author <a href="https://github.com/iannC69" target="_blank" rel="noopener noreferrer" className="docs-footer-author">@iannC69</a>
+            </p>
+          </div>
+        </footer>
       </main>
     </div>
   );

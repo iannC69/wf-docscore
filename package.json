@@ -1,6 +1,8 @@
 {
-  "name": "docs-platform",
+  "name": "wf-docscore",
   "version": "1.2.0",
+  "description": "WF-DOCSCORE — Next-Generation Documentation & Architecture Engine",
+  "author": "iannC69",
   "private": true,
   "scripts": {
     "dev": "next dev",

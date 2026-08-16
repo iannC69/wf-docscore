@@ -2083,3 +2083,69 @@ nextjs-portal,
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
+
+/* ============================================================
+   DOCS HOME WATERMARK FOOTER
+   ============================================================ */
+.docs-home-footer {
+  margin-top: var(--space-12);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-8);
+  border-top: 1px solid var(--glass-border);
+}
+
+.docs-footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.docs-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.docs-footer-logo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+.docs-footer-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+}
+
+.docs-footer-version {
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+}
+
+.docs-footer-copyright {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.docs-footer-author {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+.docs-footer-author:hover {
+  text-decoration: underline;
+}

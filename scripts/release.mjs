@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Wildfire Docs — Release Automation Engine
+ * WF-DOCSCORE — Release Automation Engine
+ * Engine Author: iannC69
  *
  * Usage:
  *   node scripts/release.mjs <version> [title]

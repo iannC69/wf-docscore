@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Wildfire Docs — Developer Documentation Engine",
-    template: "%s — Wildfire Docs",
+    default: "WF-DOCSCORE — Documentation & Architecture Engine",
+    template: "%s — WF-DOCSCORE",
   },
   description:
-    "Ultra-fast Next.js documentation engine with live Git synchronization and liquid glass aesthetics.",
+    "WF-DOCSCORE — Next-Generation developer documentation and architecture platform with live Git synchronization and liquid aesthetics.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),
