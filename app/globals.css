@@ -1385,6 +1385,8 @@ nextjs-portal,
   display: flex;
   align-items: center;
   position: relative;
+  min-height: 26px;
+  padding: 1px 0;
 }
 
 .toc-flow-link {
@@ -1395,23 +1397,19 @@ nextjs-portal,
   border-radius: var(--radius-sm);
   color: var(--color-text-tertiary);
   font-size: 0.75rem;
-  line-height: 1.3;
+  line-height: 1.35;
   text-decoration: none;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  transition: color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
 }
 .toc-flow-link:hover {
   color: var(--color-text);
   background: var(--glass-bg-hover);
-  transform: translateX(3px);
+  transform: translateX(2px);
 }
 
 .toc-flow-link--nested {
-  font-size: 0.72rem;
-  padding-left: 6px;
-  color: var(--color-text-tertiary);
+  font-size: 0.71rem;
+  padding-left: 4px;
 }
 
 .toc-flow-link--active {
@@ -1420,9 +1418,11 @@ nextjs-portal,
 }
 
 .toc-flow-text {
-  white-space: nowrap;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .toc-floating-toggle {

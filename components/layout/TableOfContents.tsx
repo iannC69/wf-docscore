@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
@@ -8,111 +8,93 @@ interface TableOfContentsProps {
   items: TocItem[];
 }
 
-const ITEM_ROW_HEIGHT = 26;
-const START_OFFSET_Y = 13;
-
 export function TableOfContents({ items }: TableOfContentsProps) {
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [pathTotalLength, setPathTotalLength] = useState<number>(0);
-  const pathRef = useRef<SVGPathElement>(null);
+  const [nodePositions, setNodePositions] = useState<{ x: number; y: number }[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const { tocOpen, toggleToc } = useLayout();
 
-  // Scroll Progress Calculator & Bottom-of-page detector
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        const current = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(Math.min(100, Math.max(0, Math.round(current))));
+  // 1. Measure real DOM item centers (0 glitch, 100% accurate alignment)
+  const measureNodes = useCallback(() => {
+    if (!containerRef.current || items.length === 0) return;
+    const containerTop = containerRef.current.getBoundingClientRect().top;
 
-        // If user scrolled to the bottom of the page, highlight the last item
-        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 60) {
-          if (items.length > 0) {
-            setActiveId(items[items.length - 1].id);
+    const positions = items.map((item, idx) => {
+      const el = itemRefs.current[idx];
+      const isNested = item.depth >= 3;
+      const x = isNested ? 18 : 7;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const y = rect.top - containerTop + rect.height / 2;
+        return { x, y: Math.round(y) };
+      }
+      return { x, y: 13 + idx * 26 };
+    });
+
+    setNodePositions(positions);
+  }, [items]);
+
+  useEffect(() => {
+    measureNodes();
+    window.addEventListener("resize", measureNodes, { passive: true });
+    return () => window.removeEventListener("resize", measureNodes);
+  }, [measureNodes]);
+
+  // 2. High-Performance Deterministic Scroll Spy (0 Jitter, 0 Spike, 0 Delay)
+  useEffect(() => {
+    if (items.length === 0) return;
+
+    let rafId: number;
+
+    const handleScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        const windowH = window.innerHeight;
+        const docH = document.documentElement.scrollHeight;
+        const totalHeight = docH - windowH;
+
+        // Reading progress percentage
+        if (totalHeight > 0) {
+          const current = (scrollY / totalHeight) * 100;
+          setScrollProgress(Math.min(100, Math.max(0, Math.round(current))));
+        }
+
+        // Bottom of page lock
+        if (scrollY + windowH >= docH - 50) {
+          setActiveId(items[items.length - 1].id);
+          return;
+        }
+
+        // Find currently active heading closest to top viewport trigger
+        const offsetTrigger = 110;
+        let matchedId = items[0].id;
+
+        for (let i = 0; i < items.length; i++) {
+          const el = document.getElementById(items[i].id);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= offsetTrigger) {
+              matchedId = items[i].id;
+            } else {
+              break;
+            }
           }
         }
-      }
+
+        setActiveId(matchedId);
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [items]);
-
-  // Intersection Observer for Active Heading
-  useEffect(() => {
-    if (items.length === 0) return;
-
-    const headings = items
-      .map((item) => document.getElementById(item.id))
-      .filter(Boolean);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((e) => e.isIntersecting);
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
-        }
-      },
-      {
-        rootMargin: "-64px 0% -60% 0%",
-        threshold: 0,
-      }
-    );
-
-    headings.forEach((h) => h && observer.observe(h));
-    return () => observer.disconnect();
-  }, [items]);
-
-  // Calculate coordinates for every item
-  const nodePoints = useMemo(() => {
-    return items.map((item, index) => {
-      const isNested = item.depth >= 3;
-      const x = isNested ? 18 : 7;
-      const y = START_OFFSET_Y + index * ITEM_ROW_HEIGHT;
-      return { x, y, id: item.id, depth: item.depth, title: item.title, index };
-    });
-  }, [items]);
-
-  // Construct continuous flowing S-curve path
-  const { fullPathD, totalSvgHeight } = useMemo(() => {
-    if (nodePoints.length === 0)
-      return { fullPathD: "", totalSvgHeight: 60 };
-
-    if (nodePoints.length === 1) {
-      return {
-        fullPathD: `M ${nodePoints[0].x} ${nodePoints[0].y} L ${nodePoints[0].x} ${nodePoints[0].y + 1}`,
-        totalSvgHeight: 40,
-      };
-    }
-
-    let fullD = `M ${nodePoints[0].x} ${nodePoints[0].y}`;
-
-    for (let i = 1; i < nodePoints.length; i++) {
-      const p0 = nodePoints[i - 1];
-      const p1 = nodePoints[i];
-      const midY = (p0.y + p1.y) / 2;
-      fullD += ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
-    }
-
-    const totalHeight =
-      START_OFFSET_Y * 2 + (nodePoints.length - 1) * ITEM_ROW_HEIGHT;
-
-    return {
-      fullPathD: fullD,
-      totalSvgHeight: Math.max(totalHeight, 40),
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafId);
     };
-  }, [nodePoints]);
-
-  // Measure path length on SVG mount
-  useEffect(() => {
-    if (pathRef.current) {
-      const len = pathRef.current.getTotalLength();
-      setPathTotalLength(len);
-    }
-  }, [fullPathD]);
+  }, [items]);
 
   if (items.length === 0) return null;
 
@@ -129,20 +111,41 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
-  const activePoint = nodePoints[activeIdx] || nodePoints[0] || { x: 7, y: 13 };
 
-  // Calculate active path length to reach exact node coordinate
-  let activeLength = 0;
-  if (pathTotalLength > 0 && nodePoints.length > 1) {
-    if (activeIdx === nodePoints.length - 1) {
-      activeLength = pathTotalLength; // Go 100% to the bottom
-    } else {
-      activeLength = (activeIdx / (nodePoints.length - 1)) * pathTotalLength;
+  // Use measured positions or calculated fallbacks
+  const points = nodePositions.length === items.length
+    ? nodePositions
+    : items.map((item, idx) => ({
+        x: item.depth >= 3 ? 18 : 7,
+        y: 13 + idx * 26,
+      }));
+
+  const activePoint = points[activeIdx] || points[0] || { x: 7, y: 13 };
+  const totalSvgHeight = points.length > 0 ? points[points.length - 1].y + 16 : 60;
+
+  // Construct full background curve
+  let fullPathD = "";
+  if (points.length > 0) {
+    fullPathD = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const p0 = points[i - 1];
+      const p1 = points[i];
+      const midY = (p0.y + p1.y) / 2;
+      fullPathD += ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
     }
   }
 
-  const dashOffset =
-    pathTotalLength > 0 ? Math.max(0, pathTotalLength - activeLength) : 0;
+  // Construct active flowing curve up to active index
+  let activePathD = "";
+  if (points.length > 0 && activeIdx >= 0) {
+    activePathD = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i <= activeIdx; i++) {
+      const p0 = points[i - 1];
+      const p1 = points[i];
+      const midY = (p0.y + p1.y) / 2;
+      activePathD += ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
+    }
+  }
 
   return (
     <>
@@ -195,7 +198,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           </div>
 
           {/* Continuous Flowing Curved S-Track Navigation */}
-          <nav className="toc-river-container">
+          <nav className="toc-river-container" ref={containerRef}>
             {/* SVG Flow River Curves */}
             <svg
               className="toc-flow-svg"
@@ -208,53 +211,51 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             >
               <defs>
                 <linearGradient
-                  id="toc-lava-stroke"
+                  id="toc-clean-lava"
                   x1="0%"
                   y1="0%"
                   x2="0%"
                   y2="100%"
                 >
-                  <stop offset="0%" stopColor="hsl(26 100% 55%)" />
-                  <stop offset="100%" stopColor="hsl(42 100% 58%)" />
+                  <stop offset="0%" stopColor="hsl(26 100% 52%)" />
+                  <stop offset="100%" stopColor="hsl(38 100% 55%)" />
                 </linearGradient>
               </defs>
 
               {/* Inactive Base River Spine */}
-              <path
-                d={fullPathD}
-                stroke="var(--color-border)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                opacity="0.8"
-              />
+              {fullPathD && (
+                <path
+                  d={fullPathD}
+                  stroke="var(--color-border)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                  opacity="0.8"
+                />
+              )}
 
-              {/* Active Smooth Liquid Flow (Animated via CSS strokeDashoffset) */}
-              <path
-                ref={pathRef}
-                d={fullPathD}
-                stroke="url(#toc-lava-stroke)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                style={{
-                  strokeDasharray: pathTotalLength > 0 ? pathTotalLength : 1000,
-                  strokeDashoffset: dashOffset,
-                  transition: "stroke-dashoffset 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
-                }}
-              />
+              {/* Active Clean Liquid Flow Line */}
+              {activePathD && (
+                <path
+                  d={activePathD}
+                  stroke="url(#toc-clean-lava)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              )}
 
-              {/* Static Background Nodes */}
-              {nodePoints.map((pt, idx) => {
+              {/* Background Node Markers */}
+              {points.map((pt, idx) => {
                 const isPassed = idx <= activeIdx;
                 return (
                   <circle
-                    key={pt.id}
+                    key={items[idx]?.id || idx}
                     cx={pt.x}
                     cy={pt.y}
-                    r={pt.depth >= 3 ? "1.8" : "2.2"}
+                    r={items[idx]?.depth >= 3 ? "1.8" : "2.2"}
                     fill={
                       isPassed
                         ? "hsl(26 100% 52%)"
@@ -262,42 +263,41 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     }
                     stroke={
                       isPassed
-                        ? "hsl(26 100% 52% / 0.4)"
+                        ? "hsl(26 100% 52% / 0.5)"
                         : "var(--color-border-strong)"
                     }
                     strokeWidth="1"
-                    style={{ transition: "fill 0.25s ease, stroke 0.25s ease" }}
                   />
                 );
               })}
 
-              {/* Smooth Gliding Active Node */}
-              <g
+              {/* Gliding Active Indicator Dot */}
+              <circle
+                cx={activePoint.x}
+                cy={activePoint.y}
+                r="3.5"
+                fill="hsl(26 100% 52%)"
+                stroke="var(--color-bg)"
+                strokeWidth="1.5"
                 style={{
-                  transform: `translate(${activePoint.x}px, ${activePoint.y}px)`,
-                  transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+                  transition: "cx 0.22s cubic-bezier(0.2, 0, 0, 1), cy 0.22s cubic-bezier(0.2, 0, 0, 1)",
                 }}
-              >
-                <circle
-                  r="3.5"
-                  fill="hsl(26 100% 52%)"
-                  stroke="var(--color-bg)"
-                  strokeWidth="1.5"
-                />
-              </g>
+              />
             </svg>
 
             {/* List of Titles */}
             <ul role="list" className="toc-flow-list">
-              {items.map((item) => {
+              {items.map((item, index) => {
                 const isActive = activeId === item.id;
                 const isNested = item.depth >= 3;
 
                 return (
                   <li
                     key={item.id}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
                     className={`toc-flow-item-wrap ${isNested ? "toc-flow-item-wrap--nested" : ""}`}
-                    style={{ height: `${ITEM_ROW_HEIGHT}px` }}
                   >
                     <a
                       href={`#${item.id}`}
