@@ -53,8 +53,36 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
   - Frosted glass input pill (`max-width: 440px`) with animated search icon and keyboard shortcut key (`⌘K` on Mac, `Ctrl K` on Windows/Linux) that glows with an amber border on hover.
 - **Right Controls**:
   - Segmented tri-mode glass switcher (`Standard`, `Focus`, `Full`).
+  - Mobile search trigger icon button (`.header-mobile-search-btn`) for `<= 1024px`.
   - GitHub repository icon button with subtle frosted hover ring.
   - Smooth light/dark theme toggle button.
+
+---
+
+## 📱 4. Mobile & Tablet 100% Responsive Adaptation
+
+- **Header Breakpoints**:
+  - `> 1024px` (Desktop): Full center search input (`max-width: 440px`), segmented tri-mode controls, GitHub link, and theme toggle.
+  - `769px - 1024px` (Tablets & iPads):
+    - Replaces desktop center input with a frosted glass search icon button (`.header-mobile-search-btn`).
+    - Hides segmented tri-mode controls to preserve clean horizontal space.
+    - Displays the hamburger menu toggle (`.mobile-menu-toggle`) on the left.
+  - `<= 768px` (Mobile & Phablets):
+    - Compact 12px header padding.
+    - Collapses version pill and sub-text badges to maintain a clean single-row header.
+- **Mobile Sidebar Touch Drawer (`components/layout/Sidebar.tsx`)**:
+  - Smooth slide-in drawer (`transform: translateX(0)` with `0.28s cubic-bezier` easing) width `min(300px, 85vw)` with a deep frosted backdrop blur overlay (`.sidebar-overlay`).
+  - Auto-closes automatically whenever a reader taps any navigation link (`closeMobileSidebar()`).
+  - Touch-friendly tap targets (`min-height: 38px` per item).
+- **Mobile In-Page Table of Contents (`components/layout/MobileTableOfContents.tsx`)**:
+  - Automatically activates on `<= 1200px` screens replacing the desktop right sidebar.
+  - Renders a frosted glass accordion bar (`📑 On this page: Heading Title`) right above the article title.
+  - Tapping expands the animated table of contents and smoothly scrolls to headings on tap before auto-closing.
+- **Content & Grid Responsiveness**:
+  - "Recently Updated" Cards: `1 column` on phones (`<= 768px`), `2 columns` on tablets (`769px - 1024px`), `3 columns` on desktops (`> 1024px`).
+  - Code blocks: Horizontal scrolling with sticky copy buttons (`-webkit-overflow-scrolling: touch`).
+  - Tables: Touch-scrollable wrappers with clean hairline borders.
+  - Page Navigation & Metadata: Responsive wrap prevents clipping on small viewports.
 
 ---
 
