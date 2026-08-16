@@ -9,28 +9,23 @@ function injectStyles() {
   style.id = STYLE_ID;
   style.textContent = `
     @keyframes liquidDrift1 {
-      0%   { transform: translate(0px, 0px) scale(1); opacity: 0.85; }
-      25%  { transform: translate(80px, -40px) scale(1.12); opacity: 0.70; }
-      50%  { transform: translate(40px, 60px) scale(0.92); opacity: 0.80; }
-      75%  { transform: translate(-50px, 20px) scale(1.08); opacity: 0.72; }
-      100% { transform: translate(0px, 0px) scale(1); opacity: 0.85; }
+      0%   { transform: translate(0px, 0px)   scale(1);    opacity: 0.60; }
+      25%  { transform: translate(80px, -40px) scale(1.08); opacity: 0.45; }
+      50%  { transform: translate(40px,  60px) scale(0.94); opacity: 0.55; }
+      75%  { transform: translate(-50px, 20px) scale(1.04); opacity: 0.48; }
+      100% { transform: translate(0px, 0px)   scale(1);    opacity: 0.60; }
     }
     @keyframes liquidDrift2 {
-      0%   { transform: translate(0px, 0px) scale(1); opacity: 0.75; }
-      33%  { transform: translate(-70px, 60px) scale(1.15); opacity: 0.60; }
-      66%  { transform: translate(80px, -40px) scale(0.90); opacity: 0.80; }
-      100% { transform: translate(0px, 0px) scale(1); opacity: 0.75; }
+      0%   { transform: translate(0px, 0px)    scale(1);    opacity: 0.35; }
+      33%  { transform: translate(-60px, 50px)  scale(1.10); opacity: 0.25; }
+      66%  { transform: translate(70px, -30px)  scale(0.92); opacity: 0.40; }
+      100% { transform: translate(0px, 0px)    scale(1);    opacity: 0.35; }
     }
     @keyframes liquidDrift3 {
-      0%   { transform: translate(0px, 0px) scale(1); opacity: 0.70; }
-      40%  { transform: translate(60px, 90px) scale(1.18); opacity: 0.80; }
-      80%  { transform: translate(-80px, -50px) scale(0.85); opacity: 0.55; }
-      100% { transform: translate(0px, 0px) scale(1); opacity: 0.70; }
-    }
-    @keyframes liquidDrift4 {
-      0%   { transform: translate(0px, 0px) scale(1); opacity: 0.60; }
-      50%  { transform: translate(-50px, -60px) scale(1.10); opacity: 0.75; }
-      100% { transform: translate(0px, 0px) scale(1); opacity: 0.60; }
+      0%   { transform: translate(0px, 0px)    scale(1);    opacity: 0.20; }
+      40%  { transform: translate(50px, 80px)  scale(1.12); opacity: 0.28; }
+      80%  { transform: translate(-70px, -40px) scale(0.88); opacity: 0.18; }
+      100% { transform: translate(0px, 0px)    scale(1);    opacity: 0.20; }
     }
 
     /* Lava Flow Oscillations */
@@ -54,46 +49,41 @@ function injectStyles() {
     /* Floating Molten Ember Particles */
     @keyframes emberRise1 {
       0%   { transform: translateY(0px) translateX(0px) scale(0.8); opacity: 0; }
-      30%  { opacity: 0.9; }
-      80%  { opacity: 0.7; }
-      100% { transform: translateY(-65px) translateX(14px) scale(0.3); opacity: 0; }
+      30%  { opacity: 0.8; }
+      80%  { opacity: 0.6; }
+      100% { transform: translateY(-55px) translateX(12px) scale(0.3); opacity: 0; }
     }
     @keyframes emberRise2 {
       0%   { transform: translateY(0px) translateX(0px) scale(0.9); opacity: 0; }
-      25%  { opacity: 0.95; }
-      75%  { opacity: 0.6; }
-      100% { transform: translateY(-75px) translateX(-16px) scale(0.2); opacity: 0; }
+      25%  { opacity: 0.9; }
+      75%  { opacity: 0.5; }
+      100% { transform: translateY(-65px) translateX(-14px) scale(0.2); opacity: 0; }
     }
     @keyframes emberRise3 {
       0%   { transform: translateY(0px) translateX(0px) scale(0.7); opacity: 0; }
-      40%  { opacity: 0.9; }
-      85%  { opacity: 0.5; }
-      100% { transform: translateY(-55px) translateX(10px) scale(0.2); opacity: 0; }
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
+      40%  { opacity: 0.85; }
+      85%  { opacity: 0.4; }
+      100% { transform: translateY(-48px) translateX(8px) scale(0.2); opacity: 0; }
     }
 
     [data-theme="light"] .liquid-vignette {
       opacity: 0.15 !important;
     }
     [data-theme="light"] .liquid-blob-1 {
-      opacity: 0.35 !important;
+      opacity: 0.45 !important;
     }
     [data-theme="light"] .liquid-blob-2 {
-      opacity: 0.25 !important;
+      opacity: 0.30 !important;
     }
     [data-theme="light"] .liquid-blob-3 {
-      opacity: 0.20 !important;
+      opacity: 0.25 !important;
     }
   `;
   document.head.appendChild(style);
 }
 
 /**
- * Full-page dynamic liquid fire background with glowing translucent gradients.
+ * Full-page liquid fire background.
  */
 export function LiquidBackground() {
   useEffect(() => {
@@ -111,80 +101,53 @@ export function LiquidBackground() {
         zIndex: 0,
       }}
     >
-      {/* Primary Fire Orange Magma Orb */}
       <div
         className="liquid-blob-1"
         style={{
-          animation: "liquidDrift1 20s ease-in-out infinite",
+          animation: "liquidDrift1 22s ease-in-out infinite",
           background:
-            "radial-gradient(circle at center, hsl(26 100% 52% / 0.26) 0%, hsl(20 100% 48% / 0.14) 40%, transparent 70%)",
-          bottom: "-5%",
+            "radial-gradient(ellipse 600px 500px at center, hsl(26 100% 52% / 0.08) 0%, transparent 70%)",
+          bottom: "-10%",
           left: "-5%",
           position: "absolute",
-          height: "75vh",
+          height: "80vh",
           width: "70vw",
-          filter: "blur(40px)",
           willChange: "transform",
         }}
       />
-
-      {/* Amber / Golden Incandescent Orb */}
       <div
         className="liquid-blob-2"
         style={{
-          animation: "liquidDrift2 26s ease-in-out infinite 2s",
+          animation: "liquidDrift2 30s ease-in-out infinite 4s",
           background:
-            "radial-gradient(circle at center, hsl(38 100% 52% / 0.22) 0%, hsl(28 100% 48% / 0.10) 45%, transparent 70%)",
-          right: "-5%",
-          top: "0%",
+            "radial-gradient(ellipse 500px 400px at center, hsl(8 90% 45% / 0.06) 0%, transparent 70%)",
+          right: "-10%",
+          top: "5%",
           position: "absolute",
-          height: "65vh",
-          width: "55vw",
-          filter: "blur(45px)",
+          height: "60vh",
+          width: "50vw",
           willChange: "transform",
         }}
       />
-
-      {/* Crimson / Deep Fire Core Orb */}
       <div
         className="liquid-blob-3"
         style={{
-          animation: "liquidDrift3 32s ease-in-out infinite 5s",
+          animation: "liquidDrift3 40s ease-in-out infinite 8s",
           background:
-            "radial-gradient(circle at center, hsl(6 95% 52% / 0.18) 0%, hsl(16 100% 46% / 0.08) 40%, transparent 68%)",
-          left: "25%",
-          top: "20%",
-          position: "absolute",
-          height: "55vh",
-          width: "50vw",
-          filter: "blur(50px)",
-          willChange: "transform",
-        }}
-      />
-
-      {/* Luminous Center Ambient Highlight */}
-      <div
-        className="liquid-blob-4"
-        style={{
-          animation: "liquidDrift4 24s ease-in-out infinite 1s",
-          background:
-            "radial-gradient(circle at center, hsl(26 100% 56% / 0.15) 0%, transparent 60%)",
-          right: "20%",
-          bottom: "10%",
+            "radial-gradient(ellipse 400px 300px at center, hsl(38 100% 52% / 0.05) 0%, transparent 70%)",
+          left: "30%",
+          top: "30%",
           position: "absolute",
           height: "50vh",
-          width: "45vw",
-          filter: "blur(35px)",
+          width: "40vw",
           willChange: "transform",
         }}
       />
-
-      {/* Subtle Depth Vignette */}
       <div
         className="liquid-vignette"
         style={{
           background:
-            "radial-gradient(ellipse 85% 85% at 50% 50%, transparent 35%, hsl(220 20% 5% / 0.5) 100%)",
+            "radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, hsl(0 0% 7% / 0.6) 100%)",
           inset: 0,
           position: "absolute",
         }}
@@ -246,7 +209,7 @@ export function LiquidFireWave({
           height: "4px",
           borderRadius: "50%",
           background: "hsl(44 100% 60%)",
-          boxShadow: "0 0 8px hsl(44 100% 60%)",
+          boxShadow: "0 0 6px hsl(44 100% 60%)",
           animation: "emberRise1 3.5s ease-out infinite 0.2s",
           zIndex: 2,
           pointerEvents: "none",
@@ -261,7 +224,7 @@ export function LiquidFireWave({
           height: "5px",
           borderRadius: "50%",
           background: "hsl(26 100% 55%)",
-          boxShadow: "0 0 8px hsl(26 100% 55%)",
+          boxShadow: "0 0 6px hsl(26 100% 55%)",
           animation: "emberRise2 4.2s ease-out infinite 1.4s",
           zIndex: 2,
           pointerEvents: "none",
@@ -276,7 +239,7 @@ export function LiquidFireWave({
           height: "3px",
           borderRadius: "50%",
           background: "hsl(38 100% 65%)",
-          boxShadow: "0 0 7px hsl(38 100% 65%)",
+          boxShadow: "0 0 5px hsl(38 100% 65%)",
           animation: "emberRise3 3.8s ease-out infinite 2.1s",
           zIndex: 2,
           pointerEvents: "none",
@@ -295,32 +258,32 @@ export function LiquidFireWave({
         <defs>
           {/* Deep Magma Base */}
           <linearGradient id="lava-base-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="hsl(8, 90%, 28%)" stopOpacity="0.95" />
-            <stop offset="25%"  stopColor="hsl(16, 95%, 36%)" stopOpacity="0.95" />
-            <stop offset="65%"  stopColor="hsl(24, 100%, 45%)" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="hsl(8, 90%, 28%)" stopOpacity="0.95" />
+            <stop offset="0%"   stopColor="hsl(8, 90%, 26%)" stopOpacity="0.95" />
+            <stop offset="25%"  stopColor="hsl(16, 95%, 34%)" stopOpacity="0.95" />
+            <stop offset="65%"  stopColor="hsl(24, 100%, 42%)" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="hsl(8, 90%, 26%)" stopOpacity="0.95" />
           </linearGradient>
 
           {/* Liquid Fire Middle */}
           <linearGradient id="lava-mid-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="hsl(20, 100%, 46%)" stopOpacity="0.85" />
-            <stop offset="45%"  stopColor="hsl(28, 100%, 52%)" stopOpacity="0.90" />
-            <stop offset="85%"  stopColor="hsl(36, 100%, 56%)" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="hsl(20, 100%, 46%)" stopOpacity="0.85" />
+            <stop offset="0%"   stopColor="hsl(20, 100%, 44%)" stopOpacity="0.80" />
+            <stop offset="45%"  stopColor="hsl(28, 100%, 50%)" stopOpacity="0.85" />
+            <stop offset="85%"  stopColor="hsl(36, 100%, 54%)" stopOpacity="0.80" />
+            <stop offset="100%" stopColor="hsl(20, 100%, 44%)" stopOpacity="0.80" />
           </linearGradient>
 
           {/* Molten Amber Crest */}
           <linearGradient id="lava-crest-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="hsl(32, 100%, 54%)" stopOpacity="0.70" />
-            <stop offset="50%"  stopColor="hsl(44, 100%, 60%)" stopOpacity="0.80" />
-            <stop offset="100%" stopColor="hsl(32, 100%, 54%)" stopOpacity="0.70" />
+            <stop offset="0%"   stopColor="hsl(32, 100%, 52%)" stopOpacity="0.65" />
+            <stop offset="50%"  stopColor="hsl(44, 100%, 58%)" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="hsl(32, 100%, 52%)" stopOpacity="0.65" />
           </linearGradient>
 
           {/* Incandescent Golden Froth */}
           <linearGradient id="lava-froth-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="hsl(44, 100%, 66%)" stopOpacity="0.50" />
-            <stop offset="50%"  stopColor="hsl(52, 100%, 78%)" stopOpacity="0.65" />
-            <stop offset="100%" stopColor="hsl(44, 100%, 66%)" stopOpacity="0.50" />
+            <stop offset="0%"   stopColor="hsl(44, 100%, 65%)" stopOpacity="0.45" />
+            <stop offset="50%"  stopColor="hsl(52, 100%, 75%)" stopOpacity="0.60" />
+            <stop offset="100%" stopColor="hsl(44, 100%, 65%)" stopOpacity="0.45" />
           </linearGradient>
         </defs>
 

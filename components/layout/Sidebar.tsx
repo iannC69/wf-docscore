@@ -26,6 +26,8 @@ import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
 
+import { getDocIcon } from "@/lib/icons";
+
 interface SidebarProps {
   nav: NavGroup[];
 }
@@ -35,28 +37,6 @@ const GROUP_ICONS: Record<string, React.ReactNode> = {
   "Core Features": <Layers size={13} aria-hidden="true" />,
   "API Reference": <Terminal size={13} aria-hidden="true" />,
 };
-
-/**
- * Returns a dedicated, representative Lucide icon for each doc route
- */
-function getItemIcon(slug: string, title: string): React.ReactNode {
-  const s = slug.toLowerCase();
-  const t = title.toLowerCase();
-
-  if (s.includes("getting-started") && !s.includes("/") || t === "getting started") return <Rocket size={14} aria-hidden="true" />;
-  if (s.includes("config") || t.includes("configuration")) return <Sliders size={14} aria-hidden="true" />;
-  if (s.includes("install") || t.includes("installation")) return <Package size={14} aria-hidden="true" />;
-  if (s.includes("deploy") || t.includes("deployment")) return <Cloud size={14} aria-hidden="true" />;
-  if (s === "features" || t === "features overview") return <Sparkles size={14} aria-hidden="true" />;
-  if (s.includes("component") || s.includes("mdx")) return <Code2 size={14} aria-hidden="true" />;
-  if (s.includes("github") || s.includes("git")) return <GitBranch size={14} aria-hidden="true" />;
-  if (s.includes("search")) return <Search size={14} aria-hidden="true" />;
-  if (s === "api-reference" || t === "api reference") return <Terminal size={14} aria-hidden="true" />;
-  if (s.includes("webhook") || t.includes("webhook")) return <Webhook size={14} aria-hidden="true" />;
-  if (s.includes("schema") || s.includes("database") || s.includes("db")) return <Database size={14} aria-hidden="true" />;
-
-  return <FileText size={14} aria-hidden="true" />;
-}
 
 function NavItemRow({
   item,
@@ -77,7 +57,7 @@ function NavItemRow({
       >
         <span className="nav-item-indicator" aria-hidden="true" />
         <span className="nav-item-icon">
-          {getItemIcon(item.slug, item.title)}
+          {getDocIcon(item.slug, item.title, 14)}
         </span>
         <span className="nav-item-text">{item.title}</span>
         {item.badge && (

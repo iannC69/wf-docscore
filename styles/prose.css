@@ -161,9 +161,7 @@
   color: var(--color-text-secondary);
   margin: var(--space-6) 0;
   padding: 12px 18px;
-  background: linear-gradient(135deg, hsl(26 100% 52% / 0.08) 0%, var(--color-surface) 60%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, hsl(26 100% 52% / 0.05) 0%, var(--color-surface) 60%);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   box-shadow: var(--shadow-xs);
 }
@@ -176,12 +174,9 @@
   font-size: var(--text-sm);
   margin-bottom: var(--space-6);
   width: 100%;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-xs);
 }
 
 .prose thead tr {
@@ -214,7 +209,7 @@
 }
 
 .prose tbody tr:nth-child(even) {
-  background: var(--glass-bg);
+  background: var(--color-surface);
 }
 
 /* ── Horizontal Rule ──────────────────────────────────────── */

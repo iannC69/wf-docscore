@@ -13,11 +13,10 @@ import {
   ArrowRight,
   Code2,
   Clock,
-  Sparkles,
   GitCommit,
-  Flame,
 } from "lucide-react";
 import { getRecentlyUpdatedDocs } from "@/lib/git";
+import { getDocIcon, getCategoryIcon } from "@/lib/icons";
 
 export default function DocsHomePage() {
   const recentDocs = getRecentlyUpdatedDocs(6);
@@ -71,18 +70,26 @@ export default function DocsHomePage() {
             <div className="recent-updates-grid">
               {recentDocs.map((doc) => (
                 <Link key={doc.slug} href={doc.href} className="recent-update-card">
-                  {/* Top Bar: Category Pill + Relative Time */}
+                  {/* Top Bar: Category Pill with Icon + Relative Time */}
                   <div className="recent-card-top">
-                    <span className="recent-card-category">{doc.category}</span>
+                    <span className="recent-card-category">
+                      <span className="recent-card-cat-icon">{getCategoryIcon(doc.category, 12)}</span>
+                      <span>{doc.category}</span>
+                    </span>
                     <span className="recent-card-time">
                       <Clock size={11} aria-hidden="true" />
                       <span>{doc.relativeTime}</span>
                     </span>
                   </div>
 
-                  {/* Title */}
+                  {/* Title Row with Specific Matching Route Icon from Sidebar */}
                   <div className="recent-card-title-row">
-                    <h3 className="recent-card-title">{doc.title}</h3>
+                    <div className="recent-card-title-wrap">
+                      <span className="recent-card-item-icon">
+                        {getDocIcon(doc.slug, doc.title, 14)}
+                      </span>
+                      <h3 className="recent-card-title">{doc.title}</h3>
+                    </div>
                     <ArrowRight size={14} className="recent-card-arrow" aria-hidden="true" />
                   </div>
 
