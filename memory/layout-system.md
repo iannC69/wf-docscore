@@ -45,8 +45,10 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
 - Height: `58px` (`--header-height`).
 - Background: `var(--glass-bg)` with `backdrop-filter: blur(18px)` and hairline bottom border.
 - **Brand Identity**:
-  - Liquid glass flame icon with ambient warm ember reflection.
+  - Official brand logo image (`/logo.png`) housed in a frosted glass badge with hover elevation.
   - Bold uppercase typography: `WILDFIRE` with amber `DOCS` badge and a frosted `v1.0` version pill tag.
+  - Dynamic Browser Tab Title: `Wildfire Docs — Developer Documentation Engine` (with sub-page template `%s — Wildfire Docs`).
+  - App Favicon: Custom `/logo.png` generated at `/icon.png` and `/apple-icon.png`.
 - **Center Search Dialog Trigger**:
   - Frosted glass input pill (`max-width: 440px`) with animated search icon and keyboard shortcut key (`⌘K` on Mac, `Ctrl K` on Windows/Linux) that glows with an amber border on hover.
 - **Right Controls**:
