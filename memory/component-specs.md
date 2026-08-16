@@ -125,8 +125,9 @@ Interactive link cards for documentation navigation and external resources.
 
 - Displays in the page header meta bar on every documentation page.
 - Features:
-  - Author Avatar with frosted ring and subtle ember glow.
-  - "Updated by" or "Posted by" label + GitHub profile link (`@iannC69`).
+  - **Pure Frosted Glass**: Translucent backdrop blur with hairline border and **zero glow (`box-shadow: none`)**.
+  - Author Avatar with clean subtle ring.
+  - "Updated by" label + GitHub profile link (`@iannC69`).
   - Relative updated time (e.g. `2d ago`, `1h ago`) with full ISO timestamp tooltip.
   - Direct Commit Hash Chip (`#4a740e3`) linking to GitHub commit.
 
@@ -135,7 +136,7 @@ Interactive link cards for documentation navigation and external resources.
 ## ✏️ 9. Header "Edit Page" Action Button (`.page-top-edit-btn`)
 
 - Positioned in the top row alongside breadcrumbs and status badges.
-- Frosted glass button with fire ember hover elevation and external link icon.
+- Frosted glass button with clean hover elevation and external link icon (no heavy glow).
 - Directly opens the GitHub web editor for that exact Markdown file in the repo.
 
 ---
@@ -145,7 +146,8 @@ Interactive link cards for documentation navigation and external resources.
 - Rendered dynamically on the Documentation Hub (`/docs`, `app/docs/page.tsx`).
 - Powered by `getRecentlyUpdatedDocs()` in `lib/git.ts`.
 - Features:
-  - Aurora top light beam on hover.
+  - **Pure Frosted Glass Surface**: `backdrop-filter: blur(14px)` over `var(--glass-bg)` with **zero glow / no beam overlays**.
+  - Crisp subtle hover state (`var(--glass-bg-hover)` with clean border).
   - Category pill + relative time badge (`Clock` icon + `2h ago`).
   - Document title and excerpt description.
   - Footer with author avatar, author name, commit hash badge, and reading time.
