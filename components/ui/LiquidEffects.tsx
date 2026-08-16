@@ -305,7 +305,7 @@ export function LiquidFireWave({
         <path
           fill="url(#lava-crest-grad)"
           style={{ animation: "lavaFlow3 6s ease-in-out infinite 1.2s" }}
-          d="M0,100 L0,60 C240,48 480,68 720,54 C960,44 1200,64 1320,52 1400,60 1440,56 L1440,100 Z"
+          d="M0,100 L0,60 C240,48 480,68 720,54 C960,40 1200,68 1440,56 L1440,100 Z"
         />
 
         {/* Wave Layer 4 — Golden Froth Tip */}
