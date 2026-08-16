@@ -106,7 +106,20 @@ The **Wildfire Docs Platform** utilizes a fluid, customizable multi-mode layout 
 
 ---
 
-## 📋 Table of Contents (TOC)
+## 🌍 5. Multi-Language Romanian & English Architecture (i18n)
+
+- **Supported Locales**: `en` (English 🇬🇧) & `ro` (Română 🇷🇴).
+- **Flag Switcher Component (`components/ui/LanguageSwitcher.tsx`)**:
+  - Segmented frosted glass pill showing `🇬🇧 EN` and `🇷🇴 RO` with active ember glow.
+  - Placed prominently in the **Top Navbar** and in the **Mobile Sidebar Drawer**.
+- **Content Hierarchy**:
+  - `content/docs/en/`: Full English markdown guides and API references.
+  - `content/docs/ro/`: Full natural Romanian markdown technical documentation.
+  - Dynamic fallback: Automatically falls back to English with a polite alert banner if a Romanian translation is pending.
+- **Bilingual UI Dictionary (`lib/i18n.ts`)**:
+  - Strongly-typed translations for search dialog, navigation labels, Production Edge status, feedback widgets, breadcrumbs, and article metadata.
+- **Locale-Aware Search (`/api/search?locale=ro|en`)**:
+  - Global search indexes each language independently and filters results by the active reader's language.
 
 - **Width**: `250px`
 - **Position**: `sticky top: calc(var(--header-height) + 24px)`
