@@ -18,12 +18,7 @@ function getDepthX(depth: number): number {
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [nodePositions, setNodePositions] = useState<{ y: number }[]>([]);
-  const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number; opacity: number }>({
-    top: 0,
-    height: 26,
-    opacity: 0,
-  });
+  const [nodeMetrics, setNodeMetrics] = useState<{ y: number; top: number; height: number }[]>([]);
   const activeIdRef = useRef<string>(items[0]?.id || "");
   const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -31,22 +26,29 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { tocOpen, toggleToc } = useLayout();
 
-  // 1. Measure real DOM item centers (0 glitch, 100% accurate alignment)
+  // 1. Measure real DOM item centers and row bounds (0 glitch, 100% synchronous)
   const measureNodes = useCallback(() => {
-    if (!containerRef.current || items.length === 0) return;
+    if (!containerRef.current || !listRef.current || items.length === 0) return;
     const containerTop = containerRef.current.getBoundingClientRect().top;
+    const listTop = listRef.current.getBoundingClientRect().top;
 
-    const positions = items.map((_, idx) => {
+    const metrics = items.map((_, idx) => {
       const el = itemRefs.current[idx];
       if (el) {
         const rect = el.getBoundingClientRect();
         const y = rect.top - containerTop + rect.height / 2;
-        return { y: Math.round(y) };
+        const top = rect.top - listTop;
+        const height = rect.height;
+        return {
+          y: Math.round(y),
+          top: Math.round(top),
+          height: Math.round(height),
+        };
       }
-      return { y: 13 + idx * 26 };
+      return { y: 13 + idx * 26, top: idx * 26, height: 26 };
     });
 
-    setNodePositions(positions);
+    setNodeMetrics(metrics);
   }, [items]);
 
   useEffect(() => {
@@ -141,23 +143,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
 
-  // 3. Update Gliding Frosted Glass Pill Position (Smooth magnetic transition)
-  useEffect(() => {
-    const activeIdx = items.findIndex((item) => item.id === activeId);
-    if (activeIdx >= 0 && itemRefs.current[activeIdx] && listRef.current) {
-      const itemEl = itemRefs.current[activeIdx]!;
-      const listEl = listRef.current;
-      const itemRect = itemEl.getBoundingClientRect();
-      const listRect = listEl.getBoundingClientRect();
-
-      setIndicatorStyle({
-        top: itemRect.top - listRect.top,
-        height: itemRect.height,
-        opacity: 1,
-      });
-    }
-  }, [activeId, items, nodePositions]);
-
   if (items.length === 0) return null;
 
   const handleClick = (id: string) => (e: React.MouseEvent) => {
@@ -175,49 +160,62 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
 
-  // 4. Compute Coordinates for every Depth Level (#, ##, ###, ####)
-  const points = useMemo(() => {
-    return items.map((item, idx) => {
+  // 3. Compute Coordinates, Cumulative Arc Lengths & S-Curves
+  const { points, fullPathD, totalSvgHeight, totalPathLength, cumulativeLengths } = useMemo(() => {
+    if (items.length === 0) {
+      return { points: [], fullPathD: "", totalSvgHeight: 60, totalPathLength: 0, cumulativeLengths: [] };
+    }
+
+    const pts = items.map((item, idx) => {
       const x = getDepthX(item.depth);
-      const measuredY = nodePositions[idx]?.y;
+      const measuredY = nodeMetrics[idx]?.y;
       const y = measuredY !== undefined ? measuredY : 13 + idx * 26;
       return { x, y, id: item.id, depth: item.depth };
     });
-  }, [items, nodePositions]);
 
-  const activePoint = points[activeIdx] || points[0] || { x: 10, y: 13 };
+    let fullD = `M ${pts[0].x} ${pts[0].y}`;
+    const lengths = [0];
+    let totalLen = 0;
 
-  // 5. Generate S-Curves that smoothly snake and bend between #, ##, and ###
-  const { fullPathD, activePathD, totalSvgHeight } = useMemo(() => {
-    if (points.length === 0) return { fullPathD: "", activePathD: "", totalSvgHeight: 60 };
-
-    let fullD = `M ${points[0].x} ${points[0].y}`;
-    let activeD = `M ${points[0].x} ${points[0].y}`;
-
-    for (let i = 1; i < points.length; i++) {
-      const p0 = points[i - 1];
-      const p1 = points[i];
+    for (let i = 1; i < pts.length; i++) {
+      const p0 = pts[i - 1];
+      const p1 = pts[i];
       const midY = (p0.y + p1.y) / 2;
 
-      // If x values are identical, straight vertical link; if different depths, organic S-curve!
       const segment =
         p0.x === p1.x
           ? ` L ${p1.x} ${p1.y}`
           : ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
 
       fullD += segment;
-      if (i <= activeIdx) {
-        activeD += segment;
-      }
+
+      const dx = p1.x - p0.x;
+      const dy = p1.y - p0.y;
+      const segLen = dx === 0 ? Math.abs(dy) : Math.sqrt(dx * dx + dy * dy) * 1.08;
+      totalLen += segLen;
+      lengths.push(totalLen);
     }
 
-    const totalHeight = points[points.length - 1].y + 16;
+    const totalHeight = pts[pts.length - 1].y + 16;
+
     return {
+      points: pts,
       fullPathD: fullD,
-      activePathD: activeD,
       totalSvgHeight: Math.max(totalHeight, 60),
+      totalPathLength: Math.max(totalLen, 1),
+      cumulativeLengths: lengths,
     };
-  }, [points, activeIdx]);
+  }, [items, nodeMetrics]);
+
+  const activePoint = points[activeIdx] || points[0] || { x: 10, y: 13 };
+  const activeStrokeLength = cumulativeLengths[activeIdx] ?? 0;
+  const activeDashOffset = Math.max(0, totalPathLength - activeStrokeLength);
+
+  // Synchronously derived capsule coordinates (Zero delayed effect frames)
+  const activeCapsuleMetrics = nodeMetrics[activeIdx] || {
+    top: activeIdx * 26,
+    height: 26,
+  };
 
   return (
     <>
@@ -300,19 +298,24 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
-                opacity="0.75"
+                opacity="0.65"
               />
             )}
 
-            {/* Active Flowing River Stroke */}
-            {activePathD && (
+            {/* Active Flowing River Stroke (Interpolates seamlessly with stroke-dashoffset) */}
+            {fullPathD && (
               <path
-                d={activePathD}
+                d={fullPathD}
                 stroke="url(#toc-depth-lava-stroke)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
+                style={{
+                  strokeDasharray: `${totalPathLength} ${totalPathLength + 20}`,
+                  strokeDashoffset: `${activeDashOffset}`,
+                  transition: "stroke-dashoffset 0.32s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
               />
             )}
 
@@ -336,6 +339,9 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                       : "var(--color-border-strong)"
                   }
                   strokeWidth="1"
+                  style={{
+                    transition: "fill 0.25s ease, stroke 0.25s ease",
+                  }}
                 />
               );
             })}
@@ -349,20 +355,20 @@ export function TableOfContents({ items }: TableOfContentsProps) {
               stroke="var(--sidebar-bg)"
               strokeWidth="1.5"
               style={{
-                transition: "cx 0.24s cubic-bezier(0.16, 1, 0.3, 1), cy 0.24s cubic-bezier(0.16, 1, 0.3, 1)",
+                transition: "cx 0.32s cubic-bezier(0.16, 1, 0.3, 1), cy 0.32s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             />
           </svg>
 
-          {/* List of Titles with Depth Padding & Gliding Frosted Glass Pill */}
+          {/* List of Titles with Gliding Frosted Glass Pill */}
           <div className="toc-list-wrapper">
-            {/* GPU-Accelerated Gliding Frosted Glass Pill */}
+            {/* GPU-Accelerated Gliding Frosted Glass Pill (Synchronously locked to active heading) */}
             <div
               className="toc-gliding-capsule"
               style={{
-                transform: `translate3d(0, ${indicatorStyle.top}px, 0)`,
-                height: `${indicatorStyle.height}px`,
-                opacity: indicatorStyle.opacity,
+                transform: `translate3d(0, ${activeCapsuleMetrics.top}px, 0)`,
+                height: `${activeCapsuleMetrics.height}px`,
+                opacity: nodeMetrics.length > 0 ? 1 : 0,
               }}
               aria-hidden="true"
             />
