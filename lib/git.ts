@@ -243,8 +243,9 @@ export function getRecentlyUpdatedDocs(limit: number = 6): RecentDocItem[] {
           ? (baseSlug || "")
           : (baseSlug ? `${baseSlug}/${entry.name.replace(/\.md$/, "")}` : entry.name.replace(/\.md$/, ""));
 
-        // Derive category from first slug segment
-        const firstSegment = fileSlug.split("/")[0] || "";
+        // Derive category from first slug segment (ignoring language subfolders if present)
+        const cleanSlug = fileSlug.replace(/^(en|ro)\//, "");
+        const firstSegment = cleanSlug.split("/")[0] || "";
         const categoryMap: Record<string, string> = {
           "getting-started": "Getting Started",
           "features": "Core Features",
