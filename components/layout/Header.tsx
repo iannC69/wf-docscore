@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LayoutControls } from "@/components/ui/LayoutControls";
 import { MobileMenuToggle } from "@/components/layout/MobileMenuToggle";
 import { SearchModal } from "@/components/ui/SearchModal";
+import { CURRENT_VERSION } from "@/lib/version";
 
 function GithubIcon({ size = 16 }: { size?: number }) {
   return (
@@ -59,7 +60,7 @@ export function Header() {
                 <span className="header-logo-badge">DOCS</span>
               </span>
               <span className="header-version-pill" aria-label="Platform Version">
-                v1.0
+                v{CURRENT_VERSION}
               </span>
             </Link>
           </div>

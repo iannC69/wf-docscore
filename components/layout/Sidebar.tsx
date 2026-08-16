@@ -19,6 +19,7 @@ import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
 import { getDocIcon } from "@/lib/icons";
+import { CURRENT_VERSION } from "@/lib/version";
 
 interface SidebarProps {
   nav: NavGroup[];
@@ -258,7 +259,7 @@ export function Sidebar({ nav }: SidebarProps) {
                         <Sparkles size={14} aria-hidden="true" />
                       </span>
                       <span className="nav-item-text">Changelog &amp; Releases</span>
-                      <span className="nav-item-badge badge--new">v1.2</span>
+                      <span className="nav-item-badge badge--new">v{CURRENT_VERSION}</span>
                     </Link>
                   </li>
                 </ul>
