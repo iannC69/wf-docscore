@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
@@ -8,46 +8,35 @@ interface TableOfContentsProps {
   items: TocItem[];
 }
 
-function getDepthX(depth: number): number {
-  if (depth <= 1) return 8;
-  if (depth === 2) return 10;
-  if (depth === 3) return 22;
-  return 30; // depth >= 4
-}
-
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [nodeMetrics, setNodeMetrics] = useState<{ y: number; top: number; height: number }[]>([]);
+  const [nodeMetrics, setNodeMetrics] = useState<{ top: number; height: number }[]>([]);
   const activeIdRef = useRef<string>(items[0]?.id || "");
   const prevActiveIdxRef = useRef<number>(0);
   const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const listRef = useRef<HTMLUListElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const tocAsideRef = useRef<HTMLElement>(null);
   const { tocOpen, toggleToc } = useLayout();
 
-  // 1. Measure real DOM item centers and row bounds (0 glitch, 100% synchronous)
+  // 1. Measure real DOM item bounds (Synchronous, zero layout thrashing)
   const measureNodes = useCallback(() => {
-    if (!containerRef.current || !listRef.current || items.length === 0) return;
-    const containerTop = containerRef.current.getBoundingClientRect().top;
+    if (!listRef.current || items.length === 0) return;
     const listTop = listRef.current.getBoundingClientRect().top;
 
     const metrics = items.map((_, idx) => {
       const el = itemRefs.current[idx];
       if (el) {
         const rect = el.getBoundingClientRect();
-        const y = rect.top - containerTop + rect.height / 2;
         const top = rect.top - listTop;
         const height = rect.height;
         return {
-          y: Math.round(y),
           top: Math.round(top),
           height: Math.round(height),
         };
       }
-      return { y: 13 + idx * 26, top: idx * 26, height: 26 };
+      return { top: idx * 28, height: 28 };
     });
 
     setNodeMetrics(metrics);
@@ -179,66 +168,14 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     }
   }, [activeIdx, delta]);
 
-  // If scrolling super fast (delta >= 3), speed up transition to 0.12s so it keeps up instantly without lag!
-  // If normal scroll (delta <= 1), enjoy the silky 0.26s liquid physics!
+  // Motion physics timing
   const motionDuration = delta >= 3 ? "0.12s" : delta === 2 ? "0.18s" : "0.26s";
   const motionEasing = delta >= 3 ? "cubic-bezier(0.1, 0.9, 0.2, 1)" : "cubic-bezier(0.16, 1, 0.3, 1)";
 
-  // 4. Compute Coordinates, Cumulative Arc Lengths & S-Curves
-  const { points, fullPathD, totalSvgHeight, totalPathLength, cumulativeLengths } = useMemo(() => {
-    if (items.length === 0) {
-      return { points: [], fullPathD: "", totalSvgHeight: 60, totalPathLength: 0, cumulativeLengths: [] };
-    }
-
-    const pts = items.map((item, idx) => {
-      const x = getDepthX(item.depth);
-      const measuredY = nodeMetrics[idx]?.y;
-      const y = measuredY !== undefined ? measuredY : 13 + idx * 26;
-      return { x, y, id: item.id, depth: item.depth };
-    });
-
-    let fullD = `M ${pts[0].x} ${pts[0].y}`;
-    const lengths = [0];
-    let totalLen = 0;
-
-    for (let i = 1; i < pts.length; i++) {
-      const p0 = pts[i - 1];
-      const p1 = pts[i];
-      const midY = (p0.y + p1.y) / 2;
-
-      const segment =
-        p0.x === p1.x
-          ? ` L ${p1.x} ${p1.y}`
-          : ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
-
-      fullD += segment;
-
-      const dx = p1.x - p0.x;
-      const dy = p1.y - p0.y;
-      const segLen = dx === 0 ? Math.abs(dy) : Math.sqrt(dx * dx + dy * dy) * 1.08;
-      totalLen += segLen;
-      lengths.push(totalLen);
-    }
-
-    const totalHeight = pts[pts.length - 1].y + 16;
-
-    return {
-      points: pts,
-      fullPathD: fullD,
-      totalSvgHeight: Math.max(totalHeight, 60),
-      totalPathLength: Math.max(totalLen, 1),
-      cumulativeLengths: lengths,
-    };
-  }, [items, nodeMetrics]);
-
-  const activePoint = points[activeIdx] || points[0] || { x: 10, y: 13 };
-  const activeStrokeLength = cumulativeLengths[activeIdx] ?? 0;
-  const activeDashOffset = Math.max(0, totalPathLength - activeStrokeLength);
-
   // Synchronously derived capsule coordinates (Zero delayed effect frames)
   const activeCapsuleMetrics = nodeMetrics[activeIdx] || {
-    top: activeIdx * 26,
-    height: 26,
+    top: activeIdx * 28,
+    height: 28,
   };
 
   return (
@@ -289,105 +226,24 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           </div>
         </div>
 
-        {/* Depth-Aware Continuous S-Curve Navigation */}
-        <nav className="toc-depth-nav" ref={containerRef}>
-          {/* SVG Depth-Flowing S-Curve */}
-          <svg
-            className="toc-depth-svg"
-            width="36"
-            height={totalSvgHeight}
-            viewBox={`0 0 36 ${totalSvgHeight}`}
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient
-                id="toc-depth-lava-stroke"
-                x1="0%"
-                y1="0%"
-                x2="0%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="hsl(26 100% 52%)" />
-                <stop offset="100%" stopColor="hsl(38 100% 55%)" />
-              </linearGradient>
-            </defs>
-
-            {/* Base River Spine */}
-            {fullPathD && (
-              <path
-                d={fullPathD}
-                stroke="var(--color-border)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                opacity="0.65"
-              />
-            )}
-
-            {/* Active Flowing River Stroke (Adaptive velocity interpolation) */}
-            {fullPathD && (
-              <path
-                d={fullPathD}
-                stroke="url(#toc-depth-lava-stroke)"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                style={{
-                  strokeDasharray: `${totalPathLength} ${totalPathLength + 20}`,
-                  strokeDashoffset: `${activeDashOffset}`,
-                  transition: `stroke-dashoffset ${motionDuration} ${motionEasing}`,
-                }}
-              />
-            )}
-
-            {/* Static Depth Nodes on Curve */}
-            {points.map((pt, idx) => {
-              const isPassed = idx <= activeIdx;
-              return (
-                <circle
-                  key={items[idx]?.id || idx}
-                  cx={pt.x}
-                  cy={pt.y}
-                  r={pt.depth >= 3 ? "1.8" : "2.2"}
-                  fill={
-                    isPassed
-                      ? "hsl(26 100% 52%)"
-                      : "var(--color-surface-raised)"
-                  }
-                  stroke={
-                    isPassed
-                      ? "hsl(26 100% 52% / 0.5)"
-                      : "var(--color-border-strong)"
-                  }
-                  strokeWidth="1"
-                  style={{
-                    transition: "fill 0.20s ease, stroke 0.20s ease",
-                  }}
-                />
-              );
-            })}
-
-            {/* Smooth Gliding Active Head Indicator (Adaptive velocity physics) */}
-            <circle
-              cx={activePoint.x}
-              cy={activePoint.y}
-              r="3.5"
-              fill="hsl(26 100% 52%)"
-              stroke="var(--sidebar-bg)"
-              strokeWidth="1.5"
+        {/* Deep Recessed Liquid Glass Spine & Navigation */}
+        <nav className="toc-deep-nav">
+          {/* Deep Recessed Trench Rail on the Left */}
+          <div className="toc-deep-trench" aria-hidden="true">
+            {/* Glowing Liquid Droplet Pill Gliding Inside the Trench */}
+            <div
+              className="toc-trench-liquid-core"
               style={{
-                transition: `cx ${motionDuration} ${motionEasing}, cy ${motionDuration} ${motionEasing}`,
+                transform: `translate3d(0, ${activeCapsuleMetrics.top + 4}px, 0)`,
+                height: `${Math.max(16, activeCapsuleMetrics.height - 8)}px`,
+                transition: `transform ${motionDuration} ${motionEasing}, height ${motionDuration} ${motionEasing}`,
               }}
             />
-          </svg>
+          </div>
 
-          {/* List of Titles with Gliding Frosted Glass Pill */}
-          <div className="toc-list-wrapper">
-            {/* GPU-Accelerated Gliding Frosted Glass Pill (Adaptive velocity tracking) */}
+          {/* List of Titles with Gliding Magnetic Frosted Glass Capsule */}
+          <div className="toc-deep-list-wrapper">
+            {/* GPU-Accelerated Gliding Frosted Glass Pill */}
             <div
               className="toc-gliding-capsule"
               style={{
@@ -399,7 +255,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
               aria-hidden="true"
             />
 
-            <ul role="list" className="toc-depth-list" ref={listRef}>
+            <ul role="list" className="toc-deep-list" ref={listRef}>
               {items.map((item, index) => {
                 const isActive = activeId === item.id;
                 const depth = item.depth || 2;
@@ -410,15 +266,23 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     ref={(el) => {
                       itemRefs.current[index] = el;
                     }}
-                    className={`toc-depth-row toc-depth-row--${depth}`}
+                    className={`toc-deep-row toc-deep-row--${depth}`}
                   >
+                    {/* Delicate Glass Branch Elbow for Nested Subsections */}
+                    {depth >= 3 && (
+                      <span
+                        className={`toc-branch-connector ${isActive ? "toc-branch-connector--active" : ""}`}
+                        aria-hidden="true"
+                      />
+                    )}
+
                     <a
                       href={`#${item.id}`}
                       onClick={handleClick(item.id)}
-                      className={`toc-depth-link ${isActive ? "toc-depth-link--active" : ""}`}
+                      className={`toc-deep-link ${isActive ? "toc-deep-link--active" : ""} ${depth >= 3 ? "toc-deep-link--nested" : ""}`}
                       aria-current={isActive ? "location" : undefined}
                     >
-                      <span className="toc-depth-text">{item.title}</span>
+                      <span className="toc-deep-text">{item.title}</span>
                     </a>
                   </li>
                 );
