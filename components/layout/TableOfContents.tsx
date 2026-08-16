@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
@@ -14,6 +14,8 @@ const START_OFFSET_Y = 14;
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [pathTotalLength, setPathTotalLength] = useState<number>(0);
+  const pathRef = useRef<SVGPathElement>(null);
   const { tocOpen, toggleToc } = useLayout();
 
   // Scroll Progress Calculator
@@ -57,6 +59,47 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     return () => observer.disconnect();
   }, [items]);
 
+  // Calculate coordinates for every item
+  const nodePoints = useMemo(() => {
+    return items.map((item, index) => {
+      const isNested = item.depth >= 3;
+      const x = isNested ? 20 : 8;
+      const y = START_OFFSET_Y + index * ITEM_ROW_HEIGHT;
+      return { x, y, id: item.id, depth: item.depth, title: item.title, index };
+    });
+  }, [items]);
+
+  // Construct continuous flowing S-curve path (Fixed geometry, animated via dashoffset)
+  const { fullPathD, totalSvgHeight } = useMemo(() => {
+    if (nodePoints.length === 0)
+      return { fullPathD: "", totalSvgHeight: 100 };
+
+    let fullD = `M ${nodePoints[0].x} ${nodePoints[0].y}`;
+
+    for (let i = 1; i < nodePoints.length; i++) {
+      const p0 = nodePoints[i - 1];
+      const p1 = nodePoints[i];
+      const midY = (p0.y + p1.y) / 2;
+      fullD += ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
+    }
+
+    const totalHeight =
+      START_OFFSET_Y * 2 + (nodePoints.length - 1) * ITEM_ROW_HEIGHT;
+
+    return {
+      fullPathD: fullD,
+      totalSvgHeight: Math.max(totalHeight, 100),
+    };
+  }, [nodePoints]);
+
+  // Measure path length on SVG mount
+  useEffect(() => {
+    if (pathRef.current) {
+      const len = pathRef.current.getTotalLength();
+      setPathTotalLength(len);
+    }
+  }, [fullPathD]);
+
   if (items.length === 0) return null;
 
   const handleClick = (id: string) => (e: React.MouseEvent) => {
@@ -72,46 +115,16 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
+  const activePoint = nodePoints[activeIdx] || nodePoints[0] || { x: 8, y: 14 };
 
-  // Calculate coordinates for every item
-  const nodePoints = useMemo(() => {
-    return items.map((item, index) => {
-      const isNested = item.depth >= 3;
-      const x = isNested ? 20 : 8;
-      const y = START_OFFSET_Y + index * ITEM_ROW_HEIGHT;
-      return { x, y, id: item.id, depth: item.depth, title: item.title };
-    });
-  }, [items]);
+  // Calculate active path length for smooth dashoffset liquid transition
+  const activeLength =
+    pathTotalLength > 0 && nodePoints.length > 1
+      ? (activeIdx / (nodePoints.length - 1)) * pathTotalLength
+      : 0;
 
-  // Construct continuous flowing S-curve path
-  const { fullPathD, activePathD, totalSvgHeight } = useMemo(() => {
-    if (nodePoints.length === 0)
-      return { fullPathD: "", activePathD: "", totalSvgHeight: 100 };
-
-    let fullD = `M ${nodePoints[0].x} ${nodePoints[0].y}`;
-    let activeD = `M ${nodePoints[0].x} ${nodePoints[0].y}`;
-
-    for (let i = 1; i < nodePoints.length; i++) {
-      const p0 = nodePoints[i - 1];
-      const p1 = nodePoints[i];
-      const midY = (p0.y + p1.y) / 2;
-      const curveSegment = ` C ${p0.x} ${midY}, ${p1.x} ${midY}, ${p1.x} ${p1.y}`;
-      fullD += curveSegment;
-
-      if (i <= activeIdx) {
-        activeD += curveSegment;
-      }
-    }
-
-    const totalHeight =
-      START_OFFSET_Y * 2 + (nodePoints.length - 1) * ITEM_ROW_HEIGHT;
-
-    return {
-      fullPathD: fullD,
-      activePathD: activeD,
-      totalSvgHeight: Math.max(totalHeight, 100),
-    };
-  }, [nodePoints, activeIdx]);
+  const dashOffset =
+    pathTotalLength > 0 ? Math.max(0, pathTotalLength - activeLength) : 0;
 
   return (
     <>
@@ -168,93 +181,108 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             {/* SVG Flow River Curves */}
             <svg
               className="toc-flow-svg"
-              width="32"
+              width="30"
               height={totalSvgHeight}
-              viewBox={`0 0 32 ${totalSvgHeight}`}
+              viewBox={`0 0 30 ${totalSvgHeight}`}
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
               <defs>
                 <linearGradient
-                  id="toc-active-lava-gradient"
+                  id="toc-lava-stroke"
                   x1="0%"
                   y1="0%"
                   x2="0%"
                   y2="100%"
                 >
                   <stop offset="0%" stopColor="hsl(26 100% 55%)" />
-                  <stop offset="100%" stopColor="hsl(38 100% 55%)" />
+                  <stop offset="100%" stopColor="hsl(42 100% 58%)" />
                 </linearGradient>
-                <filter id="toc-glow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="1.5" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
               </defs>
 
-              {/* Inactive Base Track Curve */}
+              {/* Inactive Base River Spine */}
               <path
                 d={fullPathD}
                 stroke="var(--color-border)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
+                strokeLinejoin="round"
                 fill="none"
+                opacity="0.8"
               />
 
-              {/* Active Glowing Flow Curve */}
+              {/* Active Smooth Liquid Flow (Animated via CSS strokeDashoffset) */}
               <path
-                d={activePathD}
-                stroke="url(#toc-active-lava-gradient)"
-                strokeWidth="2"
+                ref={pathRef}
+                d={fullPathD}
+                stroke="url(#toc-lava-stroke)"
+                strokeWidth="2.5"
                 strokeLinecap="round"
+                strokeLinejoin="round"
                 fill="none"
-                filter="url(#toc-glow)"
-                className="toc-active-flow-path"
+                style={{
+                  strokeDasharray: pathTotalLength > 0 ? pathTotalLength : 1000,
+                  strokeDashoffset: dashOffset,
+                  transition: "stroke-dashoffset 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  filter: "drop-shadow(0 0 4px hsl(26 100% 52% / 0.6))",
+                }}
               />
 
-              {/* River Node Dots */}
+              {/* Static Background Nodes */}
               {nodePoints.map((pt, idx) => {
-                const isActive = activeId === pt.id;
                 const isPassed = idx <= activeIdx;
-
                 return (
-                  <g key={pt.id} transform={`translate(${pt.x}, ${pt.y})`}>
-                    <circle
-                      r={isActive ? "4" : "2.5"}
-                      fill={
-                        isActive
-                          ? "hsl(38 100% 55%)"
-                          : isPassed
-                          ? "hsl(26 100% 52%)"
-                          : "var(--color-surface-raised)"
-                      }
-                      stroke={
-                        isActive
-                          ? "hsl(26 100% 52%)"
-                          : isPassed
-                          ? "hsl(26 100% 52% / 0.5)"
-                          : "var(--color-border-strong)"
-                      }
-                      strokeWidth={isActive ? "2" : "1.5"}
-                    />
-                    {isActive && (
-                      <circle
-                        r="7"
-                        fill="none"
-                        stroke="hsl(26 100% 52%)"
-                        strokeWidth="1"
-                        opacity="0.6"
-                        className="toc-ping-ring"
-                      />
-                    )}
-                  </g>
+                  <circle
+                    key={pt.id}
+                    cx={pt.x}
+                    cy={pt.y}
+                    r={pt.depth >= 3 ? "2" : "2.5"}
+                    fill={
+                      isPassed
+                        ? "hsl(26 100% 52%)"
+                        : "var(--color-surface-raised)"
+                    }
+                    stroke={
+                      isPassed
+                        ? "hsl(26 100% 52% / 0.4)"
+                        : "var(--color-border-strong)"
+                    }
+                    strokeWidth="1"
+                    style={{ transition: "fill 0.3s ease, stroke 0.3s ease" }}
+                  />
                 );
               })}
+
+              {/* Smooth Gliding Active Ember Bead */}
+              <g
+                style={{
+                  transform: `translate(${activePoint.x}px, ${activePoint.y}px)`,
+                  transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
+              >
+                {/* Outer Glow Halo */}
+                <circle
+                  r="7"
+                  fill="hsl(26 100% 52% / 0.2)"
+                  className="toc-ping-halo"
+                />
+                {/* Core Glowing Ember Node */}
+                <circle
+                  r="4"
+                  fill="hsl(44 100% 60%)"
+                  stroke="hsl(26 100% 52%)"
+                  strokeWidth="1.5"
+                  style={{
+                    filter: "drop-shadow(0 0 6px hsl(26 100% 52%))",
+                  }}
+                />
+              </g>
             </svg>
 
             {/* List of Titles */}
             <ul role="list" className="toc-flow-list">
-              {items.map((item) => {
+              {items.map((item, index) => {
                 const isActive = activeId === item.id;
                 const isNested = item.depth >= 3;
 
