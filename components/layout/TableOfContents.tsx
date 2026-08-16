@@ -19,9 +19,15 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [nodePositions, setNodePositions] = useState<{ y: number }[]>([]);
+  const [indicatorStyle, setIndicatorStyle] = useState<{ top: number; height: number; opacity: number }>({
+    top: 0,
+    height: 26,
+    opacity: 0,
+  });
   const activeIdRef = useRef<string>(items[0]?.id || "");
   const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const listRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { tocOpen, toggleToc } = useLayout();
 
@@ -135,6 +141,23 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
 
+  // 3. Update Gliding Frosted Glass Pill Position (Smooth magnetic transition)
+  useEffect(() => {
+    const activeIdx = items.findIndex((item) => item.id === activeId);
+    if (activeIdx >= 0 && itemRefs.current[activeIdx] && listRef.current) {
+      const itemEl = itemRefs.current[activeIdx]!;
+      const listEl = listRef.current;
+      const itemRect = itemEl.getBoundingClientRect();
+      const listRect = listEl.getBoundingClientRect();
+
+      setIndicatorStyle({
+        top: itemRect.top - listRect.top,
+        height: itemRect.height,
+        opacity: 1,
+      });
+    }
+  }, [activeId, items, nodePositions]);
+
   if (items.length === 0) return null;
 
   const handleClick = (id: string) => (e: React.MouseEvent) => {
@@ -152,7 +175,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
 
-  // 3. Compute Coordinates for every Depth Level (#, ##, ###, ####)
+  // 4. Compute Coordinates for every Depth Level (#, ##, ###, ####)
   const points = useMemo(() => {
     return items.map((item, idx) => {
       const x = getDepthX(item.depth);
@@ -164,7 +187,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
   const activePoint = points[activeIdx] || points[0] || { x: 10, y: 13 };
 
-  // 4. Generate S-Curves that smoothly snake and bend between #, ##, and ###
+  // 5. Generate S-Curves that smoothly snake and bend between #, ##, and ###
   const { fullPathD, activePathD, totalSvgHeight } = useMemo(() => {
     if (points.length === 0) return { fullPathD: "", activePathD: "", totalSvgHeight: 60 };
 
@@ -215,124 +238,136 @@ export function TableOfContents({ items }: TableOfContentsProps) {
         aria-label="Table of contents"
         data-collapsed={!tocOpen}
       >
-          {/* Header */}
-          <div className="toc-header">
-            <div className="toc-header-left">
-              <span className="toc-header-icon-box">
-                <AlignLeft size={11} className="toc-header-icon" aria-hidden="true" />
-              </span>
-              <span className="toc-title">On this page</span>
-            </div>
-
-            <div className="toc-header-right">
-              {scrollProgress > 0 && (
-                <span className="toc-progress-chip" title="Reading Progress">
-                  {scrollProgress}%
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={toggleToc}
-                className="toc-collapse-btn"
-                title="Collapse Table of Contents (Shortcut: ])"
-                aria-label="Collapse table of contents"
-              >
-                <PanelRightClose size={12} />
-                <kbd className="toc-collapse-kbd" aria-hidden="true">]</kbd>
-              </button>
-            </div>
+        {/* Header */}
+        <div className="toc-header">
+          <div className="toc-header-left">
+            <span className="toc-header-icon-box">
+              <AlignLeft size={11} className="toc-header-icon" aria-hidden="true" />
+            </span>
+            <span className="toc-title">On this page</span>
           </div>
 
-          {/* Depth-Aware Continuous S-Curve Navigation */}
-          <nav className="toc-depth-nav" ref={containerRef}>
-            {/* SVG Depth-Flowing S-Curve */}
-            <svg
-              className="toc-depth-svg"
-              width="36"
-              height={totalSvgHeight}
-              viewBox={`0 0 36 ${totalSvgHeight}`}
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
+          <div className="toc-header-right">
+            {scrollProgress > 0 && (
+              <span className="toc-progress-chip" title="Reading Progress">
+                {scrollProgress}%
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={toggleToc}
+              className="toc-collapse-btn"
+              title="Collapse Table of Contents (Shortcut: ])"
+              aria-label="Collapse table of contents"
             >
-              <defs>
-                <linearGradient
-                  id="toc-depth-lava-stroke"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="hsl(26 100% 52%)" />
-                  <stop offset="100%" stopColor="hsl(38 100% 55%)" />
-                </linearGradient>
-              </defs>
+              <PanelRightClose size={12} />
+              <kbd className="toc-collapse-kbd" aria-hidden="true">]</kbd>
+            </button>
+          </div>
+        </div>
 
-              {/* Base River Spine */}
-              {fullPathD && (
-                <path
-                  d={fullPathD}
-                  stroke="var(--color-border)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  opacity="0.75"
-                />
-              )}
+        {/* Depth-Aware Continuous S-Curve Navigation */}
+        <nav className="toc-depth-nav" ref={containerRef}>
+          {/* SVG Depth-Flowing S-Curve */}
+          <svg
+            className="toc-depth-svg"
+            width="36"
+            height={totalSvgHeight}
+            viewBox={`0 0 36 ${totalSvgHeight}`}
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient
+                id="toc-depth-lava-stroke"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="hsl(26 100% 52%)" />
+                <stop offset="100%" stopColor="hsl(38 100% 55%)" />
+              </linearGradient>
+            </defs>
 
-              {/* Active Flowing River Stroke */}
-              {activePathD && (
-                <path
-                  d={activePathD}
-                  stroke="url(#toc-depth-lava-stroke)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-              )}
-
-              {/* Static Depth Nodes on Curve */}
-              {points.map((pt, idx) => {
-                const isPassed = idx <= activeIdx;
-                return (
-                  <circle
-                    key={items[idx]?.id || idx}
-                    cx={pt.x}
-                    cy={pt.y}
-                    r={pt.depth >= 3 ? "1.8" : "2.2"}
-                    fill={
-                      isPassed
-                        ? "hsl(26 100% 52%)"
-                        : "var(--color-surface-raised)"
-                    }
-                    stroke={
-                      isPassed
-                        ? "hsl(26 100% 52% / 0.5)"
-                        : "var(--color-border-strong)"
-                    }
-                    strokeWidth="1"
-                  />
-                );
-              })}
-
-              {/* Smooth Gliding Active Head Indicator */}
-              <circle
-                cx={activePoint.x}
-                cy={activePoint.y}
-                r="3.5"
-                fill="hsl(26 100% 52%)"
-                stroke="var(--sidebar-bg)"
+            {/* Base River Spine */}
+            {fullPathD && (
+              <path
+                d={fullPathD}
+                stroke="var(--color-border)"
                 strokeWidth="1.5"
-                style={{
-                  transition: "cx 0.2s cubic-bezier(0.2, 0, 0, 1), cy 0.2s cubic-bezier(0.2, 0, 0, 1)",
-                }}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+                opacity="0.75"
               />
-            </svg>
+            )}
 
-            {/* List of Titles with Depth Padding */}
-            <ul role="list" className="toc-depth-list">
+            {/* Active Flowing River Stroke */}
+            {activePathD && (
+              <path
+                d={activePathD}
+                stroke="url(#toc-depth-lava-stroke)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            )}
+
+            {/* Static Depth Nodes on Curve */}
+            {points.map((pt, idx) => {
+              const isPassed = idx <= activeIdx;
+              return (
+                <circle
+                  key={items[idx]?.id || idx}
+                  cx={pt.x}
+                  cy={pt.y}
+                  r={pt.depth >= 3 ? "1.8" : "2.2"}
+                  fill={
+                    isPassed
+                      ? "hsl(26 100% 52%)"
+                      : "var(--color-surface-raised)"
+                  }
+                  stroke={
+                    isPassed
+                      ? "hsl(26 100% 52% / 0.5)"
+                      : "var(--color-border-strong)"
+                  }
+                  strokeWidth="1"
+                />
+              );
+            })}
+
+            {/* Smooth Gliding Active Head Indicator */}
+            <circle
+              cx={activePoint.x}
+              cy={activePoint.y}
+              r="3.5"
+              fill="hsl(26 100% 52%)"
+              stroke="var(--sidebar-bg)"
+              strokeWidth="1.5"
+              style={{
+                transition: "cx 0.24s cubic-bezier(0.16, 1, 0.3, 1), cy 0.24s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            />
+          </svg>
+
+          {/* List of Titles with Depth Padding & Gliding Frosted Glass Pill */}
+          <div className="toc-list-wrapper">
+            {/* GPU-Accelerated Gliding Frosted Glass Pill */}
+            <div
+              className="toc-gliding-capsule"
+              style={{
+                transform: `translate3d(0, ${indicatorStyle.top}px, 0)`,
+                height: `${indicatorStyle.height}px`,
+                opacity: indicatorStyle.opacity,
+              }}
+              aria-hidden="true"
+            />
+
+            <ul role="list" className="toc-depth-list" ref={listRef}>
               {items.map((item, index) => {
                 const isActive = activeId === item.id;
                 const depth = item.depth || 2;
@@ -357,8 +392,9 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 );
               })}
             </ul>
-          </nav>
-        </aside>
+          </div>
+        </nav>
+      </aside>
     </>
   );
 }
