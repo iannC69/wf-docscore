@@ -144,10 +144,17 @@ Interactive link cards for documentation navigation and external resources.
 ## 🕒 10. Recently Updated Documentation Cards (`.recent-update-card`)
 
 - Rendered dynamically on the Documentation Hub (`/docs`, `app/docs/page.tsx`).
-- Powered by `getRecentlyUpdatedDocs()` in `lib/git.ts`.
+- Powered by `getRecentlyUpdatedDocs()` in `lib/git.ts` and `getDocColorVariant()` in `lib/icons.tsx`.
 - Features:
-  - **Pure Frosted Glass Surface**: `backdrop-filter: blur(14px)` over `var(--glass-bg)` with **zero glow / no beam overlays**.
-  - Crisp subtle hover state (`var(--glass-bg-hover)` with clean border).
+  - **Pure Frosted Glass Surface**: `backdrop-filter: blur(14px)` over `var(--glass-bg)` with **zero glow**.
+  - **Dynamic Route-Specific Accent Colors**:
+    - 🟢 **Green** (`hsl(142 72% 42%)`): Database schemas & tables (`<Database />`)
+    - 🔵 **Blue** (`hsl(210 85% 56%)`): API Reference & Webhooks (`<Terminal />`, `<Webhook />`)
+    - 🟣 **Purple** (`hsl(258 75% 62%)`): MDX Components & Core Features (`<Code2 />`, `<Sparkles />`)
+    - 🩵 **Teal** (`hsl(168 80% 44%)`): GitOps, GitHub Sync, & Full-Text Search (`<GitBranch />`, `<Search />`)
+    - 🟡 **Yellow** (`hsl(44 100% 52%)`): Setup & Configuration (`<Sliders />`)
+    - 🟠 **Orange** (`hsl(26 100% 52%)`): Getting Started & Installation (`<Rocket />`, `<Package />`)
+    - 🔴 **Red** (`hsl(4 90% 52%)`): Deployment & Production (`<Cloud />`)
   - Category pill + relative time badge (`Clock` icon + `2h ago`).
   - Document title and excerpt description.
   - Footer with author avatar, author name, commit hash badge, and reading time.
