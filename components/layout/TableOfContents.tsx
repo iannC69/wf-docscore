@@ -20,10 +20,12 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [nodeMetrics, setNodeMetrics] = useState<{ y: number; top: number; height: number }[]>([]);
   const activeIdRef = useRef<string>(items[0]?.id || "");
+  const prevActiveIdxRef = useRef<number>(0);
   const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const listRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const tocAsideRef = useRef<HTMLElement>(null);
   const { tocOpen, toggleToc } = useLayout();
 
   // 1. Measure real DOM item centers and row bounds (0 glitch, 100% synchronous)
@@ -112,16 +114,15 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             return;
           }
 
-          // Fast arithmetic search in cached offsets
+          // Reverse fast search in cached offsets
           const offsets = cachedHeadings.current;
           if (offsets.length > 0) {
             const triggerY = scrollY + 110;
             let currentId = offsets[0].id;
 
-            for (let i = 0; i < offsets.length; i++) {
+            for (let i = offsets.length - 1; i >= 0; i--) {
               if (triggerY >= offsets[i].top) {
                 currentId = offsets[i].id;
-              } else {
                 break;
               }
             }
@@ -160,7 +161,30 @@ export function TableOfContents({ items }: TableOfContentsProps) {
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
 
-  // 3. Compute Coordinates, Cumulative Arc Lengths & S-Curves
+  // 3. Adaptive Dynamic Velocity (Adapts transition speed based on scroll velocity)
+  const delta = Math.abs(activeIdx - prevActiveIdxRef.current);
+  useEffect(() => {
+    prevActiveIdxRef.current = activeIdx;
+
+    // Auto-scroll TOC container if heading goes out of card view during rapid scrolling
+    if (itemRefs.current[activeIdx] && tocAsideRef.current) {
+      const itemEl = itemRefs.current[activeIdx]!;
+      const asideEl = tocAsideRef.current;
+      const asideRect = asideEl.getBoundingClientRect();
+      const itemRect = itemEl.getBoundingClientRect();
+
+      if (itemRect.bottom > asideRect.bottom - 16 || itemRect.top < asideRect.top + 16) {
+        itemEl.scrollIntoView({ block: "nearest", behavior: delta > 2 ? "auto" : "smooth" });
+      }
+    }
+  }, [activeIdx, delta]);
+
+  // If scrolling super fast (delta >= 3), speed up transition to 0.12s so it keeps up instantly without lag!
+  // If normal scroll (delta <= 1), enjoy the silky 0.26s liquid physics!
+  const motionDuration = delta >= 3 ? "0.12s" : delta === 2 ? "0.18s" : "0.26s";
+  const motionEasing = delta >= 3 ? "cubic-bezier(0.1, 0.9, 0.2, 1)" : "cubic-bezier(0.16, 1, 0.3, 1)";
+
+  // 4. Compute Coordinates, Cumulative Arc Lengths & S-Curves
   const { points, fullPathD, totalSvgHeight, totalPathLength, cumulativeLengths } = useMemo(() => {
     if (items.length === 0) {
       return { points: [], fullPathD: "", totalSvgHeight: 60, totalPathLength: 0, cumulativeLengths: [] };
@@ -232,6 +256,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       </button>
 
       <aside
+        ref={tocAsideRef}
         className={`toc ${tocOpen ? "toc--open" : "toc--collapsed"}`}
         aria-label="Table of contents"
         data-collapsed={!tocOpen}
@@ -302,7 +327,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
               />
             )}
 
-            {/* Active Flowing River Stroke (Interpolates seamlessly with stroke-dashoffset) */}
+            {/* Active Flowing River Stroke (Adaptive velocity interpolation) */}
             {fullPathD && (
               <path
                 d={fullPathD}
@@ -314,7 +339,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                 style={{
                   strokeDasharray: `${totalPathLength} ${totalPathLength + 20}`,
                   strokeDashoffset: `${activeDashOffset}`,
-                  transition: "stroke-dashoffset 0.32s cubic-bezier(0.16, 1, 0.3, 1)",
+                  transition: `stroke-dashoffset ${motionDuration} ${motionEasing}`,
                 }}
               />
             )}
@@ -340,13 +365,13 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                   }
                   strokeWidth="1"
                   style={{
-                    transition: "fill 0.25s ease, stroke 0.25s ease",
+                    transition: "fill 0.20s ease, stroke 0.20s ease",
                   }}
                 />
               );
             })}
 
-            {/* Smooth Gliding Active Head Indicator */}
+            {/* Smooth Gliding Active Head Indicator (Adaptive velocity physics) */}
             <circle
               cx={activePoint.x}
               cy={activePoint.y}
@@ -355,20 +380,21 @@ export function TableOfContents({ items }: TableOfContentsProps) {
               stroke="var(--sidebar-bg)"
               strokeWidth="1.5"
               style={{
-                transition: "cx 0.32s cubic-bezier(0.16, 1, 0.3, 1), cy 0.32s cubic-bezier(0.16, 1, 0.3, 1)",
+                transition: `cx ${motionDuration} ${motionEasing}, cy ${motionDuration} ${motionEasing}`,
               }}
             />
           </svg>
 
           {/* List of Titles with Gliding Frosted Glass Pill */}
           <div className="toc-list-wrapper">
-            {/* GPU-Accelerated Gliding Frosted Glass Pill (Synchronously locked to active heading) */}
+            {/* GPU-Accelerated Gliding Frosted Glass Pill (Adaptive velocity tracking) */}
             <div
               className="toc-gliding-capsule"
               style={{
                 transform: `translate3d(0, ${activeCapsuleMetrics.top}px, 0)`,
                 height: `${activeCapsuleMetrics.height}px`,
                 opacity: nodeMetrics.length > 0 ? 1 : 0,
+                transition: `transform ${motionDuration} ${motionEasing}, height ${motionDuration} ${motionEasing}, opacity 0.2s ease`,
               }}
               aria-hidden="true"
             />
