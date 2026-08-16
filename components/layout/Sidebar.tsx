@@ -13,6 +13,7 @@ import {
   LayoutGrid,
   ChevronRight,
   Compass,
+  Sparkles,
 } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
@@ -243,6 +244,21 @@ export function Sidebar({ nav }: SidebarProps) {
                         <Compass size={14} aria-hidden="true" />
                       </span>
                       <span className="nav-item-text">Documentation Hub</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/changelog"
+                      onClick={closeMobileSidebar}
+                      className={`nav-item${pathname === "/changelog" ? " nav-item--active" : ""}`}
+                      aria-current={pathname === "/changelog" ? "page" : undefined}
+                    >
+                      <span className="nav-item-indicator" aria-hidden="true" />
+                      <span className="nav-item-icon">
+                        <Sparkles size={14} aria-hidden="true" />
+                      </span>
+                      <span className="nav-item-text">Changelog &amp; Releases</span>
+                      <span className="nav-item-badge badge--new">v1.2</span>
                     </Link>
                   </li>
                 </ul>
