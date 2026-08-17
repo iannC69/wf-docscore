@@ -1,0 +1,15 @@
+{
+  "maintenance": {
+    "enabled": false,
+    "message": "Wildfire Docs is currently undergoing scheduled platform maintenance. We'll be back shortly.",
+    "estimatedEndTime": "30 minutes"
+  },
+  "banner": {
+    "enabled": false,
+    "text": "🔥 Wildfire Docs v1.3.0 is live with 120 FPS Table of Contents and Fortress Admin!",
+    "link": "/changelog",
+    "linkText": "Read Changelog"
+  },
+  "updatedAt": "2026-08-17T11:58:16.223Z",
+  "updatedBy": "iannC"
+}

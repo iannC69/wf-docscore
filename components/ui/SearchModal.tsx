@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -6,10 +7,13 @@ import {
   X,
   FileText,
   Hash,
-  ArrowRight,
   Sparkles,
   CornerDownLeft,
-  BookOpen,
+  Clock,
+  Trash2,
+  Terminal,
+  Layers,
+  ChevronRight,
 } from "lucide-react";
 import type { SearchChunk } from "@/lib/search";
 
@@ -49,46 +53,110 @@ export function SearchModal({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
   const [chunks, setChunks] = useState<SearchChunk[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch deep search index on initial open
-  useEffect(() => {
-    if (isOpen && chunks.length === 0) {
-      setLoading(true);
-      fetch("/api/search")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.results) {
-            setChunks(data.results);
-          }
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [isOpen, chunks.length]);
-
-  // Auto-focus input when modal opens
+  // 1. Lock body background scroll while modal is open
   useEffect(() => {
     if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const originalPaddingRight = document.body.style.paddingRight;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      document.body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.paddingRight = originalPaddingRight;
+      };
+    }
+  }, [isOpen]);
+
+  // 2. Load search index and recent searches
+  useEffect(() => {
+    if (isOpen) {
+      // Load recent searches from localStorage
+      try {
+        const stored = localStorage.getItem("wf_recent_searches");
+        if (stored) {
+          setRecentSearches(JSON.parse(stored));
+        }
+      } catch {}
+
+      // Fetch or refresh search index
+      if (chunks.length === 0) {
+        setLoading(true);
+        fetch("/api/search")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.results) {
+              setChunks(data.results);
+            }
+            setLoading(false);
+          })
+          .catch(() => setLoading(false));
+      }
+
       setQuery("");
+      setActiveCategory("all");
       setSelectedIndex(0);
       const timer = setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, chunks.length]);
 
-  // Deep search scoring & filtering
+  const saveRecentSearch = (term: string) => {
+    const trimmed = term.trim();
+    if (!trimmed) return;
+    try {
+      const updated = [trimmed, ...recentSearches.filter((s) => s.toLowerCase() !== trimmed.toLowerCase())].slice(0, 5);
+      setRecentSearches(updated);
+      localStorage.setItem("wf_recent_searches", JSON.stringify(updated));
+    } catch {}
+  };
+
+  const clearRecentSearches = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRecentSearches([]);
+    try {
+      localStorage.removeItem("wf_recent_searches");
+    } catch {}
+  };
+
+  // Dynamic Category Tabs extracted automatically from indexed chunks
+  const categoryTabs = useMemo(() => {
+    const unique = Array.from(new Set(chunks.map((c) => c.category).filter(Boolean)));
+    return [
+      { id: "all", label: "All Topics" },
+      ...unique.map((cat) => ({ id: cat, label: cat })),
+    ];
+  }, [chunks]);
+
+  // 3. Deep search scoring & category filtering
   const results = useMemo(() => {
+    let pool = chunks;
+    if (activeCategory !== "all") {
+      pool = chunks.filter((c) => c.category === activeCategory);
+    }
+
     const q = query.toLowerCase().trim();
 
     if (!q) {
-      // Default curated quicklinks when query is empty
+      // If query is empty, show curated highlights or first items in category
+      if (activeCategory !== "all") {
+        return pool.slice(0, 8);
+      }
+
       return [
         {
           id: "quick-getting-started",
@@ -135,7 +203,7 @@ export function SearchModal({
 
     const words = q.split(/\s+/).filter(Boolean);
 
-    const scored = chunks.map((item) => {
+    const scored = pool.map((item) => {
       let score = 0;
       const titleLower = item.title.toLowerCase();
       const sectionLower = item.sectionTitle ? item.sectionTitle.toLowerCase() : "";
@@ -144,21 +212,21 @@ export function SearchModal({
       const hrefLower = item.href.toLowerCase();
 
       // Exact phrase match in title
-      if (titleLower === q) score += 100;
-      else if (titleLower.startsWith(q)) score += 60;
-      else if (titleLower.includes(q)) score += 40;
+      if (titleLower === q) score += 120;
+      else if (titleLower.startsWith(q)) score += 80;
+      else if (titleLower.includes(q)) score += 50;
 
       // Section or category match
-      if (sectionLower.includes(q)) score += 30;
-      if (catLower.includes(q)) score += 20;
-      if (hrefLower.includes(q)) score += 25;
+      if (sectionLower.includes(q)) score += 35;
+      if (catLower.includes(q)) score += 25;
+      if (hrefLower.includes(q)) score += 30;
 
-      // Match each word in title/snippet
+      // Match individual terms
       for (const w of words) {
-        if (titleLower.includes(w)) score += 15;
-        if (sectionLower.includes(w)) score += 10;
-        if (snippetLower.includes(w)) score += 8;
-        if (item.keywords.some(k => k.toLowerCase().includes(w))) score += 12;
+        if (titleLower.includes(w)) score += 20;
+        if (sectionLower.includes(w)) score += 14;
+        if (snippetLower.includes(w)) score += 10;
+        if (item.keywords && item.keywords.some((k) => k.toLowerCase().includes(w))) score += 16;
       }
 
       return { item, score };
@@ -167,11 +235,11 @@ export function SearchModal({
     return scored
       .filter((s) => s.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 16)
+      .slice(0, 20)
       .map((s) => s.item);
-  }, [query, chunks]);
+  }, [query, activeCategory, chunks]);
 
-  // Handle keyboard navigation
+  // 4. Keyboard Navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -182,6 +250,7 @@ export function SearchModal({
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (results[selectedIndex]) {
+        if (query.trim()) saveRecentSearch(query);
         navigate(results[selectedIndex].href);
       }
     } else if (e.key === "Escape") {
@@ -191,6 +260,7 @@ export function SearchModal({
   };
 
   const navigate = (href: string) => {
+    if (query.trim()) saveRecentSearch(query);
     onClose();
     router.push(href);
   };
@@ -228,7 +298,7 @@ export function SearchModal({
             ref={inputRef}
             type="text"
             className="search-input"
-            placeholder="Search documentation, guides, APIs, code..."
+            placeholder="Search docs, APIs, commands, variables..."
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -245,6 +315,7 @@ export function SearchModal({
               className="search-clear-btn"
               onClick={() => {
                 setQuery("");
+                setSelectedIndex(0);
                 inputRef.current?.focus();
               }}
               aria-label="Clear search query"
@@ -262,6 +333,58 @@ export function SearchModal({
           </button>
         </div>
 
+        {/* Category Tabs Filter Bar */}
+        <div className="search-filter-tabs">
+          {categoryTabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`search-filter-tab ${activeCategory === tab.id ? "search-filter-tab--active" : ""}`}
+              onClick={() => {
+                setActiveCategory(tab.id);
+                setSelectedIndex(0);
+                inputRef.current?.focus();
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Recent Searches Row (if any and query is empty) */}
+        {!query && recentSearches.length > 0 && (
+          <div className="search-recent-row">
+            <div className="search-recent-label">
+              <Clock size={11} />
+              <span>Recent Searches</span>
+            </div>
+            <div className="search-recent-chips">
+              {recentSearches.map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  className="search-recent-chip"
+                  onClick={() => {
+                    setQuery(term);
+                    setSelectedIndex(0);
+                    inputRef.current?.focus();
+                  }}
+                >
+                  <span>{term}</span>
+                </button>
+              ))}
+              <button
+                type="button"
+                className="search-recent-clear"
+                onClick={clearRecentSearches}
+                title="Clear recent searches"
+              >
+                <Trash2 size={11} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Search Results / Status */}
         <div className="search-results-wrapper" ref={resultsContainerRef}>
           {loading && (
@@ -277,7 +400,7 @@ export function SearchModal({
                 No matching results found for &ldquo;<strong>{query}</strong>&rdquo;
               </p>
               <span className="search-no-results-hint">
-                Search across all topics, variables, API routes, and code blocks.
+                Try searching for keywords like &ldquo;setup&rdquo;, &ldquo;auth&rdquo;, &ldquo;turso&rdquo;, &ldquo;api&rdquo; or &ldquo;mdx&rdquo;.
               </span>
             </div>
           )}
@@ -354,7 +477,7 @@ export function SearchModal({
             </span>
             <span className="shortcut-tag">
               <kbd>↵</kbd>
-              <span>Open</span>
+              <span>Select</span>
             </span>
             <span className="shortcut-tag">
               <kbd>ESC</kbd>
@@ -363,7 +486,7 @@ export function SearchModal({
           </div>
 
           <div className="search-powered-by">
-            <span>Wildfire DeepSearch</span>
+            <span>{chunks.length > 0 ? `${chunks.length} Topics Indexed` : "Wildfire DeepSearch"}</span>
           </div>
         </div>
       </div>

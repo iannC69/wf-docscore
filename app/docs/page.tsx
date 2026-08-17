@@ -15,11 +15,25 @@ import {
   Clock,
   GitCommit,
 } from "lucide-react";
+import { redirect } from "next/navigation";
 import { getRecentlyUpdatedDocs } from "@/lib/git";
 import { getDocIcon, getCategoryIcon, getDocColorVariant } from "@/lib/icons";
 import { CURRENT_VERSION } from "@/lib/version";
+import { getPlatformSettings } from "@/lib/security/settingsStore";
+import { getAuthenticatedAdminSession } from "@/lib/security/auth";
+import { AnnouncementBanner } from "@/components/ui/AnnouncementBanner";
 
-export default function DocsHomePage() {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function DocsHomePage() {
+  const settings = getPlatformSettings();
+  const session = await getAuthenticatedAdminSession();
+
+  if (settings.maintenance.enabled && !session) {
+    redirect("/maintenance");
+  }
+
   const recentDocs = getRecentlyUpdatedDocs(6);
 
   return (

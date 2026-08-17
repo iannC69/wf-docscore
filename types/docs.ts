@@ -62,6 +62,7 @@ export interface DocPage {
   lastModified?: string;
   gitInfo?: GitCommitInfo;
   firstCommit?: GitCommitInfo;
+  sha256?: string;
 }
 
 // ─── Table of Contents ────────────────────────────────────────────────────────

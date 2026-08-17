@@ -164,14 +164,13 @@ export async function getAllSlugs(): Promise<string[][]> {
     }
   }
 
-  // Root index
-  slugs.push([]);
   collectSlugs(DOCS_PATH);
 
-  // Deduplicate slugs
+  // Deduplicate slugs (excluding empty root which is handled by /docs/page.tsx)
   const seen = new Set<string>();
   const uniqueSlugs: string[][] = [];
   for (const s of slugs) {
+    if (s.length === 0) continue;
     const key = s.join("/");
     if (!seen.has(key)) {
       seen.add(key);
@@ -205,7 +204,13 @@ export async function getRawPage(slug: string[]): Promise<{
     path.join(DOCS_PATH, slugPath, "index.md"),
   ];
 
+  const resolvedDocsPath = path.resolve(/*turbopackIgnore: true*/ DOCS_PATH);
   for (const candidate of candidates) {
+    const resolvedCandidate = path.resolve(/*turbopackIgnore: true*/ candidate);
+    // Security Boundary: Prevent Path Traversal attacks
+    if (!resolvedCandidate.startsWith(resolvedDocsPath)) {
+      continue;
+    }
     if (fs.existsSync(/*turbopackIgnore: true*/ candidate)) {
       const content = fs.readFileSync(/*turbopackIgnore: true*/ candidate, "utf-8");
       return { content, path: candidate };

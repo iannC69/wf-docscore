@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getAllSlugs } from "@/lib/navigation";
 import { getDocPage } from "@/lib/content";
 import { TableOfContents } from "@/components/layout/TableOfContents";
@@ -7,6 +7,11 @@ import { MobileTableOfContents } from "@/components/layout/MobileTableOfContents
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { PageNav } from "@/components/ui/PageNav";
 import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
+import { getPlatformSettings } from "@/lib/security/settingsStore";
+import { getAuthenticatedAdminSession } from "@/lib/security/auth";
+import { DocQuickActions } from "@/components/docs/DocQuickActions";
+import { DocIntegritySeal } from "@/components/docs/DocIntegritySeal";
+import { CURRENT_VERSION } from "@/lib/version";
 import {
   Pencil,
   Clock,
@@ -16,6 +21,9 @@ import {
   ExternalLink,
   UserCheck,
 } from "lucide-react";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface Props {
   params: Promise<{ slug?: string[] }>;
@@ -61,6 +69,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ─── Page Component ───────────────────────────────────────────────────────────
 
 export default async function DocPage({ params }: Props) {
+  const settings = getPlatformSettings();
+  const session = await getAuthenticatedAdminSession();
+
+  if (settings.maintenance.enabled && !session) {
+    redirect("/maintenance");
+  }
+
   const { slug = [] } = await params;
   const page = await getDocPage(slug);
 
@@ -91,9 +106,65 @@ export default async function DocPage({ params }: Props) {
     <div className="docs-page-container">
       <div className="docs-content-wrapper">
         <article className="docs-content" id="main-content">
+          {/* Print Watermark (Visible only during PDF export / print) */}
+          <div className="print-watermark" aria-hidden="true">
+            <div className="print-watermark-inner">
+              <img src="/logo.png" alt="" className="print-watermark-img" width={160} height={160} />
+              <span className="print-watermark-text">WILDFIRE DOCS</span>
+              <span className="print-watermark-sub">OFFICIAL ARCHITECTURE SPECIFICATION</span>
+            </div>
+          </div>
+
           <div className="docs-content-inner">
-            
-            {/* Top Row: Breadcrumbs + Tag/Badge + Top Edit Action */}
+            {/* Print Header (Visible only during PDF export / print) */}
+            <div className="print-sheet-header">
+              <div className="print-header-top">
+                <div className="print-sheet-brand">
+                  <img
+                    src="/logo.png"
+                    alt="Wildfire"
+                    className="print-sheet-logo"
+                    width={38}
+                    height={38}
+                  />
+                  <div className="print-sheet-title-wrap">
+                    <div className="print-sheet-title-row">
+                      <span className="print-sheet-title">WILDFIRE DOCUMENTATION</span>
+                      <span className="print-sheet-ver-pill">v{CURRENT_VERSION}</span>
+                    </div>
+                    <span className="print-sheet-sub">
+                      Official Engineering Specification • https://github.com/iannC69/wf-docscore
+                    </span>
+                  </div>
+                </div>
+
+                <div className="print-sheet-meta">
+                  <span className="print-sheet-category">{categoryLabel}</span>
+                  <span className="print-sheet-hash">Git Commit #{commitHash.slice(0, 7)}</span>
+                </div>
+              </div>
+
+              <div className="print-header-bottom-meta">
+                <div className="print-meta-item">
+                  <span className="print-meta-lbl">Path:</span>
+                  <span className="print-meta-val">/docs/{slug.join("/")}</span>
+                </div>
+                <div className="print-meta-item">
+                  <span className="print-meta-lbl">Author:</span>
+                  <span className="print-meta-val">{authorName} ({relativeTime})</span>
+                </div>
+                <div className="print-meta-item">
+                  <span className="print-meta-lbl">Length:</span>
+                  <span className="print-meta-val">{page.readingTime} min read • {page.wordCount} words</span>
+                </div>
+                <div className="print-meta-item">
+                  <span className="print-meta-lbl">Status:</span>
+                  <span className="print-meta-val">Fortress Verified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Top Row: Breadcrumbs + Tag/Badge + Developer Quick Actions Toolbar */}
             <div className="page-header-top-row">
               <div className="page-header-breadcrumbs-wrap">
                 {breadcrumbs.length > 1 ? (
@@ -111,20 +182,13 @@ export default async function DocPage({ params }: Props) {
                 )}
               </div>
 
-              {/* Prominent Header Edit Page Button */}
-              {page.githubEditUrl && (
-                <a
-                  href={page.githubEditUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="page-top-edit-btn"
-                  title={`Edit ${page.frontmatter.title} on GitHub`}
-                >
-                  <Pencil size={12} aria-hidden="true" />
-                  <span>Edit Page</span>
-                  <ExternalLink size={10} className="edit-btn-ext" aria-hidden="true" />
-                </a>
-              )}
+              {/* Developer Quick Actions: Copy Markdown, Export PDF, Admin Edit, GitHub Edit */}
+              <DocQuickActions
+                rawContent={page.content}
+                slug={slug.join("/")}
+                githubEditUrl={page.githubEditUrl}
+                isAdmin={!!session}
+              />
             </div>
 
             {/* Mobile Table of Contents Accordion (Visible on <= 1200px) */}
@@ -142,7 +206,7 @@ export default async function DocPage({ params }: Props) {
                 </p>
               )}
 
-              {/* Comprehensive Metadata: Author, Commit, Read Time, Category */}
+              {/* Comprehensive Metadata: Author, Commit, Read Time, Word Count */}
               <div className="page-header-meta-bar">
                 {/* Author Card / Updated By */}
                 <div className="page-author-chip">
@@ -185,6 +249,16 @@ export default async function DocPage({ params }: Props) {
                   </a>
                 )}
 
+                {/* Cryptographic Integrity & GPG Attestation Seal */}
+                <DocIntegritySeal
+                  sha256={page.sha256}
+                  commitHash={commitHash}
+                  commitUrl={git?.commitUrl || `https://github.com/iannC69/wf-docscore/commit/${commitHash}`}
+                  authorName={authorName}
+                  relativeTime={relativeTime}
+                  slug={slug.join("/")}
+                />
+
                 <div className="page-meta-right-group">
                   {/* Reading Time */}
                   <span className="page-meta-item">
@@ -198,10 +272,6 @@ export default async function DocPage({ params }: Props) {
                     <BookOpen size={12} aria-hidden="true" />
                     <span>{page.wordCount.toLocaleString()} words</span>
                   </span>
-                  <span className="page-header-meta-sep" aria-hidden="true">·</span>
-
-                  {/* Category */}
-                  <span className="page-meta-category">{categoryLabel}</span>
                 </div>
               </div>
             </header>
@@ -230,6 +300,20 @@ export default async function DocPage({ params }: Props) {
               </div>
               <PageNav prev={page.prev} next={page.next} />
             </footer>
+
+            {/* Print Footer (Visible only during PDF export / print) */}
+            <div className="print-sheet-footer">
+              <div className="print-footer-left">
+                <span>Wildfire Docs • Technical Specification</span>
+                <span className="print-footer-dot">·</span>
+                <span>Maintainer: iannC69</span>
+                <span className="print-footer-dot">·</span>
+                <span>/docs/{slug.join("/")}</span>
+              </div>
+              <div className="print-footer-right">
+                <span>Fortress Security Verified • SHA-256 Chained</span>
+              </div>
+            </div>
           </div>
         </article>
       </div>

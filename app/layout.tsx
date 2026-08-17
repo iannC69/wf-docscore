@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { PageProgressBar } from "@/components/ui/PageProgressBar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -51,7 +53,12 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <Suspense fallback={null}>
+          <PageProgressBar />
+        </Suspense>
+        {children}
+      </body>
     </html>
   );
 }

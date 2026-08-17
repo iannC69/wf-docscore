@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { getRawPage, getAdjacentPages, getNavigation } from "@/lib/navigation";
 import { compileMdxContent } from "@/lib/mdx";
 import { getFileGitInfo, getFileFirstCommitInfo } from "@/lib/git";
@@ -52,6 +53,9 @@ export async function getDocPage(slug: string[]): Promise<DocPage | null> {
   const gitInfo = getFileGitInfo(raw.path);
   const firstCommit = getFileFirstCommitInfo(raw.path);
 
+  // Calculate real cryptographic SHA-256 checksum of raw Markdown content
+  const sha256 = crypto.createHash("sha256").update(raw.content).digest("hex");
+
   // GitHub repo & edit URL
   const githubRepo = (process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME)
     ? `${process.env.GITHUB_REPO_OWNER}/${process.env.GITHUB_REPO_NAME}`
@@ -79,5 +83,6 @@ export async function getDocPage(slug: string[]): Promise<DocPage | null> {
     lastModified: gitInfo.date,
     gitInfo,
     firstCommit,
+    sha256,
   };
 }
