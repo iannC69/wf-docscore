@@ -11,76 +11,50 @@ interface TableOfContentsProps {
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id || "");
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [nodeMetrics, setNodeMetrics] = useState<{ top: number; height: number }[]>(() =>
-    items.map((_, idx) => ({ top: idx * 28, height: 28 }))
-  );
+  const [capsuleMetrics, setCapsuleMetrics] = useState<{ top: number; height: number }>({
+    top: 0,
+    height: 28,
+  });
+
   const activeIdRef = useRef<string>(items[0]?.id || "");
-  const cachedHeadings = useRef<{ id: string; top: number }[]>([]);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const listRef = useRef<HTMLUListElement>(null);
   const tocAsideRef = useRef<HTMLElement>(null);
+  const isClickingRef = useRef<boolean>(false);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { tocOpen, toggleToc } = useLayout();
 
-  // 1. Measure real DOM item bounds (Synchronous, zero layout thrashing)
-  const measureNodes = useCallback(() => {
-    if (!listRef.current || items.length === 0) return;
-    const listTop = listRef.current.getBoundingClientRect().top;
+  // 1. Update active gliding capsule metrics based on real DOM item position
+  const updateCapsulePosition = useCallback(() => {
+    if (items.length === 0) return;
+    const activeIndex = items.findIndex((i) => i.id === activeId);
+    const targetIdx = activeIndex >= 0 ? activeIndex : 0;
+    const activeEl = itemRefs.current[targetIdx];
 
-    const metrics = items.map((_, idx) => {
-      const el = itemRefs.current[idx];
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const top = rect.top - listTop;
-        const height = rect.height;
-        return {
-          top: Math.round(top),
-          height: Math.round(height),
-        };
-      }
-      return { top: idx * 28, height: 28 };
-    });
-
-    setNodeMetrics(metrics);
-  }, [items]);
+    if (activeEl) {
+      setCapsuleMetrics({
+        top: activeEl.offsetTop,
+        height: activeEl.offsetHeight || 28,
+      });
+    }
+  }, [activeId, items]);
 
   useEffect(() => {
-    measureNodes();
-    window.addEventListener("resize", measureNodes, { passive: true });
-    return () => window.removeEventListener("resize", measureNodes);
-  }, [measureNodes]);
+    updateCapsulePosition();
+    window.addEventListener("resize", updateCapsulePosition, { passive: true });
+    return () => window.removeEventListener("resize", updateCapsulePosition);
+  }, [updateCapsulePosition]);
 
-  // 2. High-Performance Deterministic Scroll Spy (0 Layout Thrashing, 120 FPS Locked)
-  const updateHeadingOffsets = useCallback(() => {
-    if (typeof window === "undefined" || items.length === 0) return;
-
-    cachedHeadings.current = items
-      .map((item) => {
-        const el = document.getElementById(item.id);
-        if (!el) return null;
-        const rect = el.getBoundingClientRect();
-        return {
-          id: item.id,
-          top: rect.top + window.scrollY,
-        };
-      })
-      .filter(Boolean) as { id: string; top: number }[];
-  }, [items]);
-
-  useEffect(() => {
-    const timer = setTimeout(updateHeadingOffsets, 100);
-    window.addEventListener("resize", updateHeadingOffsets, { passive: true });
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", updateHeadingOffsets);
-    };
-  }, [updateHeadingOffsets]);
-
+  // 2. High-Performance Live Viewport Scroll Spy
   useEffect(() => {
     if (items.length === 0) return;
 
     let ticking = false;
 
     const onScroll = () => {
+      // If user clicked a TOC link, let smooth scroll complete before spy takes over
+      if (isClickingRef.current) return;
+
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const scrollY = window.scrollY;
@@ -88,13 +62,13 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           const docH = document.documentElement.scrollHeight;
           const totalHeight = docH - windowH;
 
-          // Reading progress
+          // Calculate reading progress percentage
           if (totalHeight > 0) {
             setScrollProgress(Math.min(100, Math.max(0, Math.round((scrollY / totalHeight) * 100))));
           }
 
-          // Bottom of page lock
-          if (scrollY + windowH >= docH - 40) {
+          // Bottom of page lock: if scrolled to the very bottom, highlight the last heading
+          if (scrollY + windowH >= docH - 30) {
             const lastId = items[items.length - 1].id;
             if (activeIdRef.current !== lastId) {
               activeIdRef.current = lastId;
@@ -104,23 +78,25 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             return;
           }
 
-          // Reverse fast search in cached offsets
-          const offsets = cachedHeadings.current;
-          if (offsets.length > 0) {
-            const triggerY = scrollY + 110;
-            let currentId = offsets[0].id;
+          // Dynamic live check against headings in viewport
+          const triggerLine = 120; // 120px from top
+          let candidateId = items[0]?.id || "";
 
-            for (let i = offsets.length - 1; i >= 0; i--) {
-              if (triggerY >= offsets[i].top) {
-                currentId = offsets[i].id;
+          for (let i = 0; i < items.length; i++) {
+            const el = document.getElementById(items[i].id);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= triggerLine) {
+                candidateId = items[i].id;
+              } else {
                 break;
               }
             }
+          }
 
-            if (currentId !== activeIdRef.current) {
-              activeIdRef.current = currentId;
-              setActiveId(currentId);
-            }
+          if (candidateId && candidateId !== activeIdRef.current) {
+            activeIdRef.current = candidateId;
+            setActiveId(candidateId);
           }
 
           ticking = false;
@@ -136,22 +112,31 @@ export function TableOfContents({ items }: TableOfContentsProps) {
 
   if (items.length === 0) return null;
 
+  // 3. Smooth Click Handler with Lock
   const handleClick = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 75;
-      window.scrollTo({ top, behavior: "smooth" });
+      isClickingRef.current = true;
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+
       activeIdRef.current = id;
       setActiveId(id);
+
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
       window.history.pushState(null, "", `#${id}`);
+
+      clickTimeoutRef.current = setTimeout(() => {
+        isClickingRef.current = false;
+      }, 700);
     }
   };
 
   const activeIndex = items.findIndex((i) => i.id === activeId);
   const activeIdx = activeIndex >= 0 ? activeIndex : 0;
 
-  // Auto-scroll TOC container if heading goes out of view
+  // Auto-scroll TOC container if active heading goes out of view
   useEffect(() => {
     if (itemRefs.current[activeIdx] && tocAsideRef.current) {
       const itemEl = itemRefs.current[activeIdx]!;
@@ -164,12 +149,6 @@ export function TableOfContents({ items }: TableOfContentsProps) {
       }
     }
   }, [activeIdx]);
-
-  // Synchronously derived capsule coordinates
-  const activeCapsuleMetrics = nodeMetrics[activeIdx] || {
-    top: activeIdx * 28,
-    height: 28,
-  };
 
   return (
     <>
@@ -226,8 +205,8 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             <div
               className="toc-gliding-capsule"
               style={{
-                transform: `translate3d(0, ${activeCapsuleMetrics.top}px, 0)`,
-                height: `${activeCapsuleMetrics.height}px`,
+                transform: `translate3d(0, ${capsuleMetrics.top}px, 0)`,
+                height: `${capsuleMetrics.height}px`,
               }}
               aria-hidden="true"
             />
@@ -235,11 +214,11 @@ export function TableOfContents({ items }: TableOfContentsProps) {
             <ul role="list" className="toc-clean-list" ref={listRef}>
               {items.map((item, index) => {
                 const isActive = activeId === item.id;
-                const depth = item.depth || 2;
+                const depth = Math.min(Math.max(item.depth || 2, 1), 4);
 
                 return (
                   <li
-                    key={item.id}
+                    key={`${item.id}-${index}`}
                     ref={(el) => {
                       itemRefs.current[index] = el;
                     }}
@@ -248,9 +227,12 @@ export function TableOfContents({ items }: TableOfContentsProps) {
                     <a
                       href={`#${item.id}`}
                       onClick={handleClick(item.id)}
-                      className={`toc-clean-link ${isActive ? "toc-clean-link--active" : ""} ${depth >= 3 ? "toc-clean-link--nested" : ""}`}
+                      className={`toc-clean-link toc-clean-link--${depth} ${isActive ? "toc-clean-link--active" : ""}`}
                       aria-current={isActive ? "location" : undefined}
                     >
+                      {depth >= 3 && (
+                        <span className={`toc-nested-pip toc-nested-pip--${depth}`} aria-hidden="true" />
+                      )}
                       <span className="toc-clean-text">{item.title}</span>
                     </a>
                   </li>

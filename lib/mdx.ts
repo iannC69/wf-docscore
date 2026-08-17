@@ -3,39 +3,46 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
+import GithubSlugger from "github-slugger";
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import type { TocItem, PageFrontmatter } from "@/types/docs";
 import { mdxComponents } from "@/components/docs/MDXComponents";
 
 // ─── TOC Extraction ────────────────────────────────────────────────────────────
-// Extracts only h2 and h3 headings (skipping h1 so page title isn't duplicated)
+// Extracts headings (h1, h2, h3, h4) with precise GithubSlugger IDs matching rehype-slug in DOM
 
 export function extractToc(markdown: string): TocItem[] {
-  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
+  const slugger = new GithubSlugger();
+
+  // Strip code blocks so code comments (e.g. #!/bin/bash, # comment) are never treated as headings
+  const stripped = markdown
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/~~~[\s\S]*?~~~/g, "");
+
+  const headingRegex = /^(#{1,4})\s+(.+)$/gm;
   const toc: TocItem[] = [];
   let match;
 
-  while ((match = headingRegex.exec(markdown)) !== null) {
+  while ((match = headingRegex.exec(stripped)) !== null) {
     const depth = match[1].length;
     const rawTitle = match[2];
-    // Strip markdown formatting from title (bold, italic, code, links)
+
+    // Strip markdown formatting from title (bold, italic, code, links, custom html)
     const title = rawTitle
-      .replace(/\*\*(.+?)\*\*/g, "$1")
-      .replace(/\*(.+?)\*/g, "$1")
-      .replace(/`(.+?)`/g, "$1")
-      .replace(/\[(.+?)\]\(.+?\)/g, "$1")
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/<[^>]+>/g, "")
       .trim();
 
-    const id = title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-");
+    if (!title) continue;
 
-    if (depth === 2 || depth === 3) {
-      toc.push({ id, title, depth });
-    }
+    // Generate exact slug matching rehype-slug output in DOM
+    const id = slugger.slug(title);
+
+    toc.push({ id, title, depth });
   }
 
   return toc;

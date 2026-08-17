@@ -77,10 +77,10 @@ export function MobileTableOfContents({ items }: MobileTableOfContentsProps) {
       {isOpen && (
         <div className="mobile-toc-dropdown">
           <ul role="list" className="mobile-toc-list">
-            {items.map((item) => (
+            {items.map((item, idx) => (
               <li
-                key={item.id}
-                className={`mobile-toc-item ${item.depth === 3 ? "mobile-toc-item--nested" : ""}`}
+                key={`${item.id}-${idx}`}
+                className={`mobile-toc-item mobile-toc-item--${item.depth || 2} ${item.depth >= 3 ? "mobile-toc-item--nested" : ""}`}
               >
                 <a
                   href={`#${item.id}`}
