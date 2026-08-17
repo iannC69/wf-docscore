@@ -34,8 +34,86 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
-    version: "v1.5.0",
+    version: "v1.6.0",
     isLatest: true,
+    date: "August 17, 2026",
+    title: "Granular RBAC 2.0 Team Matrix, Root Session Immunity, Liquid Glass Inspector & Zero-Emoji Security Architecture",
+    summary:
+      "Version 1.6.0 introduces a comprehensive RBAC 2.0 administration matrix with 10 granular permissions, Root Super Admin session immunity, emergency Panic Lockdown authorization shields, an overhauled Liquid Glass profile inspector, vibrant permission pills, auto-syncing .env.local credentials, and dynamic sidebar privilege filtering.",
+    author: {
+      name: "iannC69",
+      username: "iannC69",
+      avatar: "https://github.com/iannC69.png",
+    },
+    git: {
+      commitHash: "HEAD",
+      commitUrl: "https://github.com/iannC69/wf-docscore/tree/main",
+      tagUrl: "https://github.com/iannC69/wf-docscore/releases/tag/v1.6.0",
+    },
+    changes: [
+      {
+        type: "feature",
+        title: "Granular RBAC 2.0 Matrix & Live Team Store",
+        description:
+          "Fine-grained 10-module permission engine (Content Studio, Delete Docs, Media Vault, Search Telemetry, Audit Ledger, Platform Settings, Security 2FA, API Tokens, Panic Lockdown, Team Access) with instant .env.local credential synchronization.",
+        badge: "Security Core",
+      },
+      {
+        type: "feature",
+        title: "Root Super Admin Session Immunity & Panic Shield",
+        description:
+          "Root administrator sessions (iannC69) are permanently immune to unauthorized revocation. Emergency Panic Lockdown controls and API endpoints are strictly guarded by Root cryptographic verification.",
+        badge: "Fortress RBAC",
+      },
+      {
+        type: "feature",
+        title: "Dynamic Sidebar Matrix Privilege Filtering",
+        description:
+          "Navigation matrix automatically filters out inaccessible administrative modules in real-time based on active member permissions with 403 Forbidden enforcement on server routes.",
+        badge: "Admin Matrix",
+      },
+      {
+        type: "improvement",
+        title: "Liquid Glass 2-Column Compact Profile Inspector",
+        description:
+          "Replaced text-heavy forms with a clean 2-column permission matrix featuring colored SVG icon capsules, green ACTIV and subtle grey BLOCAT status pills, and root-only interactive toggle switches.",
+        badge: "UI / UX",
+      },
+      {
+        type: "improvement",
+        title: "Restrained Liquid Glass Metric Cards & Session Pills",
+        description:
+          "Upgraded top team metric cards with color-tinted Lucide vector icon boxes, micro-status badges (2 ACTIVE, ROOT PROFIL, 10 MODULI), adaptive search toolbar, and wrap-protected session indicators.",
+        badge: "Design System",
+      },
+      {
+        type: "improvement",
+        title: "Dark Liquid Glass Select & Filter Architecture",
+        description:
+          "Custom dark glass select dropdowns and filter capsules with Lucide SVG vectors across Audit Ledger, API Tokens, Media Vault, and Content Studio, eliminating unstyled native browser elements.",
+        badge: "Styling",
+      },
+      {
+        type: "improvement",
+        title: "Vibrant Frosted Glass Permission Badges",
+        description:
+          "Standardized color-coded frosted glass pill badges for all 10 module access tags across member cards and profile views.",
+        badge: "Visual Polish",
+      },
+    ],
+    highlights: [
+      "10-module Granular RBAC 2.0 engine with .env.local credential auto-sync",
+      "Root Super Admin (iannC69) session immunity and Panic Lockdown shields",
+      "Dynamic sidebar navigation matrix with server-side 403 gatekeeping",
+      "Compact 2-column Liquid Glass permission matrix inspector",
+      "Restrained metric cards, vibrant frosted badges, and dark glass dropdowns",
+      "Strict zero-emoji compliance with 100% Lucide React vector icons",
+    ],
+    slug: "v1-6-0",
+  },
+  {
+    version: "v1.5.0",
+    isLatest: false,
     date: "August 17, 2026",
     title: "Wildfire Full Migration, Studio HD Media Lightbox, Orange Video Player & 61-Doc Live Carousel",
     summary:

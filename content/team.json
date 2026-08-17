@@ -1,0 +1,54 @@
+[
+  {
+    "id": "user_root_iannc69",
+    "username": "iannC69",
+    "displayName": "iannC (Founder & Root)",
+    "email": "iannc@wildfire.ro",
+    "role": "root_admin",
+    "avatarColor": "#ff6b00",
+    "passwordHash": "b3f609a854dcf6bf00b3150c55dcbe132ca37b3e2ea88ad0e23e07985ba5969dda8689fe17b08c007137cf932f3d7e56c01359dc24037ed3b898da3f1ba1255c",
+    "salt": "wf_root_salt_2026",
+    "permissions": {
+      "canEditDocs": true,
+      "canDeleteDocs": true,
+      "canManageMedia": true,
+      "canViewAnalytics": true,
+      "canViewAudit": true,
+      "canManageSettings": true,
+      "canManageSecurity": true,
+      "canManageApiKeys": true,
+      "canTriggerPanic": true,
+      "canManageTeam": true
+    },
+    "status": "active",
+    "isRoot": true,
+    "createdAt": "2026-08-17T18:20:32.349Z",
+    "lastLoginAt": "2026-08-17T18:20:32.423Z"
+  },
+  {
+    "id": "user_e88ca0b4c008bda646d0b02e79c00938",
+    "username": "ceva",
+    "displayName": "ceva",
+    "email": "",
+    "role": "content_editor",
+    "avatarColor": "#3b82f6",
+    "passwordHash": "de1575132a8e9b8f57efbc1104a1b7ffa229ad57e807031f0a6f232087f326eac39da52e379e48d58b042fa6b147d46bdc29fe2cfac06d99e432020893f21450",
+    "salt": "salt_20732be06d2cf765895b7835",
+    "permissions": {
+      "canEditDocs": true,
+      "canDeleteDocs": false,
+      "canManageMedia": true,
+      "canViewAnalytics": true,
+      "canViewAudit": false,
+      "canManageSettings": false,
+      "canManageSecurity": false,
+      "canManageApiKeys": false,
+      "canTriggerPanic": false,
+      "canManageTeam": false
+    },
+    "status": "active",
+    "isRoot": false,
+    "createdAt": "2026-08-17T18:21:41.322Z",
+    "lastLoginAt": "2026-08-17T18:23:23.628Z"
+  }
+]

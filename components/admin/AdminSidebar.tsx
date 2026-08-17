@@ -11,12 +11,24 @@ import {
   Key,
   ScrollText,
   Sliders,
-  Terminal,
   Activity,
+  Folder,
+  Users,
+  Terminal,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
-const NAV_ITEMS = [
+import type { TeamMemberPermissions } from "@/lib/security/teamStore";
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: any;
+  badge?: string;
+  permKey?: keyof TeamMemberPermissions;
+}
+
+const NAV_ITEMS: NavItem[] = [
   {
     label: "Mission Control",
     href: "/admin",
@@ -24,39 +36,76 @@ const NAV_ITEMS = [
     badge: "Live",
   },
   {
+    label: "My Team & Access",
+    href: "/admin/team",
+    icon: Users,
+    permKey: "canManageTeam",
+  },
+  {
     label: "Content Studio",
     href: "/admin/content",
     icon: FileEdit,
+    permKey: "canEditDocs",
+  },
+  {
+    label: "Doc Health & Linter",
+    href: "/admin/health",
+    icon: Activity,
+    permKey: "canEditDocs",
+  },
+  {
+    label: "Media & Asset Vault",
+    href: "/admin/media",
+    icon: Folder,
+    permKey: "canManageMedia",
   },
   {
     label: "Search Telemetry",
     href: "/admin/search-analytics",
     icon: Search,
+    permKey: "canViewAnalytics",
   },
   {
     label: "Security & 2FA",
     href: "/admin/security",
     icon: ShieldCheck,
+    permKey: "canManageSecurity",
   },
   {
     label: "API Tokens",
     href: "/admin/api-keys",
     icon: Key,
+    permKey: "canManageApiKeys",
   },
   {
     label: "Audit Ledger",
     href: "/admin/audit",
     icon: ScrollText,
+    permKey: "canViewAudit",
   },
   {
     label: "Engine Settings",
     href: "/admin/settings",
     icon: Sliders,
+    permKey: "canManageSettings",
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({
+  permissions,
+  isRoot = false,
+}: {
+  permissions?: TeamMemberPermissions;
+  isRoot?: boolean;
+}) {
   const pathname = usePathname();
+
+  // Filter navigation items by active permissions
+  const allowedNavItems = NAV_ITEMS.filter((item) => {
+    if (isRoot) return true;
+    if (!item.permKey) return true;
+    return Boolean(permissions?.[item.permKey]);
+  });
 
   return (
     <aside className="admin-sidebar" aria-label="Admin Navigation">
@@ -66,7 +115,7 @@ export function AdminSidebar() {
       </div>
 
       <nav className="admin-nav-list">
-        {NAV_ITEMS.map((item) => {
+        {allowedNavItems.map((item) => {
           const Icon = item.icon;
           const isActive =
             item.href === "/admin"

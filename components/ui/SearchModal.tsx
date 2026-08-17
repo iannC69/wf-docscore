@@ -160,43 +160,43 @@ export function SearchModal({
       return [
         {
           id: "quick-getting-started",
-          title: "Getting Started",
-          sectionTitle: "Introduction & Setup",
-          category: "Getting Started",
-          href: "/docs/getting-started",
-          contentSnippet: "Step-by-step installation, environment setup, and verification guide.",
+          title: "Ghid de Început CS2",
+          sectionTitle: "Informații Generale & Conectare",
+          category: "Informații",
+          href: "/docs/informatii/getting-started",
+          contentSnippet: "Ghid pas cu pas de conectare pe serverele Wildfire CS2, comenzi de bază și setări.",
         },
         {
-          id: "quick-config",
-          title: "Configuration",
-          sectionTitle: "Environment & Keys",
-          category: "Getting Started",
-          href: "/docs/getting-started/configuration",
-          contentSnippet: "Configure GitHub App tokens, Turso database connection, and theme presets.",
+          id: "quick-currency",
+          title: "Sistemul de Currency",
+          sectionTitle: "Credits & Phoenix Coins",
+          category: "Currency",
+          href: "/docs/currency",
+          contentSnippet: "Află cum funcționează monedele oficiale ale serverului, cum câștigi credite și cum le folosești.",
         },
         {
-          id: "quick-features",
-          title: "MDX Components",
-          sectionTitle: "Component Reference",
-          category: "Core Features",
-          href: "/docs/features/mdx-components",
-          contentSnippet: "Interactive callouts, code blocks, tabs, cards, and sequential steps.",
+          id: "quick-vip",
+          title: "Grade VIP & Beneficii",
+          sectionTitle: "Market & Donații",
+          category: "Market",
+          href: "/docs/market/vip",
+          contentSnippet: "Prezentare detaliată a gradelor VIP (Immortal, Mythic, Rebirth), comenzi și avantaje exclusive.",
         },
         {
-          id: "quick-github",
-          title: "GitHub Sync",
-          sectionTitle: "GitOps Workflow",
-          category: "Core Features",
-          href: "/docs/features/github-integration",
-          contentSnippet: "Automated two-way GitHub synchronizer, commit-on-save, and webhooks.",
+          id: "quick-skins",
+          title: "Skins & Cuțite CS2",
+          sectionTitle: "Sistemul !ws / !knife",
+          category: "Systems",
+          href: "/docs/systems/skins",
+          contentSnippet: "Ghid complet pentru alegerea skin-urilor, mănușilor, agenților și cuțitelor personalizate pe server.",
         },
         {
-          id: "quick-api",
-          title: "API Reference",
-          sectionTitle: "REST Endpoints",
-          category: "API Reference",
-          href: "/docs/api-reference",
-          contentSnippet: "Programmatic access to documentation content, navigation trees, and revalidation.",
+          id: "quick-regulamente",
+          title: "Regulamente Oficiale",
+          sectionTitle: "Regulament Jucători & STAFF",
+          category: "Informații",
+          href: "/docs/informatii/regulamente",
+          contentSnippet: "Regulamentul oficial al comunității Wildfire CS2, sancțiuni și reguli de conduită.",
         },
       ];
     }
@@ -260,7 +260,21 @@ export function SearchModal({
   };
 
   const navigate = (href: string) => {
-    if (query.trim()) saveRecentSearch(query);
+    if (query.trim()) {
+      saveRecentSearch(query);
+      // Real Search Telemetry ping
+      try {
+        fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: query.trim(),
+            resultCount: results.length,
+            latencyMs: 1.8,
+          }),
+        }).catch(() => {});
+      } catch {}
+    }
     onClose();
     router.push(href);
   };

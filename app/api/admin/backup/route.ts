@@ -1,0 +1,110 @@
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import { validateSessionToken, SESSION_COOKIE_NAME } from "@/lib/security/auth";
+import { recordAuditEvent } from "@/lib/security/audit";
+import { createZipArchive, ZipFileEntry } from "@/lib/admin/zipBuilder";
+import matter from "gray-matter";
+
+const DOCS_DIR = path.join(process.cwd(), "content", "docs");
+
+function collectAllDocFiles(dir = DOCS_DIR, base = ""): { relativePath: string; fullPath: string }[] {
+  if (!fs.existsSync(dir)) return [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  let results: { relativePath: string; fullPath: string }[] = [];
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    const rel = path.join(base, entry.name);
+
+    if (entry.isDirectory()) {
+      results = results.concat(collectAllDocFiles(fullPath, rel));
+    } else if (entry.isFile() && (entry.name.endsWith(".md") || entry.name.endsWith(".mdx"))) {
+      results.push({ relativePath: rel.replace(/\\/g, "/"), fullPath });
+    }
+  }
+
+  return results;
+}
+
+export async function GET(req: NextRequest) {
+  const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const session = token ? validateSessionToken(token) : null;
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
+
+  if (!session) {
+    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const format = searchParams.get("format") || "zip";
+  const allDocs = collectAllDocFiles();
+
+  recordAuditEvent({
+    action: "BACKUP_EXPORT",
+    actor: session.username,
+    ip,
+    details: { format, totalFiles: allDocs.length },
+  });
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+  if (format === "json") {
+    const dump = allDocs.map((doc) => {
+      const raw = fs.readFileSync(doc.fullPath, "utf-8");
+      const { data, content } = matter(raw);
+      return {
+        path: doc.relativePath,
+        slug: doc.relativePath.replace(/\.(md|mdx)$/, ""),
+        frontmatter: data,
+        content,
+      };
+    });
+
+    return new NextResponse(JSON.stringify(dump, null, 2), {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Disposition": `attachment; filename="wf-docs-backup-${timestamp}.json"`,
+      },
+    });
+  }
+
+  if (format === "bundle") {
+    let bundle = `# WF-DOCSCORE FULL REPOSITORY BUNDLE\nExport Date: ${new Date().toISOString()}\nTotal Documents: ${allDocs.length}\n\n---\n\n`;
+    for (const doc of allDocs) {
+      const raw = fs.readFileSync(doc.fullPath, "utf-8");
+      bundle += `\n\n<!-- FILE: ${doc.relativePath} -->\n${raw}\n\n---\n`;
+    }
+
+    return new NextResponse(bundle, {
+      headers: {
+        "Content-Type": "text/markdown; charset=utf-8",
+        "Content-Disposition": `attachment; filename="wf-docs-bundle-${timestamp}.md"`,
+      },
+    });
+  }
+
+  // Default: ZIP Archive
+  const zipEntries: ZipFileEntry[] = allDocs.map((doc) => ({
+    filename: `docs/${doc.relativePath}`,
+    data: fs.readFileSync(doc.fullPath),
+  }));
+
+  // Include settings if present
+  const settingsPath = path.join(process.cwd(), "content", "settings.json");
+  if (fs.existsSync(settingsPath)) {
+    zipEntries.push({
+      filename: "settings.json",
+      data: fs.readFileSync(settingsPath),
+    });
+  }
+
+  const zipBuffer = createZipArchive(zipEntries);
+
+  return new NextResponse(new Uint8Array(zipBuffer), {
+    headers: {
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="wf-docs-repository-${timestamp}.zip"`,
+    },
+  });
+}

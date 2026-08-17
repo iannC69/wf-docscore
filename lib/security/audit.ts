@@ -17,7 +17,10 @@ export type AuditAction =
   | "PANIC_LOCKDOWN_RELEASED"
   | "CACHE_REVALIDATED"
   | "SYSTEM_INIT"
-  | "MAINTENANCE_TOGGLED";
+  | "MAINTENANCE_TOGGLED"
+  | "BACKUP_EXPORT"
+  | "DOC_ROLLBACK"
+  | "DOC_VERSION_SAVE";
 
 export interface AuditEvent {
   id: string;

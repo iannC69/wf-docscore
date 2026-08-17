@@ -10,8 +10,8 @@ import {
   ShieldAlert,
   KeyRound,
   Radio,
+  Flame,
 } from "lucide-react";
-import { LiquidBackground } from "@/components/ui/LiquidEffects";
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
@@ -56,20 +56,17 @@ export default function AdminLoginPage() {
       if (data.success) {
         window.location.href = "/admin";
       } else {
-        setError(data.message || "Invalid administrator credentials.");
+        setError(data.message || "Credențiale de administrator invalide.");
         setLoading(false);
       }
     } catch {
-      setError("Network connection error. Please try again.");
+      setError("Eroare de conexiune la rețea. Te rugăm să reîncerci.");
       setLoading(false);
     }
   };
 
   return (
     <div className="admin-login-wrapper">
-      {/* Signature Liquid Fire Background */}
-      <LiquidBackground />
-
       <div className="admin-login-card">
         {/* Header with Official Wildfire Logo */}
         <div className="admin-login-header">
@@ -78,14 +75,14 @@ export default function AdminLoginPage() {
               src="/logo.png"
               alt="Wildfire Logo"
               className="admin-login-logo-img"
-              width={38}
-              height={38}
+              width={42}
+              height={42}
             />
           </div>
           <h1 className="admin-login-title">WILDFIRE ADMIN</h1>
           <p className="admin-login-subtitle">Fortress Security & Mission Control</p>
           <div className="admin-login-badge">
-            <Radio size={11} className="admin-live-pulse-dot" />
+            <Radio size={10} className="admin-live-pulse-dot" />
             <span>SECURE ACCESS GATEWAY</span>
           </div>
         </div>
@@ -107,14 +104,14 @@ export default function AdminLoginPage() {
                   Administrator ID
                 </label>
                 <div className="admin-input-wrapper">
-                  <User size={15} className="admin-input-icon" />
+                  <User size={16} className="admin-input-icon" />
                   <input
                     id="admin-username"
                     type="text"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter admin ID (e.g. iannC)"
+                    placeholder="Introdu ID-ul de admin (ex. iannC)"
                     className="admin-input-field"
                     autoComplete="username"
                   />
@@ -126,14 +123,14 @@ export default function AdminLoginPage() {
                   Master Password
                 </label>
                 <div className="admin-input-wrapper">
-                  <Lock size={15} className="admin-input-icon" />
+                  <Lock size={16} className="admin-input-icon" />
                   <input
                     id="admin-password"
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter master password"
+                    placeholder="Introdu parola master"
                     className="admin-input-field"
                     autoComplete="current-password"
                   />
@@ -143,10 +140,10 @@ export default function AdminLoginPage() {
           ) : (
             <div className="admin-form-group">
               <label className="admin-form-label" htmlFor="admin-totp">
-                Two-Factor Security Code (TOTP)
+                Cod de Securitate 2FA (TOTP)
               </label>
               <div className="admin-input-wrapper">
-                <KeyRound size={15} className="admin-input-icon" />
+                <KeyRound size={16} className="admin-input-icon" />
                 <input
                   id="admin-totp"
                   type="text"
@@ -154,13 +151,13 @@ export default function AdminLoginPage() {
                   maxLength={14}
                   value={totpCode}
                   onChange={(e) => setTotpCode(e.target.value)}
-                  placeholder="6-digit authenticator code or backup key"
-                  className="admin-input-field"
+                  placeholder="Cod de autentificare din 6 cifre sau cheie de backup"
+                  className="admin-input-field font-mono tracking-widest text-center"
                   autoFocus
                 />
               </div>
               <p className="admin-form-help">
-                Open Google Authenticator, 1Password, or enter a backup emergency recovery key.
+                Deschide Google Authenticator, 1Password sau introdu cheia de urgență.
               </p>
             </div>
           )}
@@ -168,28 +165,28 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="admin-btn admin-btn--primary admin-btn--block"
+            className="admin-login-submit-btn"
           >
             <span>
               {loading
-                ? "Authenticating..."
+                ? "Se autentifică..."
                 : requireTwoFactor
-                ? "Verify Security Code"
+                ? "Verifică Codul 2FA"
                 : "Sign In to Mission Control"}
             </span>
-            <ArrowRight size={14} />
+            <ArrowRight size={15} />
           </button>
         </form>
 
         {/* Footer */}
         <div className="admin-login-footer">
           <div className="admin-security-seal">
-            <ShieldCheck size={13} />
+            <ShieldCheck size={13} className="text-emerald-400" />
             <span>256-bit Cryptographic Salt & HMAC Protected</span>
           </div>
 
           <Link href="/docs" className="admin-back-link">
-            &larr; Back to Public Documentation
+            &larr; Înapoi la Documentația Publică
           </Link>
         </div>
       </div>

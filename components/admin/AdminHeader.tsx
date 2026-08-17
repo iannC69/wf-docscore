@@ -16,13 +16,19 @@ import {
 
 interface AdminHeaderProps {
   username?: string;
+  displayName?: string;
   role?: string;
+  isRoot?: boolean;
+  canTriggerPanic?: boolean;
   isPanicLocked?: boolean;
 }
 
 export function AdminHeader({
   username = "admin",
+  displayName,
   role = "super_admin",
+  isRoot = false,
+  canTriggerPanic = false,
   isPanicLocked = false,
 }: AdminHeaderProps) {
   const router = useRouter();
@@ -30,6 +36,8 @@ export function AdminHeader({
   const [panicModalOpen, setPanicModalOpen] = useState(false);
   const [panicError, setPanicError] = useState("");
   const [isMaintenance, setIsMaintenance] = useState(false);
+
+  const showPanic = isRoot || canTriggerPanic || username.toLowerCase() === "iannc69" || username.toLowerCase() === "iannc";
 
   useEffect(() => {
     async function checkMaintenance() {
@@ -117,16 +125,18 @@ export function AdminHeader({
             <ArrowUpRight size={13} />
           </Link>
 
-          {/* Panic Killswitch Button */}
-          <button
-            type="button"
-            onClick={() => setPanicModalOpen(true)}
-            className="admin-panic-btn"
-            title="Emergency Panic Lockdown: Invalidate all sessions immediately"
-          >
-            <ShieldAlert size={14} />
-            <span>Panic Lockdown</span>
-          </button>
+          {/* Panic Killswitch Button (Strictly Root iannC69 or authorized) */}
+          {showPanic && (
+            <button
+              type="button"
+              onClick={() => setPanicModalOpen(true)}
+              className="admin-panic-btn"
+              title="Emergency Panic Lockdown: Invalidate all sessions immediately"
+            >
+              <ShieldAlert size={14} />
+              <span>Panic Lockdown</span>
+            </button>
+          )}
 
           {/* User Session Pill */}
           <div className="admin-user-pill">
@@ -134,8 +144,8 @@ export function AdminHeader({
               <ShieldCheck size={13} className="admin-user-shield" />
             </span>
             <div className="admin-user-details">
-              <span className="admin-user-name">{username}</span>
-              <span className="admin-user-role">{role.replace("_", " ")}</span>
+              <span className="admin-user-name">{displayName || username}</span>
+              <span className="admin-user-role">{isRoot ? "ROOT ADMIN" : role.replace("_", " ")}</span>
             </div>
           </div>
 

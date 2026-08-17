@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Search,
   TrendingUp,
@@ -9,6 +10,7 @@ import {
   RefreshCw,
   FileQuestion,
   CheckCircle2,
+  Plus,
 } from "lucide-react";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
 
@@ -185,18 +187,19 @@ export default function AdminSearchAnalyticsPage() {
                       <td>
                         <strong className="admin-query-missed">"{log.query}"</strong>
                       </td>
-                      <td>{new Date(log.timestamp).toLocaleString()}</td>
+                      <td>{new Date(log.timestamp).toLocaleString("ro-RO")}</td>
                       <td>{log.ip}</td>
                       <td>{log.latencyMs}ms</td>
                       <td>
-                        <a
-                          href={`/admin/content?new=true&slug=${encodeURIComponent(
-                            log.query.replace(/\s+/g, "-")
-                          )}`}
+                        <Link
+                          href={`/admin/content?newDoc=true&slug=${encodeURIComponent(
+                            log.query.toLowerCase().replace(/[^a-z0-9-_]/g, "-")
+                          )}&title=${encodeURIComponent(log.query)}&category=informatii`}
                           className="admin-btn admin-btn--primary admin-btn--sm"
                         >
-                          Create Doc Article
-                        </a>
+                          <Plus size={12} />
+                          <span>Generează Document</span>
+                        </Link>
                       </td>
                     </tr>
                   ))

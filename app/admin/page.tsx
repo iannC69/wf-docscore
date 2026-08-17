@@ -25,6 +25,7 @@ import { getMaintenanceState } from "@/lib/security/maintenance";
 import { getSearchAnalytics } from "@/lib/security/searchAnalytics";
 import { listApiKeys } from "@/lib/security/apiKeys";
 import { AdminMetricCard } from "@/components/admin/AdminMetricCard";
+import { AdminLiveTerminal } from "@/components/admin/AdminLiveTerminal";
 import { CURRENT_VERSION } from "@/lib/version";
 import fs from "fs";
 import path from "path";
@@ -150,6 +151,9 @@ export default async function AdminDashboardPage() {
           subtitle="Active API tokens & keys"
         />
       </div>
+
+      {/* 100% Real Live Engine & Terminal Telemetry Stream */}
+      <AdminLiveTerminal />
 
       {/* Two Column Layout: Recent Audit Trail + System Status Matrix */}
       <div className="admin-dashboard-two-col">

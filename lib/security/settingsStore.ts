@@ -7,11 +7,16 @@ export interface PlatformSettings {
     enabled: boolean;
     message: string;
     estimatedEndTime: string;
+    reason?: string;
+    allowAdmins?: boolean;
   };
   announcement: {
     enabled: boolean;
     text: string;
     link?: string;
+    linkText?: string;
+    type?: "info" | "warning" | "fire";
+    dismissible?: boolean;
   };
   updatedAt: string;
   updatedBy: string;
@@ -23,11 +28,16 @@ const DEFAULT_SETTINGS: PlatformSettings = {
     message:
       "Wildfire Docs is currently undergoing scheduled platform upgrades and engine optimizations. We'll be back online shortly.",
     estimatedEndTime: "30 minutes",
+    reason: "Actualizare structură documentație & optimizare index căutare",
+    allowAdmins: true,
   },
   announcement: {
     enabled: false,
-    text: "Wildfire Docs v1.5.0 is live with Full Wiki Migration, Media Lightbox & Orange Video Player!",
+    text: "Wildfire Docs v1.5.0 este live cu Ghiduri CS2, Media Vault & Sistem de Securitate!",
     link: "/changelog",
+    linkText: "Vezi Noutățile",
+    type: "fire",
+    dismissible: true,
   },
   updatedAt: new Date().toISOString(),
   updatedBy: "system",

@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export interface SearchQueryLog {
   id: string;
   query: string;
@@ -7,50 +10,31 @@ export interface SearchQueryLog {
   ip: string;
 }
 
-// Global in-memory search log
-const globalSearchLogs: SearchQueryLog[] = (globalThis as any).__wf_search_logs || [
-  {
-    id: "srch_1",
-    query: "authentication tokens",
-    resultCount: 4,
-    latencyMs: 3.2,
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    ip: "127.0.0.1",
-  },
-  {
-    id: "srch_2",
-    query: "rate limiting config",
-    resultCount: 2,
-    latencyMs: 2.8,
-    timestamp: new Date(Date.now() - 7200000).toISOString(),
-    ip: "127.0.0.1",
-  },
-  {
-    id: "srch_3",
-    query: "turbopack ssg deployment",
-    resultCount: 6,
-    latencyMs: 4.1,
-    timestamp: new Date(Date.now() - 10800000).toISOString(),
-    ip: "127.0.0.1",
-  },
-  {
-    id: "srch_4",
-    query: "webhooks zapier integration",
-    resultCount: 0,
-    latencyMs: 2.1,
-    timestamp: new Date(Date.now() - 14400000).toISOString(),
-    ip: "127.0.0.1",
-  },
-  {
-    id: "srch_5",
-    query: "graphql api reference",
-    resultCount: 0,
-    latencyMs: 2.4,
-    timestamp: new Date(Date.now() - 18000000).toISOString(),
-    ip: "127.0.0.1",
-  },
-];
-(globalThis as any).__wf_search_logs = globalSearchLogs;
+const SEARCH_LOGS_PATH = path.join(process.cwd(), "content", "search-logs.json");
+
+function loadSearchLogs(): SearchQueryLog[] {
+  try {
+    if (fs.existsSync(SEARCH_LOGS_PATH)) {
+      const raw = fs.readFileSync(SEARCH_LOGS_PATH, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.error("Failed to load search logs from disk", err);
+  }
+  return [];
+}
+
+function saveSearchLogs(logs: SearchQueryLog[]) {
+  try {
+    const dir = path.dirname(SEARCH_LOGS_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(SEARCH_LOGS_PATH, JSON.stringify(logs.slice(0, 500), null, 2), "utf-8");
+  } catch (err) {
+    console.error("Failed to save search logs to disk", err);
+  }
+}
 
 export function recordSearchQuery(params: {
   query: string;
@@ -58,6 +42,7 @@ export function recordSearchQuery(params: {
   latencyMs: number;
   ip?: string;
 }): void {
+  const logs = loadSearchLogs();
   const log: SearchQueryLog = {
     id: `srch_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
     query: params.query.trim().toLowerCase(),
@@ -67,12 +52,16 @@ export function recordSearchQuery(params: {
     ip: params.ip || "127.0.0.1",
   };
 
-  globalSearchLogs.unshift(log);
-  if (globalSearchLogs.length > 500) globalSearchLogs.pop();
+  logs.unshift(log);
+  saveSearchLogs(logs);
+}
+
+export function clearSearchLogs(): void {
+  saveSearchLogs([]);
 }
 
 export function getSearchAnalytics() {
-  const logs = (globalThis as any).__wf_search_logs as SearchQueryLog[];
+  const logs = loadSearchLogs();
   const totalSearches = logs.length;
   const missedSearches = logs.filter((l) => l.resultCount === 0);
   const avgLatency =

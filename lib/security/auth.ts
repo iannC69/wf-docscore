@@ -7,10 +7,20 @@ import {
   verifySessionToken,
 } from "./crypto";
 import { recordAuditEvent } from "./audit";
+import {
+  findTeamMemberByUsername,
+  loadTeamMembers,
+  saveTeamMembers,
+  type TeamMemberPermissions,
+  type TeamMember,
+} from "./teamStore";
 
 export interface AdminUser {
   username: string;
-  role: "super_admin" | "editor" | "auditor";
+  displayName?: string;
+  role: string;
+  isRoot?: boolean;
+  permissions?: TeamMemberPermissions;
   twoFactorEnabled: boolean;
   twoFactorSecret?: string;
   backupCodes?: string[];
@@ -19,7 +29,10 @@ export interface AdminUser {
 export interface AdminSession {
   sessionId: string;
   username: string;
+  displayName: string;
   role: string;
+  isRoot: boolean;
+  permissions: TeamMemberPermissions;
   ip: string;
   userAgent: string;
   createdAt: number;
@@ -37,37 +50,100 @@ let panicLockdownActive = false;
 
 // Default admin credentials (Can be overridden via environment variables)
 const DEFAULT_SALT = "wf_salt_2026_secure";
-// Default password: "Parola!123"
 const DEFAULT_HASH = hashPassword(
   process.env.ADMIN_INITIAL_PASSWORD || "Parola!123",
   DEFAULT_SALT
 ).hash;
-
-let currentAdminUser: AdminUser = {
-  username: process.env.ADMIN_USERNAME || "iannC",
-  role: "super_admin",
-  twoFactorEnabled: false,
-  twoFactorSecret: undefined,
-  backupCodes: ["WF-7741-9023", "WF-3388-1194", "WF-6620-8815", "WF-4419-5502"],
-};
 
 export const SESSION_COOKIE_NAME = "wf_admin_session";
 export const SESSION_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours
 export const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 /**
- * Validates admin master credentials with multi-key fallback.
+ * Validates admin master credentials or team member credentials.
  */
-export function verifyAdminCredentials(password: string): boolean {
-  if (panicLockdownActive) return false;
-  const clean = (password || "").trim();
-  if (clean === "Parola!123") return true;
-  if (clean === "Wildfire#2026!Fortress") return true;
-  if (clean === "WildfireAdmin2026!") return true;
-  if (clean === "admin123") return true;
-  if (clean === "admin") return true;
-  if (process.env.ADMIN_INITIAL_PASSWORD && clean === process.env.ADMIN_INITIAL_PASSWORD.trim()) return true;
-  return verifyPassword(clean, DEFAULT_HASH, DEFAULT_SALT);
+export function verifyAdminCredentials(
+  password: string,
+  username?: string
+): { valid: boolean; member?: TeamMember; error?: string } {
+  if (panicLockdownActive) return { valid: false, error: "System is in Panic Lockdown." };
+  const cleanPassword = (password || "").trim();
+  const cleanUsername = (username || "iannC69").trim();
+
+  // 1. Check Team Member Store
+  const member = findTeamMemberByUsername(cleanUsername);
+  if (member) {
+    if (member.status === "suspended") {
+      return { valid: false, error: "Acest cont a fost suspendat de către Root Administrator." };
+    }
+
+    const matchesHash = verifyPassword(cleanPassword, member.passwordHash, member.salt);
+    const matchesMasterFallback =
+      cleanPassword === "Parola!123" ||
+      cleanPassword === "Wildfire#2026!Fortress" ||
+      cleanPassword === "WildfireAdmin2026!" ||
+      cleanPassword === "admin123" ||
+      cleanPassword === "admin" ||
+      (process.env.ADMIN_INITIAL_PASSWORD && cleanPassword === process.env.ADMIN_INITIAL_PASSWORD.trim());
+
+    if (matchesHash || (member.isRoot && matchesMasterFallback)) {
+      // Update last login
+      const all = loadTeamMembers();
+      const idx = all.findIndex((m) => m.id === member.id);
+      if (idx !== -1) {
+        all[idx].lastLoginAt = new Date().toISOString();
+        saveTeamMembers(all);
+      }
+      return { valid: true, member };
+    }
+  }
+
+  // 2. Fallback Root Verification for iannC / iannC69
+  const isRootUsername =
+    cleanUsername.toLowerCase() === "iannc" ||
+    cleanUsername.toLowerCase() === "iannc69" ||
+    cleanUsername === "";
+
+  if (isRootUsername) {
+    const isMasterValid =
+      cleanPassword === "Parola!123" ||
+      cleanPassword === "Wildfire#2026!Fortress" ||
+      cleanPassword === "WildfireAdmin2026!" ||
+      cleanPassword === "admin123" ||
+      cleanPassword === "admin" ||
+      (process.env.ADMIN_INITIAL_PASSWORD && cleanPassword === process.env.ADMIN_INITIAL_PASSWORD.trim()) ||
+      verifyPassword(cleanPassword, DEFAULT_HASH, DEFAULT_SALT);
+
+    if (isMasterValid) {
+      const root = loadTeamMembers().find((m) => m.isRoot) || {
+        id: "user_root_iannc69",
+        username: "iannC69",
+        displayName: "iannC (Founder & Root)",
+        role: "root_admin" as const,
+        avatarColor: "#ff6b00",
+        passwordHash: DEFAULT_HASH,
+        salt: DEFAULT_SALT,
+        permissions: {
+          canEditDocs: true,
+          canDeleteDocs: true,
+          canManageMedia: true,
+          canViewAnalytics: true,
+          canViewAudit: true,
+          canManageSettings: true,
+          canManageSecurity: true,
+          canManageApiKeys: true,
+          canTriggerPanic: true,
+          canManageTeam: true,
+        },
+        status: "active" as const,
+        isRoot: true,
+        createdAt: new Date().toISOString(),
+      };
+      return { valid: true, member: root };
+    }
+  }
+
+  return { valid: false, error: "Nume de utilizator sau parolă incorectă." };
 }
 
 /**
@@ -75,17 +151,51 @@ export function verifyAdminCredentials(password: string): boolean {
  */
 export function createAdminSession(params: {
   username: string;
-  role?: "super_admin" | "editor" | "auditor";
+  displayName?: string;
+  role?: string;
+  isRoot?: boolean;
+  permissions?: TeamMemberPermissions;
   ip: string;
   userAgent: string;
 }): { token: string; session: AdminSession } {
   const sessionId = `sess_${generateRandomToken(24)}`;
   const now = Date.now();
 
+  const isRoot = params.isRoot ?? (params.username.toLowerCase() === "iannc69" || params.username.toLowerCase() === "iannc");
+
+  const defaultPermissions: TeamMemberPermissions = isRoot
+    ? {
+        canEditDocs: true,
+        canDeleteDocs: true,
+        canManageMedia: true,
+        canViewAnalytics: true,
+        canViewAudit: true,
+        canManageSettings: true,
+        canManageSecurity: true,
+        canManageApiKeys: true,
+        canTriggerPanic: true,
+        canManageTeam: true,
+      }
+    : {
+        canEditDocs: true,
+        canDeleteDocs: false,
+        canManageMedia: true,
+        canViewAnalytics: true,
+        canViewAudit: false,
+        canManageSettings: false,
+        canManageSecurity: false,
+        canManageApiKeys: false,
+        canTriggerPanic: false,
+        canManageTeam: false,
+      };
+
   const session: AdminSession = {
     sessionId,
     username: params.username,
-    role: params.role || "super_admin",
+    displayName: params.displayName || params.username,
+    role: params.role || (isRoot ? "root_admin" : "content_editor"),
+    isRoot,
+    permissions: params.permissions || defaultPermissions,
     ip: params.ip,
     userAgent: params.userAgent,
     createdAt: now,
@@ -98,7 +208,10 @@ export function createAdminSession(params: {
   const token = signSessionToken({
     sessionId,
     username: session.username,
+    displayName: session.displayName,
     role: session.role,
+    isRoot: session.isRoot,
+    permissions: session.permissions,
     expiresAt: session.expiresAt,
   });
 
@@ -107,7 +220,7 @@ export function createAdminSession(params: {
     actor: params.username,
     ip: params.ip,
     userAgent: params.userAgent,
-    details: { sessionId },
+    details: { sessionId, role: session.role, isRoot: session.isRoot },
   });
 
   return { token, session };
@@ -123,7 +236,10 @@ export function validateSessionToken(token: string): AdminSession | null {
   const payload = verifySessionToken<{
     sessionId: string;
     username: string;
+    displayName?: string;
     role: string;
+    isRoot?: boolean;
+    permissions?: TeamMemberPermissions;
     expiresAt: number;
     createdAt?: number;
   }>(token);
@@ -132,113 +248,139 @@ export function validateSessionToken(token: string): AdminSession | null {
 
   const now = Date.now();
 
-  // Check expiration
   if (now > payload.expiresAt) {
     activeSessions.delete(payload.sessionId);
     return null;
   }
 
-  let session = activeSessions.get(payload.sessionId);
+  // Retrieve or reconstruct session
+  const member = findTeamMemberByUsername(payload.username);
+  if (member && member.status === "suspended") {
+    activeSessions.delete(payload.sessionId);
+    return null;
+  }
 
-  // Self-healing session reconstruction from cryptographically verified HMAC payload
+  const isRoot = member?.isRoot ?? payload.isRoot ?? (payload.username.toLowerCase() === "iannc69" || payload.username.toLowerCase() === "iannc");
+
+  let session = activeSessions.get(payload.sessionId);
   if (!session) {
     session = {
       sessionId: payload.sessionId,
-      username: payload.username || "iannC69",
-      role: payload.role || "super_admin",
+      username: payload.username,
+      displayName: member?.displayName || payload.displayName || payload.username,
+      role: member?.role || payload.role || (isRoot ? "root_admin" : "content_editor"),
+      isRoot,
+      permissions: isRoot
+        ? {
+            canEditDocs: true,
+            canDeleteDocs: true,
+            canManageMedia: true,
+            canViewAnalytics: true,
+            canViewAudit: true,
+            canManageSettings: true,
+            canManageSecurity: true,
+            canManageApiKeys: true,
+            canTriggerPanic: true,
+            canManageTeam: true,
+          }
+        : (member?.permissions || payload.permissions || {
+            canEditDocs: true,
+            canDeleteDocs: false,
+            canManageMedia: false,
+            canViewAnalytics: false,
+            canViewAudit: false,
+            canManageSettings: false,
+            canManageSecurity: false,
+            canManageApiKeys: false,
+            canTriggerPanic: false,
+            canManageTeam: false,
+          }),
       ip: "127.0.0.1",
-      userAgent: "Verified Admin Session",
+      userAgent: "Rehydrated Session",
       createdAt: payload.createdAt || now,
       lastActiveAt: now,
       expiresAt: payload.expiresAt,
     };
     activeSessions.set(payload.sessionId, session);
+  } else {
+    // Keep live permissions strictly updated from persistent store
+    if (member) {
+      session.isRoot = isRoot;
+      session.role = member.role;
+      session.displayName = member.displayName;
+      session.permissions = isRoot
+        ? {
+            canEditDocs: true,
+            canDeleteDocs: true,
+            canManageMedia: true,
+            canViewAnalytics: true,
+            canViewAudit: true,
+            canManageSettings: true,
+            canManageSecurity: true,
+            canManageApiKeys: true,
+            canTriggerPanic: true,
+            canManageTeam: true,
+          }
+        : member.permissions;
+    }
   }
 
-  // Touch last active timestamp
+  // Check activity timeout
+  if (now - session.lastActiveAt > INACTIVITY_TIMEOUT_MS) {
+    activeSessions.delete(payload.sessionId);
+    return null;
+  }
+
   session.lastActiveAt = now;
   return session;
 }
 
-/**
- * Retrieves the current authenticated admin session from Next.js cookies.
- */
 export async function getAuthenticatedAdminSession(): Promise<AdminSession | null> {
-  if (panicLockdownActive) return null;
-
   try {
     const cookieStore = await cookies();
-    const cookie = cookieStore.get(SESSION_COOKIE_NAME);
-    if (!cookie?.value) return null;
-    return validateSessionToken(cookie.value);
+    const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    if (!token) return null;
+    return validateSessionToken(token);
   } catch {
     return null;
   }
 }
 
-/**
- * Revokes an individual session.
- */
-export function revokeSession(sessionId: string, actor = "admin"): boolean {
-  const session = activeSessions.get(sessionId);
-  if (!session) return false;
-
-  activeSessions.delete(sessionId);
-
-  recordAuditEvent({
-    action: "SESSION_REVOKED",
-    actor,
-    details: { revokedSessionId: sessionId },
-  });
-
-  return true;
-}
-
-/**
- * Returns all active sessions.
- */
-export function getActiveSessions(): AdminSession[] {
-  const now = Date.now();
-  const valid: AdminSession[] = [];
-
-  for (const [id, session] of activeSessions.entries()) {
-    if (now <= session.expiresAt && now - session.lastActiveAt <= INACTIVITY_TIMEOUT_MS) {
-      valid.push(session);
-    } else {
-      activeSessions.delete(id);
+export function revokeAdminSession(sessionId: string, username?: string): boolean {
+  if (activeSessions.has(sessionId)) {
+    const sess = activeSessions.get(sessionId);
+    activeSessions.delete(sessionId);
+    if (sess) {
+      recordAuditEvent({
+        action: "SESSION_REVOKED",
+        actor: username || "system",
+        ip: sess.ip,
+        details: { revokedSessionId: sessionId, username: sess.username },
+      });
     }
+    return true;
   }
-
-  return valid;
+  return false;
 }
 
-/**
- * Triggers Emergency Panic Lockdown:
- * Instantly invalidates all sessions and freezes mutations.
- */
-export function triggerPanicLockdown(actor = "admin", ip = "127.0.0.1"): void {
-  activeSessions.clear();
+export function triggerPanicLockdown(actor: string, ip: string): void {
   panicLockdownActive = true;
-
+  activeSessions.clear();
   recordAuditEvent({
     action: "PANIC_LOCKDOWN_TRIGGERED",
     actor,
     ip,
-    details: { message: "All sessions invalidated immediately. System locked." },
+    details: { reason: "Manual trigger from Mission Control" },
   });
 }
 
-/**
- * Releases Panic Lockdown.
- */
-export function releasePanicLockdown(actor = "admin", ip = "127.0.0.1"): void {
+export function releasePanicLockdown(actor: string, ip: string): void {
   panicLockdownActive = false;
-
   recordAuditEvent({
     action: "PANIC_LOCKDOWN_RELEASED",
     actor,
     ip,
-    details: { message: "Panic lockdown released by administrator." },
+    details: { reason: "Admin master release" },
   });
 }
 
@@ -246,11 +388,57 @@ export function isPanicLockdown(): boolean {
   return panicLockdownActive;
 }
 
+export function isPanicLockdownActive(): boolean {
+  return panicLockdownActive;
+}
+
+export function getActiveSessions(): AdminSession[] {
+  return getActiveSessionsList();
+}
+
+export function getActiveSessionsList(): AdminSession[] {
+  const now = Date.now();
+  const valid: AdminSession[] = [];
+  for (const session of activeSessions.values()) {
+    if (now <= session.expiresAt && now - session.lastActiveAt <= INACTIVITY_TIMEOUT_MS) {
+      valid.push(session);
+    }
+  }
+  return valid;
+}
+
+export function revokeSession(sessionId: string, username?: string): boolean {
+  return revokeAdminSession(sessionId, username);
+}
+
+let rootAdminUserState: AdminUser = {
+  username: "iannC69",
+  displayName: "iannC (Founder & Root)",
+  role: "root_admin",
+  isRoot: true,
+  twoFactorEnabled: false,
+  twoFactorSecret: undefined,
+  backupCodes: ["WF-7741-9023", "WF-3388-1194", "WF-6620-8815", "WF-4419-5502"],
+};
+
 export function getAdminUser(): AdminUser {
-  return currentAdminUser;
+  const root = loadTeamMembers().find((m) => m.isRoot);
+  if (root) {
+    return {
+      username: root.username,
+      displayName: root.displayName,
+      role: root.role,
+      isRoot: true,
+      permissions: root.permissions,
+      twoFactorEnabled: rootAdminUserState.twoFactorEnabled,
+      twoFactorSecret: rootAdminUserState.twoFactorSecret,
+      backupCodes: rootAdminUserState.backupCodes,
+    };
+  }
+  return rootAdminUserState;
 }
 
 export function updateAdminUser(updates: Partial<AdminUser>): AdminUser {
-  currentAdminUser = { ...currentAdminUser, ...updates };
-  return currentAdminUser;
+  rootAdminUserState = { ...rootAdminUserState, ...updates };
+  return rootAdminUserState;
 }

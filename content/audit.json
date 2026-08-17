@@ -1,5 +1,481 @@
 [
   {
+    "id": "aud_1786993554374_3dd0d9b9",
+    "timestamp": "2026-08-17T19:05:54.377Z",
+    "action": "BACKUP_EXPORT",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "format": "bundle",
+      "totalFiles": 62
+    },
+    "previousHash": "84c8f88a9e66b0025d240737185d44c852665915c3e2b669790f3ec0b5cf5e0f",
+    "hash": "9fec16b1bce9c731475691cd750553fa45d643c0a788c22f86d6e1bbe8717c8b"
+  },
+  {
+    "id": "aud_1786993455627_f4f3e687",
+    "timestamp": "2026-08-17T19:04:15.627Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "ceva",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "23dcdbefb5fc3cd0111676230f93f8e776db92aae4e32f0545866503afa6bbd7",
+    "hash": "84c8f88a9e66b0025d240737185d44c852665915c3e2b669790f3ec0b5cf5e0f"
+  },
+  {
+    "id": "aud_1786993323030_0d866225",
+    "timestamp": "2026-08-17T19:02:03.030Z",
+    "action": "MAINTENANCE_TOGGLED",
+    "actor": "ceva",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "event": "PLATFORM_RESTORED",
+      "dispatchedToSubscribers": 1,
+      "subscribers": [
+        "solwolfs@gmail.com"
+      ]
+    },
+    "previousHash": "544db75fe15b65db3d1a01515e995e1f0e37929b32f8fd3953b933acac18e18c",
+    "hash": "23dcdbefb5fc3cd0111676230f93f8e776db92aae4e32f0545866503afa6bbd7"
+  },
+  {
+    "id": "aud_1786993323023_11c37451",
+    "timestamp": "2026-08-17T19:02:03.023Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "ceva",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "8d2be02da293b7148fbdbdd2e367af5b42eb6f063d4951eeaf5ef5cb7dded92a",
+    "hash": "544db75fe15b65db3d1a01515e995e1f0e37929b32f8fd3953b933acac18e18c"
+  },
+  {
+    "id": "aud_1786993321334_4f0559ed",
+    "timestamp": "2026-08-17T19:02:01.336Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "ceva",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": true,
+      "announcementEnabled": false
+    },
+    "previousHash": "78d442371074339e9be82431c5f94b37345a6036d694234f328c3aaaf4739696",
+    "hash": "8d2be02da293b7148fbdbdd2e367af5b42eb6f063d4951eeaf5ef5cb7dded92a"
+  },
+  {
+    "id": "aud_1786991003631_a3fbf791",
+    "timestamp": "2026-08-17T18:23:23.631Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "ceva",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_f6f994793a234a991c5914625a04a04199444736b89451ae",
+      "role": "doc_lead",
+      "isRoot": false
+    },
+    "previousHash": "2d9914241b4e7e39318a809e28cfa0e9f1e4f9c87aa9ea2d43c9871604277900",
+    "hash": "78d442371074339e9be82431c5f94b37345a6036d694234f328c3aaaf4739696"
+  },
+  {
+    "id": "aud_1786990997011_d1370e8f",
+    "timestamp": "2026-08-17T18:23:17.011Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "ceva",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_a082f9d27508fb39edc23c9abd65334a11becc0c9cc20695"
+    },
+    "previousHash": "7f05278a3929b02058eb55f68f50d9bd221cdd98ea08a2bc3be5680da25c2c05",
+    "hash": "2d9914241b4e7e39318a809e28cfa0e9f1e4f9c87aa9ea2d43c9871604277900"
+  },
+  {
+    "id": "aud_1786990997007_53c76f4d",
+    "timestamp": "2026-08-17T18:23:17.007Z",
+    "action": "SESSION_REVOKED",
+    "actor": "ceva",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_a082f9d27508fb39edc23c9abd65334a11becc0c9cc20695",
+      "username": "ceva"
+    },
+    "previousHash": "b85664bcf42faadc1e172048a33b0b17d12a89f30081a6e3f5d81266996d1d97",
+    "hash": "7f05278a3929b02058eb55f68f50d9bd221cdd98ea08a2bc3be5680da25c2c05"
+  },
+  {
+    "id": "aud_1786990920783_c9babb93",
+    "timestamp": "2026-08-17T18:22:00.783Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "ceva",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_a082f9d27508fb39edc23c9abd65334a11becc0c9cc20695",
+      "role": "doc_lead",
+      "isRoot": false
+    },
+    "previousHash": "764feb87a840f7a8954b409425fe5ed8fa17f4579ca4f7114bbaec71029826b8",
+    "hash": "b85664bcf42faadc1e172048a33b0b17d12a89f30081a6e3f5d81266996d1d97"
+  },
+  {
+    "id": "aud_1786990918540_f9e40460",
+    "timestamp": "2026-08-17T18:21:58.540Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "ceva",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "remainingAttempts": 99
+    },
+    "previousHash": "cbfe209801a5482ffb88d1ffcd347a57a9940594316c055e0cd24fbaad35aa19",
+    "hash": "764feb87a840f7a8954b409425fe5ed8fa17f4579ca4f7114bbaec71029826b8"
+  },
+  {
+    "id": "aud_1786990912487_a069d34b",
+    "timestamp": "2026-08-17T18:21:52.487Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_36901235caf01dcf0d58164898c45fa626f3820526a4ecfb"
+    },
+    "previousHash": "2d3ad1c6df85b7153230f360f59e041f4086d075ecee9e22c67311450f87fbe3",
+    "hash": "cbfe209801a5482ffb88d1ffcd347a57a9940594316c055e0cd24fbaad35aa19"
+  },
+  {
+    "id": "aud_1786990912481_1d97c490",
+    "timestamp": "2026-08-17T18:21:52.482Z",
+    "action": "SESSION_REVOKED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_36901235caf01dcf0d58164898c45fa626f3820526a4ecfb",
+      "username": "iannC69"
+    },
+    "previousHash": "bc83bcb60896923362dcf39e375822454cfb5b781cbdbcd7045c82f786f3ebf3",
+    "hash": "2d3ad1c6df85b7153230f360f59e041f4086d075ecee9e22c67311450f87fbe3"
+  },
+  {
+    "id": "aud_1786990901325_73162c7f",
+    "timestamp": "2026-08-17T18:21:41.325Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "CREATE_TEAM_MEMBER",
+      "createdUser": "ceva",
+      "role": "doc_lead"
+    },
+    "previousHash": "b3eb86471c62a006dbcd63bff80359164b087f2cbf230211eea7f20a30521bfd",
+    "hash": "bc83bcb60896923362dcf39e375822454cfb5b781cbdbcd7045c82f786f3ebf3"
+  },
+  {
+    "id": "aud_1786990832426_e4d80df2",
+    "timestamp": "2026-08-17T18:20:32.426Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_36901235caf01dcf0d58164898c45fa626f3820526a4ecfb",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "3bc06042dad79da6c4aa2d6eb6071e9983681f5c7d370521c05faf935328c74e",
+    "hash": "b3eb86471c62a006dbcd63bff80359164b087f2cbf230211eea7f20a30521bfd"
+  },
+  {
+    "id": "aud_1786990555411_c6849a1d",
+    "timestamp": "2026-08-17T18:15:55.412Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "be8593aaa732367fd725b6522948f9572abd4b079d8ad79b739c80ab80db7c9a",
+    "hash": "3bc06042dad79da6c4aa2d6eb6071e9983681f5c7d370521c05faf935328c74e"
+  },
+  {
+    "id": "aud_1786990552974_8df192de",
+    "timestamp": "2026-08-17T18:15:52.975Z",
+    "action": "MAINTENANCE_TOGGLED",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "event": "PLATFORM_RESTORED",
+      "dispatchedToSubscribers": 1,
+      "subscribers": [
+        "solwolfs@gmail.com"
+      ]
+    },
+    "previousHash": "6839a5289afd8a1d2be4e40de53c19463e38d4c51b2ccb80ea0c1d0adfc4b152",
+    "hash": "be8593aaa732367fd725b6522948f9572abd4b079d8ad79b739c80ab80db7c9a"
+  },
+  {
+    "id": "aud_1786990552965_9a4810d7",
+    "timestamp": "2026-08-17T18:15:52.965Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "999ac54eea57630943291705abcbb6a0d5e7b2a2cebc7eb72a502602e888e68c",
+    "hash": "6839a5289afd8a1d2be4e40de53c19463e38d4c51b2ccb80ea0c1d0adfc4b152"
+  },
+  {
+    "id": "aud_1786990518567_e67faf32",
+    "timestamp": "2026-08-17T18:15:18.567Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": true,
+      "announcementEnabled": false
+    },
+    "previousHash": "fd3ba4b2e6b28c44605f7abe20192168350a06ddd8b6754d1a1e03be2e754ef7",
+    "hash": "999ac54eea57630943291705abcbb6a0d5e7b2a2cebc7eb72a502602e888e68c"
+  },
+  {
+    "id": "aud_1786990516409_b1dcfa45",
+    "timestamp": "2026-08-17T18:15:16.409Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": true,
+      "announcementEnabled": false
+    },
+    "previousHash": "3db828a4e8af920f77617a54775e9f09149284796c3510d9cd9fa114deb80c54",
+    "hash": "fd3ba4b2e6b28c44605f7abe20192168350a06ddd8b6754d1a1e03be2e754ef7"
+  },
+  {
+    "id": "aud_1786990514246_c636c932",
+    "timestamp": "2026-08-17T18:15:14.246Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "501b406c82a190bb4be130132c99ce93e2dd6fd4b4ce308b419e5fb864385de8",
+    "hash": "3db828a4e8af920f77617a54775e9f09149284796c3510d9cd9fa114deb80c54"
+  },
+  {
+    "id": "aud_1786990511014_327df81e",
+    "timestamp": "2026-08-17T18:15:11.014Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "3fffc7a1ed48e39d846339a67c04b9afceb8ba184b6d283882213b712fdee314",
+    "hash": "501b406c82a190bb4be130132c99ce93e2dd6fd4b4ce308b419e5fb864385de8"
+  },
+  {
+    "id": "aud_1786990215704_27b1f2ae",
+    "timestamp": "2026-08-17T18:10:15.705Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "fe6e2a6f2c99ea6e581f2135bb78a556970ac45e06d9fcc58f4588aab763cd87",
+    "hash": "3fffc7a1ed48e39d846339a67c04b9afceb8ba184b6d283882213b712fdee314"
+  },
+  {
+    "id": "aud_1786990189075_6aff255d",
+    "timestamp": "2026-08-17T18:09:49.075Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "e56f2396ad2cfe87bb5d66772c0278f42851bb8901a108f3b40ae0d51f52e5d8",
+    "hash": "fe6e2a6f2c99ea6e581f2135bb78a556970ac45e06d9fcc58f4588aab763cd87"
+  },
+  {
+    "id": "aud_1786990172998_16153e80",
+    "timestamp": "2026-08-17T18:09:32.999Z",
+    "action": "BACKUP_EXPORT",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "format": "zip",
+      "totalFiles": 62
+    },
+    "previousHash": "cfa9fce1fc7e9352080655aaa3414efa7c62f816460b542f2d88874cf4e0d01b",
+    "hash": "e56f2396ad2cfe87bb5d66772c0278f42851bb8901a108f3b40ae0d51f52e5d8"
+  },
+  {
+    "id": "aud_1786989190584_bdb530b9",
+    "timestamp": "2026-08-17T17:53:10.584Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_8ea646f4427f8cdd2b8121691f28d9afff786bb1d29e1329"
+    },
+    "previousHash": "e1ca026bc2c5a095b71ea1a0c3753b2614b9ec1068bc96e7ac3950a97f3ef213",
+    "hash": "cfa9fce1fc7e9352080655aaa3414efa7c62f816460b542f2d88874cf4e0d01b"
+  },
+  {
+    "id": "aud_1786989088628_64ab1315",
+    "timestamp": "2026-08-17T17:51:28.628Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_cf81d9187ad35720b08469b468e8d6500cdbdfd06d336c69"
+    },
+    "previousHash": "9ccc13015f9b6e9198fa6f864fdacdfaab8aa346bfb86e027b09f5be2ce36c20",
+    "hash": "e1ca026bc2c5a095b71ea1a0c3753b2614b9ec1068bc96e7ac3950a97f3ef213"
+  },
+  {
+    "id": "aud_1786989088626_0305e2b5",
+    "timestamp": "2026-08-17T17:51:28.626Z",
+    "action": "SESSION_REVOKED",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_cf81d9187ad35720b08469b468e8d6500cdbdfd06d336c69"
+    },
+    "previousHash": "42c7af260d8028df13156314c43e36fe5b8a921eb67769edb78f1afb3593ba99",
+    "hash": "9ccc13015f9b6e9198fa6f864fdacdfaab8aa346bfb86e027b09f5be2ce36c20"
+  },
+  {
+    "id": "aud_1786988716712_bdfa8c1b",
+    "timestamp": "2026-08-17T17:45:16.712Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_cf81d9187ad35720b08469b468e8d6500cdbdfd06d336c69"
+    },
+    "previousHash": "06d3ddcac59d8297b79565f80d09d2a15ea86acdbf15a4b0b98daf806f21a5c5",
+    "hash": "42c7af260d8028df13156314c43e36fe5b8a921eb67769edb78f1afb3593ba99"
+  },
+  {
+    "id": "aud_1786988709426_194fb9bc",
+    "timestamp": "2026-08-17T17:45:09.427Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_8f9c79ce9520083ceb4f46863e2f650ee54ec9482c4723de"
+    },
+    "previousHash": "6fd3550d2291f2ebe0e0c3ebeb60665cae1ba652909f371f9299d3424aa51cda",
+    "hash": "06d3ddcac59d8297b79565f80d09d2a15ea86acdbf15a4b0b98daf806f21a5c5"
+  },
+  {
+    "id": "aud_1786988709422_d4f2debe",
+    "timestamp": "2026-08-17T17:45:09.423Z",
+    "action": "SESSION_REVOKED",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_8f9c79ce9520083ceb4f46863e2f650ee54ec9482c4723de"
+    },
+    "previousHash": "ab368dc4fd0f7eeaa9a403e2911782c80570c0f213902d0769bba3c4de761ce5",
+    "hash": "6fd3550d2291f2ebe0e0c3ebeb60665cae1ba652909f371f9299d3424aa51cda"
+  },
+  {
+    "id": "aud_1786988593265_c88ab0e4",
+    "timestamp": "2026-08-17T17:43:13.265Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_8f9c79ce9520083ceb4f46863e2f650ee54ec9482c4723de"
+    },
+    "previousHash": "f5546a96127fec373b8e55ee5d4ce5ff0e99e27f073f2c125b51ebd86f927132",
+    "hash": "ab368dc4fd0f7eeaa9a403e2911782c80570c0f213902d0769bba3c4de761ce5"
+  },
+  {
+    "id": "aud_1786988575116_0ddcef96",
+    "timestamp": "2026-08-17T17:42:55.116Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_d7862a19fb1e143489fbe399002338eca0c217095ed7e12c"
+    },
+    "previousHash": "964427f94534d09c3d281e05045208e1f054684f2ce2c40af7179bb48bd0070f",
+    "hash": "f5546a96127fec373b8e55ee5d4ce5ff0e99e27f073f2c125b51ebd86f927132"
+  },
+  {
+    "id": "aud_1786988575110_dcbec562",
+    "timestamp": "2026-08-17T17:42:55.113Z",
+    "action": "SESSION_REVOKED",
+    "actor": "iannC",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_d7862a19fb1e143489fbe399002338eca0c217095ed7e12c"
+    },
+    "previousHash": "aa211e29e0b90880e31a257413fa7d1fee13304b91a31b99a2bb444807949db4",
+    "hash": "964427f94534d09c3d281e05045208e1f054684f2ce2c40af7179bb48bd0070f"
+  },
+  {
+    "id": "aud_1786988387496_64d73830",
+    "timestamp": "2026-08-17T17:39:47.496Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_d7862a19fb1e143489fbe399002338eca0c217095ed7e12c"
+    },
+    "previousHash": "6eadf56caa7b00ec11cb16b06633fda6c9ec2b7e12be33b80e0d2323abcbe4fc",
+    "hash": "aa211e29e0b90880e31a257413fa7d1fee13304b91a31b99a2bb444807949db4"
+  },
+  {
     "id": "aud_1786971328531_ec3a8255",
     "timestamp": "2026-08-17T12:55:28.532Z",
     "action": "SETTINGS_UPDATE",

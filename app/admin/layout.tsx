@@ -25,13 +25,21 @@ export default async function AdminLayout({
       {session && (
         <AdminHeader
           username={session.username}
+          displayName={session.displayName}
           role={session.role}
+          isRoot={session.isRoot}
+          canTriggerPanic={session.isRoot || session.permissions?.canTriggerPanic}
           isPanicLocked={isLocked}
         />
       )}
 
       <div className="admin-body-container">
-        {session && <AdminSidebar />}
+        {session && (
+          <AdminSidebar
+            permissions={session.permissions}
+            isRoot={session.isRoot}
+          />
+        )}
         <main className={`admin-main-content ${!session ? "admin-main-content--auth" : ""}`}>
           {children}
         </main>

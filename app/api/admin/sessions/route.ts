@@ -17,6 +17,13 @@ export async function GET(req: NextRequest) {
   const sessions = getActiveSessions();
   return NextResponse.json({
     currentSessionId: session.sessionId,
+    currentUser: {
+      username: session.username,
+      displayName: session.displayName,
+      role: session.role,
+      isRoot: session.isRoot,
+      permissions: session.permissions,
+    },
     total: sessions.length,
     sessions,
   });
@@ -35,6 +42,43 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "sessionId is required." }, { status: 400 });
   }
 
+  const sessions = getActiveSessions();
+  const targetSession = sessions.find((s) => s.sessionId === sessionId);
+
+  if (targetSession) {
+    const isTargetRoot =
+      targetSession.isRoot ||
+      targetSession.username.toLowerCase() === "iannc69" ||
+      targetSession.username.toLowerCase() === "iannc";
+
+    const isActorRoot =
+      session.isRoot ||
+      session.username.toLowerCase() === "iannc69" ||
+      session.username.toLowerCase() === "iannc";
+
+    // STRICT RULE: Non-root admins CANNOT revoke a Root admin's session
+    if (isTargetRoot && !isActorRoot) {
+      return NextResponse.json(
+        {
+          error: "FORBIDDEN",
+          message: "Securitate Refuzată: Nu ai permisiunea de a revoca sesiunea Super Administratorului Root (iannC69)!",
+        },
+        { status: 403 }
+      );
+    }
+
+    // Non-root members can only revoke their own session unless they have canManageSecurity
+    if (!isActorRoot && !session.permissions?.canManageSecurity && targetSession.sessionId !== session.sessionId) {
+      return NextResponse.json(
+        {
+          error: "FORBIDDEN",
+          message: "Nu ai permisiunea 'canManageSecurity' pentru a revoca sesiunile altor administratori!",
+        },
+        { status: 403 }
+      );
+    }
+  }
+
   const success = revokeSession(sessionId, session.username);
-  return NextResponse.json({ success, message: "Session revoked successfully." });
+  return NextResponse.json({ success, message: "Sesiune revocată cu succes." });
 }

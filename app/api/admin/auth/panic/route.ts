@@ -17,13 +17,26 @@ export async function POST(req: NextRequest) {
   const { action, masterPassword } = await req.json();
 
   if (action === "trigger") {
-    // Requires an active admin session OR master password verification
+    // Requires Root Admin session OR master password verification
     const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
     const session = token ? validateSessionToken(token) : null;
     const isPwValid = masterPassword ? verifyAdminCredentials(masterPassword) : false;
 
     if (!session && !isPwValid) {
       return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+    }
+
+    const isRoot = session?.isRoot || session?.username.toLowerCase() === "iannc69" || session?.username.toLowerCase() === "iannc";
+    const canPanic = isRoot || Boolean(session?.permissions?.canTriggerPanic) || isPwValid;
+
+    if (!canPanic) {
+      return NextResponse.json(
+        {
+          error: "FORBIDDEN",
+          message: "Securitate Refuzată: Doar Super Administratorul Root (iannC69) poate declanșa Panic Lockdown!",
+        },
+        { status: 403 }
+      );
     }
 
     triggerPanicLockdown(session?.username || "emergency_override", ip);

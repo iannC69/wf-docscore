@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LayoutControls } from "@/components/ui/LayoutControls";
 import { MobileMenuToggle } from "@/components/layout/MobileMenuToggle";
 import { SearchModal } from "@/components/ui/SearchModal";
+import { AnnouncementBanner } from "@/components/ui/AnnouncementBanner";
 import { CURRENT_VERSION } from "@/lib/version";
 
 function GithubIcon({ size = 16 }: { size?: number }) {
@@ -40,6 +41,7 @@ export function Header() {
 
   return (
     <>
+      <AnnouncementBanner />
       <header className="header" role="banner">
         <div className="header-inner">
           {/* Left: Brand Logo + Mobile toggle */}

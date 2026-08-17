@@ -28,6 +28,7 @@ interface SessionInfo {
 export default function AdminSecurityPage() {
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(false);
   const [twoFactorSecret, setTwoFactorSecret] = useState<string>("");
   const [twoFactorUri, setTwoFactorUri] = useState<string>("");
@@ -50,6 +51,9 @@ export default function AdminSecurityPage() {
       const sessData = await sessRes.json();
       setSessions(sessData.sessions || []);
       setCurrentSessionId(sessData.currentSessionId || "");
+      if (sessData.currentUser) {
+        setCurrentUser(sessData.currentUser);
+      }
 
       // 2. Load 2FA status
       const totpRes = await fetch("/api/admin/auth/totp");
@@ -365,7 +369,7 @@ export default function AdminSecurityPage() {
                   <span>Release Panic Lockdown</span>
                 </button>
               </div>
-            ) : (
+            ) : currentUser?.isRoot || currentUser?.username?.toLowerCase() === "iannc69" || currentUser?.username?.toLowerCase() === "iannc" ? (
               <button
                 type="button"
                 onClick={handleTriggerPanic}
@@ -374,6 +378,11 @@ export default function AdminSecurityPage() {
                 <Lock size={14} />
                 <span>Trigger Panic Lockdown Now</span>
               </button>
+            ) : (
+              <div className="flex items-center gap-2 p-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-md text-xs font-mono text-[var(--color-text-tertiary)]">
+                <ShieldAlert size={14} className="text-amber-400 flex-shrink-0" />
+                <span>Acces Restricționat: Doar Super Administratorul Root (iannC69) poate declanșa Panic Lockdown.</span>
+              </div>
             )}
           </div>
         </section>
@@ -404,13 +413,29 @@ export default function AdminSecurityPage() {
             <tbody>
               {sessions.map((sess) => {
                 const isCurrent = sess.sessionId === currentSessionId;
+                const isTargetRoot =
+                  sess.username?.toLowerCase() === "iannc69" ||
+                  sess.username?.toLowerCase() === "iannc" ||
+                  sess.role === "root_admin";
+                const isCurrentRoot =
+                  currentUser?.isRoot ||
+                  currentUser?.username?.toLowerCase() === "iannc69" ||
+                  currentUser?.username?.toLowerCase() === "iannc";
+
                 return (
                   <tr key={sess.sessionId}>
                     <td>
                       <code className="admin-code-cell">{sess.sessionId.slice(0, 16)}...</code>
                     </td>
                     <td>
-                      <span className="admin-user-tag">{sess.username}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="admin-user-tag">{sess.username}</span>
+                        {isTargetRoot && (
+                          <span className="admin-root-badge" title="Root Super Admin (Protejat)">
+                            ROOT
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td>{sess.ip}</td>
                     <td>{new Date(sess.createdAt).toLocaleTimeString()}</td>
@@ -425,7 +450,20 @@ export default function AdminSecurityPage() {
                       )}
                     </td>
                     <td>
-                      {!isCurrent && (
+                      {isCurrent ? null : isTargetRoot && !isCurrentRoot ? (
+                        <span
+                          className="admin-status-pill"
+                          style={{
+                            borderColor: "rgba(245, 158, 11, 0.35)",
+                            color: "#f59e0b",
+                            background: "rgba(245, 158, 11, 0.08)",
+                          }}
+                        >
+                          PROTEJAT ROOT
+                        </span>
+                      ) : !isCurrentRoot && !currentUser?.permissions?.canManageSecurity ? (
+                        <span className="text-xs text-[var(--color-text-tertiary)] font-mono">Fără Drept</span>
+                      ) : (
                         <button
                           type="button"
                           onClick={() => handleRevokeSession(sess.sessionId)}

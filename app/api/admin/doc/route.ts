@@ -6,10 +6,18 @@ import { recordAuditEvent } from "@/lib/security/audit";
 
 const DOCS_DIR = path.join(process.cwd(), "content", "docs");
 
-function getAllDocFiles(dir = DOCS_DIR, base = ""): { slug: string; relativePath: string; fullPath: string }[] {
+export interface DocFileInfo {
+  slug: string;
+  relativePath: string;
+  fullPath: string;
+  category: string;
+  title: string;
+}
+
+function getAllDocFiles(dir = DOCS_DIR, base = ""): DocFileInfo[] {
   if (!fs.existsSync(dir)) return [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  let results: { slug: string; relativePath: string; fullPath: string }[] = [];
+  let results: DocFileInfo[] = [];
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
@@ -19,7 +27,21 @@ function getAllDocFiles(dir = DOCS_DIR, base = ""): { slug: string; relativePath
       results = results.concat(getAllDocFiles(fullPath, rel));
     } else if (entry.isFile() && (entry.name.endsWith(".md") || entry.name.endsWith(".mdx"))) {
       const cleanSlug = rel.replace(/\\/g, "/").replace(/\.(md|mdx)$/, "");
-      results.push({ slug: cleanSlug, relativePath: rel, fullPath });
+      
+      // Extract title and category
+      let title = path.basename(cleanSlug).replace(/-/g, " ");
+      try {
+        const raw = fs.readFileSync(fullPath, "utf-8");
+        const titleMatch = raw.match(/title:\s*["']?([^"\n\r]+)["']?/);
+        if (titleMatch && titleMatch[1].trim()) {
+          title = titleMatch[1].trim();
+        }
+      } catch {}
+
+      const parts = cleanSlug.split("/");
+      const category = parts.length > 1 ? parts[0] : "general";
+
+      results.push({ slug: cleanSlug, relativePath: rel, fullPath, category, title });
     }
   }
 
@@ -49,6 +71,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       slug: match.slug,
       relativePath: match.relativePath,
+      category: match.category,
+      title: match.title,
       content,
     });
   }
@@ -56,7 +80,12 @@ export async function GET(req: NextRequest) {
   const docs = getAllDocFiles();
   return NextResponse.json({
     total: docs.length,
-    docs: docs.map((d) => ({ slug: d.slug, relativePath: d.relativePath })),
+    docs: docs.map((d) => ({
+      slug: d.slug,
+      relativePath: d.relativePath,
+      category: d.category,
+      title: d.title,
+    })),
   });
 }
 

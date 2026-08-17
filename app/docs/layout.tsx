@@ -31,14 +31,6 @@ export default async function DocsLayout({
   return (
     <LayoutProvider>
       <LightboxProvider>
-        {/* Top Announcement Bar positioned above the navbar */}
-        {settings.announcement.enabled && (
-          <AnnouncementBanner
-            text={settings.announcement.text}
-            link={settings.announcement.link}
-          />
-        )}
-
         <div className="docs-layout">
           {/* Instant scroll to top on page navigation */}
           <ScrollToTop />

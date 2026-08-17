@@ -2,13 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   verifyAdminCredentials,
   createAdminSession,
-  getAdminUser,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
-  isPanicLockdown,
+  isPanicLockdownActive,
 } from "@/lib/security/auth";
 import { checkRateLimit, registerFailedAttempt, resetRateLimit } from "@/lib/security/rateLimit";
-import { verifyTotpCode } from "@/lib/security/totp";
 import { recordAuditEvent } from "@/lib/security/audit";
 
 export async function POST(req: NextRequest) {
@@ -17,9 +15,9 @@ export async function POST(req: NextRequest) {
   const rateLimitKey = `login:ip:${ip}`;
 
   // 1. Check Panic Mode
-  if (isPanicLockdown()) {
+  if (isPanicLockdownActive()) {
     return NextResponse.json(
-      { error: "SYSTEM_LOCKED", message: "Emergency Panic Lockdown is active. All administrative logins are suspended." },
+      { error: "SYSTEM_LOCKED", message: "Emergency Panic Lockdown este activ. Toate autentificările sunt suspendate." },
       { status: 403 }
     );
   }
@@ -30,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: "RATE_LIMITED",
-        message: `Too many failed attempts. Account access is locked for ${rateCheck.lockoutRemainingSeconds} seconds.`,
+        message: `Prea multe încercări eșuate. Accesul este blocat temporar pentru ${rateCheck.lockoutRemainingSeconds} secunde.`,
         lockoutRemainingSeconds: rateCheck.lockoutRemainingSeconds,
       },
       { status: 429 }
@@ -39,74 +37,41 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { username, password, totpCode } = body;
+    const { username, password } = body;
 
-    const admin = getAdminUser();
+    const authResult = verifyAdminCredentials(password || "", username || "");
 
-    // 3. Timing-safe password check
-    const isPasswordValid = verifyAdminCredentials(password || "");
-    const isUsernameValid =
-      username === admin.username ||
-      username.toLowerCase() === "iannc" ||
-      username.toLowerCase() === "iannc69" ||
-      username.toLowerCase() === "admin";
-
-    if (!isPasswordValid || !isUsernameValid) {
+    if (!authResult.valid || !authResult.member) {
       const failedResult = registerFailedAttempt(rateLimitKey);
       recordAuditEvent({
         action: "AUTH_LOGIN_FAILURE",
         actor: username || "anonymous",
         ip,
         userAgent,
-        details: { reason: "Invalid credentials", remainingAttempts: failedResult.remainingAttempts },
+        details: { reason: authResult.error || "Invalid credentials", remainingAttempts: failedResult.remainingAttempts },
       });
 
       return NextResponse.json(
         {
           error: "INVALID_CREDENTIALS",
-          message: "Invalid administrator credentials.",
+          message: authResult.error || "Nume de utilizator sau parolă incorectă.",
           remainingAttempts: failedResult.remainingAttempts,
         },
         { status: 401 }
       );
     }
 
-    // 4. Check 2FA if enabled
-    if (admin.twoFactorEnabled) {
-      if (!totpCode) {
-        return NextResponse.json(
-          { requireTwoFactor: true, message: "Two-factor authentication code required." },
-          { status: 200 }
-        );
-      }
+    const member = authResult.member;
 
-      const isTotpValid =
-        admin.twoFactorSecret && verifyTotpCode(admin.twoFactorSecret, totpCode);
-      const isBackupCodeValid = admin.backupCodes?.includes(totpCode.trim().toUpperCase());
-
-      if (!isTotpValid && !isBackupCodeValid) {
-        registerFailedAttempt(rateLimitKey);
-        recordAuditEvent({
-          action: "AUTH_LOGIN_FAILURE",
-          actor: username,
-          ip,
-          userAgent,
-          details: { reason: "Invalid 2FA TOTP code" },
-        });
-
-        return NextResponse.json(
-          { error: "INVALID_2FA", message: "Invalid 2FA authentication code or backup token." },
-          { status: 401 }
-        );
-      }
-    }
-
-    // 5. Success: Create Session & Reset Rate Limit
+    // 3. Success: Create Session & Reset Rate Limit
     resetRateLimit(rateLimitKey);
 
     const { token, session } = createAdminSession({
-      username: admin.username,
-      role: admin.role,
+      username: member.username,
+      displayName: member.displayName,
+      role: member.role,
+      isRoot: member.isRoot,
+      permissions: member.permissions,
       ip,
       userAgent,
     });
@@ -114,9 +79,11 @@ export async function POST(req: NextRequest) {
     const response = NextResponse.json({
       success: true,
       user: {
-        username: admin.username,
-        role: admin.role,
-        twoFactorEnabled: admin.twoFactorEnabled,
+        username: member.username,
+        displayName: member.displayName,
+        role: member.role,
+        isRoot: member.isRoot,
+        permissions: member.permissions,
       },
       sessionId: session.sessionId,
     });
@@ -135,7 +102,7 @@ export async function POST(req: NextRequest) {
     return response;
   } catch {
     return NextResponse.json(
-      { error: "SERVER_ERROR", message: "Internal server error occurred." },
+      { error: "SERVER_ERROR", message: "Eroare internă de server la autentificare." },
       { status: 500 }
     );
   }

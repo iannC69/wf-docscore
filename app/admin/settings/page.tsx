@@ -14,21 +14,36 @@ import {
   Radio,
   Eye,
   Lock,
+  Download,
+  Archive,
+  FileCode,
+  Megaphone,
+  Layers,
+  ExternalLink,
 } from "lucide-react";
 import { CURRENT_VERSION, PLATFORM_NAME } from "@/lib/version";
 
 export default function AdminSettingsPage() {
+  // Maintenance State
   const [maintenanceEnabled, setMaintenanceEnabled] = useState<boolean>(false);
   const [maintenanceMessage, setMaintenanceMessage] = useState<string>(
     "Wildfire Docs is currently undergoing scheduled platform upgrades and engine optimizations. We'll be back online shortly."
   );
+  const [maintenanceReason, setMaintenanceReason] = useState<string>(
+    "Actualizare structură documentație & optimizare index căutare"
+  );
   const [estimatedEndTime, setEstimatedEndTime] = useState<string>("30 minutes");
+  const [allowAdmins, setAllowAdmins] = useState<boolean>(true);
 
+  // Announcement State
   const [bannerEnabled, setBannerEnabled] = useState<boolean>(false);
   const [bannerText, setBannerText] = useState<string>(
-    "Wildfire Docs v1.4.0 is live with Fortress Cryptographic Proof and DeepSearch!"
+    "Wildfire Docs v1.5.0 este live cu Ghiduri CS2, Media Vault & Sistem de Securitate!"
   );
   const [bannerLink, setBannerLink] = useState<string>("/changelog");
+  const [bannerLinkText, setBannerLinkText] = useState<string>("Vezi Noutățile");
+  const [bannerType, setBannerType] = useState<"fire" | "info" | "warning">("fire");
+  const [bannerDismissible, setBannerDismissible] = useState<boolean>(true);
 
   const [revalidating, setRevalidating] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
@@ -50,13 +65,20 @@ export default function AdminSettingsPage() {
         if (data.maintenance) {
           setMaintenanceEnabled(data.maintenance.enabled || false);
           if (data.maintenance.message) setMaintenanceMessage(data.maintenance.message);
+          if (data.maintenance.reason) setMaintenanceReason(data.maintenance.reason);
           if (data.maintenance.estimatedEndTime)
             setEstimatedEndTime(data.maintenance.estimatedEndTime);
+          if (data.maintenance.allowAdmins !== undefined)
+            setAllowAdmins(data.maintenance.allowAdmins);
         }
         if (data.announcement) {
           setBannerEnabled(data.announcement.enabled || false);
           if (data.announcement.text) setBannerText(data.announcement.text);
           if (data.announcement.link) setBannerLink(data.announcement.link);
+          if (data.announcement.linkText) setBannerLinkText(data.announcement.linkText);
+          if (data.announcement.type) setBannerType(data.announcement.type);
+          if (data.announcement.dismissible !== undefined)
+            setBannerDismissible(data.announcement.dismissible);
         }
       } catch (err) {
         console.error("Failed to load settings:", err);
@@ -89,12 +111,17 @@ export default function AdminSettingsPage() {
           maintenance: {
             enabled: maintActive,
             message: maintenanceMessage,
+            reason: maintenanceReason,
             estimatedEndTime,
+            allowAdmins,
           },
           announcement: {
             enabled: bannerActive,
             text: bannerText,
             link: bannerLink,
+            linkText: bannerLinkText,
+            type: bannerType,
+            dismissible: bannerDismissible,
           },
         }),
       });
@@ -103,72 +130,70 @@ export default function AdminSettingsPage() {
       if (data.success) {
         setStatusMessage({
           type: "success",
-          text: `Settings committed to disk! Maintenance: ${
-            maintActive ? "ACTIVE (Public Locked)" : "OFF (Public Online)"
-          }, Announcement Bar: ${bannerActive ? "ACTIVE" : "OFF"}.`,
+          text: "Configurațiile platformei au fost salvate și aplicate pe disc.",
         });
       } else {
         setStatusMessage({
           type: "error",
-          text: data.error || "Failed to save settings.",
+          text: data.error || "Salvarea setărilor a eșuat.",
         });
       }
     } catch {
-      setStatusMessage({ type: "error", text: "Network connection error." });
+      setStatusMessage({
+        type: "error",
+        text: "Eroare de conexiune la server.",
+      });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await saveConfiguration();
-  };
-
-  const handleToggleMaintenance = async () => {
-    const nextState = !maintenanceEnabled;
-    setMaintenanceEnabled(nextState);
-    await saveConfiguration({ maintenanceEnabled: nextState });
-  };
-
-  const handleToggleBanner = async () => {
-    const nextState = !bannerEnabled;
-    setBannerEnabled(nextState);
-    await saveConfiguration({ bannerEnabled: nextState });
-  };
-
-  const handleRevalidateCache = () => {
+  const handleRevalidateCache = async () => {
     setRevalidating(true);
-    setTimeout(() => {
-      setRevalidating(false);
-      setStatusMessage({
-        type: "success",
-        text: "Static pages and ISR cache successfully purged and revalidated across all edge nodes.",
+    try {
+      const res = await fetch("/api/admin/maintenance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "revalidate" }),
       });
-    }, 650);
+      const data = await res.json();
+      if (data.success) {
+        setStatusMessage({
+          type: "success",
+          text: "Cache-ul ISR al platformei și rutele statice au fost regenerate.",
+        });
+      }
+    } catch {
+      setStatusMessage({
+        type: "error",
+        text: "Eroare la invalidarea cache-ului.",
+      });
+    } finally {
+      setRevalidating(false);
+    }
   };
 
   return (
-    <div className="admin-settings-page">
-      {/* Page Header */}
+    <div className="admin-page-container">
+      {/* Header */}
       <div className="admin-page-header">
         <div>
-          <div className="admin-breadcrumb-tag">ENGINE SETTINGS</div>
-          <h1 className="admin-page-title">Platform Configuration & Controls</h1>
+          <div className="admin-breadcrumb-tag">ENGINE CONFIGURATION</div>
+          <h1 className="admin-page-title">Setări Globale Platformă & Backup</h1>
           <p className="admin-page-description">
-            Manage public maintenance lockdown, global announcement banners, static cache revalidation, and engine runtime parameters.
+            Controlează bannerele publice de anunțuri, modul de mentenanță și descarcă backup-uri complete ale bazei de documentație.
           </p>
         </div>
 
         <div className="admin-header-actions">
           <button
-            type="submit"
-            form="admin-settings-form"
+            type="button"
+            onClick={() => saveConfiguration()}
             disabled={saving}
             className="admin-btn admin-btn--primary"
           >
             <Save size={14} />
-            <span>{saving ? "Saving Changes..." : "Save Platform Settings"}</span>
+            <span>{saving ? "Se salvează..." : "Salvează Toate Setările"}</span>
           </button>
         </div>
       </div>
@@ -191,240 +216,308 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      <form id="admin-settings-form" onSubmit={handleFormSubmit} className="admin-settings-grid">
-        {/* Public Maintenance Mode Card */}
-        <section
-          className={`admin-panel-card ${
-            maintenanceEnabled ? "admin-panel-card--danger" : ""
-          }`}
-        >
-          <div className="admin-panel-card-header">
-            <div className="admin-panel-title-box">
-              <Wrench
-                size={16}
-                className={
-                  maintenanceEnabled
-                    ? "admin-panel-icon--danger"
-                    : "admin-panel-icon"
-                }
-              />
-              <h2 className="admin-panel-title">Public Maintenance Mode Protocol</h2>
-            </div>
-            <span
-              className={`admin-status-pill ${
-                maintenanceEnabled
-                  ? "admin-status-pill--danger"
-                  : "admin-status-pill--success"
-              }`}
-            >
-              {maintenanceEnabled ? "MAINTENANCE ACTIVE" : "PUBLIC SYSTEM ONLINE"}
-            </span>
-          </div>
-
-          <div className="admin-panel-card-body">
-            <div className="admin-switch-row">
-              <div className="admin-switch-info">
-                <span className="admin-switch-title">Enable Public Maintenance Lockdown</span>
-                <p className="admin-switch-desc">
-                  When active, all visitors in Incognito or regular browsers viewing <code>/docs</code> see the high-tech maintenance calibration screen. Authenticated administrators bypass the lock seamlessly.
-                </p>
-              </div>
-
-              {/* Instant-Save Liquid Toggle Switch */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={maintenanceEnabled}
-                onClick={handleToggleMaintenance}
-                className={`admin-liquid-switch ${
-                  maintenanceEnabled ? "admin-liquid-switch--active" : ""
-                }`}
-                title={maintenanceEnabled ? "Click to deactivate maintenance" : "Click to activate maintenance"}
-              >
-                <span className="admin-liquid-switch-knob" />
-              </button>
-            </div>
-
-            {maintenanceEnabled && (
-              <div className="admin-settings-subfields">
-                <div className="admin-form-group">
-                  <label className="admin-form-label" htmlFor="maint-msg">
-                    Public Maintenance Notification Message
-                  </label>
-                  <textarea
-                    id="maint-msg"
-                    rows={2}
-                    value={maintenanceMessage}
-                    onChange={(e) => setMaintenanceMessage(e.target.value)}
-                    className="admin-input-field"
-                    placeholder="Enter maintenance notification text..."
-                  />
+      <div className="admin-settings-layout-grid">
+        {/* Left Column: Announcement Banner & Maintenance */}
+        <div className="flex flex-col gap-6">
+          {/* Global Announcement Banner Card */}
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <div className="flex items-center gap-3">
+                <div className="admin-card-icon-box text-orange-400">
+                  <Megaphone size={16} />
                 </div>
-
-                <div className="admin-form-group">
-                  <label className="admin-form-label" htmlFor="maint-time">
-                    Estimated Time Until Completion
-                  </label>
-                  <input
-                    id="maint-time"
-                    type="text"
-                    value={estimatedEndTime}
-                    onChange={(e) => setEstimatedEndTime(e.target.value)}
-                    placeholder="e.g. 30 minutes / 2 hours"
-                    className="admin-input-field"
-                  />
+                <div>
+                  <h3 className="admin-card-title">Banner Public de Anunțuri</h3>
+                  <p className="admin-card-subtitle">
+                    Afișează un banner proeminent în antetul tuturor paginilor de documentație
+                  </p>
                 </div>
               </div>
-            )}
-          </div>
-        </section>
 
-        {/* Global Announcement Banner Card */}
-        <section className="admin-panel-card">
-          <div className="admin-panel-card-header">
-            <div className="admin-panel-title-box">
-              <Sparkles size={16} className="admin-panel-icon" />
-              <h2 className="admin-panel-title">Global Announcement Bar</h2>
+              <label className="admin-toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={bannerEnabled}
+                  onChange={(e) => {
+                    setBannerEnabled(e.target.checked);
+                    saveConfiguration({ bannerEnabled: e.target.checked });
+                  }}
+                />
+                <span className="admin-toggle-slider" />
+              </label>
             </div>
-            <span
-              className={`admin-status-pill ${
-                bannerEnabled
-                  ? "admin-status-pill--warning"
-                  : "admin-status-pill--neutral"
-              }`}
-            >
-              {bannerEnabled ? "BANNER ACTIVE" : "BANNER DISABLED"}
-            </span>
-          </div>
 
-          <div className="admin-panel-card-body">
-            <div className="admin-switch-row">
-              <div className="admin-switch-info">
-                <span className="admin-switch-title">Enable Top Announcement Bar</span>
-                <p className="admin-switch-desc">
-                  Displays an elegant liquid update bar directly above the navigation header on all public documentation pages.
-                </p>
+            <div className="admin-card-body">
+              <div className="admin-form-group">
+                <label className="admin-form-label">Tip Banner & Culoare</label>
+                <div className="admin-banner-type-picker">
+                  <button
+                    type="button"
+                    onClick={() => setBannerType("fire")}
+                    className={`admin-banner-type-btn ${
+                      bannerType === "fire" ? "admin-banner-type-btn--fire-active" : ""
+                    }`}
+                  >
+                    <span className="admin-banner-type-dot bg-orange-500" />
+                    <span>Wildfire Ember (Portocaliu)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setBannerType("info")}
+                    className={`admin-banner-type-btn ${
+                      bannerType === "info" ? "admin-banner-type-btn--info-active" : ""
+                    }`}
+                  >
+                    <span className="admin-banner-type-dot bg-blue-500" />
+                    <span>Informativ (Albastru)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setBannerType("warning")}
+                    className={`admin-banner-type-btn ${
+                      bannerType === "warning" ? "admin-banner-type-btn--warning-active" : ""
+                    }`}
+                  >
+                    <span className="admin-banner-type-dot bg-amber-500" />
+                    <span>Atenționare (Chihlimbar)</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Instant-Save Liquid Toggle Switch */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={bannerEnabled}
-                onClick={handleToggleBanner}
-                className={`admin-liquid-switch ${
-                  bannerEnabled ? "admin-liquid-switch--active" : ""
-                }`}
-                title={bannerEnabled ? "Click to deactivate banner" : "Click to activate banner"}
-              >
-                <span className="admin-liquid-switch-knob" />
-              </button>
-            </div>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Mesaj Anunț</label>
+                <input
+                  type="text"
+                  value={bannerText}
+                  onChange={(e) => setBannerText(e.target.value)}
+                  placeholder="Ex: Am actualizat ghidul de Currency și regulamentul..."
+                  className="admin-form-input"
+                />
+              </div>
 
-            {bannerEnabled && (
-              <div className="admin-settings-subfields">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="admin-form-group">
-                  <label className="admin-form-label" htmlFor="banner-text">
-                    Announcement Banner Text
-                  </label>
+                  <label className="admin-form-label">Link Buton (Opțional)</label>
                   <input
-                    id="banner-text"
-                    type="text"
-                    value={bannerText}
-                    onChange={(e) => setBannerText(e.target.value)}
-                    placeholder="e.g. Wildfire Docs v1.4.0 is live!"
-                    className="admin-input-field"
-                  />
-                </div>
-
-                <div className="admin-form-group">
-                  <label className="admin-form-label" htmlFor="banner-link">
-                    Target Link URL (Optional)
-                  </label>
-                  <input
-                    id="banner-link"
                     type="text"
                     value={bannerLink}
                     onChange={(e) => setBannerLink(e.target.value)}
-                    placeholder="e.g. /changelog or https://..."
-                    className="admin-input-field"
+                    placeholder="/changelog sau https://..."
+                    className="admin-form-input"
                   />
                 </div>
 
-                {/* Live Preview Box */}
-                <div className="admin-banner-preview-box">
-                  <div className="admin-banner-preview-header">
-                    <Eye size={12} />
-                    <span>LIVE BANNER PREVIEW</span>
-                  </div>
-                  <div className="announcement-banner-wrapper announcement-banner-wrapper--preview">
-                    <div className="announcement-banner-inner">
-                      <div className="announcement-beacon-dot" aria-hidden="true" />
-                      <span className="announcement-banner-tag">UPDATE</span>
-                      <p className="announcement-banner-text">{bannerText || "Sample announcement text"}</p>
-                    </div>
-                  </div>
+                <div className="admin-form-group">
+                  <label className="admin-form-label">Text Buton</label>
+                  <input
+                    type="text"
+                    value={bannerLinkText}
+                    onChange={(e) => setBannerLinkText(e.target.value)}
+                    placeholder="Vezi Noutățile"
+                    className="admin-form-input"
+                  />
                 </div>
               </div>
-            )}
-          </div>
-        </section>
 
-        {/* Cache & Static Revalidation Card */}
-        <section className="admin-panel-card">
-          <div className="admin-panel-card-header">
-            <div className="admin-panel-title-box">
-              <Zap size={16} className="admin-panel-icon" />
-              <h2 className="admin-panel-title">Cache & ISR Edge Revalidation</h2>
-            </div>
-          </div>
+              <div className="flex items-center justify-between pt-2 border-t border-[var(--color-border-subtle)]">
+                <div>
+                  <span className="text-xs font-semibold text-white">Poate fi închis de vizitator</span>
+                  <p className="text-xs text-[var(--color-text-tertiary)]">
+                    Permite utilizatorilor să ascundă bannerul cu butonul X
+                  </p>
+                </div>
 
-          <div className="admin-panel-card-body">
-            <p className="admin-card-text">
-              Manually trigger static page revalidation to instantly propagate Markdown edits and navigation changes across all edge nodes without full build redeployment.
-            </p>
-
-            <button
-              type="button"
-              onClick={handleRevalidateCache}
-              disabled={revalidating}
-              className="admin-btn admin-btn--secondary"
-            >
-              <RefreshCw size={14} className={revalidating ? "admin-spin" : ""} />
-              <span>{revalidating ? "Purging Edge Cache..." : "Revalidate All Pages"}</span>
-            </button>
-          </div>
-        </section>
-
-        {/* Platform Metadata Card */}
-        <section className="admin-panel-card admin-panel-card--full">
-          <div className="admin-panel-card-header">
-            <div className="admin-panel-title-box">
-              <Server size={16} className="admin-panel-icon" />
-              <h2 className="admin-panel-title">Engine Metadata & Architecture</h2>
+                <label className="admin-toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={bannerDismissible}
+                    onChange={(e) => setBannerDismissible(e.target.checked)}
+                  />
+                  <span className="admin-toggle-slider" />
+                </label>
+              </div>
             </div>
           </div>
 
-          <div className="admin-env-specs">
-            <div className="admin-env-row">
-              <span className="admin-env-label">Platform Engine:</span>
-              <span className="admin-env-value">{PLATFORM_NAME}</span>
+          {/* Maintenance Mode Card */}
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <div className="flex items-center gap-3">
+                <div className="admin-card-icon-box text-red-400">
+                  <Wrench size={16} />
+                </div>
+                <div>
+                  <h3 className="admin-card-title">Mod Mentenanță Platformă Docs</h3>
+                  <p className="admin-card-subtitle">
+                    Blochează temporar accesul public și redirecționează către ecranul de mentenanță
+                  </p>
+                </div>
+              </div>
+
+              <label className="admin-toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={maintenanceEnabled}
+                  onChange={(e) => {
+                    setMaintenanceEnabled(e.target.checked);
+                    saveConfiguration({ maintenanceEnabled: e.target.checked });
+                  }}
+                />
+                <span className="admin-toggle-slider" />
+              </label>
             </div>
-            <div className="admin-env-row">
-              <span className="admin-env-label">Version Release:</span>
-              <span className="admin-env-value">v{CURRENT_VERSION}</span>
-            </div>
-            <div className="admin-env-row">
-              <span className="admin-env-label">Maintainer ID:</span>
-              <span className="admin-env-value">iannC</span>
-            </div>
-            <div className="admin-env-row">
-              <span className="admin-env-label">Configuration Store:</span>
-              <span className="admin-env-value">content/settings.json (Disk Synchronized)</span>
+
+            <div className="admin-card-body">
+              <div className="admin-form-group">
+                <label className="admin-form-label">Motiv Mentenanță (Intern)</label>
+                <input
+                  type="text"
+                  value={maintenanceReason}
+                  onChange={(e) => setMaintenanceReason(e.target.value)}
+                  placeholder="Actualizare regulamente și structură foldere"
+                  className="admin-form-input"
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label className="admin-form-label">Mesaj Public pentru Jucători</label>
+                <textarea
+                  value={maintenanceMessage}
+                  onChange={(e) => setMaintenanceMessage(e.target.value)}
+                  rows={2}
+                  className="admin-form-input"
+                />
+              </div>
+
+              <div className="admin-form-group">
+                <label className="admin-form-label">Timp Estimat Rămas</label>
+                <input
+                  type="text"
+                  value={estimatedEndTime}
+                  onChange={(e) => setEstimatedEndTime(e.target.value)}
+                  placeholder="15 minute"
+                  className="admin-form-input"
+                />
+              </div>
             </div>
           </div>
-        </section>
-      </form>
+        </div>
+
+        {/* Right Column: Backup & Export + Engine Info */}
+        <div className="flex flex-col gap-6">
+          {/* One-Click Backup & Export Card */}
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <div className="flex items-center gap-3">
+                <div className="admin-card-icon-box text-emerald-400">
+                  <Archive size={16} />
+                </div>
+                <div>
+                  <h3 className="admin-card-title">Backup & Export Repository</h3>
+                  <p className="admin-card-subtitle">
+                    Descarcă instantaneu arhiva completă cu toate cele 62+ articole Markdown
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-card-body flex flex-col gap-3">
+              {/* ZIP Download */}
+              <a
+                href="/api/admin/backup?format=zip"
+                download
+                className="admin-backup-action-card"
+              >
+                <div className="admin-backup-icon-box text-emerald-400">
+                  <Download size={18} />
+                </div>
+                <div className="admin-backup-text-box">
+                  <strong>Descarcă Arhivă ZIP (.zip)</strong>
+                  <span>Include toate fișierele .md și structura de foldere intactă</span>
+                </div>
+              </a>
+
+              {/* JSON Database Export */}
+              <a
+                href="/api/admin/backup?format=json"
+                download
+                className="admin-backup-action-card"
+              >
+                <div className="admin-backup-icon-box text-blue-400">
+                  <FileCode size={18} />
+                </div>
+                <div className="admin-backup-text-box">
+                  <strong>Export Bază de Date JSON (.json)</strong>
+                  <span>Conține toate documentele cu frontmatter și conținut structurat</span>
+                </div>
+              </a>
+
+              {/* Single Markdown Bundle */}
+              <a
+                href="/api/admin/backup?format=bundle"
+                download
+                className="admin-backup-action-card"
+              >
+                <div className="admin-backup-icon-box text-orange-400">
+                  <Layers size={18} />
+                </div>
+                <div className="admin-backup-text-box">
+                  <strong>Export Markdown Unificat (.md)</strong>
+                  <span>Fișier unic concatenat pentru căutare și citire offline</span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          {/* Engine Optimization Card */}
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <div className="flex items-center gap-3">
+                <div className="admin-card-icon-box text-purple-400">
+                  <Server size={16} />
+                </div>
+                <div>
+                  <h3 className="admin-card-title">Optimizare & Cache ISR</h3>
+                  <p className="admin-card-subtitle">
+                    Regenerează paginile statice și indexul de căutare
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-card-body">
+              <div className="admin-engine-spec-list">
+                <div className="admin-engine-spec-item">
+                  <span>Engine:</span>
+                  <strong>{PLATFORM_NAME}</strong>
+                </div>
+                <div className="admin-engine-spec-item">
+                  <span>Versiune:</span>
+                  <strong>v{CURRENT_VERSION}</strong>
+                </div>
+                <div className="admin-engine-spec-item">
+                  <span>Framework:</span>
+                  <strong>Next.js 16 (Turbopack)</strong>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-[var(--color-border-subtle)]">
+                <button
+                  type="button"
+                  onClick={handleRevalidateCache}
+                  disabled={revalidating}
+                  className="admin-btn admin-btn--secondary w-full"
+                >
+                  <RefreshCw size={14} className={revalidating ? "animate-spin" : ""} />
+                  <span>{revalidating ? "Se regenerează cache-ul..." : "Regenerează Cache ISR"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
