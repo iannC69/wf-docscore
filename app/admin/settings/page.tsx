@@ -26,7 +26,7 @@ export default function AdminSettingsPage() {
 
   const [bannerEnabled, setBannerEnabled] = useState<boolean>(false);
   const [bannerText, setBannerText] = useState<string>(
-    "Wildfire Docs v1.3.0 is live with 120 FPS TOC and Fortress Security!"
+    "Wildfire Docs v1.4.0 is live with Fortress Cryptographic Proof and DeepSearch!"
   );
   const [bannerLink, setBannerLink] = useState<string>("/changelog");
 
@@ -332,7 +332,7 @@ export default function AdminSettingsPage() {
                     type="text"
                     value={bannerText}
                     onChange={(e) => setBannerText(e.target.value)}
-                    placeholder="e.g. Wildfire Docs v1.3.0 is live!"
+                    placeholder="e.g. Wildfire Docs v1.4.0 is live!"
                     className="admin-input-field"
                   />
                 </div>

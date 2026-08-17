@@ -6,7 +6,7 @@
   },
   "banner": {
     "enabled": false,
-    "text": "🔥 Wildfire Docs v1.3.0 is live with 120 FPS Table of Contents and Fortress Admin!",
+    "text": "Wildfire Docs v1.4.0 is live with Fortress Cryptographic Proof and DeepSearch!",
     "link": "/changelog",
     "linkText": "Read Changelog"
   },

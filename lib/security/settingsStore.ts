@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: PlatformSettings = {
   },
   announcement: {
     enabled: false,
-    text: "Wildfire Docs v1.3.0 is live with 120 FPS TOC and Fortress Security!",
+    text: "Wildfire Docs v1.4.0 is live with Fortress Cryptographic Proof and DeepSearch!",
     link: "/changelog",
   },
   updatedAt: new Date().toISOString(),

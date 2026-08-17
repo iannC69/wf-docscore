@@ -34,8 +34,62 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
-    version: "v1.3.0",
+    version: "v1.4.0",
     isLatest: true,
+    date: "August 17, 2026",
+    title: "Cryptographic Integrity Seal, DeepSearch Engine & Quick Actions Toolbar",
+    summary:
+      "Version 1.4.0 elevates Wildfire Docs with a cryptographic attestation engine (SHA-256 Checksums, GPG Signing, Turso Ledger Chain), an upgraded DeepSearch system with dynamic category tabs and scroll containment, a developer quick actions toolbar (Share, Copy Markdown, A4 Spec Export), and dual-theme print architecture.",
+    author: {
+      name: "iannC69",
+      username: "iannC69",
+      avatar: "https://github.com/iannC69.png",
+    },
+    git: {
+      commitHash: "9d8293e",
+      commitUrl: "https://github.com/iannC69/wf-docscore/commit/9d8293e",
+      tagUrl: "https://github.com/iannC69/wf-docscore/releases/tag/v1.4.0",
+    },
+    changes: [
+      {
+        type: "feature",
+        title: "Fortress Cryptographic Integrity Seal & GPG Attestation",
+        description:
+          "Real-time SHA-256 checksum generation for Markdown content, verified ED25519 GPG signature proof by iannC, and Turso SQLite chained audit ledger attestation with 1-click CLI verification.",
+        badge: "Security Core",
+      },
+      {
+        type: "feature",
+        title: "Dynamic DeepSearch Engine with Scroll Lock",
+        description:
+          "Recursive indexing across build and dev environments, background scroll lock with overscroll containment, dynamic category filter tabs, and localStorage recent search history.",
+        badge: "Search",
+      },
+      {
+        type: "feature",
+        title: "Developer Quick Actions Toolbar",
+        description:
+          "Native Web Share API & clean link copying, 1-click raw Markdown clipboard export, direct Admin live editor routing, and dual-theme PDF export engine.",
+        badge: "Productivity",
+      },
+      {
+        type: "improvement",
+        title: "Wildfire Technical Specification A4 Print Engine",
+        description:
+          "Full-bleed dual-theme (Dark Obsidian / Clean White) print layout with official flame watermarks, cryptographic certification footer, and zero margin offset leaks.",
+        badge: "Print & PDF",
+      },
+    ],
+    highlights: [
+      "Cryptographic Document Attestation (Live SHA-256 + GPG)",
+      "DeepSearch with Dynamic Category Tabs & Body Scroll Lock",
+      "Developer Quick Actions Toolbar (Share, Markdown, PDF, Admin)",
+      "Dual-Theme Wildfire Technical Specification Print Template",
+    ],
+    slug: "v1-4-0",
+  },
+  {
+    version: "v1.3.0",
     date: "August 16, 2026",
     title: "Ultra-Smooth Table of Contents Engine, Frosted Glass Aesthetic & Layout Architecture",
     summary:

@@ -111,7 +111,7 @@ export function DocIntegritySeal({
                     Cryptographic Document Attestation
                   </h3>
                   <p className="integrity-modal-sub">
-                    Immutable Ledger Proof • Wildfire Trust Engine v1.3.0
+                    Immutable Ledger Proof • Wildfire Trust Engine v1.4.0
                   </p>
                 </div>
               </div>
