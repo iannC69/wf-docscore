@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: PlatformSettings = {
   },
   announcement: {
     enabled: false,
-    text: "Wildfire Docs v1.4.0 is live with Fortress Cryptographic Proof and DeepSearch!",
+    text: "Wildfire Docs v1.5.0 is live with Full Wiki Migration, Media Lightbox & Orange Video Player!",
     link: "/changelog",
   },
   updatedAt: new Date().toISOString(),

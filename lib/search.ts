@@ -16,9 +16,10 @@ export interface SearchChunk {
 const DOCS_PATH = path.join(process.cwd(), "content", "docs");
 
 const CATEGORY_NAMES: Record<string, string> = {
-  "getting-started": "Getting Started",
-  "features": "Core Features",
-  "api-reference": "API Reference",
+  "informatii": "Informații",
+  "currency": "Currency",
+  "systems": "Systems",
+  "market": "Market & Donații",
 };
 
 function formatCategoryName(folderName: string, folderPath: string): string {

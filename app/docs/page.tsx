@@ -1,30 +1,49 @@
 import Link from "next/link";
 import {
-  Rocket,
-  Sliders,
-  Layers,
-  Terminal,
-  GitBranch,
-  Cloud,
-  Cpu,
-  Shield,
+  Flame,
+  Gamepad2,
+  Swords,
+  Clover,
+  ShoppingCart,
+  Crown,
   Search,
-  BookOpen,
   ArrowRight,
-  Code2,
-  Clock,
-  GitCommit,
+  Shield,
+  Coins,
+  Cpu,
+  BookOpen,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getRecentlyUpdatedDocs } from "@/lib/git";
-import { getDocIcon, getCategoryIcon, getDocColorVariant } from "@/lib/icons";
 import { CURRENT_VERSION } from "@/lib/version";
 import { getPlatformSettings } from "@/lib/security/settingsStore";
 import { getAuthenticatedAdminSession } from "@/lib/security/auth";
-import { AnnouncementBanner } from "@/components/ui/AnnouncementBanner";
+import { RecentlyUpdatedSection } from "@/components/docs/RecentlyUpdatedSection";
+import fs from "fs";
+import path from "path";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+function getTotalDocsCount(): number {
+  const docsDir = path.join(process.cwd(), "content", "docs");
+  let count = 0;
+  function countFiles(dir: string, base: string = "") {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const e of entries) {
+      if (e.isDirectory()) countFiles(path.join(dir, e.name), base ? `${base}/${e.name}` : e.name);
+      else if (e.isFile() && (e.name.endsWith(".md") || e.name.endsWith(".mdx"))) {
+        // Exclude root index
+        if (!(base === "" && (e.name === "index.md" || e.name === "index.mdx"))) {
+          count++;
+        }
+      }
+    }
+  }
+  countFiles(docsDir);
+  return count;
+}
 
 export default async function DocsHomePage() {
   const settings = getPlatformSettings();
@@ -34,7 +53,8 @@ export default async function DocsHomePage() {
     redirect("/maintenance");
   }
 
-  const recentDocs = getRecentlyUpdatedDocs(6);
+  const recentDocs = getRecentlyUpdatedDocs();
+  const totalDocsCount = getTotalDocsCount();
 
   return (
     <div className="docs-home-wrapper">
@@ -43,198 +63,123 @@ export default async function DocsHomePage() {
         <section className="docs-home-hero">
           <div className="docs-home-badge">
             <span className="docs-badge-dot" aria-hidden="true" />
-            <span>Powered by WF-DOCSCORE Engine</span>
+            <span>Wildfire Documentation Engine v{CURRENT_VERSION}</span>
           </div>
           <h1 className="docs-home-title">
-            Wildfire Documentation &amp; Developer Hub
+            Wildfire Documentation Hub
           </h1>
           <p className="docs-home-desc">
-            Complete guides, architecture blueprints, API specifications, and
-            component references for the documentation platform.
+            Ghiduri complete, regulamente oficiale, economie in-game, sisteme de joc și informații despre gradele VIP pe serverele CS2 Wildfire.ro.
           </p>
 
           {/* Quick Search / Command hint */}
           <div className="docs-home-search-hint">
             <div className="search-hint-left">
               <Search size={15} className="search-hint-icon" aria-hidden="true" />
-              <span>Press <kbd>Ctrl K</kbd> or <kbd>⌘K</kbd> anywhere to search documentation</span>
+              <span>Apasă <kbd>Ctrl K</kbd> oriunde pentru căutare instantanee în documente</span>
             </div>
-            <Link href="/docs/getting-started" className="docs-hero-btn">
-              <span>Get Started</span>
+            <Link href="/docs/informatii/getting-started" className="docs-hero-btn">
+              <span>Ghid de Început</span>
               <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
         </section>
 
-        {/* ── Recently Updated Section (Dynamic Commit / File Tracking) ── */}
-        {recentDocs.length > 0 && (
-          <section className="docs-home-section">
-            <div className="section-header section-header--flex">
-              <div>
-                <div className="section-title-badge-row">
-                  <h2 className="docs-home-section-title">Recently Updated</h2>
-                  <span className="live-pulse-badge">
-                    <span className="pulse-dot" aria-hidden="true" />
-                    <span>Live Git Sync</span>
-                  </span>
-                </div>
-                <span className="section-sub">Latest changes, updated guides, and revised API docs</span>
-              </div>
-            </div>
+        {/* ── Recently Updated Section (Dynamic Git Sync with Collapse & Counters) ── */}
+        <RecentlyUpdatedSection
+          recentDocs={recentDocs}
+          totalDocsCount={totalDocsCount}
+        />
 
-            <div className="recent-updates-grid">
-              {recentDocs.map((doc) => {
-                const color = getDocColorVariant(doc.slug, doc.title);
-
-                return (
-                  <Link key={doc.slug} href={doc.href} className="recent-update-card">
-                    {/* Top Bar: Category Pill + Relative Time */}
-                    <div className="recent-card-top">
-                      <span className="recent-card-category">
-                        <span className="recent-card-cat-icon">{getCategoryIcon(doc.category, 11)}</span>
-                        <span>{doc.category}</span>
-                      </span>
-                      <span className="recent-card-time">
-                        <Clock size={11} aria-hidden="true" />
-                        <span>{doc.relativeTime}</span>
-                      </span>
-                    </div>
-
-                    {/* Title Row with Dynamic Colored Icon from Sidebar */}
-                    <div className="recent-card-title-row">
-                      <div className="recent-card-title-wrap">
-                        <span className={`recent-card-item-icon recent-card-item-icon--${color}`}>
-                          {getDocIcon(doc.slug, doc.title, 14)}
-                        </span>
-                        <h3 className="recent-card-title">{doc.title}</h3>
-                      </div>
-                      <ArrowRight size={14} className="recent-card-arrow" aria-hidden="true" />
-                    </div>
-
-                  {/* Excerpt Description */}
-                  <p className="recent-card-desc">{doc.description}</p>
-
-                  {/* Bottom Footer: Author Avatar + Commit Hash + Read Time */}
-                  <div className="recent-card-footer">
-                    <div className="recent-card-author">
-                      <img
-                        src={doc.authorAvatar}
-                        alt={doc.authorName}
-                        className="recent-author-avatar"
-                        width={18}
-                        height={18}
-                      />
-                      <span className="recent-author-name">
-                        <span className="recent-author-by">by</span> {doc.authorName}
-                      </span>
-                    </div>
-
-                    <div className="recent-card-meta-right">
-                      {doc.commitHash && doc.commitHash !== "HEAD" && (
-                        <span className="recent-commit-badge" title={`Commit ${doc.commitHash}`}>
-                          <GitCommit size={11} aria-hidden="true" />
-                          <span>#{doc.commitHash.slice(0, 7)}</span>
-                        </span>
-                      )}
-                      <span className="recent-read-time">{doc.readingTime}m read</span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-            </div>
-          </section>
-        )}
-
-        {/* ── Core Modules Navigation Cards ─────────────────────────────── */}
+        {/* ── Core Sections Navigation Cards ─────────────────────────────── */}
         <section className="docs-home-section">
           <div className="section-header">
-            <h2 className="docs-home-section-title">Core Sections</h2>
-            <span className="section-sub">Explore the foundational architecture modules</span>
+            <h2 className="docs-home-section-title">Secțiuni Principale</h2>
+            <span className="section-sub">Explorează documentația oficială a comunității</span>
           </div>
 
           <div className="home-cards-grid">
-            <Link href="/docs/getting-started" className="home-card">
+            <Link href="/docs/informatii/about" className="home-card">
               <div className="home-card-header">
                 <div className="home-card-icon-wrap home-card-icon--orange">
-                  <Rocket size={18} aria-hidden="true" />
+                  <Flame size={18} aria-hidden="true" />
                 </div>
-                <span className="home-card-tag">Guide</span>
+                <span className="home-card-tag">Ghiduri</span>
                 <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
               </div>
-              <h3 className="home-card-title">Getting Started</h3>
+              <h3 className="home-card-title">Informații &amp; Ghiduri</h3>
               <p className="home-card-desc">
-                Step-by-step walkthrough to clone, install dependencies, and run the platform locally in minutes.
+                Despre comunitate, verificare cont Steam cu Discord și răspunsuri la întrebări frecvente.
               </p>
             </Link>
 
-            <Link href="/docs/getting-started/configuration" className="home-card">
-              <div className="home-card-header">
-                <div className="home-card-icon-wrap home-card-icon--yellow">
-                  <Sliders size={18} aria-hidden="true" />
-                </div>
-                <span className="home-card-tag">Setup</span>
-                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
-              </div>
-              <h3 className="home-card-title">Configuration</h3>
-              <p className="home-card-desc">
-                Configure environment variables, GitHub App credentials, database connection strings, and theming.
-              </p>
-            </Link>
-
-            <Link href="/docs/features" className="home-card">
-              <div className="home-card-header">
-                <div className="home-card-icon-wrap home-card-icon--purple">
-                  <Layers size={18} aria-hidden="true" />
-                </div>
-                <span className="home-card-tag">Architecture</span>
-                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
-              </div>
-              <h3 className="home-card-title">Core Features</h3>
-              <p className="home-card-desc">
-                Discover built-in MDX rendering, interactive components, responsive navigation, and dark mode engine.
-              </p>
-            </Link>
-
-            <Link href="/docs/features/github-integration" className="home-card">
-              <div className="home-card-header">
-                <div className="home-card-icon-wrap home-card-icon--teal">
-                  <GitBranch size={18} aria-hidden="true" />
-                </div>
-                <span className="home-card-tag">GitOps</span>
-                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
-              </div>
-              <h3 className="home-card-title">GitHub Sync</h3>
-              <p className="home-card-desc">
-                Bidirectional GitOps workflow with automated commit-on-save and webhook-driven cache invalidation.
-              </p>
-            </Link>
-
-            <Link href="/docs/api-reference" className="home-card">
+            <Link href="/docs/informatii/regulamente/go/regulament-go" className="home-card">
               <div className="home-card-header">
                 <div className="home-card-icon-wrap home-card-icon--blue">
-                  <Terminal size={18} aria-hidden="true" />
+                  <Gamepad2 size={18} aria-hidden="true" />
                 </div>
-                <span className="home-card-tag">API</span>
+                <span className="home-card-tag">Oficial</span>
                 <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
               </div>
-              <h3 className="home-card-title">API Reference</h3>
+              <h3 className="home-card-title">Regulamente Server</h3>
               <p className="home-card-desc">
-                Comprehensive REST API contracts for programmatic content retrieval, revalidation, and webhooks.
+                Regulamentul oficial pentru jucători, ghidul administrativ pentru STAFF și regulile deținătorilor VIP.
               </p>
             </Link>
 
-            <Link href="/docs/getting-started/deployment" className="home-card">
+            <Link href="/docs/systems/skins/informatiiws" className="home-card">
               <div className="home-card-header">
                 <div className="home-card-icon-wrap home-card-icon--red">
-                  <Cloud size={18} aria-hidden="true" />
+                  <Swords size={18} aria-hidden="true" />
                 </div>
-                <span className="home-card-tag">Production</span>
+                <span className="home-card-tag">CS2 !ws</span>
                 <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
               </div>
-              <h3 className="home-card-title">Deployment</h3>
+              <h3 className="home-card-title">Weapon Skins (!ws)</h3>
               <p className="home-card-desc">
-                Production deployment strategy on Vercel, edge static generation, custom domain setup, and ISR.
+                Sistemul complet de arme, cuțite, mănuși, agenți și deschidere de cutii interactive.
+              </p>
+            </Link>
+
+            <Link href="/docs/systems/gambling/roulette" className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--purple">
+                  <Clover size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">Gambling</span>
+                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
+              </div>
+              <h3 className="home-card-title">Sisteme de Gambling</h3>
+              <p className="home-card-desc">
+                Jocuri de noroc in-game: Ruletă, Slots (aparate) și Dices (barbut) cu credite și Phoenix Coins.
+              </p>
+            </Link>
+
+            <Link href="/docs/systems/shop/chat-tags" className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--teal">
+                  <ShoppingCart size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">In-Game</span>
+                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
+              </div>
+              <h3 className="home-card-title">In-Game Shop (!shop)</h3>
+              <p className="home-card-desc">
+                Personalizări de profil și chat: Chat Tags, culori de nume, fumuri colorate și weapon tracers.
+              </p>
+            </Link>
+
+            <Link href="/docs/market/vip/vip-overview" className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--yellow">
+                  <Crown size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">VIP &amp; Shop</span>
+                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
+              </div>
+              <h3 className="home-card-title">Grade VIP &amp; Market</h3>
+              <p className="home-card-desc">
+                Tabelul comparativ complet al gradelor VIP (Rebirth, Immortal, Mythic), Custom MVP și Entry Songs.
               </p>
             </Link>
           </div>
@@ -243,31 +188,31 @@ export default async function DocsHomePage() {
         {/* ── Architecture Highlights ───────────────────────────────────── */}
         <section className="docs-home-section">
           <div className="section-header">
-            <h2 className="docs-home-section-title">Platform Architecture</h2>
-            <span className="section-sub">Engineered for speed, control, and reliability</span>
+            <h2 className="docs-home-section-title">Economie &amp; Utilități</h2>
+            <span className="section-sub">Sisteme native dezvoltate pentru serverele Wildfire</span>
           </div>
 
           <div className="home-features-list">
             <div className="feature-item">
               <div className="feature-item-icon">
-                <Cpu size={16} aria-hidden="true" />
+                <Coins size={16} aria-hidden="true" />
               </div>
               <div className="feature-item-content">
-                <h3 className="feature-item-title">Next.js 16 App Router &amp; Turbopack</h3>
+                <h3 className="feature-item-title">Economie Dublă (Credits &amp; Phoenix Coins)</h3>
                 <p className="feature-item-desc">
-                  Static Site Generation pre-renders all documentation pages at build time for sub-millisecond TTFB.
+                  Câștigă credite jucând pe server și acumulează Phoenix Coins din evenimente, drop-uri și donații.
                 </p>
               </div>
             </div>
 
             <div className="feature-item">
               <div className="feature-item-icon">
-                <Code2 size={16} aria-hidden="true" />
+                <Cpu size={16} aria-hidden="true" />
               </div>
               <div className="feature-item-content">
-                <h3 className="feature-item-title">Shiki Server Syntax Highlighting</h3>
+                <h3 className="feature-item-title">Moduri &amp; Misiuni Dinamice</h3>
                 <p className="feature-item-desc">
-                  Zero client-side highlighting JavaScript overhead. Code blocks are parsed server-side with precise tokens.
+                  Misiuni zilnice, sistem avansat de rank phases, RTV map chooser și echilibrare automată a echipelor.
                 </p>
               </div>
             </div>
@@ -277,9 +222,9 @@ export default async function DocsHomePage() {
                 <Shield size={16} aria-hidden="true" />
               </div>
               <div className="feature-item-content">
-                <h3 className="feature-item-title">Type-Safe Content Layer</h3>
+                <h3 className="feature-item-title">Securitate &amp; Atestare Criptografică</h3>
                 <p className="feature-item-desc">
-                  TypeScript schemas for frontmatter, navigation structures, and API responses prevent broken links.
+                  Toate ghidurile și regulamentele sunt semnate criptografic cu SHA-256 pentru integritate totală.
                 </p>
               </div>
             </div>
@@ -289,9 +234,9 @@ export default async function DocsHomePage() {
                 <BookOpen size={16} aria-hidden="true" />
               </div>
               <div className="feature-item-content">
-                <h3 className="feature-item-title">Customizable Design System</h3>
+                <h3 className="feature-item-title">Căutare Globală Rapidă (DeepSearch)</h3>
                 <p className="feature-item-desc">
-                  HSL tokens and CSS custom properties allow effortless retheming matching any corporate brand identity.
+                  Indexare în timp real a tuturor comenzilor, sistemelor și regulamentelor cu tastă rapidă <kbd>Ctrl+K</kbd>.
                 </p>
               </div>
             </div>
@@ -303,11 +248,11 @@ export default async function DocsHomePage() {
           <div className="docs-footer-inner">
             <div className="docs-footer-brand">
               <span className="docs-footer-logo-dot" aria-hidden="true" />
-              <span className="docs-footer-title">WF-DOCSCORE ENGINE</span>
+              <span className="docs-footer-title">WILDFIRE DOCS PLATFORM</span>
               <span className="docs-footer-version">v{CURRENT_VERSION}</span>
             </div>
             <p className="docs-footer-copyright">
-              Next.js 16 Turbopack &amp; Liquid Theme Architecture • Author <a href="https://github.com/iannC69" target="_blank" rel="noopener noreferrer" className="docs-footer-author">@iannC69</a>
+              Next.js 16 Turbopack Architecture • Author <a href="https://github.com/iannC69" target="_blank" rel="noopener noreferrer" className="docs-footer-author">@iannC69</a>
             </p>
           </div>
         </footer>

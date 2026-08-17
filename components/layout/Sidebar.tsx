@@ -18,18 +18,12 @@ import {
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
-import { getDocIcon } from "@/lib/icons";
+import { getDocIcon, getCategoryIcon } from "@/lib/icons";
 import { CURRENT_VERSION } from "@/lib/version";
 
 interface SidebarProps {
   nav: NavGroup[];
 }
-
-const GROUP_ICONS: Record<string, React.ReactNode> = {
-  "Getting Started": <BookOpen size={13} aria-hidden="true" />,
-  "Core Features": <Layers size={13} aria-hidden="true" />,
-  "API Reference": <Terminal size={13} aria-hidden="true" />,
-};
 
 function closeMobileSidebar() {
   if (typeof window !== "undefined" && window.innerWidth <= 1024) {
@@ -146,9 +140,7 @@ function CollapsibleNavGroup({
         aria-expanded={isGroupOpen}
       >
         <span className="nav-group-header-left">
-          {GROUP_ICONS[group.title] && (
-            <span className="nav-group-icon">{GROUP_ICONS[group.title]}</span>
-          )}
+          <span className="nav-group-icon">{getCategoryIcon(group.title)}</span>
           <span>{group.title}</span>
         </span>
         <ChevronRight size={12} className="nav-group-chevron" aria-hidden="true" />

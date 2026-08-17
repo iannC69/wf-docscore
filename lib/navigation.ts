@@ -5,18 +5,39 @@ import matter from "gray-matter";
 
 const DOCS_PATH = path.join(process.cwd(), "content", "docs");
 
-// Group title mappings for top-level folders
 const GROUP_TITLE_MAP: Record<string, string> = {
-  "getting-started": "Getting Started",
-  "features": "Core Features",
-  "api-reference": "API Reference",
+  "informatii": "Informații",
+  "currency": "Currency",
+  "systems": "Systems",
+  "market": "Market & Donații",
 };
 
 const GROUP_ORDER_MAP: Record<string, number> = {
-  "getting-started": 1,
-  "features": 2,
-  "api-reference": 3,
+  "informatii": 1,
+  "currency": 2,
+  "systems": 3,
+  "market": 4,
 };
+
+const SUBFOLDER_TITLE_MAP: Record<string, string> = {
+  "staff": "Staff",
+  "regulamente": "Regulamente",
+  "go": "Regulament GO",
+  "skins": "Weapon Skins",
+  "gambling": "Gambling",
+  "shop": "In-Game Shop",
+  "other": "Other Systems",
+  "premium-shop": "Premium Shop",
+  "vip": "VIP Tiers",
+};
+
+function formatSubfolderTitle(name: string): string {
+  if (SUBFOLDER_TITLE_MAP[name]) return SUBFOLDER_TITLE_MAP[name];
+  return name
+    .split("-")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
 function sortByOrder(items: NavItem[]): NavItem[] {
   return items.sort((a, b) => a.order - b.order);
@@ -88,7 +109,7 @@ function buildNavItemsForDir(dirPath: string, baseSlug: string): NavItem[] {
         const subIndexPath = path.join(fullPath, "index.md");
         const { title, order, badge } = fs.existsSync(/*turbopackIgnore: true*/ subIndexPath)
           ? readFrontmatterTitle(subIndexPath)
-          : { title: entry.name.replace(/-/g, " "), order: 99, badge: undefined };
+          : { title: formatSubfolderTitle(entry.name), order: 99, badge: undefined };
 
         const children = subItems.filter(n => n.href !== `/docs/${slug}`);
 

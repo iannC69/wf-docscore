@@ -34,8 +34,78 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
-    version: "v1.4.0",
+    version: "v1.5.0",
     isLatest: true,
+    date: "August 17, 2026",
+    title: "Wildfire Full Migration, Studio HD Media Lightbox, Orange Video Player & 61-Doc Live Carousel",
+    summary:
+      "Version 1.5.0 delivers the complete migration of the official Wildfire documentation (61+ pure semantic MDX articles across 4 core groups), a studio-grade HD Media Lightbox with Zoom & Pan for all imagery, the Wildfire Orange Video Player with Frosted Blur & Theatre Mode, a dynamic 61-document paginated slider in Recently Updated, and clean Lucide vector iconography.",
+    author: {
+      name: "iannC69",
+      username: "iannC69",
+      avatar: "https://github.com/iannC69.png",
+    },
+    git: {
+      commitHash: "HEAD",
+      commitUrl: "https://github.com/iannC69/wf-docscore/tree/main",
+      tagUrl: "https://github.com/iannC69/wf-docscore/releases/tag/v1.5.0",
+    },
+    changes: [
+      {
+        type: "feature",
+        title: "100% Wildfire Documentation Migration (61+ Articles)",
+        description:
+          "Full port and semantic normalization of all server documentation into 4 official categories: Informații, Currency, Systems, and Market & Donații. Generated intermediate route indexes for 100% 404-free navigation across 87 static routes.",
+        badge: "Content Core",
+      },
+      {
+        type: "feature",
+        title: "Studio HD Media Lightbox with Zoom & Pan",
+        description:
+          "Global interactive lightbox for all documentation images with 50%-300% zoom controls, 90-degree rotation, 1-click URL copy, direct file download, and full keyboard navigation (Esc, +, -, 0).",
+        badge: "Media Engine",
+      },
+      {
+        type: "feature",
+        title: "Wildfire Orange Video Player with Theatre Mode",
+        description:
+          "Frosted glass blur preview card with pulsing orange circular play button, auto-transforming all MDX <video> tags into HD Lightbox theatre modals without native control bleeding or console warnings.",
+        badge: "Video Player",
+      },
+      {
+        type: "feature",
+        title: "61-Document Live Git Sync Carousel with Pagination",
+        description:
+          "Uncapped Recently Updated section scanning all 61 active articles, featuring header arrow navigation (< 1 / 11 >), bottom numbered pagination, dynamic change counter pill, and full collapse/expand toggle.",
+        badge: "Documentation Hub",
+      },
+      {
+        type: "improvement",
+        title: "Lucide Vector Iconography System",
+        description:
+          "Replaced legacy emojis across sidebar groups and document cards with crisp, themed Lucide React SVG vectors with category-specific color badges.",
+        badge: "UI / UX",
+      },
+      {
+        type: "fix",
+        title: "MDX AST Sanitizer & Console Warning Elimination",
+        description:
+          "Resolved empty string src warnings on media elements, auto-escaped placeholder tags (<cod>, <nume>), and stripped orphan HTML closing tags for bulletproof Turbopack builds.",
+        badge: "Stability",
+      },
+    ],
+    highlights: [
+      "61+ fully migrated and verified documentation articles",
+      "Studio HD Media Lightbox with zoom, rotation, and keyboard controls",
+      "Wildfire Orange Video Player with frosted blur & theatre modal",
+      "Paginated 61-doc carousel with live change counter in Documentation Hub",
+      "Zero 404s and 100% clean builds across all 87 routes",
+    ],
+    slug: "v1-5-0",
+  },
+  {
+    version: "v1.4.0",
+    isLatest: false,
     date: "August 17, 2026",
     title: "Cryptographic Integrity Seal, DeepSearch Engine & Quick Actions Toolbar",
     summary:

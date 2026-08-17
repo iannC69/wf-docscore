@@ -30,9 +30,10 @@ interface Props {
 }
 
 const CATEGORY_NAMES: Record<string, string> = {
-  "getting-started": "Getting Started",
-  "features": "Core Features",
-  "api-reference": "API Reference",
+  "informatii": "Informații",
+  "currency": "Currency",
+  "systems": "Systems",
+  "market": "Market & Donații",
 };
 
 // ─── Static params ────────────────────────────────────────────────────────────

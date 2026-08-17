@@ -4,6 +4,8 @@ import { Steps, Step } from "./Steps";
 import { Tabs, Tab } from "./Tabs";
 import { Card, Cards } from "./Card";
 import { CopyablePre } from "./CopyablePre";
+import { DocVideo } from "./DocVideo";
+import { DocImage } from "./DocImage";
 import Link from "next/link";
 
 export const mdxComponents: MDXComponents = {
@@ -12,6 +14,12 @@ export const mdxComponents: MDXComponents = {
 
   // Figure pass-through (rehype-pretty-code wraps pre in figure)
   figure: ({ children }: any) => <>{children}</>,
+
+  // Media components with HD Lightbox
+  video: (props: any) => <DocVideo {...props} />,
+  DocVideo,
+  img: (props: any) => <DocImage {...props} />,
+  DocImage,
 
   // Wrap all pre blocks with our unified Aurora header and copy button
   pre: (props: any) => <CopyablePre {...props} />,

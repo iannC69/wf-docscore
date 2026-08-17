@@ -223,7 +223,7 @@ export function getFileFirstCommitInfo(filePath: string): GitCommitInfo {
 /**
  * Get all docs pages sorted by last updated time for the Documentation Hub "Last Updated" section
  */
-export function getRecentlyUpdatedDocs(limit: number = 6): RecentDocItem[] {
+export function getRecentlyUpdatedDocs(limit?: number): RecentDocItem[] {
   const items: RecentDocItem[] = [];
 
   function scanDir(dir: string, baseSlug: string = "") {
@@ -235,23 +235,25 @@ export function getRecentlyUpdatedDocs(limit: number = 6): RecentDocItem[] {
       if (entry.isDirectory()) {
         const subSlug = baseSlug ? `${baseSlug}/${entry.name}` : entry.name;
         scanDir(fullPath, subSlug);
-      } else if (entry.isFile() && entry.name.endsWith(".md")) {
+      } else if (entry.isFile() && (entry.name.endsWith(".md") || entry.name.endsWith(".mdx"))) {
         const raw = fs.readFileSync(fullPath, "utf-8");
         const { data, content } = matter(raw);
 
-        const fileSlug = entry.name === "index.md" 
+        const cleanExt = entry.name.replace(/\.(md|mdx)$/, "");
+        const fileSlug = cleanExt === "index" 
           ? (baseSlug || "")
-          : (baseSlug ? `${baseSlug}/${entry.name.replace(/\.md$/, "")}` : entry.name.replace(/\.md$/, ""));
+          : (baseSlug ? `${baseSlug}/${cleanExt}` : cleanExt);
 
         // Derive category from first slug segment (ignoring language subfolders if present)
         const cleanSlug = fileSlug.replace(/^(en|ro)\//, "");
         const firstSegment = cleanSlug.split("/")[0] || "";
         const categoryMap: Record<string, string> = {
-          "getting-started": "Getting Started",
-          "features": "Core Features",
-          "api-reference": "API Reference",
+          "informatii": "Informații",
+          "currency": "Currency",
+          "systems": "Systems",
+          "market": "Market & Donații",
         };
-        const category = categoryMap[firstSegment] || (firstSegment ? firstSegment.replace(/-/g, " ") : "Overview");
+        const category = categoryMap[firstSegment] || (firstSegment ? firstSegment.replace(/-/g, " ") : "Informații");
 
         const gitInfo = getFileGitInfo(fullPath);
 
@@ -263,7 +265,7 @@ export function getRecentlyUpdatedDocs(limit: number = 6): RecentDocItem[] {
           slug: fileSlug,
           href: fileSlug ? `/docs/${fileSlug}` : "/docs",
           title: data.title || (fileSlug ? fileSlug.replace(/-/g, " ") : "Documentation Home"),
-          description: data.description || (data.seoDescription || "Detailed guide and architecture documentation."),
+          description: data.description || (data.seoDescription || "Ghid detaliat si documentatie pentru serverul Wildfire."),
           category,
           readingTime,
           lastUpdated: gitInfo.date,
@@ -285,5 +287,8 @@ export function getRecentlyUpdatedDocs(limit: number = 6): RecentDocItem[] {
   // Sort descending by date
   filtered.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
 
-  return filtered.slice(0, limit);
+  if (typeof limit === "number" && limit > 0) {
+    return filtered.slice(0, limit);
+  }
+  return filtered;
 }

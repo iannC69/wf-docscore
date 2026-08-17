@@ -1,15 +1,14 @@
 ---
 title: Welcome to Docs Platform
-description: A fully custom documentation platform with GitHub integration, visual editor, and admin panel — built from the ground up.
+description: >-
+  A fully custom documentation platform with GitHub integration, visual editor,
+  and admin panel — built from the ground up.
 order: 0
 ---
-
-# Welcome to Docs Platform
-
+## Welcome to Docs Platform
 A powerful, self-hosted documentation platform built with **Next.js 15**, **GitHub integration**, and a **visual WYSIWYG editor**. Designed to replace tools like Fumadocs and VitePress with something completely yours.
 
 ## What makes this different?
-
 Unlike hosted solutions, this platform gives you **complete control** over your content pipeline, editor experience, and deployment strategy.
 
 - **GitHub as source of truth** — content lives in your repo as Markdown/MDX files
@@ -20,23 +19,21 @@ Unlike hosted solutions, this platform gives you **complete control** over your 
 - **Analytics** — track page views, reading time, and popular content
 
 ## Architecture overview
-
 ```
 Content Request
-     ↓
+↓
 Next.js App Router (SSG/ISR)
-     ↓
+↓
 Cache Layer (Upstash Redis)
-     ↓
+↓
 GitHub API (Octokit) — reads .md files from your repo
-     ↓
+↓
 MDX Pipeline (Shiki + GFM + autolink headings)
-     ↓
+↓
 React Components (Callout, CodeBlock, Steps, Tabs)
 ```
 
 ## Tech stack
-
 | Layer | Technology |
 |-------|-----------|
 | Framework | Next.js 15 (App Router) |
@@ -49,7 +46,6 @@ React Components (Callout, CodeBlock, Steps, Tabs)
 | Deploy | Vercel |
 
 ## Quick navigation
-
 - **[Getting Started](/docs/getting-started)** — install and run in 5 minutes
 - **[Configuration](/docs/getting-started/configuration)** — connect GitHub and configure environment
 - **[Features](/docs/features)** — overview of all platform capabilities
