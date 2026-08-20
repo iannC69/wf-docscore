@@ -15,6 +15,7 @@ import {
   Folder,
   Users,
   Terminal,
+  Cpu,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
@@ -34,6 +35,13 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin",
     icon: LayoutDashboard,
     badge: "Live",
+  },
+  {
+    label: "AI Engine Telemetry",
+    href: "/admin/ai-analytics",
+    icon: Cpu,
+    badge: "AI",
+    permKey: "canViewAnalytics",
   },
   {
     label: "My Team & Access",

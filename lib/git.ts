@@ -90,9 +90,14 @@ export function getAuthorProfile(name: string, email: string): { username: strin
 }
 
 /**
- * Executes a git command safely with fallbacks
+ * Executes a git command safely with fallbacks.
+ * Results are cached in-memory so each unique command runs only once per server instance.
  */
+const _gitCommandCache = new Map<string, string | null>();
+
 function runGitCommand(cmd: string): string | null {
+  if (_gitCommandCache.has(cmd)) return _gitCommandCache.get(cmd)!;
+
   const gitPaths = [
     "git",
     "\"C:\\Program Files\\Git\\cmd\\git.exe\"",
@@ -106,19 +111,29 @@ function runGitCommand(cmd: string): string | null {
         encoding: "utf-8",
         stdio: ["ignore", "pipe", "ignore"],
         windowsHide: true,
+        timeout: 3000,
       });
-      if (output) return output.trim();
+      if (output) {
+        _gitCommandCache.set(cmd, output.trim());
+        return output.trim();
+      }
     } catch {
       continue;
     }
   }
+
+  _gitCommandCache.set(cmd, null);
   return null;
 }
 
 /**
- * Get latest git commit info for a specific file
+ * Get latest git commit info for a specific file.
+ * Cached per file path — runs git only once per server instance.
  */
+const _gitInfoCache = new Map<string, GitCommitInfo>();
+
 export function getFileGitInfo(filePath: string): GitCommitInfo {
+  if (_gitInfoCache.has(filePath)) return _gitInfoCache.get(filePath)!;
   // Relative path from repo root
   const relPath = path.relative(process.cwd(), filePath).replace(/\\/g, "/");
 
@@ -135,7 +150,7 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
       const commitMessage = parts.slice(4).join("|") || "Update documentation";
       const profile = getAuthorProfile(authorName, authorEmail);
 
-      return {
+      const result: GitCommitInfo = {
         authorName: profile.username,
         authorEmail,
         authorUsername: profile.username,
@@ -146,6 +161,8 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
         commitMessage,
         commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commit/${commitHash}`,
       };
+      _gitInfoCache.set(filePath, result);
+      return result;
     }
   }
 
@@ -155,7 +172,7 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
     const date = stats.mtime.toISOString();
     const profile = getAuthorProfile(DEFAULT_AUTHOR, DEFAULT_EMAIL);
 
-    return {
+    const fallback: GitCommitInfo = {
       authorName: DEFAULT_AUTHOR,
       authorEmail: DEFAULT_EMAIL,
       authorUsername: DEFAULT_AUTHOR,
@@ -166,9 +183,11 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
       commitMessage: "Documentation update",
       commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`,
     };
+    _gitInfoCache.set(filePath, fallback);
+    return fallback;
   } catch {
     const profile = getAuthorProfile(DEFAULT_AUTHOR, DEFAULT_EMAIL);
-    return {
+    const err: GitCommitInfo = {
       authorName: DEFAULT_AUTHOR,
       authorEmail: DEFAULT_EMAIL,
       authorUsername: DEFAULT_AUTHOR,
@@ -179,13 +198,20 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
       commitMessage: "Documentation update",
       commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`,
     };
+    _gitInfoCache.set(filePath, err);
+    return err;
   }
 }
 
 /**
- * Get the first commit info ("Posted by" / "Created by") for a specific file
+ * Get the first commit info ("Posted by" / "Created by") for a specific file.
+ * Cached per file path.
  */
+const _firstCommitCache = new Map<string, GitCommitInfo>();
+
 export function getFileFirstCommitInfo(filePath: string): GitCommitInfo {
+  if (_firstCommitCache.has(filePath)) return _firstCommitCache.get(filePath)!;
+
   const relPath = path.relative(process.cwd(), filePath).replace(/\\/g, "/");
 
   // Fetch earliest commit for this file
@@ -202,7 +228,7 @@ export function getFileFirstCommitInfo(filePath: string): GitCommitInfo {
       const commitMessage = parts.slice(4).join("|") || "Initial documentation";
       const profile = getAuthorProfile(authorName, authorEmail);
 
-      return {
+      const firstResult: GitCommitInfo = {
         authorName: profile.username,
         authorEmail,
         authorUsername: profile.username,
@@ -213,17 +239,28 @@ export function getFileFirstCommitInfo(filePath: string): GitCommitInfo {
         commitMessage,
         commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commit/${commitHash}`,
       };
+      _firstCommitCache.set(filePath, firstResult);
+      return firstResult;
     }
   }
 
   // Fallback to latest info
-  return getFileGitInfo(filePath);
+  const fallback = getFileGitInfo(filePath);
+  _firstCommitCache.set(filePath, fallback);
+  return fallback;
 }
 
 /**
- * Get all docs pages sorted by last updated time for the Documentation Hub "Last Updated" section
+ * Get all docs pages sorted by last updated time.
+ * Cached in-memory — heavy operation (runs git for all 62 files) done only once per server instance.
  */
+let _recentDocsCache: RecentDocItem[] | null = null;
+
 export function getRecentlyUpdatedDocs(limit?: number): RecentDocItem[] {
+  if (_recentDocsCache) {
+    if (typeof limit === "number" && limit > 0) return _recentDocsCache.slice(0, limit);
+    return _recentDocsCache;
+  }
   const items: RecentDocItem[] = [];
 
   function scanDir(dir: string, baseSlug: string = "") {
@@ -286,6 +323,9 @@ export function getRecentlyUpdatedDocs(limit?: number): RecentDocItem[] {
 
   // Sort descending by date
   filtered.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
+
+  // Store in cache
+  _recentDocsCache = filtered;
 
   if (typeof limit === "number" && limit > 0) {
     return filtered.slice(0, limit);

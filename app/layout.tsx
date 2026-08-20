@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PageProgressBar } from "@/components/ui/PageProgressBar";
+import { AiHelper } from "@/components/ui/AiHelper";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -58,6 +59,7 @@ export default function RootLayout({
           <PageProgressBar />
         </Suspense>
         {children}
+        <AiHelper />
       </body>
     </html>
   );

@@ -34,8 +34,86 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
-    version: "v1.6.0",
+    version: "v1.7.0",
     isLatest: true,
+    date: "August 21, 2026",
+    title: "WildFire AI Assistant Engine, LocalStorage Multi-Session History, Search Spotlight & Ambient Liquid Glass Parity",
+    summary:
+      "Version 1.7.0 introduces the WildFire AI Intelligence Engine grounded on all 62 documentation guides, LocalStorage multi-conversation history with intelligent naming and session management, Command Palette AI Spotlight with live telemetry suggestions, confidential error masking (ERROR_WF-XYZ), multilingual language matching, and 1:1 ambient Liquid Fire background parity.",
+    author: {
+      name: "iannC69",
+      username: "iannC69",
+      avatar: "https://github.com/iannC69.png",
+    },
+    git: {
+      commitHash: "HEAD",
+      commitUrl: "https://github.com/iannC69/wf-docscore/tree/main",
+      tagUrl: "https://github.com/iannC69/wf-docscore/releases/tag/v1.7.0",
+    },
+    changes: [
+      {
+        type: "feature",
+        title: "WildFire AI Assistant Engine & Security Grounding",
+        description:
+          "Google Gemini-powered intelligent assistant strictly grounded on the entire documentation index (62 guides). Includes server-side prompt injection defenses, zero secrets leakage, and confidential error code masking (ERROR_WF-XYZ).",
+        badge: "AI Core",
+      },
+      {
+        type: "feature",
+        title: "LocalStorage Multi-Session Conversation History",
+        description:
+          "Full conversation persistence across page reloads. Includes a dedicated History drawer, automatic conversation naming from user prompts, timestamps, message counters, active session indicators, and individual/bulk session management.",
+        badge: "AI Sessions",
+      },
+      {
+        type: "feature",
+        title: "Search Modal AI Spotlight & Live Telemetry Suggestions",
+        description:
+          "Command Palette (Ctrl + K) displays an interactive AI Spotlight action card when typing questions, a quick 'Ask AI' tab, and live telemetry suggestions from the community query log.",
+        badge: "DeepSearch",
+      },
+      {
+        type: "feature",
+        title: "Bilingual Multilingual Intelligence",
+        description:
+          "Exact language matching ensuring English questions receive pure English responses and Romanian questions receive clean Romanian responses without cross-language pollution.",
+        badge: "Intelligence",
+      },
+      {
+        type: "improvement",
+        title: "1:1 Docs Ambient Liquid Fire Background Continuity",
+        description:
+          "Enhanced AI panel with drifting warm ember radial gradient blobs, fractal noise texture, and translucent frosted glass header/input trays matching the documentation aesthetic.",
+        badge: "Design System",
+      },
+      {
+        type: "improvement",
+        title: "Multi-Layout Responsive Architecture",
+        description:
+          "Three customizable display modes: Side Drawer (460px right dock), Centered Modal (820px floating window), and Expansive Fullscreen, with layout preference saved in localStorage.",
+        badge: "UI / UX",
+      },
+      {
+        type: "fix",
+        title: "Search Modal Recent Searches CSS & Zero-Emoji Enforcement",
+        description:
+          "Restored and polished CSS styling for recent searches chips and enforced 100% Lucide React SVG vector iconography across all assistant markdown responses.",
+        badge: "Bug Fix",
+      },
+    ],
+    highlights: [
+      "WildFire AI Assistant grounded in 62 documentation guides with prompt injection defenses",
+      "Multi-session conversation history stored in LocalStorage with quick New Chat & session switching",
+      "Command Palette AI Spotlight action card & dynamic telemetry questions",
+      "Exact multilingual language matching (English / Romanian)",
+      "1:1 Docs ambient Liquid Fire background aura & translucent glass panels",
+      "Confidential ERROR_WF-XYZ error code masking with zero raw provider traces",
+    ],
+    slug: "v1-7-0",
+  },
+  {
+    version: "v1.6.0",
+    isLatest: false,
     date: "August 17, 2026",
     title: "Granular RBAC 2.0 Team Matrix, Root Session Immunity, Liquid Glass Inspector & Zero-Emoji Security Architecture",
     summary:

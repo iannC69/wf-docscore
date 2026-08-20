@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI Helper — auto-generated at build time
+content/ai-context.json
+content/ai-telemetry.json

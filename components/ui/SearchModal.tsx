@@ -56,10 +56,33 @@ export function SearchModal({
   const [activeCategory, setActiveCategory] = useState("all");
   const [chunks, setChunks] = useState<SearchChunk[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [trendingAiQuestions, setTrendingAiQuestions] = useState<string[]>([
+    "Cum aplic în staff și ce cerințe sunt?",
+    "Care sunt beneficiile la gradele VIP?",
+    "Cum pot obține Phoenix Coins?",
+    "Cum folosesc comanda !ws pe server?",
+  ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsContainerRef = useRef<HTMLDivElement>(null);
+
+  // Helper to open AI Assistant from anywhere in SearchModal
+  const askAi = (targetQuery?: string) => {
+    const q = targetQuery ?? query;
+    onClose();
+    if (q.trim()) {
+      saveRecentSearch(q);
+    }
+    window.dispatchEvent(
+      new CustomEvent("wf:open-ai", {
+        detail: {
+          query: q || "",
+          autoSubmit: Boolean(q.trim()),
+        },
+      })
+    );
+  };
 
   // 1. Lock body background scroll while modal is open
   useEffect(() => {
@@ -80,7 +103,7 @@ export function SearchModal({
     }
   }, [isOpen]);
 
-  // 2. Load search index and recent searches
+  // 2. Load search index, recent searches, and live AI telemetry suggestions
   useEffect(() => {
     if (isOpen) {
       // Load recent searches from localStorage
@@ -90,6 +113,16 @@ export function SearchModal({
           setRecentSearches(JSON.parse(stored));
         }
       } catch {}
+
+      // Fetch live AI telemetry questions
+      fetch("/api/ai-helper/trending")
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data?.suggestions) && data.suggestions.length > 0) {
+            setTrendingAiQuestions(data.suggestions);
+          }
+        })
+        .catch(() => {});
 
       // Fetch or refresh search index
       if (chunks.length === 0) {
@@ -152,7 +185,6 @@ export function SearchModal({
     const q = query.toLowerCase().trim();
 
     if (!q) {
-      // If query is empty, show curated highlights or first items in category
       if (activeCategory !== "all") {
         return pool.slice(0, 8);
       }
@@ -211,17 +243,14 @@ export function SearchModal({
       const catLower = item.category.toLowerCase();
       const hrefLower = item.href.toLowerCase();
 
-      // Exact phrase match in title
       if (titleLower === q) score += 120;
       else if (titleLower.startsWith(q)) score += 80;
       else if (titleLower.includes(q)) score += 50;
 
-      // Section or category match
       if (sectionLower.includes(q)) score += 35;
       if (catLower.includes(q)) score += 25;
       if (hrefLower.includes(q)) score += 30;
 
-      // Match individual terms
       for (const w of words) {
         if (titleLower.includes(w)) score += 20;
         if (sectionLower.includes(w)) score += 14;
@@ -239,19 +268,27 @@ export function SearchModal({
       .map((s) => s.item);
   }, [query, activeCategory, chunks]);
 
+  const hasAiSpotlight = Boolean(query.trim());
+  const totalSelectableCount = results.length + (hasAiSpotlight ? 1 : 0);
+
   // 4. Keyboard Navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : 0));
+      setSelectedIndex((prev) => (prev < totalSelectableCount - 1 ? prev + 1 : 0));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : results.length - 1));
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : totalSelectableCount - 1));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (results[selectedIndex]) {
-        if (query.trim()) saveRecentSearch(query);
-        navigate(results[selectedIndex].href);
+      if (hasAiSpotlight && selectedIndex === 0) {
+        askAi(query);
+      } else {
+        const docIndex = hasAiSpotlight ? selectedIndex - 1 : selectedIndex;
+        if (results[docIndex]) {
+          if (query.trim()) saveRecentSearch(query);
+          navigate(results[docIndex].href);
+        }
       }
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -262,7 +299,6 @@ export function SearchModal({
   const navigate = (href: string) => {
     if (query.trim()) {
       saveRecentSearch(query);
-      // Real Search Telemetry ping
       try {
         fetch("/api/search", {
           method: "POST",
@@ -347,22 +383,34 @@ export function SearchModal({
           </button>
         </div>
 
-        {/* Category Tabs Filter Bar */}
-        <div className="search-filter-tabs">
-          {categoryTabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              className={`search-filter-tab ${activeCategory === tab.id ? "search-filter-tab--active" : ""}`}
-              onClick={() => {
-                setActiveCategory(tab.id);
-                setSelectedIndex(0);
-                inputRef.current?.focus();
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Category Tabs Filter Bar + Ask AI Quick Action */}
+        <div className="search-filter-tabs-row">
+          <div className="search-filter-tabs">
+            {categoryTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`search-filter-tab ${activeCategory === tab.id ? "search-filter-tab--active" : ""}`}
+                onClick={() => {
+                  setActiveCategory(tab.id);
+                  setSelectedIndex(0);
+                  inputRef.current?.focus();
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="search-ask-ai-quick-btn"
+            onClick={() => askAi()}
+            title="Deschide Asistentul AI WildFire"
+          >
+            <Sparkles size={11} className="text-amber-400" />
+            <span>Ask AI</span>
+          </button>
         </div>
 
         {/* Recent Searches Row (if any and query is empty) */}
@@ -399,6 +447,40 @@ export function SearchModal({
           </div>
         )}
 
+        {/* AI Intelligence & Trending Telemetry Queries (When Query is Empty) */}
+        {!query && (
+          <div className="search-ai-trending-section">
+            <div className="search-ai-trending-header">
+              <div className="search-ai-trending-title">
+                <Sparkles size={12} className="text-amber-400" />
+                <span>ÎNTREBĂRI FRECVENTE AI</span>
+              </div>
+              <button
+                type="button"
+                className="search-ai-open-chat-link"
+                onClick={() => askAi()}
+              >
+                <span>Deschide Chat AI</span>
+                <ChevronRight size={12} />
+              </button>
+            </div>
+
+            <div className="search-ai-chips-list">
+              {trendingAiQuestions.map((qText, qIdx) => (
+                <button
+                  key={qIdx}
+                  type="button"
+                  className="search-ai-prompt-chip"
+                  onClick={() => askAi(qText)}
+                >
+                  <Sparkles size={10} className="search-chip-sparkle" />
+                  <span>{qText}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Search Results / Status */}
         <div className="search-results-wrapper" ref={resultsContainerRef}>
           {loading && (
@@ -408,7 +490,49 @@ export function SearchModal({
             </div>
           )}
 
-          {!loading && results.length === 0 && (
+          {/* AI Spotlight Action Row (Always present when typing a query) */}
+          {hasAiSpotlight && (
+            <div className="search-results-list" role="listbox">
+              <div className="search-section-label">AI ASSISTANT SPOTLIGHT</div>
+              <div
+                data-index={0}
+                role="option"
+                aria-selected={selectedIndex === 0}
+                className={`search-result-item search-result-item--ai ${selectedIndex === 0 ? "search-result-item--selected" : ""}`}
+                onClick={() => askAi(query)}
+                onMouseEnter={() => setSelectedIndex(0)}
+              >
+                <div className="result-item-icon-box result-item-icon-box--ai">
+                  <Sparkles size={14} className="result-icon-ai" aria-hidden="true" />
+                </div>
+
+                <div className="result-item-content">
+                  <div className="result-item-title-row">
+                    <span className="result-item-title result-item-title--ai">
+                      Întreabă AI-ul despre: &ldquo;{query}&rdquo;
+                    </span>
+                    <span className="result-item-category result-item-category--ai">
+                      AI INTEL
+                    </span>
+                  </div>
+                  <p className="result-item-snippet">
+                    Obține un răspuns generat instant din toate cele 62 de ghiduri oficiale WildFire.ro.
+                  </p>
+                </div>
+
+                <div className="result-item-action">
+                  <span className="search-ai-enter-badge">Ask AI</span>
+                  <CornerDownLeft
+                    size={13}
+                    className="result-item-enter-icon"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!loading && results.length === 0 && !hasAiSpotlight && (
             <div className="search-status-state">
               <p className="search-no-results">
                 No matching results found for &ldquo;<strong>{query}</strong>&rdquo;
@@ -422,22 +546,23 @@ export function SearchModal({
           {!loading && results.length > 0 && (
             <div className="search-results-list" role="listbox">
               <div className="search-section-label">
-                {!query.trim() ? "Suggested Quicklinks" : `Search Results (${results.length})`}
+                {!query.trim() ? "Suggested Quicklinks" : `Documentation Matches (${results.length})`}
               </div>
 
               {results.map((item, idx) => {
-                const isSelected = idx === selectedIndex;
+                const itemIndex = hasAiSpotlight ? idx + 1 : idx;
+                const isSelected = itemIndex === selectedIndex;
                 const isHeading = item.href.includes("#");
 
                 return (
                   <div
                     key={item.id}
-                    data-index={idx}
+                    data-index={itemIndex}
                     role="option"
                     aria-selected={isSelected}
                     className={`search-result-item ${isSelected ? "search-result-item--selected" : ""}`}
                     onClick={() => navigate(item.href)}
-                    onMouseEnter={() => setSelectedIndex(idx)}
+                    onMouseEnter={() => setSelectedIndex(itemIndex)}
                   >
                     <div className="result-item-icon-box">
                       {isHeading ? (

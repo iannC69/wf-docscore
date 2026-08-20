@@ -1,15 +1,18 @@
 {
   "name": "wf-docscore",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "WF-DOCSCORE — Next-Generation Documentation & Architecture Engine",
   "author": "iannC69",
   "private": true,
   "scripts": {
+    "predev": "node scripts/build-ai-context.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/build-ai-context.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "release": "node scripts/release.mjs"
+    "release": "node scripts/release.mjs",
+    "ai:rebuild": "node scripts/build-ai-context.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",
