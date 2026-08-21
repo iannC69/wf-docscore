@@ -23,6 +23,7 @@ import { useLayout } from "@/context/LayoutContext";
 import type { NavGroup, NavItem } from "@/types/docs";
 import { getDocIcon, getCategoryIcon } from "@/lib/icons";
 import { CURRENT_VERSION } from "@/lib/version";
+import { SidebarShuffleCard } from "@/components/layout/SidebarShuffleCard";
 
 interface SidebarProps {
   nav: NavGroup[];
@@ -337,23 +338,8 @@ export function Sidebar({ nav }: SidebarProps) {
 
         {/* Pinned Bottom Dock: Always visible */}
         <div className="sidebar-bottom-dock">
-          {/* Liquid Glass Info Card */}
-          <div className="sidebar-liquid-card">
-            <div className="liquid-card-header">
-              <span className="liquid-card-dot" aria-hidden="true" />
-              <span className="liquid-card-title">Production Edge</span>
-            </div>
-            <p className="liquid-card-desc">
-              Next.js 16 Turbopack engine with instant global cache revalidation.
-            </p>
-            <div className="liquid-card-footer">
-              <span className="liquid-card-tag">
-                <GitBranch size={11} aria-hidden="true" />
-                <span>main</span>
-              </span>
-              <span className="liquid-card-status">99.9% ISR</span>
-            </div>
-          </div>
+          {/* Dynamic Community Shuffle Spotlight Card */}
+          <SidebarShuffleCard />
 
           {/* System status */}
           <div className="sidebar-footer">

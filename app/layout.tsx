@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PageProgressBar } from "@/components/ui/PageProgressBar";
 import { AiHelper } from "@/components/ui/AiHelper";
+import { CookieConsentBanner } from "@/components/ui/CookieConsentBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -60,6 +61,7 @@ export default function RootLayout({
         </Suspense>
         {children}
         <AiHelper />
+        <CookieConsentBanner />
       </body>
     </html>
   );

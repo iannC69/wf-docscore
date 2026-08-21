@@ -34,8 +34,52 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
-    "version": "v1.8.0",
+    "version": "v1.8.5",
     "isLatest": true,
+    "date": "August 21, 2026",
+    "title": "Cookie Consent Morphing, CS2 Community Spotlight & Admin Fortress 2.0",
+    "summary": "Official v1.8.5 release featuring in-place payment-style cookie consent animations, dynamic CS2 rotating community cards, and complete Admin Gateway Liquid Glass overhaul.",
+    "author": {
+      "name": "iannC69",
+      "username": "iannC69",
+      "avatar": "https://github.com/iannC69.png"
+    },
+    "git": {
+      "commitHash": "e4c892a",
+      "commitUrl": "https://github.com/iannC69/wf-docscore/commit/e4c892a",
+      "tagUrl": "https://github.com/iannC69/wf-docscore/releases/tag/v1.8.5"
+    },
+    "changes": [
+      {
+        "type": "feature",
+        "title": "In-place Cookie Consent Payment-Style Animation System with SVG arc fill and particle burst",
+        "description": "Smooth morphing confirmation directly inside the floating banner with zero DOM duplication or layout shifts."
+      },
+      {
+        "type": "feature",
+        "title": "Interactive CS2 Community Spotlight & Shuffle Card in Sidebar with 5 rotating live modules",
+        "description": "Integrated real-time CS2 commands (!ws, !knife), Discord 2.860+ members hub, AI launcher, and pro-tips generator."
+      },
+      {
+        "type": "improvement",
+        "title": "Complete Admin Gateway (/admin/login) Liquid Glass redesign with Aurora flares and password toggle",
+        "description": "Upgraded with 28px backdrop blur, top shimmer beams, WebKit dark autofill, and security status tags."
+      },
+      {
+        "type": "improvement",
+        "title": "Strict Counter-Strike 2 terminology and ecosystem synchronization across entire documentation platform",
+        "description": "Aligned all AI prompts, system guides, commands, and quick search indices exclusively for CS2."
+      }
+    ],
+    "highlights": [
+      "Official v1.8.5 production engine update",
+      "Liquid Glass & Aurora aesthetic enhancements"
+    ],
+    "slug": "v1-8-5"
+  },
+  {
+    "version": "v1.8.0",
+    "isLatest": false,
     "date": "August 21, 2026",
     "title": "Core Team Liquid Glass Upgrades & Full Admin Inspector",
     "summary": "Official v1.8.0 update introducing platform enhancements, performance optimizations, and documentation refinements.",

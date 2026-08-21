@@ -2,9 +2,9 @@
   "views": {
     "informatii/faq": {
       "slug": "informatii/faq",
-      "total_views": 6,
-      "today_views": 6,
-      "last_viewed_at": "2026-08-21T18:15:52.514Z"
+      "total_views": 7,
+      "today_views": 7,
+      "last_viewed_at": "2026-08-21T19:57:39.660Z"
     },
     "informatii/staff": {
       "slug": "informatii/staff",
@@ -14,9 +14,9 @@
     },
     "informatii/about": {
       "slug": "informatii/about",
-      "total_views": 5,
-      "today_views": 5,
-      "last_viewed_at": "2026-08-21T18:15:22.240Z"
+      "total_views": 6,
+      "today_views": 6,
+      "last_viewed_at": "2026-08-21T19:54:46.006Z"
     },
     "informatii/getting-started": {
       "slug": "informatii/getting-started",
@@ -89,6 +89,18 @@
       "total_views": 1,
       "today_views": 1,
       "last_viewed_at": "2026-08-21T15:34:00.239Z"
+    },
+    "informatii/regulamente": {
+      "slug": "informatii/regulamente",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T19:57:45.723Z"
+    },
+    "currency/phoenixcoins": {
+      "slug": "currency/phoenixcoins",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T19:57:48.898Z"
     }
   },
   "feedbacks": [
@@ -123,7 +135,7 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-21T19:46:17.760Z",
+  "updatedAt": "2026-08-21T19:57:48.898Z",
   "reports": [],
   "tasks": [
     {

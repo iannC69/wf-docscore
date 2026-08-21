@@ -1,5 +1,20 @@
 [
   {
+    "id": "aud_1787343731454_f957ea90",
+    "timestamp": "2026-08-21T20:22:11.454Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_4971132e5bda4a74474efd4bac8fb34201f5cdbdb33146f3",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "1e120c28bf86e3b998618cc9e7dceb0447e74c942592f764ffa5c32832ac3f41",
+    "hash": "91291ce959708ef986eadd656e900b10962ad1e35b1e179c99d5d4deab0a1ddb"
+  },
+  {
     "id": "aud_1787341480462_fef6fc66",
     "timestamp": "2026-08-21T19:44:40.463Z",
     "action": "SETTINGS_UPDATE",

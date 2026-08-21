@@ -370,6 +370,13 @@ export function AiHelper() {
   const [thinkingIndex, setThinkingIndex] = useState(0);
   const [cooldownSeconds, setCooldownSeconds] = useState<number | null>(null);
 
+  // Global event listener to open AI helper from any button
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("open-ai-helper", handleOpen);
+    return () => window.removeEventListener("open-ai-helper", handleOpen);
+  }, []);
+
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 2500);
