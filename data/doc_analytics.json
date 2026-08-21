@@ -156,21 +156,8 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-21T21:39:05.986Z",
-  "reports": [
-    {
-      "type": "new_guide_request",
-      "slug": "systems/other/c4-planter",
-      "category": "systems",
-      "severity": "normal",
-      "title": "da",
-      "description": "da",
-      "ip_hash": "::1",
-      "id": "rep_1787343995731_wu978",
-      "status": "open",
-      "created_at": "2026-08-21T20:26:35.731Z"
-    }
-  ],
+  "updatedAt": "2026-08-21T22:03:40.422Z",
+  "reports": [],
   "tasks": [
     {
       "title": "De facut versiunea mobile la admin panel full la toate categoriile!",
@@ -202,6 +189,190 @@
     }
   ],
   "notifications": [
+    {
+      "id": "notif_1787349620184_06fkb",
+      "isGlobal": true,
+      "title": "✅ Sarcină Finalizată: De verificat gambling",
+      "message": "Sarcina a fost marcată ca finalizată de @iannC69.",
+      "category": "task",
+      "severity": "success",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T22:00:20.184Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349619517_isu84",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "⚡ Status Actualizat: De verificat gambling",
+      "message": "@iannC69 a mutat sarcina în starea IN_REVIEW.",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T22:00:19.517Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349595805_515fq",
+      "isGlobal": true,
+      "title": "✅ Sarcină Finalizată: De verificat gambling",
+      "message": "Sarcina a fost marcată ca finalizată de @iannC69.",
+      "category": "task",
+      "severity": "success",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T21:59:55.805Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349594540_9bvtk",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "⚡ Status Actualizat: De verificat gambling",
+      "message": "@iannC69 a mutat sarcina în starea IN_REVIEW.",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:59:54.541Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349592757_rmnlj",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "⚡ Status Actualizat: De verificat gambling",
+      "message": "@iannC69 a mutat sarcina în starea IN_PROGRESS.",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:59:52.757Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349515446_huo7d",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "💬 Notă Nouă pe Sarcină: De verificat gambling",
+      "message": "@iannC69: \"@V1ccX a\"",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:58:35.446Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349477678_57i22",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "💬 Notă Nouă pe Sarcină: De verificat gambling",
+      "message": "@iannC69: \"@V1ccX ba borfasule\"",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:57:57.678Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349367131_z1wqg",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "💬 Notă Nouă pe Sarcină: De verificat gambling",
+      "message": "@iannC69: \"bau\"",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:56:07.131Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349287861_f048h",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "Comentariu Nou pe Sarcină: De verificat gambling",
+      "message": "@iannC69: \"da\"",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:54:47.861Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349174298_knj1r",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "Comentariu Nou pe Sarcină: De verificat gambling",
+      "message": "@iannC69: \"Salut\"",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:52:54.298Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349150967_znngs",
+      "isGlobal": true,
+      "title": "[ALERTA SARCINĂ URGENTĂ] De verificat gambling",
+      "message": "Creată de @iannC69 · Necesită atenție prioritară imediată.",
+      "category": "task",
+      "severity": "urgent",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T21:52:30.967Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1"
+      }
+    },
+    {
+      "id": "notif_1787349150959_mrpev",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "Sarcină Nouă Asignată: De verificat gambling",
+      "message": "Ai fost asignat de @iannC69 la sarcina din categoria DOCS_UPDATE.",
+      "category": "task",
+      "severity": "urgent",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T21:52:30.959Z",
+      "metadata": {
+        "taskId": "task_1787349150940_441c1",
+        "priority": "urgent"
+      }
+    },
     {
       "id": "notif_1787348328385_tf5ug",
       "isGlobal": true,

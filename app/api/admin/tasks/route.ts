@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthenticatedAdminSession } from "@/lib/security/auth";
-import { getPublicTeamMembers } from "@/lib/security/teamStore";
+import { getPublicTeamMembers, findTeamMemberByUsername } from "@/lib/security/teamStore";
 import {
   createAdminTask,
   getAllAdminTasks,
@@ -17,7 +17,10 @@ import { getNavigation } from "@/lib/navigation";
 
 export const dynamic = "force-dynamic";
 
-import { sendDiscordTaskNotification } from "@/lib/notifications/discordTaskWebhook";
+import {
+  sendDiscordTaskNotification,
+  sendDiscordTaskCommentNotification,
+} from "@/lib/notifications/discordTaskWebhook";
 
 export async function GET(req: NextRequest) {
   const session = await getAuthenticatedAdminSession();
@@ -113,6 +116,73 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(result);
     }
 
+    // ── Handle Add Comment in POST or PATCH ──
+    if (body.action === "add_comment" && body.id && body.comment) {
+      const member = findTeamMemberByUsername(session.username);
+      const updated = await addAdminTaskComment(body.id, {
+        author: session.username || "Admin",
+        avatarUrl: member?.avatarUrl,
+        text: body.comment,
+      });
+
+      if (updated) {
+        // Find all recipients (assignees + creator + text mentions, excluding comment author)
+        const textMentions = (body.comment.match(/@([a-zA-Z0-9_-]+)/g) || []).map((m: string) =>
+          m.replace("@", "").trim()
+        );
+
+        const recipientUsernames = Array.from(
+          new Set([
+            ...(updated.assignees || []),
+            updated.assignedBy,
+            ...textMentions,
+          ])
+        ).filter((u) => u && u.toLowerCase() !== session.username.toLowerCase());
+
+        if (recipientUsernames.length > 0) {
+          for (const recipient of recipientUsernames) {
+            localCreateNotification({
+              targetUser: recipient,
+              isGlobal: false,
+              title: `💬 Notă Nouă pe Sarcină: ${updated.title}`,
+              message: `@${session.username}: "${body.comment.slice(0, 120)}${body.comment.length > 120 ? "..." : ""}"`,
+              category: "task",
+              severity: "info",
+              link: "/admin/tasks",
+              metadata: { taskId: updated.id },
+            });
+          }
+        } else {
+          localCreateNotification({
+            isGlobal: true,
+            title: `💬 Notă Nouă pe Sarcină: ${updated.title}`,
+            message: `@${session.username}: "${body.comment.slice(0, 120)}${body.comment.length > 120 ? "..." : ""}"`,
+            category: "task",
+            severity: "info",
+            link: "/admin/tasks",
+            metadata: { taskId: updated.id },
+          });
+        }
+
+        // Dispatch Discord Webhook Notification with direct mentions to assigned admin(s)
+        sendDiscordTaskCommentNotification(updated, {
+          author: session.username || "Admin",
+          text: body.comment,
+          avatarUrl: member?.avatarUrl,
+        }).catch((err) => {
+          console.error("[Discord Task Comment POST] Webhook error:", err);
+        });
+      }
+
+      return NextResponse.json({ success: Boolean(updated), task: updated });
+    }
+
+    // ── Handle Toggle Subtask in POST or PATCH ──
+    if (body.action === "toggle_subtask" && body.id && body.subtaskId) {
+      const updated = await toggleAdminTaskSubtask(body.id, body.subtaskId);
+      return NextResponse.json({ success: Boolean(updated), task: updated });
+    }
+
     const { title, description, priority, category, assignees, targetDoc, dueDate, subtasks } = body;
 
     if (!title || !title.trim()) {
@@ -144,7 +214,7 @@ export async function POST(req: NextRequest) {
         localCreateNotification({
           targetUser: assignee,
           isGlobal: false,
-          title: `Sarcină Nouă Asignată: ${task.title}`,
+          title: `📋 Sarcină Nouă Asignată: ${task.title}`,
           message: `Ai fost asignat de @${session.username} la sarcina din categoria ${task.category.toUpperCase()}.`,
           category: "task",
           severity: task.priority === "urgent" ? "urgent" : "info",
@@ -152,13 +222,23 @@ export async function POST(req: NextRequest) {
           metadata: { taskId: task.id, priority: task.priority },
         });
       }
+    } else {
+      localCreateNotification({
+        isGlobal: true,
+        title: `📋 Sarcină Nouă în Task Hub: ${task.title}`,
+        message: `Creată de @${session.username} în categoria ${task.category.toUpperCase()}.`,
+        category: "task",
+        severity: task.priority === "urgent" ? "urgent" : "info",
+        link: "/admin/tasks",
+        metadata: { taskId: task.id },
+      });
     }
 
     // If urgent, emit a global alert for the entire team
     if (task.priority === "urgent") {
       localCreateNotification({
         isGlobal: true,
-        title: `[ALERTA SARCINĂ URGENTĂ] ${task.title}`,
+        title: `🚨 [URGENT] ${task.title}`,
         message: `Creată de @${session.username} · Necesită atenție prioritară imediată.`,
         category: "task",
         severity: "urgent",
@@ -191,24 +271,61 @@ export async function PATCH(req: NextRequest) {
     // Subtask Toggle
     if (action === "toggle_subtask" && subtaskId) {
       const updated = await toggleAdminTaskSubtask(id, subtaskId);
+
+      if (updated) {
+        const recipientUsernames = Array.from(
+          new Set([
+            ...(updated.assignees || []),
+            updated.assignedBy,
+          ])
+        ).filter((u) => u && u.toLowerCase() !== session.username.toLowerCase());
+
+        for (const recipient of recipientUsernames) {
+          localCreateNotification({
+            targetUser: recipient,
+            isGlobal: false,
+            title: `☑️ Progres Checklist: ${updated.title}`,
+            message: `@${session.username} a actualizat o sub-sarcină pe "${updated.title}".`,
+            category: "task",
+            severity: "info",
+            link: "/admin/tasks",
+            metadata: { taskId: updated.id },
+          });
+        }
+      }
+
       return NextResponse.json({ success: Boolean(updated), task: updated });
     }
 
     // Add Comment
     if (action === "add_comment" && comment) {
+      const member = findTeamMemberByUsername(session.username);
       const updated = await addAdminTaskComment(id, {
         author: session.username || "Admin",
+        avatarUrl: member?.avatarUrl,
         text: comment,
       });
 
-      // Notify assignees about new comment
-      if (updated && updated.assignees) {
-        for (const assignee of updated.assignees) {
-          if (assignee.toLowerCase() !== session.username.toLowerCase()) {
+      if (updated) {
+        // Find all recipients (assignees + creator + text mentions, excluding comment author)
+        const textMentions = (comment.match(/@([a-zA-Z0-9_-]+)/g) || []).map((m: string) =>
+          m.replace("@", "").trim()
+        );
+
+        const recipientUsernames = Array.from(
+          new Set([
+            ...(updated.assignees || []),
+            updated.assignedBy,
+            ...textMentions,
+          ])
+        ).filter((u) => u && u.toLowerCase() !== session.username.toLowerCase());
+
+        if (recipientUsernames.length > 0) {
+          for (const recipient of recipientUsernames) {
             localCreateNotification({
-              targetUser: assignee,
+              targetUser: recipient,
               isGlobal: false,
-              title: `Comentariu Nou pe Sarcină: ${updated.title}`,
+              title: `💬 Notă Nouă pe Sarcină: ${updated.title}`,
               message: `@${session.username}: "${comment.slice(0, 120)}${comment.length > 120 ? "..." : ""}"`,
               category: "task",
               severity: "info",
@@ -216,7 +333,26 @@ export async function PATCH(req: NextRequest) {
               metadata: { taskId: updated.id },
             });
           }
+        } else {
+          localCreateNotification({
+            isGlobal: true,
+            title: `💬 Notă Nouă pe Sarcină: ${updated.title}`,
+            message: `@${session.username}: "${comment.slice(0, 120)}${comment.length > 120 ? "..." : ""}"`,
+            category: "task",
+            severity: "info",
+            link: "/admin/tasks",
+            metadata: { taskId: updated.id },
+          });
         }
+
+        // Dispatch Discord Webhook Notification with direct mentions to assigned admin(s)
+        sendDiscordTaskCommentNotification(updated, {
+          author: session.username || "Admin",
+          text: comment,
+          avatarUrl: member?.avatarUrl,
+        }).catch((err) => {
+          console.error("[Discord Task Comment PATCH] Webhook error:", err);
+        });
       }
 
       return NextResponse.json({ success: Boolean(updated), task: updated });
@@ -233,19 +369,36 @@ export async function PATCH(req: NextRequest) {
       sendDiscordTaskNotification(updated, "completed").catch(() => {});
       localCreateNotification({
         isGlobal: true,
-        title: `Sarcină Finalizată: ${updated.title}`,
-        message: `Sarcina a fost marcată cu succes ca finalizată de @${session.username}.`,
+        title: `✅ Sarcină Finalizată: ${updated.title}`,
+        message: `Sarcina a fost marcată ca finalizată de @${session.username}.`,
         category: "task",
         severity: "success",
         link: "/admin/tasks",
         metadata: { taskId: updated.id },
       });
-    } else if (updates?.assignees && Array.isArray(updates.assignees) && updates.assignees.length > 0) {
-      sendDiscordTaskNotification(updated, "assigned").catch(() => {});
+    } else if (updates?.status && updates.status !== "todo") {
+      const recipientUsernames = Array.from(
+        new Set([
+          ...(updated.assignees || []),
+          updated.assignedBy,
+        ])
+      ).filter((u) => u && u.toLowerCase() !== session.username.toLowerCase());
+
+      for (const recipient of recipientUsernames) {
+        localCreateNotification({
+          targetUser: recipient,
+          isGlobal: false,
+          title: `⚡ Status Actualizat: ${updated.title}`,
+          message: `@${session.username} a mutat sarcina în starea ${updated.status.toUpperCase()}.`,
+          category: "task",
+          severity: "info",
+          link: "/admin/tasks",
+          metadata: { taskId: updated.id },
+        });
+      }
     }
 
     return NextResponse.json({ success: true, task: updated });
-
   } catch (err: any) {
     console.error("[API Admin Tasks PATCH] Error:", err);
     return NextResponse.json({ error: "Failed to update task" }, { status: 500 });
@@ -258,16 +411,19 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ error: "ID is required" }, { status: 400 });
+  }
+
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json({ error: "ID parameter is required" }, { status: 400 });
+    const success = await deleteAdminTask(id);
+    if (!success) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
-
-    const deleted = await deleteAdminTask(id);
-    return NextResponse.json({ success: deleted });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("[API Admin Tasks DELETE] Error:", err);
     return NextResponse.json({ error: "Failed to delete task" }, { status: 500 });

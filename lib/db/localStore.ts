@@ -396,6 +396,10 @@ export function localAddTaskComment(
 
   target.updatedAt = new Date().toISOString();
   saveAnalyticsStore(store);
+
+  // Background Auto-Sync to Supabase
+  autoSyncSupabase((cfg) => supabaseSaveTask(cfg, target));
+
   return target;
 }
 

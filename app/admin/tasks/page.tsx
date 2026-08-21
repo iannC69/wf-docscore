@@ -36,6 +36,10 @@ import {
   Check,
   Bell,
   Radio,
+  Database,
+  CornerDownLeft,
+  CheckCheck,
+  AtSign,
 } from "lucide-react";
 
 import {
@@ -320,7 +324,7 @@ export default function AdminTasksPage() {
     if (!newCommentInput.trim()) return;
     try {
       const res = await fetch("/api/admin/tasks", {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: taskId,
@@ -370,6 +374,34 @@ export default function AdminTasksPage() {
   const getMemberAvatar = (username: string) => {
     const m = members.find((mem) => mem.username.toLowerCase() === username.toLowerCase());
     return m?.avatarUrl || `https://api.dicebear.com/7.x/identicon/svg?seed=${username}`;
+  };
+
+  // Helper to insert @mention in chat input
+  const handleInsertMention = (username: string) => {
+    setNewCommentInput((prev) => {
+      const trimmed = prev.trim();
+      if (!trimmed) return `@${username} `;
+      return `${trimmed} @${username} `;
+    });
+  };
+
+  // Helper to render chat message text with highlighted @mentions
+  const renderChatTextWithMentions = (text: string) => {
+    const parts = text.split(/(@[a-zA-Z0-9_-]+)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith("@")) {
+        const u = part.substring(1);
+        const isTarget = members.some((m) => m.username.toLowerCase() === u.toLowerCase());
+        if (isTarget) {
+          return (
+            <span key={index} className="admin-chat-mention-tag">
+              {part}
+            </span>
+          );
+        }
+      }
+      return part;
+    });
   };
 
   return (
@@ -708,6 +740,13 @@ export default function AdminTasksPage() {
                                 {task.dueDate}
                               </span>
                             )}
+
+                            {task.comments && task.comments.length > 0 && (
+                              <span className="admin-kanban-chat-chip" title={`${task.comments.length} note în discuție`}>
+                                <MessageSquare size={10} />
+                                {task.comments.length}
+                              </span>
+                            )}
                           </div>
 
                           {/* Quick Status Transition Actions */}
@@ -833,6 +872,12 @@ export default function AdminTasksPage() {
                                 <BookOpen size={9} />
                                 /docs/{task.targetDoc}
                               </a>
+                            )}
+                            {task.comments && task.comments.length > 0 && (
+                              <span className="admin-perm-tag admin-perm-tag--purple" style={{ fontSize: "0.65rem", padding: "1px 6px", width: "fit-content" }}>
+                                <MessageSquare size={9} />
+                                {task.comments.length} {task.comments.length === 1 ? "notă" : "note"}
+                              </span>
                             )}
                           </div>
                         </td>
@@ -1220,47 +1265,163 @@ export default function AdminTasksPage() {
                 </div>
               </div>
 
-              {/* Comments Section (If in edit mode) */}
+              {/* Comments / Discussion Thread (Chat Style) */}
               {editingTask && (
-                <div className="doc-report-field">
-                  <label className="doc-report-label">
-                    <MessageSquare size={12} className="text-purple-400" />
-                    Note &amp; Discuție ({editingTask.comments?.length || 0})
-                  </label>
-
-                  {editingTask.comments && editingTask.comments.length > 0 && (
-                    <div className="admin-modal-comments-box">
-                      {editingTask.comments.map((c) => (
-                        <div key={c.id} className="admin-modal-comment-item">
-                          <div className="admin-modal-comment-header">
-                            <span className="admin-modal-comment-author">@{c.author}</span>
-                            <span className="admin-modal-comment-time">
-                              {new Date(c.createdAt).toLocaleDateString("ro-RO", { hour: "2-digit", minute: "2-digit" })}
-                            </span>
-                          </div>
-                          <p className="admin-modal-comment-text">{c.text}</p>
-                        </div>
-                      ))}
+                <div className="admin-chat-section">
+                  <div className="admin-chat-header">
+                    <div className="admin-chat-title-row">
+                      <MessageSquare size={13} className="text-purple-400" />
+                      <span className="admin-chat-title">Note &amp; Discuție</span>
+                      <span className="admin-chat-badge">{editingTask.comments?.length || 0}</span>
                     </div>
-                  )}
+                    <div className="admin-chat-db-tag">
+                      <Database size={10} />
+                      <span>Persistent DB</span>
+                    </div>
+                  </div>
 
-                  <div style={{ display: "flex", gap: "8px", marginTop: "6px" }}>
-                    <input
-                      type="text"
-                      value={newCommentInput}
-                      onChange={(e) => setNewCommentInput(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddComment(editingTask.id); } }}
-                      placeholder="Scrie o notă sau un update..."
-                      className="doc-report-input"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleAddComment(editingTask.id)}
-                      className="admin-btn admin-btn--secondary"
-                      style={{ padding: "0 14px", flexShrink: 0 }}
-                    >
-                      <Send size={12} />
-                    </button>
+                  <div className="admin-chat-timeline">
+                    {(!editingTask.comments || editingTask.comments.length === 0) ? (
+                      <div className="admin-chat-empty">
+                        <div className="admin-chat-empty-icon">
+                          <MessageSquare size={20} />
+                        </div>
+                        <p className="admin-chat-empty-title">Nicio notă adăugată încă</p>
+                        <span className="admin-chat-empty-sub">
+                          Fii primul care lasă un update, o cerință tehnică sau o notă de progres. Toate mesajele se salvează automat în baza de date.
+                        </span>
+                      </div>
+                    ) : (
+                      editingTask.comments.map((c) => {
+                        const isMe = c.author.toLowerCase() === (currentUser || "").toLowerCase();
+                        const memberInfo = members.find((m) => m.username.toLowerCase() === c.author.toLowerCase());
+                        const isRoot = memberInfo?.isRoot || c.author.toLowerCase() === "iannc69" || c.author.toLowerCase() === "iannc";
+                        return (
+                          <div
+                            key={c.id}
+                            className={`admin-chat-message-row ${isMe ? "admin-chat-message-row--me" : "admin-chat-message-row--other"}`}
+                          >
+                            {!isMe && (
+                              <div className="admin-chat-avatar-wrap">
+                                {c.avatarUrl || memberInfo?.avatarUrl ? (
+                                  <img
+                                    src={c.avatarUrl || memberInfo?.avatarUrl}
+                                    alt={c.author}
+                                    className="admin-chat-avatar"
+                                  />
+                                ) : (
+                                  <div
+                                    className="admin-chat-avatar admin-chat-avatar--initials"
+                                    style={{ background: memberInfo?.avatarColor || "hsl(280 100% 65%)" }}
+                                  >
+                                    {c.author[0].toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            <div className="admin-chat-bubble-wrap">
+                              <div className="admin-chat-bubble-header">
+                                <span className="admin-chat-bubble-author">
+                                  {memberInfo?.displayName || `@${c.author}`}
+                                </span>
+                                {isRoot && <span className="adx-badge adx-badge--orange" style={{ fontSize: "0.55rem", padding: "1px 5px" }}>ROOT</span>}
+                                <span className="admin-chat-bubble-time">
+                                  {new Date(c.createdAt).toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" })} · {new Date(c.createdAt).toLocaleDateString("ro-RO", { day: "numeric", month: "short" })}
+                                </span>
+                              </div>
+                              <div className={`admin-chat-bubble ${isMe ? "admin-chat-bubble--me" : "admin-chat-bubble--other"}`}>
+                                <p className="admin-chat-text">{renderChatTextWithMentions(c.text)}</p>
+                              </div>
+                              <div className="admin-chat-bubble-footer">
+                                <span className="admin-chat-synced-pill">
+                                  <CheckCheck size={10} className="text-emerald-400" />
+                                  <span>Salvat în DB</span>
+                                </span>
+                              </div>
+                            </div>
+
+                            {isMe && (
+                              <div className="admin-chat-avatar-wrap">
+                                {memberInfo?.avatarUrl ? (
+                                  <img
+                                    src={memberInfo?.avatarUrl}
+                                    alt={c.author}
+                                    className="admin-chat-avatar"
+                                  />
+                                ) : (
+                                  <div
+                                    className="admin-chat-avatar admin-chat-avatar--initials"
+                                    style={{ background: memberInfo?.avatarColor || "hsl(26 100% 52%)" }}
+                                  >
+                                    {c.author[0].toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* Quick Mention Picker */}
+                  <div className="admin-chat-mention-bar">
+                    <span className="admin-chat-mention-bar-label">
+                      <AtSign size={11} className="text-purple-400" />
+                      <span>Tag responsabil:</span>
+                    </span>
+                    <div className="admin-chat-mention-pills">
+                      {members.map((m) => {
+                        const isAssigned = editingTask.assignees?.includes(m.username);
+                        return (
+                          <button
+                            key={m.username}
+                            type="button"
+                            onClick={() => handleInsertMention(m.username)}
+                            className={`admin-chat-mention-pill ${isAssigned ? "admin-chat-mention-pill--assigned" : ""}`}
+                            title={`Dă tag lui @${m.displayName || m.username} pentru ping direct Discord pe #notificari`}
+                          >
+                            <AtSign size={9} />
+                            <span>{m.displayName || m.username}</span>
+                            {isAssigned && <span className="admin-chat-mention-assigned-dot" title="Responsabil asignat pe sarcină" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Chat Input Box */}
+                  <div className="admin-chat-input-box">
+                    <div className="admin-chat-input-inner">
+                      <input
+                        type="text"
+                        value={newCommentInput}
+                        onChange={(e) => setNewCommentInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleAddComment(editingTask.id);
+                          }
+                        }}
+                        placeholder="Scrie o notă sau un update... (Enter pentru trimitere)"
+                        className="admin-chat-input"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleAddComment(editingTask.id)}
+                        disabled={!newCommentInput.trim()}
+                        className="admin-chat-send-btn"
+                        title="Trimite și salvează în DB"
+                      >
+                        <Send size={13} />
+                        <span>Trimite</span>
+                      </button>
+                    </div>
+                    <div className="admin-chat-input-hint">
+                      <CornerDownLeft size={10} />
+                      <span>Apasă <strong>Enter</strong> pentru a salva nota în timp real pe sarcină.</span>
+                    </div>
                   </div>
                 </div>
               )}
