@@ -407,9 +407,18 @@ export default function AdminTeamPage() {
           <Search size={14} className="admin-search-icon" />
           <input
             type="text"
+            name="admin_team_search_query_no_autofill"
+            id="admin_team_search_query_no_autofill"
             placeholder="Caută membru după nume, rol sau username..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            data-lpignore="true"
+            data-1p-ignore="true"
+            data-form-type="other"
             className="admin-team-search-input"
           />
         </div>
@@ -423,6 +432,7 @@ export default function AdminTeamPage() {
           </span>
         </div>
       </div>
+
 
       {/* Members Grid */}
       <div className="admin-team-grid">
@@ -628,6 +638,8 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editDisplayName}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditDisplayName(e.target.value)}
                         className="admin-form-input"
                       />
@@ -639,6 +651,8 @@ export default function AdminTeamPage() {
                         type="text"
                         value={editUsername}
                         disabled={selectedMember.isRoot}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditUsername(e.target.value)}
                         placeholder="Ex: iannc69"
                         className="admin-form-input font-mono"
@@ -650,6 +664,8 @@ export default function AdminTeamPage() {
                       <input
                         type="email"
                         value={editEmail}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditEmail(e.target.value)}
                         placeholder="Ex: user@wildfire.ro"
                         className="admin-form-input"
@@ -676,6 +692,8 @@ export default function AdminTeamPage() {
                         <input
                           type="password"
                           value={editNewPassword}
+                          autoComplete="new-password"
+                          data-lpignore="true"
                           onChange={(e) => setEditNewPassword(e.target.value)}
                           placeholder="Parolă nouă (opțional)..."
                           className="admin-form-input"
@@ -688,6 +706,8 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editCustomTitle}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditCustomTitle(e.target.value)}
                         placeholder="Ex: Lead Docs & Systems Architect"
                         className="admin-form-input"
@@ -699,6 +719,8 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editDiscord}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditDiscord(e.target.value)}
                         placeholder="Ex: iannc sau 371621920162185216"
                         className="admin-form-input"
@@ -710,6 +732,8 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editSteamId}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditSteamId(e.target.value)}
                         placeholder="Ex: 1iannc sau 76561198... sau link complet"
                         className="admin-form-input"
@@ -737,6 +761,8 @@ export default function AdminTeamPage() {
                         <input
                           type="text"
                           value={editAvatarUrl}
+                          autoComplete="off"
+                          data-lpignore="true"
                           onChange={(e) => setEditAvatarUrl(e.target.value)}
                           placeholder={steamAvatarPreview ? "Lăsat gol: folosește automat Steam" : "https://... (URL imagine)"}
                           className="admin-form-input text-xs font-mono"
@@ -751,6 +777,8 @@ export default function AdminTeamPage() {
                         type="number"
                         min={0}
                         value={editDocsModifiedCount}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditDocsModifiedCount(parseInt(e.target.value) || 0)}
                         placeholder="Ex: 14"
                         className="admin-form-input"
@@ -762,6 +790,8 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editBadgesString}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditBadgesString(e.target.value)}
                         placeholder="Ex: LEAD ARCHITECT, DOCS SPECIALIST, VERIFIED GUIDE"
                         className="admin-form-input"
@@ -773,6 +803,8 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editBio}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditBio(e.target.value)}
                         placeholder="Scurtă descriere a activității..."
                         className="admin-form-input"
@@ -784,12 +816,15 @@ export default function AdminTeamPage() {
                       <input
                         type="text"
                         value={editRespString}
+                        autoComplete="off"
+                        data-lpignore="true"
                         onChange={(e) => setEditRespString(e.target.value)}
                         placeholder="Ex: Arhitectură Sisteme, Ghiduri MVP, Securitate"
                         className="admin-form-input"
                       />
                     </div>
                   </div>
+
                 </div>
               )}
 

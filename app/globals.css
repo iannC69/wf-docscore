@@ -8965,6 +8965,21 @@ textarea.admin-form-input::placeholder {
   width: 100%;
 }
 
+.admin-team-search-input:-webkit-autofill,
+.admin-team-search-input:-webkit-autofill:hover, 
+.admin-team-search-input:-webkit-autofill:focus, 
+.admin-team-search-input:-webkit-autofill:active,
+.admin-form-input:-webkit-autofill,
+.admin-form-input:-webkit-autofill:hover, 
+.admin-form-input:-webkit-autofill:focus, 
+.admin-form-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px hsl(0 0% 9%) inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #f8fafc !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
 /* Current Authenticated Session Glass Pill */
 .admin-current-session-pill {
   display: inline-flex;
