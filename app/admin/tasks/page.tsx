@@ -34,6 +34,8 @@ import {
   TrendingUp,
   Award,
   Check,
+  Bell,
+  Radio,
 } from "lucide-react";
 
 import {
@@ -1064,13 +1066,20 @@ export default function AdminTasksPage() {
 
               {/* Assignee Multi-Picker */}
               <div className="doc-report-field">
-                <label className="doc-report-label">
-                  <Users size={12} className="text-blue-400" />
-                  Membri Asignați
-                </label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                  <label className="doc-report-label" style={{ margin: 0 }}>
+                    <Users size={12} className="text-blue-400" />
+                    Membri Asignați
+                  </label>
+                  <span className="admin-micro-pill" style={{ color: "#38bdf8", background: "hsl(190 90% 50% / 0.12)", borderColor: "hsl(190 90% 50% / 0.35)" }}>
+                    <Bell size={10} /> Ping Direct Discord
+                  </span>
+                </div>
+
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {members.map((m) => {
                     const isSelected = formAssignees.includes(m.username);
+                    const hasDiscord = Boolean(m.discord && /^\d+$/.test(m.discord.trim()));
                     return (
                       <button
                         key={m.username}
@@ -1084,12 +1093,22 @@ export default function AdminTasksPage() {
                           alt={m.displayName}
                           style={{ width: "16px", height: "16px", borderRadius: "50%" }}
                         />
-                        <span>@{m.username}</span>
+                        <span>@{m.displayName || m.username}</span>
+                        {hasDiscord && (
+                          <span style={{ fontSize: "0.6rem", opacity: 0.75, fontFamily: "var(--font-mono)", color: isSelected ? "#93c5fd" : "#a1a1aa" }}>
+                            • #{m.discord?.slice(0, 4)}
+                          </span>
+                        )}
                         {isSelected && <Check size={11} />}
                       </button>
                     );
                   })}
                 </div>
+
+                <p className="admin-form-help" style={{ marginTop: "6px", display: "flex", alignItems: "center", gap: "5px", color: "var(--color-text-tertiary)" }}>
+                  <Radio size={10} className="text-cyan-400" />
+                  <span>Membrii selectați primesc automat notificare și ping direct pe Discord (<code style={{ color: "#fb923c" }}>&lt;@Discord_ID&gt;</code>) prin Webhook.</span>
+                </p>
               </div>
 
               {/* Target Doc & Due Date */}

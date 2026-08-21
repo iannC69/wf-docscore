@@ -3,6 +3,24 @@ import fs from "fs";
 import path from "path";
 import { recordAiInteraction } from "@/lib/security/aiTelemetry";
 import { CURRENT_VERSION } from "@/lib/version";
+import { recordAuditEvent } from "@/lib/security/audit";
+
+const INJECTION_PATTERNS = [
+  /ignore\s+(all|previous|prior)\s+instructions/i,
+  /system\s+prompt\s+(override|leak|reveal|show)/i,
+  /reveal\s+(your\s+)?(hidden\s+)?(instructions|prompt|system\s+message)/i,
+  /bypass\s+(all\s+)?(safety|rules|constraints|filters)/i,
+  /pretend\s+you\s+have\s+no\s+(rules|limits|instructions)/i,
+  /you\s+are\s+now\s+in\s+dan\s+mode/i,
+  /jailbreak/i,
+  /disregard\s+all\s+(rules|guidelines)/i,
+  /leak\s+(the\s+)?(admin|password|secret|env|key)/i,
+];
+
+function checkPromptInjection(text: string): boolean {
+  if (!text) return false;
+  return INJECTION_PATTERNS.some((pattern) => pattern.test(text));
+}
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface DocEntry {
@@ -260,6 +278,18 @@ export async function POST(req: NextRequest) {
       ip,
     });
 
+    recordAuditEvent({
+      action: "AI_ABUSE_DETECTED",
+      actor: "Vizitator Anonim",
+      ip,
+      details: {
+        reason: `Depășire Limită Rata (${limitCheck.reason === "token_budget_exceeded" ? "Buget 500k Tokeni Depășit" : "Limita de 15 Mesaje / 3 Min"})`,
+        promptsCount: limitCheck.prompts,
+        tokensConsumed: limitCheck.tokensConsumed,
+        cooldownSec: limitCheck.retryAfterSeconds,
+      },
+    });
+
     return NextResponse.json(
       {
         error: reasonMsg,
@@ -302,6 +332,19 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(messages) || messages.length === 0) throw new Error();
     const userMsg = [...messages].reverse().find((m) => m.role === "user");
     lastUserQuery = userMsg ? userMsg.content : "";
+
+    if (checkPromptInjection(lastUserQuery)) {
+      recordAuditEvent({
+        action: "AI_ABUSE_DETECTED",
+        actor: "Vizitator Anonim",
+        ip,
+        details: {
+          reason: "Tentativă Prompt Injection / Jailbreak Detectată",
+          querySnippet: lastUserQuery.slice(0, 180),
+          matchedRule: "Guardrail Integrity Protection",
+        },
+      });
+    }
   } catch {
     return NextResponse.json(
       {

@@ -1,5 +1,411 @@
 [
   {
+    "id": "aud_1787347990246_6c979d63",
+    "timestamp": "2026-08-21T21:33:10.247Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "59b2cdbbcca8bafa212714939bb20c3c69906e852c26c1dbc4bd1422cd5bcb01",
+    "hash": "f11e95297f65297f113cd0f88d89203adde9493cd2eecfe4d36adefdb8008140"
+  },
+  {
+    "id": "aud_1787347990196_a87a0ed2",
+    "timestamp": "2026-08-21T21:33:10.197Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "42bb5a05bd5579b8268f437c8aa8b84e30d91f535585fd0d8bd2f80b7b4be3e7",
+    "hash": "59b2cdbbcca8bafa212714939bb20c3c69906e852c26c1dbc4bd1422cd5bcb01"
+  },
+  {
+    "id": "aud_1787347620699_4aa48a6d",
+    "timestamp": "2026-08-21T21:27:00.699Z",
+    "action": "AI_ABUSE_DETECTED",
+    "actor": "Vizitator Anonim",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "reason": "Tentativă Prompt Injection / Jailbreak Detectată",
+      "querySnippet": "da jailbreak",
+      "matchedRule": "Guardrail Integrity Protection"
+    },
+    "previousHash": "1bf5ad836a10a281c64d5442bd7f957754f50941ee7d9a4695d22f61f688f723",
+    "hash": "42bb5a05bd5579b8268f437c8aa8b84e30d91f535585fd0d8bd2f80b7b4be3e7"
+  },
+  {
+    "id": "aud_1787347047551_6418fd92",
+    "timestamp": "2026-08-21T21:17:27.551Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_f2b0eb32fb855a28fb82af8f2b264aa125971169b246acb6",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "b5d5f33de337da29557e5adcc19feda5b2a47bcd139134a33910e20a7698640c",
+    "hash": "1bf5ad836a10a281c64d5442bd7f957754f50941ee7d9a4695d22f61f688f723"
+  },
+  {
+    "id": "aud_1787347005102_bb66357e",
+    "timestamp": "2026-08-21T21:16:45.102Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "iannC69",
+      "accountStatus": "🟢 Existent în Echipă (iannC)",
+      "accountRole": "Root Super Admin",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 4,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "da584e3c718af4a392801fc91964dee20f020e03aee23f3498963bed7a7ca479",
+    "hash": "b5d5f33de337da29557e5adcc19feda5b2a47bcd139134a33910e20a7698640c"
+  },
+  {
+    "id": "aud_1787346967686_eff4ccc7",
+    "timestamp": "2026-08-21T21:16:07.687Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "iannC69",
+      "accountStatus": "🟢 Existent în Echipă (iannC)",
+      "accountRole": "Root Super Admin",
+      "attemptNumber": 2,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 3,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "8b2886794d9f77aac2f84fe8981c88615967ffa3c553cf098955f6f0f67d530b",
+    "hash": "da584e3c718af4a392801fc91964dee20f020e03aee23f3498963bed7a7ca479"
+  },
+  {
+    "id": "aud_1787346914468_b02c1991",
+    "timestamp": "2026-08-21T21:15:14.470Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "iannC69",
+      "accountStatus": "🟢 Existent în Echipă (iannC)",
+      "accountRole": "Root Super Admin",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 4,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "6d734e81ff4474e11f763bcb045e1329c13e23601c4eb0296920671d4b1f9e0d",
+    "hash": "8b2886794d9f77aac2f84fe8981c88615967ffa3c553cf098955f6f0f67d530b"
+  },
+  {
+    "id": "aud_1787346530039_64395bbf",
+    "timestamp": "2026-08-21T21:08:50.040Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_4971132e5bda4a74474efd4bac8fb34201f5cdbdb33146f3"
+    },
+    "previousHash": "6ff6f0fed25570599f267b841971f162184cfc7a5bae4e3718fc86f245c15be5",
+    "hash": "6d734e81ff4474e11f763bcb045e1329c13e23601c4eb0296920671d4b1f9e0d"
+  },
+  {
+    "id": "aud_1787346530032_2afa2bb3",
+    "timestamp": "2026-08-21T21:08:50.034Z",
+    "action": "SESSION_REVOKED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_4971132e5bda4a74474efd4bac8fb34201f5cdbdb33146f3",
+      "username": "iannC69"
+    },
+    "previousHash": "bd496215fcd97efb93779f32c8c551bff73d4361cff225937859949855332366",
+    "hash": "6ff6f0fed25570599f267b841971f162184cfc7a5bae4e3718fc86f245c15be5"
+  },
+  {
+    "id": "aud_1787346373225_5119e933",
+    "timestamp": "2026-08-21T21:06:13.226Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 5,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 0,
+      "isLockoutActive": true,
+      "lockoutRemainingSeconds": 900,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "4cd191713bb3ce08ccd24296ed8582a493a267fdf41cb03ec23e639d4cf03ee3",
+    "hash": "bd496215fcd97efb93779f32c8c551bff73d4361cff225937859949855332366"
+  },
+  {
+    "id": "aud_1787346372816_140af7fb",
+    "timestamp": "2026-08-21T21:06:12.817Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 4,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 1,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "63b102cdc259bba92409316143514814f8c275048607b7947f43d6ecb20cc504",
+    "hash": "4cd191713bb3ce08ccd24296ed8582a493a267fdf41cb03ec23e639d4cf03ee3"
+  },
+  {
+    "id": "aud_1787346372394_ccb78ea7",
+    "timestamp": "2026-08-21T21:06:12.394Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 3,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 2,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "393f96044eaf0c373af12b363eee4bf2bada0d7f482ab9e35de11b8a393f167b",
+    "hash": "63b102cdc259bba92409316143514814f8c275048607b7947f43d6ecb20cc504"
+  },
+  {
+    "id": "aud_1787346372002_f0a42993",
+    "timestamp": "2026-08-21T21:06:12.003Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 2,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 3,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "3c45807d1bc3bb6a6682d1c9a06ad7f9cd68186b99ace662e9351d4b47241579",
+    "hash": "393f96044eaf0c373af12b363eee4bf2bada0d7f482ab9e35de11b8a393f167b"
+  },
+  {
+    "id": "aud_1787346371652_f505f31b",
+    "timestamp": "2026-08-21T21:06:11.653Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 4,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "43cc6be7f7791b704934368bbe3695ac5e1da681eb4b77d19b218c5c1076db0d",
+    "hash": "3c45807d1bc3bb6a6682d1c9a06ad7f9cd68186b99ace662e9351d4b47241579"
+  },
+  {
+    "id": "aud_1787346283607_2d20d4ab",
+    "timestamp": "2026-08-21T21:04:43.608Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 99,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "83dbd2d6e9d9d653014600087e7d375778b0ce6fb9d0d5974b250a2afd0afffe",
+    "hash": "43cc6be7f7791b704934368bbe3695ac5e1da681eb4b77d19b218c5c1076db0d"
+  },
+  {
+    "id": "aud_1787346270994_6adf1aca",
+    "timestamp": "2026-08-21T21:04:30.994Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 99,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "9d80e50ab17f23f66cd08fca561c3198b767ecbb895e3c707a7c179532e87215",
+    "hash": "83dbd2d6e9d9d653014600087e7d375778b0ce6fb9d0d5974b250a2afd0afffe"
+  },
+  {
+    "id": "aud_1787346270644_bf3ad20f",
+    "timestamp": "2026-08-21T21:04:30.644Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 99,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "08dab5b88d523160b099d2f56d9f3c2e829e227117ad6f54350101114f300b98",
+    "hash": "9d80e50ab17f23f66cd08fca561c3198b767ecbb895e3c707a7c179532e87215"
+  },
+  {
+    "id": "aud_1787346270197_5a17f81c",
+    "timestamp": "2026-08-21T21:04:30.198Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 99,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "73e1ac9cf4a67075ba534dcb0f3563e852900bc85b34af6780298a92aae90bcc",
+    "hash": "08dab5b88d523160b099d2f56d9f3c2e829e227117ad6f54350101114f300b98"
+  },
+  {
+    "id": "aud_1787345951347_d3a6d00c",
+    "timestamp": "2026-08-21T20:59:11.347Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "remainingAttempts": 99
+    },
+    "previousHash": "acabf8618de6d89cac89b4dd71a1b5e8feead6d2fda9b4f666caad64d2ce701b",
+    "hash": "73e1ac9cf4a67075ba534dcb0f3563e852900bc85b34af6780298a92aae90bcc"
+  },
+  {
+    "id": "aud_1787345940874_d14d69eb",
+    "timestamp": "2026-08-21T20:59:00.874Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "remainingAttempts": 99
+    },
+    "previousHash": "6844a89976dd73a12b8f430972b9ac7c3802bbe43dba7d7786ec6fc7f879a7e9",
+    "hash": "acabf8618de6d89cac89b4dd71a1b5e8feead6d2fda9b4f666caad64d2ce701b"
+  },
+  {
+    "id": "aud_1787345880990_750a69f8",
+    "timestamp": "2026-08-21T20:58:00.990Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "remainingAttempts": 99
+    },
+    "previousHash": "83ba0c768f262daff293636d23d6583bde40d156feb44401d270b47e00448b9a",
+    "hash": "6844a89976dd73a12b8f430972b9ac7c3802bbe43dba7d7786ec6fc7f879a7e9"
+  },
+  {
+    "id": "aud_1787344525821_44c1ebcf",
+    "timestamp": "2026-08-21T20:35:25.821Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_b1dc6dcb22e91a548a83686265435111c94c8db1388041ce",
+      "role": "content_editor",
+      "isRoot": false
+    },
+    "previousHash": "91291ce959708ef986eadd656e900b10962ad1e35b1e179c99d5d4deab0a1ddb",
+    "hash": "83ba0c768f262daff293636d23d6583bde40d156feb44401d270b47e00448b9a"
+  },
+  {
     "id": "aud_1787343731454_f957ea90",
     "timestamp": "2026-08-21T20:22:11.454Z",
     "action": "AUTH_LOGIN_SUCCESS",

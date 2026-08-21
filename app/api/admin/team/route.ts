@@ -128,13 +128,15 @@ export async function POST(req: NextRequest) {
     }
 
     recordAuditEvent({
-      action: "SETTINGS_UPDATE",
+      action: "TEAM_MEMBER_CREATED",
       actor: session.username,
       ip: session.ip,
       details: {
-        action: "CREATE_TEAM_MEMBER",
         createdUser: result.member.username,
+        displayName: result.member.displayName,
         role: result.member.role,
+        customTitle: result.member.customTitle || "Membru Staff",
+        discordId: result.member.discord || "Nespecificat",
       },
     });
 
@@ -210,14 +212,15 @@ export async function PUT(req: NextRequest) {
     }
 
     recordAuditEvent({
-      action: "SETTINGS_UPDATE",
+      action: "TEAM_MEMBER_UPDATED",
       actor: session.username,
       ip: session.ip,
       details: {
-        action: "UPDATE_TEAM_MEMBER",
         targetUser: result.member.username,
+        displayName: result.member.displayName,
         updatedRole: result.member.role,
         status: result.member.status,
+        permissionsUpdated: Boolean(permissions),
       },
     });
 
@@ -253,10 +256,10 @@ export async function DELETE(req: NextRequest) {
   }
 
   recordAuditEvent({
-    action: "SETTINGS_UPDATE",
+    action: "TEAM_MEMBER_DELETED",
     actor: session.username,
     ip: session.ip,
-    details: { action: "DELETE_TEAM_MEMBER", targetId: id },
+    details: { targetId: id },
   });
 
   return NextResponse.json({ success: true });

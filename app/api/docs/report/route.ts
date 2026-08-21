@@ -7,13 +7,15 @@ import {
   localCreateNotification,
   DocReportRecord,
 } from "@/lib/db";
-
+import { recordAuditEvent } from "@/lib/security/audit";
 
 export const dynamic = "force-dynamic";
 
 // Discord Webhook Dispatcher for Reports & Guide Requests
 async function sendDiscordReportNotification(report: DocReportRecord) {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  const webhookUrl =
+    process.env.DISCORD_LOGS_WEBHOOK_URL ||
+    process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) return;
 
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";

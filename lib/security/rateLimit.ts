@@ -45,16 +45,6 @@ export function checkRateLimit(
   windowMs = 15 * 60 * 1000,
   lockoutDurationMs = 15 * 60 * 1000
 ): RateLimitResult {
-  // Always permit local development loopback
-  if (key.includes("127.0.0.1") || key.includes("::1") || key.includes("localhost") || process.env.NODE_ENV !== "production") {
-    return {
-      allowed: true,
-      remainingAttempts: 99,
-      lockoutRemainingSeconds: 0,
-      totalAttempts: 0,
-    };
-  }
-
   const now = Date.now();
   let record = rateLimitStore.get(key);
 
@@ -134,4 +124,11 @@ export function registerFailedAttempt(
  */
 export function resetRateLimit(key: string): void {
   rateLimitStore.delete(key);
+}
+
+/**
+ * Resets all rate limits / lockouts across all IPs.
+ */
+export function resetAllRateLimits(): void {
+  rateLimitStore.clear();
 }

@@ -17,100 +17,7 @@ import { getNavigation } from "@/lib/navigation";
 
 export const dynamic = "force-dynamic";
 
-// Discord Webhook Dispatcher for Team Task Management
-async function sendDiscordTaskNotification(task: AdminTask, action: "created" | "completed" | "assigned") {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  if (!webhookUrl) return;
-
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
-  const color =
-    action === "completed"
-      ? 0x10b981 // Emerald
-      : task.priority === "urgent"
-      ? 0xf43f5e // Rose / Red
-      : task.priority === "high"
-      ? 0xff6b00 // Orange
-      : task.priority === "medium"
-      ? 0xf59e0b // Amber
-      : 0x3b82f6; // Blue
-
-  const titlePrefix =
-    action === "completed"
-      ? "[SARCINĂ FINALIZATĂ]"
-      : action === "created"
-      ? "[SARCINĂ NOUĂ ASIGNATĂ]"
-      : "[SARCINĂ ACTUALIZATĂ]";
-
-  const assigneesFormatted =
-    task.assignees.length > 0 ? task.assignees.map((a) => `@${a}`).join(", ") : "Neasignat";
-
-  const fields = [
-    {
-      name: "Membru Asignat",
-      value: assigneesFormatted,
-      inline: true,
-    },
-    {
-      name: "Prioritate",
-      value: `\`${task.priority.toUpperCase()}\``,
-      inline: true,
-    },
-    {
-      name: "Categorie",
-      value: `\`${task.category.toUpperCase()}\``,
-      inline: true,
-    },
-  ];
-
-  if (task.dueDate) {
-    fields.push({
-      name: "Termen Limită",
-      value: `\`${task.dueDate}\``,
-      inline: true,
-    });
-  }
-
-  if (task.targetDoc) {
-    fields.push({
-      name: "Ghid Asociat",
-      value: `[Deschide Ghidul](${siteUrl}/docs/${task.targetDoc})`,
-      inline: true,
-    });
-  }
-
-  if (task.subtasks && task.subtasks.length > 0) {
-    const doneCount = task.subtasks.filter((s) => s.completed).length;
-    fields.push({
-      name: "Checklist Subtask-uri",
-      value: `${doneCount} din ${task.subtasks.length} finalizate (${Math.round((doneCount / task.subtasks.length) * 100)}%)`,
-      inline: true,
-    });
-  }
-
-  const embed = {
-    title: `${titlePrefix} ${task.title}`,
-    description: task.description || "Nicio descriere suplimentară furnizată.",
-    color,
-    fields,
-    footer: {
-      text: `WildFire Docs Team Task Hub · Asignat de ${task.assignedBy}`,
-    },
-    timestamp: new Date().toISOString(),
-  };
-
-  try {
-    await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        embeds: [embed],
-      }),
-    });
-  } catch (err) {
-    console.error("[Discord Webhook] Failed to send task embed:", err);
-  }
-}
+import { sendDiscordTaskNotification } from "@/lib/notifications/discordTaskWebhook";
 
 export async function GET(req: NextRequest) {
   const session = await getAuthenticatedAdminSession();
@@ -184,6 +91,28 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+
+    // ── Test Discord Webhook Ping Action ──
+    if (body.action === "test_discord_ping") {
+      const targetUser = body.username || session.username;
+      const testTask: AdminTask = {
+        id: "task_test_ping",
+        title: "Test Conexiune Discord Webhook & Ping",
+        description: `Notificare de test trimisă de @${session.username} pentru a verifica ping-ul direct pe Discord ID-ul membrului @${targetUser}.`,
+        status: "todo",
+        priority: "high",
+        category: "system",
+        assignees: [targetUser],
+        assignedBy: session.username || "Admin",
+        subtasks: [],
+        comments: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      const result = await sendDiscordTaskNotification(testTask, "assigned");
+      return NextResponse.json(result);
+    }
+
     const { title, description, priority, category, assignees, targetDoc, dueDate, subtasks } = body;
 
     if (!title || !title.trim()) {
@@ -204,8 +133,10 @@ export async function POST(req: NextRequest) {
       comments: [],
     });
 
-    // Notify Discord asynchronously
-    sendDiscordTaskNotification(task, "created").catch(() => {});
+    // Notify Discord with direct user ping (<@DISCORD_ID>)
+    sendDiscordTaskNotification(task, task.priority === "urgent" ? "urgent" : "created").catch((err) => {
+      console.error("[Discord Webhook POST] Dispatch failed:", err);
+    });
 
     // Create targeted personal notifications for all assignees
     if (task.assignees && task.assignees.length > 0) {
@@ -309,6 +240,8 @@ export async function PATCH(req: NextRequest) {
         link: "/admin/tasks",
         metadata: { taskId: updated.id },
       });
+    } else if (updates?.assignees && Array.isArray(updates.assignees) && updates.assignees.length > 0) {
+      sendDiscordTaskNotification(updated, "assigned").catch(() => {});
     }
 
     return NextResponse.json({ success: true, task: updated });

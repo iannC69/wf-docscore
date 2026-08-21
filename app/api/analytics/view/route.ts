@@ -1,5 +1,94 @@
 import { NextRequest, NextResponse } from "next/server";
 import { incrementDocView, getDocViews, getAllDocViews } from "@/lib/db";
+import { resolveIpGeo } from "@/lib/security/geoip";
+import fs from "fs";
+import path from "path";
+
+const GEO_STATS_FILE = path.join(process.cwd(), "data", "view-geo-stats.json");
+
+function readGeoStats() {
+  try {
+    if (fs.existsSync(GEO_STATS_FILE)) {
+      return JSON.parse(fs.readFileSync(GEO_STATS_FILE, "utf-8"));
+    }
+  } catch {}
+  return {
+    countries: {},
+    hourly: Object.fromEntries(Array.from({ length: 24 }, (_, i) => [String(i), 0])),
+    daily: {},
+    peakHour: 0,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function saveGeoStats(stats: any) {
+  try {
+    fs.writeFileSync(GEO_STATS_FILE, JSON.stringify(stats, null, 2), "utf-8");
+  } catch {}
+}
+
+async function updateGeoStatsFromIp(ip: string) {
+  try {
+    const geo = await resolveIpGeo(ip);
+    const countryCode = geo.countryCode || "UNKNOWN";
+    const countryName = geo.country || "Unknown";
+
+    const stats = readGeoStats();
+
+    // Update country count
+    if (!stats.countries[countryCode]) {
+      stats.countries[countryCode] = {
+        code: countryCode,
+        name: countryName,
+        views: 0,
+        percentage: 0,
+      };
+    }
+    stats.countries[countryCode].views += 1;
+    stats.countries[countryCode].name = countryName;
+
+    // Recompute exact percentages across all recorded visits
+    const totalCountryViews = Object.values(stats.countries).reduce(
+      (s: number, c: any) => s + (c.views || 0),
+      0
+    );
+    for (const cc of Object.keys(stats.countries)) {
+      stats.countries[cc].percentage =
+        totalCountryViews > 0
+          ? Math.round((stats.countries[cc].views / totalCountryViews) * 100)
+          : 0;
+    }
+
+    // Update hourly distribution
+    const hour = new Date().getHours();
+    stats.hourly = stats.hourly || {};
+    stats.hourly[String(hour)] = (stats.hourly[String(hour)] || 0) + 1;
+
+    // Update daily history
+    const today = new Date().toISOString().split("T")[0];
+    stats.daily = stats.daily || {};
+    stats.daily[today] = (stats.daily[today] || 0) + 1;
+
+    // Keep last 7 days only
+    const sortedDays = Object.keys(stats.daily).sort();
+    if (sortedDays.length > 7) {
+      for (const oldDay of sortedDays.slice(0, sortedDays.length - 7)) {
+        delete stats.daily[oldDay];
+      }
+    }
+
+    // Compute peak hour
+    const hourlyEntries = Object.entries(stats.hourly as Record<string, number>);
+    stats.peakHour = Number(
+      hourlyEntries.sort((a, b) => (b[1] || 0) - (a[1] || 0))[0]?.[0] || 0
+    );
+    stats.updatedAt = new Date().toISOString();
+
+    saveGeoStats(stats);
+  } catch (err) {
+    console.error("[GeoStats] Error updating geo stats:", err);
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,8 +99,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
 
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const ip =
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
     const record = await incrementDocView(slug, ip);
+
+    // Completely automated, dynamic geo-tracking per real request
+    updateGeoStatsFromIp(ip).catch(() => {});
 
     return NextResponse.json({ success: true, views: record.total_views, record });
   } catch (err: any) {

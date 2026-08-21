@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { sha256, generateRandomToken } from "./crypto";
+import { dispatchDiscordAuditLog } from "../notifications/discordAuditWebhook";
 
 export type AuditAction =
   | "AUTH_LOGIN_SUCCESS"
@@ -22,7 +23,14 @@ export type AuditAction =
   | "BACKUP_SNAPSHOT_CREATED"
   | "BACKUP_SNAPSHOT_RESTORED"
   | "DOC_ROLLBACK"
-  | "DOC_VERSION_SAVE";
+  | "DOC_VERSION_SAVE"
+  | "DOC_REPORT_SUBMITTED"
+  | "MEDIA_UPLOAD"
+  | "MEDIA_DELETE"
+  | "AI_ABUSE_DETECTED"
+  | "TEAM_MEMBER_CREATED"
+  | "TEAM_MEMBER_UPDATED"
+  | "TEAM_MEMBER_DELETED";
 
 
 export interface AuditEvent {
@@ -101,6 +109,9 @@ export function recordAuditEvent(params: {
 
   ledger.unshift(event); // most recent first
   saveAuditLedger(ledger);
+
+  // Asynchronously dispatch to Discord #logs stream
+  dispatchDiscordAuditLog(event).catch(() => {});
 
   return event;
 }

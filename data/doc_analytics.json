@@ -32,9 +32,9 @@
     },
     "systems/other/c4-planter": {
       "slug": "systems/other/c4-planter",
-      "total_views": 1,
-      "today_views": 1,
-      "last_viewed_at": "2026-08-21T14:13:10.940Z"
+      "total_views": 2,
+      "today_views": 2,
+      "last_viewed_at": "2026-08-21T20:26:28.165Z"
     },
     "systems/other/faceit-badge": {
       "slug": "systems/other/faceit-badge",
@@ -101,9 +101,30 @@
       "total_views": 1,
       "today_views": 1,
       "last_viewed_at": "2026-08-21T19:57:48.898Z"
+    },
+    "currency": {
+      "slug": "currency",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T20:27:20.612Z"
     }
   },
   "feedbacks": [
+    {
+      "id": "fb_1787343989641_blxla",
+      "slug": "systems/other/c4-planter",
+      "rating": "helpful",
+      "comment": "da",
+      "created_at": "2026-08-21T20:26:31.409Z",
+      "ip_hash": "Ojox"
+    },
+    {
+      "id": "fb_1787343989638_pphgn",
+      "slug": "systems/other/c4-planter",
+      "rating": "helpful",
+      "created_at": "2026-08-21T20:26:29.638Z",
+      "ip_hash": "Ojox"
+    },
     {
       "id": "fb_1787337572148_q3qx5",
       "slug": "informatii/faq",
@@ -135,111 +156,219 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-21T19:57:48.898Z",
-  "reports": [],
+  "updatedAt": "2026-08-21T21:39:05.986Z",
+  "reports": [
+    {
+      "type": "new_guide_request",
+      "slug": "systems/other/c4-planter",
+      "category": "systems",
+      "severity": "normal",
+      "title": "da",
+      "description": "da",
+      "ip_hash": "::1",
+      "id": "rep_1787343995731_wu978",
+      "status": "open",
+      "created_at": "2026-08-21T20:26:35.731Z"
+    }
+  ],
   "tasks": [
     {
-      "id": "task_1787335900001_yakuza",
-      "title": "Actualizare ghid Anti-Rush cu noile reguli de sancțiuni",
-      "description": "Revizuirea capitolelor de penalizări automate și adăugarea noilor excepții pentru rundele speciale.",
-      "status": "in_progress",
-      "priority": "high",
-      "category": "docs_update",
-      "assignees": [
-        "Yakuza"
-      ],
-      "assignedBy": "iannC69",
-      "targetDoc": "systems/other/anti-rush",
-      "dueDate": "2026-08-25",
-      "subtasks": [
-        {
-          "id": "sub_1",
-          "title": "Revizuire text regulament și penalizări",
-          "completed": true
-        },
-        {
-          "id": "sub_2",
-          "title": "Actualizare tabel durată sancțiuni temporare",
-          "completed": false
-        },
-        {
-          "id": "sub_3",
-          "title": "Verificare comenzi in-game /rush",
-          "completed": false
-        }
-      ],
-      "comments": [
-        {
-          "id": "cmt_1",
-          "author": "iannC69",
-          "text": "Am verificat primele modificări, arată bine. Continuă cu tabelul.",
-          "createdAt": "2026-08-21T18:09:00.000Z"
-        }
-      ],
-      "createdAt": "2026-08-21T17:00:00.000Z",
-      "updatedAt": "2026-08-21T18:09:00.000Z"
-    },
-    {
-      "id": "task_1787335900002_v1ccx",
-      "title": "Ghid Nou: Configurare & Utilizare Sistem VIP Custom",
-      "description": "Redactarea documentației complete pentru permisiunile și beneficiile pachetelor VIP.",
+      "title": "De facut versiunea mobile la admin panel full la toate categoriile!",
+      "description": "Trebuie sa fac si light theme la admin panel",
       "status": "todo",
-      "priority": "medium",
-      "category": "docs_creation",
-      "assignees": [
-        "V1ccX"
-      ],
-      "assignedBy": "iannC69",
-      "targetDoc": "sisteme-jucatori/vip",
-      "dueDate": "2026-08-28",
-      "subtasks": [
-        {
-          "id": "sub_4",
-          "title": "Structurare avantaje pe ranguri (Gold / Diamond)",
-          "completed": false
-        },
-        {
-          "id": "sub_5",
-          "title": "Adăugare capturi de ecran meniu VIP",
-          "completed": false
-        }
-      ],
-      "comments": [],
-      "createdAt": "2026-08-21T17:30:00.000Z",
-      "updatedAt": "2026-08-21T17:30:00.000Z"
-    },
-    {
-      "id": "task_1787335900003_iannc",
-      "title": "Audit & Verificare integritate linkuri și imagini FAQ",
-      "description": "Verificare meticuloasă a tuturor ancorelor și a imaginilor din secțiunea de întrebări frecvente.",
-      "status": "completed",
       "priority": "urgent",
-      "category": "review",
+      "category": "system",
       "assignees": [
         "iannC69"
       ],
       "assignedBy": "iannC69",
-      "targetDoc": "informatii/faq",
-      "dueDate": "2026-08-23",
       "subtasks": [
         {
-          "id": "sub_6",
-          "title": "Scanare linkuri externe și ancore TOC",
-          "completed": true
+          "id": "sub_1787344325373_9u8j",
+          "title": "Mobile version pt admin panel",
+          "completed": false
         },
         {
-          "id": "sub_7",
-          "title": "Optimizare renderizare componente Liquid Glass",
-          "completed": true
+          "id": "sub_1787344333212_5hao",
+          "title": "Light theme pt panel",
+          "completed": false
         }
       ],
       "comments": [],
-      "createdAt": "2026-08-21T16:00:00.000Z",
-      "updatedAt": "2026-08-21T19:10:48.455Z",
-      "completedAt": "2026-08-21T19:10:48.455Z"
+      "id": "task_1787344340776_s8ccd",
+      "createdAt": "2026-08-21T20:32:20.776Z",
+      "updatedAt": "2026-08-21T21:38:53.978Z",
+      "dueDate": "2026-08-25"
     }
   ],
   "notifications": [
+    {
+      "id": "notif_1787348328385_tf5ug",
+      "isGlobal": true,
+      "title": "Sarcină Finalizată: De facut versiunea mobile la admin panel full la toate categoriile!",
+      "message": "Sarcina a fost marcată cu succes ca finalizată de @iannC69.",
+      "category": "task",
+      "severity": "success",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T21:38:48.385Z",
+      "metadata": {
+        "taskId": "task_1787344340776_s8ccd"
+      }
+    },
+    {
+      "id": "notif_1787348315606_x023f",
+      "isGlobal": true,
+      "title": "Sarcină Finalizată: De facut versiunea mobile la admin panel full la toate categoriile!",
+      "message": "Sarcina a fost marcată cu succes ca finalizată de @iannC69.",
+      "category": "task",
+      "severity": "success",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T21:38:35.606Z",
+      "metadata": {
+        "taskId": "task_1787344340776_s8ccd"
+      }
+    },
+    {
+      "id": "notif_1787348298529_1kr1t",
+      "isGlobal": true,
+      "title": "Sarcină Finalizată: De verificat ws, cases si ruleta",
+      "message": "Sarcina a fost marcată cu succes ca finalizată de @iannC69.",
+      "category": "task",
+      "severity": "success",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T21:38:18.529Z",
+      "metadata": {
+        "taskId": "task_1787345133738_4jq9r"
+      }
+    },
+    {
+      "id": "notif_1787345133763_4z8cv",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "Sarcină Nouă Asignată: De verificat ws, cases si ruleta",
+      "message": "Ai fost asignat de @iannC69 la sarcina din categoria DOCS_UPDATE.",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T20:45:33.763Z",
+      "metadata": {
+        "taskId": "task_1787345133738_4jq9r",
+        "priority": "medium"
+      }
+    },
+    {
+      "id": "notif_1787344340789_dqq2n",
+      "isGlobal": true,
+      "title": "[ALERTA SARCINĂ URGENTĂ] De facut versiunea mobile la admin panel full la toate categoriile!",
+      "message": "Creată de @iannC69 · Necesită atenție prioritară imediată.",
+      "category": "task",
+      "severity": "urgent",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69",
+        "Yakuza"
+      ],
+      "createdAt": "2026-08-21T20:32:20.789Z",
+      "metadata": {
+        "taskId": "task_1787344340776_s8ccd"
+      }
+    },
+    {
+      "id": "notif_1787344340782_u0tys",
+      "targetUser": "iannC69",
+      "isGlobal": false,
+      "title": "Sarcină Nouă Asignată: De facut versiunea mobile la admin panel full la toate categoriile!",
+      "message": "Ai fost asignat de @iannC69 la sarcina din categoria SYSTEM.",
+      "category": "task",
+      "severity": "urgent",
+      "link": "/admin/tasks",
+      "readBy": [
+        "iannC69"
+      ],
+      "createdAt": "2026-08-21T20:32:20.782Z",
+      "metadata": {
+        "taskId": "task_1787344340776_s8ccd",
+        "priority": "urgent"
+      }
+    },
+    {
+      "id": "notif_1787343995741_m21oz",
+      "isGlobal": true,
+      "title": "Cerere Ghid Nou: da",
+      "message": "da",
+      "category": "report",
+      "severity": "info",
+      "link": "/admin/database",
+      "readBy": [
+        "iannC69",
+        "Yakuza"
+      ],
+      "createdAt": "2026-08-21T20:26:35.741Z",
+      "metadata": {
+        "reportId": "rep_1787343995731_wu978",
+        "slug": "systems/other/c4-planter",
+        "type": "new_guide_request"
+      }
+    },
+    {
+      "id": "notif_1787343991533_vz9f6",
+      "isGlobal": true,
+      "title": "Sugestie / Comentariu Feedback pe /docs/systems/other/c4-planter",
+      "message": "Un jucător a lăsat o sugestie: \"da\" (Vot: Util)",
+      "category": "feedback",
+      "severity": "info",
+      "link": "/docs/systems/other/c4-planter",
+      "readBy": [
+        "iannC69",
+        "Yakuza"
+      ],
+      "createdAt": "2026-08-21T20:26:31.533Z",
+      "metadata": {
+        "slug": "systems/other/c4-planter",
+        "rating": "helpful",
+        "comment": "da",
+        "stats": {
+          "helpful": 2,
+          "unhelpful": 0,
+          "total": 2,
+          "percentage": 100
+        }
+      }
+    },
+    {
+      "id": "notif_1787343989803_g8uh7",
+      "isGlobal": true,
+      "title": "Feedback Pozitiv pe /docs/systems/other/c4-planter",
+      "message": "Un jucător a marcat ghidul ca util! Scorul curent de satisfacție este 100% (2 voturi pozitive).",
+      "category": "feedback",
+      "severity": "success",
+      "link": "/docs/systems/other/c4-planter",
+      "readBy": [
+        "iannC69",
+        "Yakuza"
+      ],
+      "createdAt": "2026-08-21T20:26:29.803Z",
+      "metadata": {
+        "slug": "systems/other/c4-planter",
+        "rating": "helpful",
+        "stats": {
+          "helpful": 2,
+          "unhelpful": 0,
+          "total": 2,
+          "percentage": 100
+        }
+      }
+    },
     {
       "id": "notif_task_seed_1",
       "targetUser": "Yakuza",
@@ -249,7 +378,9 @@
       "category": "task",
       "severity": "urgent",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "Yakuza"
+      ],
       "createdAt": "2026-08-21T17:52:05.622Z",
       "metadata": {
         "taskId": "task_seed_1"

@@ -19,6 +19,7 @@ import {
   Database,
   ListTodo,
   Archive,
+  Webhook,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
@@ -117,6 +118,12 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin/audit",
     icon: ScrollText,
     permKey: "canViewAudit",
+  },
+  {
+    label: "Webhooks",
+    href: "/admin/webhooks",
+    icon: Webhook,
+    permKey: "canManageSettings",
   },
   {
     label: "Engine Settings",

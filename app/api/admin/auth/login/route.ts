@@ -7,10 +7,15 @@ import {
   isPanicLockdownActive,
 } from "@/lib/security/auth";
 import { checkRateLimit, registerFailedAttempt, resetRateLimit } from "@/lib/security/rateLimit";
+import { findTeamMemberByUsername } from "@/lib/security/teamStore";
 import { recordAuditEvent } from "@/lib/security/audit";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
+  const ip =
+    req.headers.get("cf-connecting-ip")?.trim() ||
+    req.headers.get("x-real-ip")?.trim() ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "127.0.0.1";
   const userAgent = req.headers.get("user-agent") || "Unknown";
   const rateLimitKey = `login:ip:${ip}`;
 
@@ -38,17 +43,35 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { username, password } = body;
+    const cleanUsername = (username || "nespecificat").trim();
 
-    const authResult = verifyAdminCredentials(password || "", username || "");
+    const authResult = verifyAdminCredentials(password || "", cleanUsername);
 
     if (!authResult.valid || !authResult.member) {
-      const failedResult = registerFailedAttempt(rateLimitKey);
+      const targetedMember = findTeamMemberByUsername(cleanUsername);
+      const failedResult = registerFailedAttempt(rateLimitKey, 5);
+      const currentAttempt = failedResult.totalAttempts || Math.max(1, 5 - failedResult.remainingAttempts);
+      const remainingAttempts = Math.max(0, 5 - currentAttempt);
+
       recordAuditEvent({
         action: "AUTH_LOGIN_FAILURE",
-        actor: username || "anonymous",
+        actor: cleanUsername,
         ip,
         userAgent,
-        details: { reason: authResult.error || "Invalid credentials", remainingAttempts: failedResult.remainingAttempts },
+        details: {
+          targetedAccount: cleanUsername,
+          accountStatus: targetedMember
+            ? `🟢 Existent în Echipă (${targetedMember.displayName || targetedMember.username})`
+            : "🔴 Cont Inexistent / Nerecunoscut",
+          accountRole: targetedMember ? (targetedMember.isRoot ? "Root Super Admin" : targetedMember.role) : "Nespecificat",
+          attemptNumber: currentAttempt,
+          maxAttemptsAllowed: 5,
+          remainingAttempts: remainingAttempts,
+          isLockoutActive: !failedResult.allowed || currentAttempt >= 5,
+          lockoutRemainingSeconds: failedResult.lockoutRemainingSeconds || (currentAttempt >= 5 ? 900 : 0),
+          reason: authResult.error || "Nume de utilizator sau parolă incorectă.",
+          clientBrowser: userAgent.length > 90 ? userAgent.slice(0, 90) + "..." : userAgent,
+        },
       });
 
       return NextResponse.json(
