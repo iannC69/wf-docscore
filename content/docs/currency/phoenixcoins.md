@@ -1,62 +1,74 @@
 ---
-title: Phoenix Coins
-description: >-
-  Descopera totul despre Phoenix Coins pe platforma Wildfire.ro. Resurse
-  complete, ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Phoenix Coins (PHX)
+description: Moneda premium a serverului WildFire CS2 pentru deblocarea si personalizarea skin-urilor de arme, cutite, manusi, agenti si cutii.
 outline: deep
 ---
-**PHOENIX COINS** **Moneda Weapon Shop-ului**
-Phoenix Coins reprezinta moneda virtuala dedicata exclusiv personalizarii arsenalului tau prin sistemul `!ws`. Cu PHX poti debloca skin-uri de arme, cutite, manusi si accesorii premium (stickere si keychains).
 
-Skins & Agents
-
-Knives & Gloves
-
-Stickers Shop
-
-Keychains Shop
-
-## 1.0 CUM OBTII PHOENIX COINS
-**Donatii**
-Poti cumpara pachete de Phoenix Coins direct din market-ul site-ului pentru a debloca instant item-urile dorite.
-
-**Market: wildfire.ro/skins-market**
-
-**Misiuni (!missions)**
-Indeplineste obiectivele zilnice si saptamanale pentru a castiga PHX gratuit in timp ce te joci pe server.
-
-Daily: 50-150 PHX
-Weekly: 500-1000 PHX
-
-**Activitate**
-COMING SOON
-
-In curand vei putea castiga Phoenix Coins si pe baza timpului petrecut pe server si a performantei tale.
+**Phoenix Coins (PHX)** reprezinta moneda virtuala premium a serverului **WildFire.ro**, dedicata exclusiv sistemului avansat de personalizare **WeaponSkins (`!ws`)**, deblocarii de cutite, manusi, agenti speciali, stickere si brelocuri (keychains).
 
 ---
 
-## 2.0 WEAPON SHOP (!ws)
-**Skins**
-Personalizeaza-ti orice arma cu mii de skin-uri disponibile in joc.
-
-**Knives & Gloves**
-Alege dintr-o gama larga de cutite si manusi premium pentru ambele echipe.
-
-**Sticker Shop**
-Adauga stickere pe armele tale pentru un aspect unic si personalizat.
-
-**Keychain Shop**
-Decoreaza-ti armele cu brelocuri (keychains) speciale.
+> [!IMPORTANT]
+> **Permanenta Bunurilor Deblocate:**  
+> Spre deosebire de cosmeticele temporare din magazinul `!shop`, skin-urile, cutitele si accesoriile achizitionate cu Phoenix Coins raman salvate permanent in inventarul tau (`!inv`) si pot fi echipate oricand.
 
 ---
 
-## 3.0 COMENZI UTILE
-**!eco** - Verifica balanta ta de Phoenix Coins
+## 1. Cum sa Obtii Phoenix Coins (PHX)
 
-**!eco pay [nume] [suma]** - Transfera coins unui alt jucator
+Exista mai multe modalitati sigure prin care poti castiga sau cumpara Phoenix Coins:
 
-**!missions** - Vezi misiunile pentru a castiga PHX gratuit
+### A. Misiuni In-Game (`!missions`)
+Poti castiga PHX in mod complet gratuit indeplinind obiectivele propuse in timp ce joci pe server:
+* **Misiuni Zilnice (Daily):** Ofera intre **50 si 150 PHX** pentru obiective rapide (eliminari cu arme specifice, castig de runde).
+* **Misiuni Saptamanale (Weekly):** Recompense consistente intre **500 si 1.000 PHX** pentru realizari pe termen mediu.
 
-- Phoenix Coins sunt dedicati **arsenalului de arme**. Pentru tag-uri chat si efecte, verificati sistemul de Credite.
+### B. Progresie Sezoniera & BattlePass
+Urcarea in nivel in cadrul sezonului activ iti deblocheaza pachete suplimentare de monede PHX si recompense speciale de MVP.
 
-- Orice tentativa de exploatare a bug-urilor pentru a obtine PHX se sanctioneaza cu ban permanent.
+### C. Skins Market & Donatii Web
+Poti achizitiona pachete de Phoenix Coins direct de pe site-ul oficial [wildfire.ro/skins-market](https://wildfire.ro) pentru a-ti debloca instantaneu combinatiile de skin-uri dorite.
+
+---
+
+## 2. Utilizarea Phoenix Coins in Joc
+
+Phoenix Coins iti ofera acces total la personalizarea inventarului tau:
+
+| Categorie | Descriere & Posibilitati | Mod de Acces |
+| :--- | :--- | :--- |
+| **Weapon Skins** | Alege dintr-o colectie completa de mii de finisaje si modele de arme | Meniul `!ws` |
+| **Knives (Cutite)** | Echipeaza orice model (Karambit, Butterfly, M9 Bayonet, Skeleton etc.) | Meniul `!ws` |
+| **Gloves (Manusi)** | Alege manusi Sport, Driver, Specialist sau Moto in combinatia favorita | Meniul `!ws` |
+| **Agent Skins** | Personalizeaza skin-ul personajului pentru echipele T si CT | Meniul `!ws` |
+| **Stickers & Keychains** | Aplica stickere si brelocuri personalizate pe armele favorite | Meniul `!ws` |
+| **Cutii cu Skin-uri (`!cases`)** | Deschide lazi animate direct in meci cu sansa de drop-uri rare | Comanda `!cases` |
+
+---
+
+## 3. Comenzi Rapide pentru Phoenix Coins
+
+* `!eco` — Afiseaza balanta curenta de **Phoenix Coins (PHX)** si **Credite**.
+* `!eco pay [jucator] [suma] phoenix_coins` — Transfera instant monede PHX catre un alt jucator conectat.
+* `!missions` — Deschide panoul de misiuni active pentru castigarea de PHX.
+* `!ws` — Deschide interfata centrala WeaponSkins.
+* `!cases` — Deschide meniul de lazi si cutii cu skin-uri.
+
+> [!TIP]
+> Monedele PHX pot fi utilizate si ca miza la jocurile de casino in-game (`!rl`, `!sl`, `!bb`) daca doresti sa iti multiplici fondurile.
+
+---
+
+## Resurse si Ghiduri Recomandate
+
+<Cards>
+  <Card title="Ghidul WeaponSkins (!ws)" href="/docs/systems/skins">
+    Afla cum echipezi, inspectezi si customizezi skin-urile pe server.
+  </Card>
+  <Card title="Deschidere Cutii (!cases)" href="/docs/systems/skins/cases">
+    Ghidul complet al cutiilor, cotelor de drop si sanselor de castig.
+  </Card>
+  <Card title="Ghidul Creditelor (!shop)" href="/docs/currency/credits">
+    Descopera ce poti cumpara cu creditele acumulate prin playtime.
+  </Card>
+</Cards>

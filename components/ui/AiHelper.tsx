@@ -30,10 +30,34 @@ import {
   Plus,
   Trash2,
   Clock,
+  Download,
+  Share2,
+  FileText,
+  MoreVertical,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+
+// ─── Source Badges Helper ──────────────────────────────────────────────────────
+function extractDocSources(content: string): { title: string; url: string }[] {
+  const sources: { title: string; url: string }[] = [];
+  const linkRegex = /\[([^\]]+)\]\((\/docs\/[^)]+)\)/g;
+  let match;
+  const seen = new Set<string>();
+
+  while ((match = linkRegex.exec(content)) !== null) {
+    const title = match[1].trim();
+    const url = match[2].trim();
+    if (!seen.has(url)) {
+      seen.add(url);
+      sources.push({ title, url });
+    }
+  }
+  return sources;
+}
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 export interface Message {
@@ -41,6 +65,8 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  interactionId?: string;
+  feedback?: "helpful" | "unhelpful" | null;
 }
 
 export interface ChatSession {
@@ -301,17 +327,105 @@ export function AiHelper() {
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("side");
   const [showSettings, setShowSettings] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [thinkingIndex, setThinkingIndex] = useState(0);
+  const [cooldownSeconds, setCooldownSeconds] = useState<number | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  }, []);
+
+  // Cooldown countdown timer effect
+  useEffect(() => {
+    if (cooldownSeconds === null || cooldownSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setCooldownSeconds((prev) => {
+        if (prev === null || prev <= 1) {
+          showToast("Cooldown expirat! Bugetul de tokeni a fost restabilit.");
+          setTimeout(() => inputRef.current?.focus(), 120);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldownSeconds, showToast]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Export conversation as Markdown (.md)
+  const handleExportMarkdown = useCallback(() => {
+    if (messages.length === 0) return;
+    const currentSession = sessions.find((s) => s.id === activeSessionId);
+    const title = currentSession?.title || "Conversatie";
+    const dateStr = new Date().toLocaleString("ro-RO", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let md = `# Conversație WildFire AI Assistant — ${title}\n\n`;
+    md += `*Data:* ${dateStr}\n`;
+    md += `*Platformă:* WF-DOCSCORE v1.7.0 (https://wildfire.ro)\n\n`;
+    md += `---\n\n`;
+
+    messages.forEach((m) => {
+      if (m.role === "user") {
+        md += `### 👤 Întrebare Utilizator:\n${m.content}\n\n`;
+      } else {
+        md += `### 🤖 Răspuns WildFire AI Assistant:\n${m.content}\n\n---\n\n`;
+      }
+    });
+
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const cleanSlug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 32) || "conversatie";
+    a.download = `wildfire-ai-${cleanSlug}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("Conversația a fost exportată (.md)!");
+  }, [activeSessionId, messages, sessions, showToast]);
+
+  // Copy conversation formatted for Discord
+  const handleCopyDiscord = useCallback(() => {
+    if (messages.length === 0) return;
+    const currentSession = sessions.find((s) => s.id === activeSessionId);
+    const title = currentSession?.title || "Conversație";
+
+    let text = `**[WildFire AI Support] ${title}**\n\n`;
+    messages.forEach((m) => {
+      if (m.role === "user") {
+        text += `> **Utilizator:** ${m.content}\n\n`;
+      } else {
+        text += `**WildFire Assistant:**\n${m.content}\n\n`;
+      }
+    });
+
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(text);
+      showToast("Formatul Discord a fost copiat în clipboard!");
+    }
+  }, [activeSessionId, messages, sessions, showToast]);
 
   // 1. Load saved layout mode
   useEffect(() => {
@@ -545,7 +659,8 @@ export function AiHelper() {
   }
 
   const isLoading = status === "loading";
-  const canSubmit = !isLoading && input.trim().length > 0;
+  const isCooldownActive = cooldownSeconds !== null && cooldownSeconds > 0;
+  const canSubmit = !isLoading && !isCooldownActive && input.trim().length > 0;
 
   const thinkingSteps = useMemo(
     () => [
@@ -670,13 +785,22 @@ export function AiHelper() {
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           const code = data.errorCode || "ERROR_WF-REQ_FAILED";
+          if (res.status === 429 || code === "ERROR_WF-COOLDOWN_ACTIVE") {
+            const retrySec = data.retryAfterSeconds || 45;
+            setCooldownSeconds(retrySec);
+            const customMsg =
+              data.error ||
+              `Ai atins limita temporară de tokeni. Cooldown activ: ${retrySec} secunde.\n\n\`Cod Eroare: ${code}\``;
+            throw new Error(customMsg);
+          }
           const customMsg = `A apărut o problemă temporară la procesarea cererii tale. Te rugăm să reîncerci peste câteva momente.\n\n\`Cod Eroare: ${code}\``;
           throw new Error(customMsg);
         }
 
+        const interactionId = res.headers.get("x-wf-interaction-id") || undefined;
         const text = await res.text();
         const finalMsgs = initialMsgs.map((m) =>
-          m.id === assistantId ? { ...m, content: text } : m
+          m.id === assistantId ? { ...m, content: text, interactionId } : m
         );
         setMessages(finalMsgs);
         syncSessionsToStorage(finalMsgs, currentSessionId);
@@ -701,6 +825,48 @@ export function AiHelper() {
       }
     },
     [activeSessionId, isLoading, messages, syncSessionsToStorage]
+  );
+
+  // Handle helpful / unhelpful rating
+  const handleFeedback = useCallback(
+    async (msgId: string, type: "helpful" | "unhelpful", userQuerySnippet?: string) => {
+      let interactionIdToSubmit: string | undefined;
+      let nextFeedback: "helpful" | "unhelpful" | null = null;
+
+      setMessages((prev) => {
+        const updated = prev.map((m) => {
+          if (m.id === msgId) {
+            interactionIdToSubmit = m.interactionId;
+            nextFeedback = m.feedback === type ? null : type;
+            return { ...m, feedback: nextFeedback };
+          }
+          return m;
+        });
+        syncSessionsToStorage(updated, activeSessionId);
+        return updated;
+      });
+
+      setTimeout(() => {
+        if (nextFeedback) {
+          showToast(
+            nextFeedback === "helpful"
+              ? "Mulțumim pentru feedback! (Răspuns util)"
+              : "Mulțumim! Lucrăm la îmbunătățirea răspunsurilor."
+          );
+
+          fetch("/api/ai-helper/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              interactionId: interactionIdToSubmit,
+              querySnippet: userQuerySnippet || "",
+              feedback: nextFeedback,
+            }),
+          }).catch((err) => console.warn("[AI Feedback] Failed to sync:", err));
+        }
+      }, 20);
+    },
+    [activeSessionId, showToast, syncSessionsToStorage]
   );
 
   const handleSubmit = useCallback(async () => {
@@ -789,6 +955,19 @@ export function AiHelper() {
           <div className="ai-panel-ambient-blob-3" />
         </div>
 
+        {/* Ambient Embossed WildFire Watermark in Chat Background */}
+        <div className="ai-chat-ambient-watermark" aria-hidden="true">
+          <div className="ai-chat-watermark-glow" />
+          <Image
+            src="/logo.png"
+            alt=""
+            width={320}
+            height={320}
+            className="ai-chat-watermark-logo"
+            priority
+          />
+        </div>
+
         {/* Header */}
         <div className="ai-panel-header">
           <div className="ai-panel-header-left">
@@ -801,12 +980,12 @@ export function AiHelper() {
                 className="ai-avatar-logo"
               />
             </div>
-            <div>
-              <div className="ai-panel-title">AI Assistant</div>
-              <div className="ai-panel-subtitle">
+            <div className="ai-panel-header-titles">
+              <span className="ai-panel-title">AI Assistant</span>
+              <span className="ai-panel-subtitle">
                 <BookOpen size={10} />
-                <span>Documentație WildFire.ro</span>
-              </div>
+                <span>WildFire Docs</span>
+              </span>
             </div>
           </div>
 
@@ -829,6 +1008,7 @@ export function AiHelper() {
               onClick={() => {
                 setShowHistory(!showHistory);
                 setShowSettings(false);
+                setShowMoreMenu(false);
               }}
               title="Istoric Conversații"
               aria-label="Istoric Conversații"
@@ -863,6 +1043,7 @@ export function AiHelper() {
                 onClick={() => {
                   setShowSettings(!showSettings);
                   setShowHistory(false);
+                  setShowMoreMenu(false);
                 }}
                 title="Preferințe layout"
                 aria-label="Preferințe layout"
@@ -915,23 +1096,82 @@ export function AiHelper() {
               )}
             </div>
 
+            {/* Conversation Actions Dropdown (Export, Copy, Clear) */}
             {messages.length > 0 && (
-              <button
-                id="ai-helper-clear"
-                className="ai-icon-btn"
-                onClick={handleClear}
-                title="Șterge conversația curentă"
-                aria-label="Șterge conversația curentă"
-              >
-                <RotateCcw size={14} />
-              </button>
+              <div className="ai-settings-dropdown-wrap">
+                <button
+                  type="button"
+                  className={`ai-icon-btn ${showMoreMenu ? "ai-icon-btn--active" : ""}`}
+                  onClick={() => {
+                    setShowMoreMenu(!showMoreMenu);
+                    setShowSettings(false);
+                    setShowHistory(false);
+                  }}
+                  title="Opțiuni conversație"
+                  aria-label="Opțiuni conversație"
+                >
+                  <MoreVertical size={14} />
+                </button>
+
+                {showMoreMenu && (
+                  <div className="ai-settings-popover">
+                    <div className="ai-settings-popover-title">OPȚIUNI CONVERSAȚIE</div>
+                    <button
+                      type="button"
+                      className="ai-settings-option"
+                      onClick={() => {
+                        setShowMoreMenu(false);
+                        handleExportMarkdown();
+                      }}
+                    >
+                      <Download size={13} className="text-amber-400" />
+                      <div className="ai-settings-opt-text">
+                        <span className="ai-settings-opt-name">Exportă în Markdown (.md)</span>
+                        <span className="ai-settings-opt-desc">Descarcă sesiunea pe disc</span>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="ai-settings-option"
+                      onClick={() => {
+                        setShowMoreMenu(false);
+                        handleCopyDiscord();
+                      }}
+                    >
+                      <Share2 size={13} className="text-cyan-400" />
+                      <div className="ai-settings-opt-text">
+                        <span className="ai-settings-opt-name">Copiază pentru Discord</span>
+                        <span className="ai-settings-opt-desc">Formatat cu blockquote</span>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="ai-settings-option"
+                      onClick={() => {
+                        setShowMoreMenu(false);
+                        handleClear();
+                      }}
+                    >
+                      <RotateCcw size={13} className="text-rose-400" />
+                      <div className="ai-settings-opt-text">
+                        <span className="ai-settings-opt-name text-rose-400">Șterge Conversația</span>
+                        <span className="ai-settings-opt-desc">Resetează mesajele curente</span>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
+
             <button
               id="ai-helper-close"
               className="ai-icon-btn"
               onClick={() => {
                 setShowSettings(false);
                 setShowHistory(false);
+                setShowMoreMenu(false);
                 setIsOpen(false);
               }}
               title="Închide (Esc)"
@@ -941,6 +1181,14 @@ export function AiHelper() {
             </button>
           </div>
         </div>
+
+        {/* Floating Feedback Toast Notification */}
+        {toastMessage && (
+          <div className="ai-toast-pill" role="status">
+            <Check size={12} className="ai-toast-icon" />
+            <span>{toastMessage}</span>
+          </div>
+        )}
 
         {/* Conversation History Overlay Drawer */}
         {showHistory && (
@@ -1036,23 +1284,12 @@ export function AiHelper() {
         <div className="ai-panel-messages" id="ai-helper-messages">
           {messages.length === 0 ? (
             <div className="ai-panel-empty">
-              {/* Imprinted / Embossed Watermark in Background */}
-              <div className="ai-empty-watermark" aria-hidden>
-                <Image
-                  src="/logo.png"
-                  alt=""
-                  width={200}
-                  height={200}
-                  className="ai-watermark-img"
-                />
-              </div>
-
               <div className="ai-empty-logo-box">
                 <Image
                   src="/logo.png"
                   alt="WildFire"
-                  width={34}
-                  height={34}
+                  width={36}
+                  height={36}
                   className="ai-empty-logo"
                 />
               </div>
@@ -1063,7 +1300,16 @@ export function AiHelper() {
               </p>
             </div>
           ) : (
-            messages.map((msg) => (
+            messages.map((msg, msgIdx) => {
+              const prevUserQuery =
+                msg.role === "assistant"
+                  ? messages
+                      .slice(0, msgIdx)
+                      .reverse()
+                      .find((m) => m.role === "user")?.content
+                  : undefined;
+
+              return (
               <div
                 key={msg.id}
                 className={`ai-msg ${msg.role === "user" ? "ai-msg--user" : "ai-msg--ai"}`}
@@ -1091,28 +1337,81 @@ export function AiHelper() {
                           <Sparkles size={10} /> WildFire Docs Intelligence
                         </span>
                         {msg.content && (
-                          <button
-                            type="button"
-                            className="ai-msg-copy-btn"
-                            onClick={() => handleCopy(msg.id, msg.content)}
-                            title="Copiază răspunsul"
-                          >
-                            {copiedId === msg.id ? (
-                              <>
-                                <Check size={11} className="ai-copy-success" />
-                                <span>Copiat</span>
-                              </>
-                            ) : (
-                              <>
-                                <Copy size={11} />
-                                <span>Copiază</span>
-                              </>
-                            )}
-                          </button>
+                          <div className="ai-msg-actions-cluster">
+                            <div className="ai-feedback-actions" role="group" aria-label="Evaluează răspunsul">
+                              <button
+                                type="button"
+                                className={`ai-feedback-btn ${msg.feedback === "helpful" ? "ai-feedback-btn--helpful" : ""}`}
+                                onClick={() => handleFeedback(msg.id, "helpful", prevUserQuery)}
+                                title={msg.feedback === "helpful" ? "Ai marcat ca util" : "Răspuns util"}
+                                aria-label="Răspuns util"
+                              >
+                                <ThumbsUp size={11} />
+                              </button>
+                              <button
+                                type="button"
+                                className={`ai-feedback-btn ${msg.feedback === "unhelpful" ? "ai-feedback-btn--unhelpful" : ""}`}
+                                onClick={() => handleFeedback(msg.id, "unhelpful", prevUserQuery)}
+                                title={msg.feedback === "unhelpful" ? "Ai marcat ca nesatisfăcător" : "Răspuns nesatisfăcător"}
+                                aria-label="Răspuns nesatisfăcător"
+                              >
+                                <ThumbsDown size={11} />
+                              </button>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="ai-msg-copy-btn"
+                              onClick={() => handleCopy(msg.id, msg.content)}
+                              title="Copiază răspunsul"
+                            >
+                              {copiedId === msg.id ? (
+                                <>
+                                  <Check size={11} className="ai-copy-success" />
+                                  <span>Copiat</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy size={11} />
+                                  <span>Copiază</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
                         )}
                       </div>
                       {msg.content ? (
-                        renderMarkdownBlocks(msg.content)
+                        <>
+                          {renderMarkdownBlocks(msg.content)}
+                          {(() => {
+                            const sources = extractDocSources(msg.content);
+                            if (sources.length === 0) return null;
+                            return (
+                              <div className="ai-msg-sources-row">
+                                <div className="ai-msg-sources-label">
+                                  <BookOpen size={11} className="text-amber-400" />
+                                  <span>Ghiduri Oficiale Conexe:</span>
+                                </div>
+                                <div className="ai-msg-sources-chips">
+                                  {sources.map((src, sIdx) => (
+                                    <Link
+                                      key={sIdx}
+                                      href={src.url}
+                                      className="ai-source-chip"
+                                      onClick={() => {
+                                        if (layoutMode === "side") setIsOpen(false);
+                                      }}
+                                    >
+                                      <BookOpen size={10} />
+                                      <span>{src.title}</span>
+                                      <ExternalLink size={9} />
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </>
                       ) : (
                         <div className="ai-thinking-skeleton">
                           <div className="ai-skeleton-line ai-skeleton-line--lg" />
@@ -1122,17 +1421,13 @@ export function AiHelper() {
                     </div>
                   ) : (
                     <div className="ai-user-bubble">
-                      <div className="ai-user-meta-bar">
-                        <span className="ai-user-badge">
-                          <User size={9} /> Tu
-                        </span>
-                      </div>
                       <p className="ai-msg-text">{msg.content}</p>
                     </div>
                   )}
                 </div>
               </div>
-            ))
+            );
+          })
           )}
           <div ref={messagesEndRef} />
         </div>
@@ -1163,6 +1458,25 @@ export function AiHelper() {
           </div>
         )}
 
+        {/* Cooldown Status Pill Banner */}
+        {isCooldownActive && (
+          <div className="ai-cooldown-dock" role="status" aria-live="polite">
+            <div className="ai-cooldown-pill">
+              <Clock size={12} className="text-amber-400 ai-cooldown-clock" />
+              <span className="ai-cooldown-text">
+                Cooldown Activ:{" "}
+                <strong>
+                  {Math.floor((cooldownSeconds || 0) / 60)}:
+                  {(cooldownSeconds || 0) % 60 < 10
+                    ? "0" + ((cooldownSeconds || 0) % 60)
+                    : (cooldownSeconds || 0) % 60}
+                </strong>
+              </span>
+              <span className="ai-cooldown-sub">Se regenerează bugetul de tokeni...</span>
+            </div>
+          </div>
+        )}
+
         {/* Input Area */}
         <div className="ai-panel-input-wrap">
           <textarea
@@ -1170,7 +1484,9 @@ export function AiHelper() {
             ref={inputRef}
             className="ai-panel-textarea"
             placeholder={
-              isLoading
+              isCooldownActive
+                ? `Cooldown activ (${cooldownSeconds}s) — se regenerează bugetul...`
+                : isLoading
                 ? "Se generează răspunsul..."
                 : "Întreabă despre server... (Enter = trimite)"
             }
@@ -1178,7 +1494,7 @@ export function AiHelper() {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            disabled={isLoading}
+            disabled={isLoading || isCooldownActive}
             aria-label="Întrebare"
           />
           <button

@@ -1,38 +1,73 @@
 ---
-title: Comenzi STAFF
-description: Lista completa de comenzi pentru membrii STAFF pe serverele Wildfire.ro. Ghid detaliat pentru administrarea serverului.
+title: Comenzi Administrative Staff
+description: Lista completa a tuturor comenzilor administrative pe serverul WildFire CS2, cu sintaxa exacta si nivelul de acces configurat pe fiecare grad.
+outline: deep
 ---
 
-# Comenzi Administrative STAFF
-
-Aceste comenzi sunt destinate exclusiv membrilor din echipa **STAFF Wildfire.ro**. Utilizarea lor necorespunzatoare sau in scopuri personale atrage dupa sine sanctiuni administrative pana la retragerea gradului.
+Aceste comenzi sunt destinate exclusiv membrilor echipei administrative **WildFire.ro**. Utilizarea comenzilor se face strict in scopul mentinerii ordinii si aplicarii regulamentului oficial.
 
 ---
 
-## Ghid Complet Comenzi Administrative
+> [!IMPORTANT]
+> **Motive Clare si Profesionale Obligatorii:**  
+> La executarea oricarei comenzi de sanctiune (`!kick`, `!ban`, `!mute`, `!gag`, `!silence`), parametrul `[motiv]` trebuie completat explicit cu fapta comisa (ex: `Limbaj vulgar repetat`, `Refuz verificare PC`, `Spam chat`). Motivele ironice sau la misto atrag sanctionarea administrativa (`WARN STAFF`).
 
-| Comanda | Sintaxa | Descriere | Grad Minim |
+---
+
+## Tabelul Complet al Comenzilor Administrative
+
+Iata lista oficiala si integrala a comenzilor administrative disponibile pe server:
+
+| Comanda | Sintaxa de Executie | Descriere & Rol | Grad Minim |
 | :--- | :--- | :--- | :--- |
-| `!admin` | `!admin` | Deschide meniul principal grafic de administrare. | **Helper** |
-| `!gag` | `!gag [nume] [timp]` | Restrictioneaza chat-ul scris al unui jucator. | **Helper** |
-| `!mute` | `!mute [nume] [timp]` | Restrictioneaza chat-ul vocal al unui jucator. | **Helper** |
-| `!silence` | `!silence [nume] [timp]` | Restrictioneaza complet comunicarea (vocal + scris). | **Helper** |
-| `!ungag` | `!ungag [nume]` | Elimina restrictia de chat scris a unui jucator. | **Helper** |
-| `!unmute` | `!unmute [nume]` | Elimina restrictia de chat vocal a unui jucator. | **Helper** |
-| `!unsilence` | `!unsilence [nume]` | Elimina sanctiunea de silence a unui jucator. | **Helper** |
-| `!team` | `!team [nume] [echipa]` | Muta un jucator in echipa specificata (T / CT / Spec). | **Helper** |
-| `!swap` | `!swap [nume]` | Schimba echipa curenta a unui jucator. | **Helper** |
-| `!spec` | `!spec [nume]` | Muta un jucator direct in modul spectator. | **Helper** |
-| `!rename` | `!rename [nume_vechi] [nume_nou]` | Schimba numele unui jucator de pe server. | **Helper** |
-| `!slay` | `!slay [nume]` | Omoara un jucator instantaneu in runda curenta. | **Helper** |
-| `!slap` | `!slap [nume] [dmg]` | Loveste un jucator aplicand daunele specificate. | **Helper** |
-| `!kick` | `!kick [nume] [motiv]` | Deconecteaza forta un jucator de pe server. | **Admin** |
-| `!ban` | `!ban [nume] [timp] [motiv]` | Interzice accesul unui jucator pe server pe durata specificata. | **Admin** |
-| `!unban` | `!unban [steamid]` | Elimina un ban existent pe baza SteamID-ului. | **Admin** |
-| `!rcon` | `!rcon [comanda]` | Executa comenzi direct in consola serverului. | **Owner** |
-| `!map` | `!map [harta]` | Schimba harta curenta a serverului. | **Manager** |
+| `!admin` | `!admin` | Deschide meniul grafic principal de administrare pe ecran | **Helper** |
+| `!spec` | `!spec [jucator]` | Muta un jucator direct in modul Spectator (pentru verificari) | **Helper** |
+| `!kick` | `!kick [jucator] [motiv]` | Deconecteaza fortat un jucator de pe server | **Helper** |
+| `!gag` | `!gag [jucator] [timp] [motiv]` | Restrictioneaza chat-ul scris al unui jucator (max. 60m) | **Helper** |
+| `!ungag` | `!ungag [jucator]` | Elimina restrictia de chat scris a unui jucator | **Helper** |
+| `!mute` | `!mute [jucator] [timp] [motiv]` | Blocheaza comunicarea audio prin microfon (max. 60m) | **Helper** |
+| `!unmute` | `!unmute [jucator]` | Deblocheaza comunicarea audio a jucatorului | **Helper** |
+| `!silence` | `!silence [jucator] [timp] [motiv]` | Restrictioneaza simultan atat chat-ul scris, cat si microfonul | **Helper** |
+| `!unsilence` | `!unsilence [jucator]` | Elimina sanctiunea completa de silence a jucatorului | **Helper** |
+| `!slay` | `!slay [jucator] [motiv]` | Elimina instantaneu un jucator in runda curenta (AFK / Bomb Grief) | **Helper** |
+| `!slap` | `!slap [jucator] [dmg]` | Loveste un jucator aplicand daune (pentru deblocare din pereti) | **Helper** |
+| `!rename` | `!rename [jucator] [nume_nou]` | Redenumeste un jucator cu nume indecent sau reclama | **Helper** |
+| `!team` | `!team [jucator] [T / CT / Spec]` | Muta un jucator in echipa specificata | **Helper** |
+| `!swap` | `!swap [jucator]` | Schimba instant echipa curenta a unui jucator (T ➔ CT / CT ➔ T) | **Helper** |
+| `!ban` | `!ban [jucator] [timp] [motiv]` | Interzice accesul pe durata specificata sau permanent (`0`) | **Moderator** |
+| `!map` | `!map [de_harta]` | Schimba harta curenta a serverului (in ultimele 5m sau server gol) | **Moderator** |
+| `!csay` | `!csay [mesaj]` | Afiseaza un mesaj mare in centrul ecranului pentru anunturi oficiale | **Moderator** |
+| `!unban` | `!unban [steamid]` | Elimina banul asociat unui cont de Steam (aprobat prin ticket) | **Administrator** |
+| `!freeze` | `!freeze [jucator]` | Ingheata pe loc un jucator suspect in timpul verificarii | **Administrator** |
+| `!unfreeze` | `!unfreeze [jucator]` | Dezgheata jucatorul la finalizarea verificarii | **Administrator** |
+| `!respawn` | `!respawn [jucator]` | Reinvie un jucator eliminat in runda activa | **Administrator** |
+| `!eco give` | `!eco give [jucator] [suma] [credits\|phoenix_coins]` | Acorda credite sau Phoenix Coins unui jucator (evenimente / reward) | **Server Manager** |
+| `!eco take` | `!eco take [jucator] [suma] [credits\|phoenix_coins]` | Retrage credite sau Phoenix Coins unui jucator (sanctiuni / corectii) | **Server Manager** |
+| `!ws_admin givecase` | `!ws_admin givecase [@all\|jucator] [tip_cutie] [suma]` | Ofera cutii/cases cu skin-uri tuturor jucatorilor sau unui jucator | **Server Manager** |
+| `!rcon` | `!rcon [comanda]` | Executa comenzi avansate direct in consola serverului | **Owner / Root** |
 
 ---
 
-> [!NOTE]
-> Pentru regulamentul de acordare a sanctiunilor si durata fiecarui tip de pedeapsa, consulta [Regulamentul STAFF](/docs/informatii/regulamente/go/regulament-staff-go) si [Motivele Oficiale](/docs/informatii/staff/motive-staff).
+## Ierarhia Gradelor si Permisiunilor
+
+* **Helper:** Acces complet la comenzi de baza de moderare a chat-ului si comportamentului (`!admin`, `!kick`, `!gag`, `!mute`, `!silence`, `!slay`, `!slap`, `!rename`, `!team`, `!swap`, `!spec`). Durata maxima a sanctiunilor: **60 de minute**.
+* **Moderator:** Mosteneste comenzile de Helper si primeste acces la **`!ban`**, schimbare de harta **`!map`** si anunturi centrale **`!csay`**.
+* **Administrator & Supervizor:** Mostenesc comenzile de Moderator si primesc acces la **`!unban`**, comenzi de control **`!freeze`** / **`!unfreeze`**, reinviere **`!respawn`** si banuri permanente.
+* **Server Manager:** Mosteneste accesul de Administrator si gestioneaza economia in-game (**`!eco give`**, **`!eco take`**) si oferirea de drop-uri speciale (**`!ws_admin givecase`**).
+* **Community Manager & Owner / Root:** Acces complet administrativ la toate modulele, setarile de configurare si comenzi RCON.
+
+---
+
+## Resurse Administrative Conexe
+
+<Cards>
+  <Card title="Motive Oficiale de Sanctiune" href="/docs/informatii/staff/motive-staff">
+    Consulta lista exacta de motive standardizate si duratele recomandate pentru fiecare incalcare.
+  </Card>
+  <Card title="Regulament Staff & Conduita" href="/docs/informatii/regulamente/regulament-staff-go">
+    Normele de etica, obligatiile lunare de activitate si protocoalele echipei de moderare.
+  </Card>
+  <Card title="Ghid Recrutare Staff" href="/docs/informatii/staff/cum-aplici">
+    Afla cum poti promova sau cum se desfasoara procesul de recrutare in cadrul comunitatii.
+  </Card>
+</Cards>

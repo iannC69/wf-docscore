@@ -1,72 +1,75 @@
 ---
-title: Gold Member
-description: >-
-  Descopera totul despre Gold Member pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Statutul Gold Member (Gratuit)
+description: Ghidul complet pentru activarea statutului gratuit Gold Member prin adaugarea tag-ului wildfire.ro in nume — beneficii +1000$, Zeus, Healthshot si clantag.
 outline: deep
 ---
-## 1.0 INFORMATII
-1.0 INFORMATII
 
-**Premium Status** **Gold Member**
-Gold Member este un statut premium pe serverul Wildfire.ro care ofera beneficii exclusive jucatorilor. Pentru a activa acest statut, trebuie sa iti setezi numele in joc astfel: **cs2.wildfire.ro** sau **wildfire.ro** in nume.
+**Gold Member** este un statut special de recunoastere acordat **100% gratuit** tuturor jucatorilor care aleg sa sustina comunitatea **WildFire.ro** prin purtarea tag-ului serverului in numele lor de pe Steam.
 
-Odata ce ai numele corect configurat, primesti automat acces la arme speciale, recompense zilnice si avantaje unice in joc.
+---
 
-Pentru a deveni **Gold Member**, adauga **cs2.wildfire.ro** sau **wildfire.ro** in numele tau din CS2. Statutul se activeaza automat dupa verificare.
+> [!NOTE]
+> Statutul se detecteaza si se activeaza in mod automat in momentul conectarii pe server. Nu necesita nicio comanda si nicio plata.
 
-## 2.0 BENEFICII GOLD MEMBER
-2.0 BENEFICII GOLD MEMBER
+---
 
-![Tag GOLDMEMBER](/utility/wf_clantag.png)
+## 1. Beneficiile Exclusive Gold Member
 
-[GOLDMEMBER]
+Toti jucatorii cu statut Gold Member primesc automat la inceputul fiecarei runde urmatoarele avantaje de gameplay:
 
-Tag exclusiv in chat si scoreboard
+| Beneficiu Activ | Descriere & Impact in Joc | Imagine Reprezentativa |
+| :--- | :--- | :--- |
+| **Tag [GOLDMEMBER]** | Prefix auriu exclusiv afisat in chat-ul public si pe tabela de scor | ![Tag Clantag](/utility/wf_clantag.png) |
+| **Zeus x27 Gratuit** | Tazer incarcat primit automat la spawn in fiecare runda | ![Zeus x27](/utility/wf_zeus.webp) |
+| **Bonus Bani +1000$** | Fonduri suplimentare virate in balanta de cumparare runda de runda | ![Bonus Bani](/utility/wf_money.png) |
+| **Medi-Shot (Healthshot)** | Seringa tactica medicala (+50 HP) pentru recuperare in lupta | ![Healthshot](/utility/wf_healthshot.webp) |
 
-![Zeus](/utility/wf_zeus.webp)
+---
 
-Zeus
+## 2. Cum Activezi Statutul Gold Member Pas cu Pas
 
-Arma tazer disponibila in fiecare runda
+Pentru a beneficia instantaneu de avantajele Gold Member, urmeaza acesti 3 pasi simpli:
 
-![+1000$ per round](/utility/wf_money.png)
+<Steps>
+  <Step title="Deschiderea Profilului de Steam">
+    Deschide aplicatia Steam pe PC sau prin browser si navigheaza la pagina profilului tau.
+    
+    ![Editare Profil Steam](/utility/wf_name_steam.png)
+  </Step>
 
-+1000$ per runda
+  <Step title="Adaugarea Tag-ului in Nume">
+    Apasa pe butonul **Edit Profile** si adauga la sfarsitul nickname-ului tau textul `wildfire.ro` sau `cs2.wildfire.ro` (de exemplu: `Player | wildfire.ro`). Apoi salveaza modificarile.
+    
+    ![Salvare Nume cu wildfire.ro](/utility/wf_name_steam2.png)
+  </Step>
 
-Bonus de bani la inceputul fiecarei runde
+  <Step title="Conectarea pe Serverul WildFire">
+    Intra pe server (`cs2.wildfire.ro`). Sistemul iti va valida automat noul nume si iti va activa instantaneu toate beneficiile Gold Member.
+  </Step>
+</Steps>
 
-![Healthshot](/utility/wf_healthshot.webp)
+---
 
-Healthshot
+## 3. Clauze de Mentinere a Statutului
 
-Seringa de vindecare disponibila in fiecare runda
+> [!IMPORTANT]
+> **Pastrarea Tag-ului in Nume:**  
+> Beneficiile raman active atat timp cat pastrezi `wildfire.ro` in numele tau. Daca modifici numele si elimini tag-ul, statutul Gold Member se dezactiveaza automat la urmatoarea runda.
 
-Beneficiile sunt aplicate automat odata ce statutul Gold Member este activ. Nu este necesara nicio comanda suplimentara pentru a le activa.
+---
 
-## 3.0 CUM OBTII STATUTUL
-3.0 CUM OBTII STATUTUL
+## Resurse si Pachete Conexe
 
-Pentru a deveni Gold Member, urmeaza acesti pasi simpli:
+<Cards>
+  <Card title="Pachete si Beneficii VIP" href="/docs/market/vip/rebirth">
+    Descopera gradele VIP superioare cu Double Jump, skin-uri exclusive si slot rezervat.
+  </Card>
 
-- **1. Deschide aplicatia Steam** — mergi la profilul tau
+  <Card title="Sistemul de Economie" href="/docs/currency">
+    Afla cum poti folosi banii si creditele acumulate pe server.
+  </Card>
 
-- **2. Editeaza-ti numele** — apasa pe „Edit Profile” si adauga cs2.wildfire.ro sau wildfire.ro la sfarsitul numelui tau
-
-- **3. Intra pe server** — odata conectat, beneficiile Gold Member sunt aplicate automat
-
-![Editare profil Steam](/utility/wf_name_steam.png)
-
-edit profile
-
-Apasa pe **Edit Profile** pentru a-ti modifica numele
-
-![Adaugare cs2.wildfire.ro in nume](/utility/wf_name_steam2.png)
-
-add wildfire.ro
-
-Adauga **cs2.wildfire.ro** sau **wildfire.ro** la sfarsitul numelui si dupa apasa pe Save
-
-Statutul Gold Member este **automat** cat timp ai numele corect configurat in Steam. Daca iti schimbi numele si elimini cs2.wildfire.ro, pierzi imediat beneficiile.
-
-- **Important!** Beneficiile Gold Member sunt active doar pe serverele Wildfire.ro. Asigura-te ca ai numele corect configurat pentru a pastra statutul. Poti verifica oricand cu comanda !goldstatus.
+  <Card title="Setari Client (!settings)" href="/docs/systems/other/settings">
+    Personalizeaza preferintele tale de afisaj si sunete in-game.
+  </Card>
+</Cards>

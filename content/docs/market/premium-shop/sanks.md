@@ -1,87 +1,81 @@
 ---
-title: Sank Sounds
-description: >-
-  Descopera totul despre Sank Sounds pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Sank Sounds in Chat (!sm)
+description: Ghidul complet al sistemului de sunete interactive Sank Sounds pe serverele WildFire CS2 — comenzi !sm, video preview, Sound of the Day si exclusivitate VIP.
 outline: deep
 ---
-**VIP Feature** **Sank Sounds**
-**Sank Sounds** reprezinta o colectie de sunete speciale disponibile exclusiv pentru jucatorii **VIP**. Prin simpla tastare a unui text prestabilit in chat, vei declansa un sunet pe care **il vor auzi TOTI jucatorii** din server. Este modalitatea perfecta de a-ti face prezenta simtita si de a adauga un plus de atmosfera meciului.
 
-**Features:**
+Modulul **Sank Sounds (`!sm`)** este o functionalitate interactiva exclusiva membrilor **VIP** de pe serverul **WildFire.ro**, permitand declansarea de efecte sonore, replici amuzante si replici iconice din filme sau meme-uri direct prin caseta de chat.
 
-- **Exclusiv VIP** — doar jucatorii cu rang VIP pot folosi Sank Sounds
+---
 
-- **Volum independent** — fiecare jucator isi poate ajusta volumul Sank Sounds separat
+> [!NOTE]
+> Sistemul include mecanisme stricte de cooldown si reglare individuala a volumului pentru a asigura un mediu distractiv, fara a perturba comunicatiile esentiale din meci.
 
-- **Cooldown system** — dupa un Sank, toti jucatorii trebuie sa astepte inainte de urmatorul
+---
 
-- **Sank of the Day** — cel mai popular sank (adica sound) din ziua respectiva
+## 1. Meniul Principal de Sunete (`!sm`)
 
-- **Sank Custom** — poti cumpara un sunet personalizat cu orice text doresti
+Tasteaza comanda `!sm` in chat pentru a deschide interfata grafica a colectiei de sunete:
 
-Sank Sounds sunt sisteme **premium exclusive VIP** care nu ofera niciun avantaj in joc, dar iti permit sa interactionezi cu intregul server intr-un mod distractiv.
+![Meniul Sank Sounds in Joc](/sank/sank_gif_1.gif)
 
-## 1.0 COMANDA !sm
-1.0 COMANDA !sm
+In meniu poti naviga prin zeci de categorii sonore: replici de lupta, meme-uri, sunete haioase si efecte speciale.
 
-Pentru a deschide meniul Sank Sounds, tasteaza **!sm** in chat.
+---
 
-Scrie `!sm` in chat pentru a deschide meniul de selectie si configurare a sunetelor.
+## 2. Previzualizare & Utilizare Directa din Chat
 
-![](/sank/sank_gif_1.gif)
+Poti declansa un sunet atat din interfata grafica, cat si tastand direct textul prestabilit in caseta de chat (de exemplu: `gg`, `headshot`, `fail` etc.):
 
-!sm
+<DocVideo src="/videos/preview_sank.mp4" title="Previzualizare Sank Sounds in Joc" />
 
-Tasteaza !sm in chat si meniul se deschide instant
+* Nu este obligatoriu sa deschizi meniul de fiecare data: retine cuvintele cheie favorite si scrie-le direct in chat in momentele potrivite ale rundei!
 
-**!sounds** — poti folosi aceasta comanda pentru a activa sau dezactiva toate Sank Sounds instant.
+---
 
-## 2.0 PREVIEW SANK SOUNDS
-2.0 PREVIEW SANK SOUNDS
+## 3. Sound of the Day & Utilizari Recente
 
-Poti selecta orice sank doresti din meniul `!sm`.
+Pentru a descoperi cele mai apreciate efecte sonore din comunitate, interfata `!sm` include doua sectiuni dinamice:
 
-De asemenea poti scrie sunetul si in chat, nu este nevoie sa il pui mereu din meniu.
+![Sound of the Day](/sank/sank_of_the_day.png)
 
-<DocVideo src="/videos/preview_sank.mp4" title="Preview Sank Sounds" />
+* **Sound of the Day:** Cel mai popular si votat efect sonor utilizat pe server in ultimele 24 de ore.
 
-preview sank
+![Sunete Folosite Recent](/sank/recently_used.png)
 
-Activeaza sunete direct din meniul nostru.
+* **Recently Played:** Istoricul rapid al ultimelor sunete pe care le-ai declansat, facilitand accesul instantaneu la replicile tale favorite.
 
-## 3.0 SOUND OF THE DAY & RECENTLY PLAYED
-3.0 SOUND OF THE DAY & RECENTLY PLAYED
+---
 
-In meniul **!sm** vei gasi doua sectiuni speciale care te ajuta sa descoperi cele mai populare sunete si pe cele folosite recent.
+## 4. Controlul Volumului & Oprire Globala (`!sounds`)
 
-![](/sank/sank_of_the_day.png)
+Fiecare jucator de pe server are control complet asupra modului in care receptioneaza sunetele Sank:
 
-sound of the day
+* `!sounds` — Comuta instantaneu intre activarea si oprirea totala (Mute) a redarii sunetelor Sank pe ecranul tau.
+* `!settings` — Permite ajustarea fina a volumului sonor dedicat pentru efectele Sank.
 
-Cel mai folosit sunet in ultimele 24 de ore
+---
 
-![](/sank/recently_used.png)
+## 5. Reguli de Utilizare & Cooldown Anti-Spam
 
-recently played
+> [!IMPORTANT]
+> **Timp de Asteptare (Cooldown):**  
+> Dupa declansarea unui sunet Sank, sistemul impune o perioada automata de cooldown pentru a preveni suprapunerea sunetelor. Foloseste efectele sonore cu masura si bun-gust pentru a crea momente memorabile alaturi de colegii de meci!
 
-Ultimele sunete folosite de tine
+---
 
-**Sank of the Day** se actualizeaza zilnic si iti arata ce este popular in comunitate.
+## Resurse si Sisteme Conexe
 
-## 4.0 EXCLUSIVITATE VIP
-4.0 EXCLUSIVITATE VIP
+<Cards>
+  <Card title="Pachete si Grade VIP" href="/docs/market/vip/vip-overview">
+    Afla cum poti debloca accesul complet la comanda !sm prin achizitia unui grad VIP.
+  </Card>
 
-Sistemul **Sank Sounds** este disponibil exclusiv pentru jucatorii cu statut **VIP**. Doar ei pot scrie comenzi in chat pentru a declansa sunete.
+  <Card title="Custom Entry Songs" href="/docs/market/premium-shop/entry-songs">
+    Seteaza melodia ta preferata care va fi redata automat cand intri pe server.
+  </Card>
 
-Ai nevoie de rang **VIP** pentru a putea folosi orice comanda Sank in chat.
-
-Pentru a deveni **VIP** si a avea acces la Sank Sounds, acceseaza sectiunea VIP de pe docs.
-
-- **Nota:** Poti activa sau dezactiva auzirea Sank Sounds oricand folosind comanda !sounds. Toate sunetele achizitionate raman in colectia ta permanent.
-
-- **VIP Required:** Doar jucatorii cu rang VIP pot folosi aceasta functionalitate.
-
-- **Cooldown:** Respecta timpul de asteptare dintre Sank-uri pentru a mentine o atmosfera placuta in server.
-
-- **Sfat:** Foloseste Sank Sounds cu moderatie si in momente potrivite pentru a crea momente memorabile alaturi de comunitate!
+  <Card title="Setari Client (!settings)" href="/docs/systems/other/settings">
+    Personalizeaza preferintele tale de afisaj si sunete in-game.
+  </Card>
+</Cards>

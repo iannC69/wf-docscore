@@ -9,6 +9,8 @@ import { getPlatformSettings } from "@/lib/security/settingsStore";
 import { getAuthenticatedAdminSession } from "@/lib/security/auth";
 import { AnnouncementBanner } from "@/components/ui/AnnouncementBanner";
 import { LightboxProvider } from "@/components/docs/MediaLightbox";
+import { TextSelectionAskAi } from "@/components/docs/TextSelectionAskAi";
+import { DocsTransitionWrapper } from "@/components/docs/DocsTransitionWrapper";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -38,10 +40,13 @@ export default async function DocsLayout({
           {/* Liquid fire background */}
           <LiquidBackground />
 
+          {/* Contextual Ask AI on text selection */}
+          <TextSelectionAskAi />
+
           <Header />
           <Sidebar nav={nav} />
           <div className="docs-main" id="docs-main-container">
-            {children}
+            <DocsTransitionWrapper>{children}</DocsTransitionWrapper>
           </div>
         </div>
       </LightboxProvider>

@@ -1,119 +1,91 @@
 ---
-title: Agents
-description: >-
-  Descopera totul despre Agents pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Skin-uri de Agenti (T & CT Operators)
+description: Ghidul complet pentru echiparea si cumpararea agentilor custom pe serverele WildFire CS2 — comenzi !ws, navigare din tastatura si sincronizare loadout.
 outline: deep
 ---
-**Operators** **Agent System**
-Agentii sunt skin-uri de personaj care inlocuiesc modelele default ale jucatorilor din CS2. Fiecare agent are un design unic, voice lines specifice si animatii proprii. Acestia sunt impartiti in doua categorii: **Terrorist (T)** si **Counter-Terrorist (CT)**.
 
-Odata castigati, agentii sunt adaugati in inventar si pot fi echipati direct din meniul `!ws` sau de pe site. Poti schimba oricand agentul pentru fiecare echipa separat.
+Modulul **Agent Skins** iti permite sa inlocuiesti modelele implicite de Counter-Strike 2 cu operatori speciali din ambele tabere (**Terrorist** si **Counter-Terrorist**). Fiecare agent beneficiaza de un model 3D detaliat, animatii de inspectare proprii si linii vocale (voice lines) originale in timpul rundelor.
 
-Agentii sunt **iteme cosmetice** care nu ofera niciun avantaj in joc. Fiecare agent are voice lines unice si animatii proprii.
+---
 
-## 1.0 INFORMATII
-1.0 INFORMATII
+> [!NOTE]
+> Toate modelele de agenti sunt iteme cosmetice si se acceseaza centralizat din meniul **`!ws`**. Poti echipa un agent diferit pentru fiecare echipa (T / CT), iar modelul se randeaza instantaneu pe server.
 
-Totul incepe cu o comanda simpla si o interfata intuitiva, controlata complet din **tastatura**.
+---
 
-Scrie `!ws` in chat pentru a deschide interfata principala a **skin-urilor si agentilor**.
+## 1. Meniul de Agenti & Controale In-Game
 
-Navigarea prin meniul de agenti se face cu ajutorul tastelor:
+Deschide interfata tastand comanda `!ws` in chat si navigheaza la categoria **Agents**:
 
-ETasta **E** - **Selecteaza** agentul
-FTasta **F** - **Navigheaza in sus** prin categorii
-SHIFTTasta **SHIFT** - **Navigheaza in jos** prin categorii
+![Navigare Meniu Agenti in !ws](/agents/gif_agents_1.gif)
 
-![Agents Menu Navigation - !ws](/agents/gif_agents_1.gif)
+Navigarea se face fluid folosind tastele de control:
+* **Tasta E:** Deschide panoul agentului selectat / Echipeaza modelul.
+* **Tasta F (Inspect):** Navigheaza in sus prin lista de operatori.
+* **Tasta SHIFT (Walk):** Navigheaza in jos prin lista de operatori.
+* **Tasta TAB / ESC:** Inchide meniul.
 
-!ws agents menu
+![Selectare si Echipare Agent](/agents/gif_agents_2.gif)
 
-Foloseste tastele **E**, **F** si **SHIFT** pentru a naviga prin meniul !ws
+In panoul fiecarui agent ai la dispozitie urmatoarele optiuni:
+* **Preview:** Inspecteaza vizual agentul inainte de cumparare.
+* **Buy Now:** Achizitioneaza modelul permanent folosind Phoenix Coins (PHX).
+* **Equip:** Activeaza agentul instantaneu pe echipa corespunzatoare (T sau CT).
 
-Meniul `!ws` iti va afisa toti **agentii disponibili**, separati pe echipe (T si CT), cu pretul in Phoenix Coins.
+---
 
-![Agents Selection - !ws](/agents/gif_agents_2.gif)
+## 2. Gestiunea Inventarului & Sincronizare Web
 
-select agent
+Toti agentii achizitionati raman salvati permanent in inventarul tau:
 
-Apasa **E** pentru a selecta agentul dorit — acesta se echipeaza automat
+![Meniul Inventar In-Game !inv](/utility/inventory.png)
 
-Dupa ce selectezi un agent, se deschide panoul detaliat:
+![Inventar pe Site](/utility/gif_inventory.gif)
 
-- **Preview** — poti vedea modelul agentului inainte de achizitie
+![Loadout si Echipare din Browser](/utility/gif_loadout.gif)
 
-- **Buy Now** — cumpara agentul direct cu Phoenix Coins
+* **In Joc:** Tasteaza `!inv` pentru a vedea operatorii detinuti si a comuta intre ei.
+* **Pe Site:** Autentifica-te pe [wildfire.ro/skins-market](https://wildfire.ro) ➔ **Loadout** pentru a schimba agentii activi direct din browser. Modificarile se transmit instantaneu pe server.
 
-- **Equip** — daca il detii deja, il echipezi instant
+---
 
-Odata selectati, agentii sunt **vizibili instant** in joc, atat pentru tine cat si pentru ceilalti jucatori. Nu este necesara relogarea.
+## 3. Colectii Populare de Agenti Disponibili
 
-## 2.0 CUM OBTII AGENTI
-2.0 CUM OBTII AGENTI
+Iata cateva dintre cele mai apreciate personaje din catalogul `!ws`:
 
-Singura metoda prin care poti obtine agenti pe server este:
+| Model Agent | Factiune & Echipa | Stil & Caracteristici |
+| :--- | :--- | :--- |
+| **Sir Bloody Miami Darryl** | The Professionals (T) | Costum elegant, masca florala, replici sonore memorabile |
+| **Lt. Commander Ricksaw** | NSWC SEAL (CT) | Comandant naval veteran, uniforma tactica militara |
+| **Special Agent Ava** | FBI (CT) | Operator feminin de elita, echipament SWAT modern |
+| **'The Doctor' Romanov** | Sabre (T) | Medic tactician misterios, stil militar est-european |
+| **Number K & Dragomir** | The Professionals (T) | Masti iconice cu cravata si manusi din piele |
 
-- **Market** — cumperi din !ws folosind Phoenix Coins
+---
 
-## 3.0 INVENTAR & LOADOUT
-3.0 INVENTAR & LOADOUT
+## 4. Tabelul Comenzilor Oficiale pentru Agenti
 
-Toate item-urile tale sunt stocate in inventar si pot fi gestionate atat din joc, cat si de pe site-ul oficial.
+| Comanda | Sintaxa Oficiala | Descriere & Rol |
+| :--- | :--- | :--- |
+| `!ws` | `!ws` | Deschide meniul principal pentru cumpararea si inspectarea agentilor |
+| `!inv` | `!inv` | Deschide inventarul personal pentru echiparea rapida a agentilor |
+| `!missions` | `!missions` | Castiga Phoenix Coins gratuit pentru deblocarea agentilor doriti |
+| `!eco` | `!eco` | Verifica balanta ta de Phoenix Coins |
 
-![Inventory Menu - !inv](/utility/inventory.png)
+---
 
-!inv - inventory menu
+## Resurse si Sisteme Conexe
 
-Foloseste comanda **!inv** in joc pentru a-ti deschide inventarul
+<Cards>
+  <Card title="Ghidul Central WeaponSkins (!ws)" href="/docs/systems/skins">
+    Afla cum personalizezi intregul arsenal de arme, float si StatTrak.
+  </Card>
 
-**Pe site-ul oficial:** Acceseaza `wildfire.ro/skins-market` si autentifica-te cu Steam pentru a accesa sectiunea **Inventory**. Acolo vei gasi toate skin-urile, cutitele, manusile si agentii pe care ii detii.
+  <Card title="Modele si Finisaje de Cutite" href="/docs/systems/skins/knives">
+    Descopera colectia completa de cutite disponibile in meniul !ws.
+  </Card>
 
-![Site Inventory - wildfire.ro/skins-market](/utility/gif_inventory.gif)
-
-site inventory
-
-In sectiunea **Inventory** de pe site poti vedea toate item-urile castigate
-
-Dupa ce ai vizualizat inventarul, acceseaza sectiunea **Loadout** pentru a-ti echipa item-urile direct din browser.
-
-![Site Loadout - Echipa iteme](/utility/gif_loadout.gif)
-
-site loadout - equip items
-
-In sectiunea **Loadout** selecteaza item-ul dorit si apasa Equip
-
-Toate item-urile echipate pe site sunt **sincronizate automat** cu jocul. Nu este nevoie de relogare - schimbarile sunt vizibile instant in CS2!
-
-## 4.0 TIPURI DE AGENTI
-4.0 TIPURI DE AGENTI
-
-![Sir Bloody Miami Darryl](https://community.fastly.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oYby8iRe_OGnZ6psLM-FD3WWj-gn47Q-GH7qxkhwsWjWyN6pJynGZld0CJR3QOdbtRa4lIGxY7_g7wfAy9USZdxTISw/330x192?allow_animated=1)
-
-Sir Bloody Miami Darryl
-
-Agent T — Stil mafiot, voice lines memorabile
-
-![Lt. Commander Ricksaw](https://community.fastly.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nz6XRk-fO8YaVjNPndVz-Ul74hsbNoHi21kUly6mrQzNagcijBPQEnCsciTOdY4Rm6m4XvN_SiuVLIl2LQXw/360fx360f)
-
-Lt. Commander Ricksaw
-
-Agent CT — Militar, comandant naval
-
-![Special Agent Ava](https://community.fastly.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nm_ytk-fO8YaVjNPLdXz6TkLdw5LY4Hnmwl0wktj7dn4r9I3OWPFApC5F1QeAO5xi4lIDiM_SiuVKk3V4ZcQ/360fx360f)
-
-Special Agent Ava
-
-Agent CT — Feminin, stil elegant
-
-![The Doctor Romanov](https://community.fastly.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oZTh8Sla4c24abZkIf6HBinGlu0k4bU7Givnk01352yByd_6IHLGZgElDpchEbNZtxewx9zhNr_m-UWA3HK9C48i/360fx360f)
-
-'The Doctor' Romanov
-
-Agent T — Misterios, stil tactic
-
-**si multi altii...** — Number K, Dragomir, Rezan, etc!
-
-- **Nota:** Poti schimba oricand agentul pentru fiecare echipa separat direct din meniul !ws.
-
-- **Atentie!** Agentii sunt iteme cosmetic rare. Preturile variaza in functie de raritate si design.
+  <Card title="Modele si Finisaje de Manusi" href="/docs/systems/skins/gloves">
+    Alege manusile perfecte pentru a se potrivi cu agentul tau echipat.
+  </Card>
+</Cards>

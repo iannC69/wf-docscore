@@ -113,7 +113,7 @@ export default async function DocsHomePage() {
               </p>
             </Link>
 
-            <Link href="/docs/informatii/regulamente/go/regulament-go" className="home-card">
+            <Link href="/docs/informatii/regulamente/regulament-go" className="home-card">
               <div className="home-card-header">
                 <div className="home-card-icon-wrap home-card-icon--blue">
                   <Gamepad2 size={18} aria-hidden="true" />
@@ -127,7 +127,7 @@ export default async function DocsHomePage() {
               </p>
             </Link>
 
-            <Link href="/docs/systems/skins/informatiiws" className="home-card">
+            <Link href="/docs/systems/skins" className="home-card">
               <div className="home-card-header">
                 <div className="home-card-icon-wrap home-card-icon--red">
                   <Swords size={18} aria-hidden="true" />

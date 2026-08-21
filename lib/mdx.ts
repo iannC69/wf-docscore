@@ -67,7 +67,25 @@ const prettyCodeOptions = {
 // ─── MDX Source Sanitizer ───────────────────────────────────────────────────
 
 export function sanitizeMdxSource(text: string): string {
-  return text
+  // Protect code blocks and inline code from HTML entity replacement
+  const codeSnippets: string[] = [];
+  const placeholderPrefix = "___WF_MDX_CODE_BLOCK_";
+
+  const protectedText = text
+    // Protect fenced code blocks (```...``` or ~~~...~~~)
+    .replace(/(```[\s\S]*?```|~~~[\s\S]*?~~~)/g, (match) => {
+      const idx = codeSnippets.length;
+      codeSnippets.push(match);
+      return `${placeholderPrefix}${idx}___`;
+    })
+    // Protect inline code (`...`)
+    .replace(/(`[^`\n]+`)/g, (match) => {
+      const idx = codeSnippets.length;
+      codeSnippets.push(match);
+      return `${placeholderPrefix}${idx}___`;
+    });
+
+  let sanitized = protectedText
     // 1. Remove HTML comments which break JSX/MDX parser: <!-- ... -->
     .replace(/<!--[\s\S]*?-->/g, "")
     // 2. Remove orphan VitePress header tags
@@ -82,7 +100,7 @@ export function sanitizeMdxSource(text: string): string {
     // 4. Ensure void tags are closed if any remain: <br> -> \n, <hr> -> \n---\n
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<hr\s*\/?>/gi, "\n---\n")
-    // 5. Escape orphan angle brackets / command placeholders: <cod> -> &lt;cod&gt;
+    // 5. Escape orphan angle brackets / command placeholders in regular text: <cod> -> &lt;cod&gt;
     .replace(/<([a-zA-Z0-9_-]+)>/g, (match, tag) => {
       const lower = tag.toLowerCase();
       const validTags = [
@@ -93,7 +111,7 @@ export function sanitizeMdxSource(text: string): string {
         "callout", "steps", "step", "tabs", "tab", "cards", "card"
       ];
       if (!validTags.includes(lower)) {
-        return `\`<${tag}>\``;
+        return `&lt;${tag}&gt;`;
       }
       return match;
     })
@@ -104,6 +122,39 @@ export function sanitizeMdxSource(text: string): string {
       const cleanAttrs = attrs.replace(/\bcontrols\b/gi, "").trim();
       return `<DocVideo ${cleanAttrs} />`;
     });
+
+  // ── 8. Convert GitHub-style callouts (> [!TYPE] ...) into <Callout type="..."> JSX ──
+  // Match a blockquote block that starts with > [!TYPE] — supports multi-line callouts
+  sanitized = sanitized.replace(
+    /(?:^|\n)((?:>[^\n]*\n?)+)/gm,
+    (fullMatch) => {
+      const lines = fullMatch.trim().split(/\n/);
+      // Strip leading "> " from each line
+      const stripped = lines.map((l) => l.replace(/^>\s?/, ""));
+      const firstLine = stripped[0] || "";
+
+      // Check if first line is a callout marker
+      const markerMatch = firstLine.match(/^\s*\[!(NOTE|TIP|WARNING|DANGER|CAUTION|IMPORTANT)\]\s*(.*)?$/i);
+      if (!markerMatch) return fullMatch;
+
+      const calloutType = markerMatch[1].toLowerCase();
+      // Content from marker line (if any) + remaining lines
+      const restOfFirst = (markerMatch[2] || "").trim();
+      const restLines = stripped.slice(1).join("\n").trim();
+
+      const bodyParts = [restOfFirst, restLines].filter(Boolean);
+      const body = bodyParts.join("\n\n");
+
+      return `\n<Callout type="${calloutType}">\n${body}\n</Callout>\n`;
+    }
+  );
+
+  // Restore protected code snippets
+  codeSnippets.forEach((snippet, idx) => {
+    sanitized = sanitized.replace(`${placeholderPrefix}${idx}___`, snippet);
+  });
+
+  return sanitized;
 }
 
 // ─── Compile MDX ──────────────────────────────────────────────────────────────

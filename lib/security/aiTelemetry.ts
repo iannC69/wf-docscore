@@ -1,4 +1,4 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 
 export interface AiInteractionLog {
@@ -15,6 +15,9 @@ export interface AiInteractionLog {
   estimatedCostUsd: number;
   ip: string;
   errorMessage?: string;
+  feedback?: "helpful" | "unhelpful" | null;
+  feedbackTimestamp?: string;
+  feedbackReason?: string;
 }
 
 export interface DailyUsageItem {
@@ -33,6 +36,9 @@ export interface AiTelemetrySummary {
   totalCostUsd: number;
   avgLatencyMs: number;
   successRate: number;
+  totalHelpful: number;
+  totalUnhelpful: number;
+  satisfactionRate: number;
   model: string;
   docsContextCount: number;
   docsContextChars: number;
@@ -58,6 +64,8 @@ interface RawTelemetryStore {
   totalPromptTokens: number;
   totalCandidatesTokens: number;
   totalCostUsd: number;
+  totalHelpful?: number;
+  totalUnhelpful?: number;
   logs: AiInteractionLog[];
 }
 
@@ -76,6 +84,8 @@ function loadTelemetryStore(): RawTelemetryStore {
     totalPromptTokens: 0,
     totalCandidatesTokens: 0,
     totalCostUsd: 0,
+    totalHelpful: 0,
+    totalUnhelpful: 0,
     logs: [],
   };
 }
@@ -104,14 +114,15 @@ export function recordAiInteraction(params: {
   model?: string;
   ip?: string;
   errorMessage?: string;
-}): void {
+}): string {
   const promptTokens = params.promptTokens || 0;
   const candidatesTokens = params.candidatesTokens || 0;
   const totalTokens = promptTokens + candidatesTokens;
   const cost = calculateCostUsd(promptTokens, candidatesTokens);
 
+  const logId = `ai_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
   const log: AiInteractionLog = {
-    id: `ai_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    id: logId,
     timestamp: new Date().toISOString(),
     querySnippet: params.query.slice(0, 100).replace(/[\r\n]+/g, " "),
     responseChars: params.responseChars || 0,
@@ -124,6 +135,7 @@ export function recordAiInteraction(params: {
     estimatedCostUsd: cost,
     ip: params.ip ? params.ip.replace(/:\d+$/, "") : "127.0.0.1",
     errorMessage: params.errorMessage,
+    feedback: null,
   };
 
   const store = loadTelemetryStore();
@@ -134,6 +146,65 @@ export function recordAiInteraction(params: {
 
   store.logs.unshift(log);
   saveTelemetryStore(store);
+
+  return logId;
+}
+
+export function recordAiFeedback(params: {
+  interactionId?: string;
+  querySnippet?: string;
+  feedback: "helpful" | "unhelpful";
+  reason?: string;
+}): { success: boolean; message: string; interactionId: string } {
+  const store = loadTelemetryStore();
+  const logs = store.logs || [];
+
+  let targetLog: AiInteractionLog | undefined;
+  if (params.interactionId) {
+    targetLog = logs.find((l) => l.id === params.interactionId);
+  }
+
+  if (!targetLog && params.querySnippet) {
+    const qSnippet = params.querySnippet.slice(0, 60).toLowerCase().trim();
+    targetLog = logs.find((l) => l.querySnippet.toLowerCase().includes(qSnippet));
+  }
+
+  if (targetLog) {
+    const prevFeedback = targetLog.feedback;
+    targetLog.feedback = params.feedback;
+    targetLog.feedbackTimestamp = new Date().toISOString();
+    if (params.reason) {
+      targetLog.feedbackReason = params.reason.slice(0, 200);
+    }
+
+    // Update global counters
+    if (prevFeedback === "helpful" && params.feedback === "unhelpful") {
+      store.totalHelpful = Math.max(0, (store.totalHelpful || 1) - 1);
+      store.totalUnhelpful = (store.totalUnhelpful || 0) + 1;
+    } else if (prevFeedback === "unhelpful" && params.feedback === "helpful") {
+      store.totalUnhelpful = Math.max(0, (store.totalUnhelpful || 1) - 1);
+      store.totalHelpful = (store.totalHelpful || 0) + 1;
+    } else if (!prevFeedback) {
+      if (params.feedback === "helpful") {
+        store.totalHelpful = (store.totalHelpful || 0) + 1;
+      } else {
+        store.totalUnhelpful = (store.totalUnhelpful || 0) + 1;
+      }
+    }
+
+    saveTelemetryStore(store);
+    return { success: true, message: "Feedback înregistrat cu succes", interactionId: targetLog.id };
+  }
+
+  // Fallback: If no matching log found (e.g. older session), record directly to counters
+  if (params.feedback === "helpful") {
+    store.totalHelpful = (store.totalHelpful || 0) + 1;
+  } else {
+    store.totalUnhelpful = (store.totalUnhelpful || 0) + 1;
+  }
+  saveTelemetryStore(store);
+
+  return { success: true, message: "Feedback agregat cu succes", interactionId: params.interactionId || "generic" };
 }
 
 export function getAiTelemetrySummary(): AiTelemetrySummary {
@@ -144,6 +215,8 @@ export function getAiTelemetrySummary(): AiTelemetrySummary {
   let todayCount = 0;
   let successCount = 0;
   let totalLatency = 0;
+  let helpfulCount = 0;
+  let unhelpfulCount = 0;
 
   // 7-day aggregation map
   const dailyMap = new Map<string, { queries: number; totalTokens: number; costUsd: number }>();
@@ -162,6 +235,11 @@ export function getAiTelemetrySummary(): AiTelemetrySummary {
     if (log.status === "success") {
       successCount++;
     }
+    if (log.feedback === "helpful") {
+      helpfulCount++;
+    } else if (log.feedback === "unhelpful") {
+      unhelpfulCount++;
+    }
     totalLatency += log.latencyMs || 0;
 
     if (dailyMap.has(logDate)) {
@@ -174,6 +252,11 @@ export function getAiTelemetrySummary(): AiTelemetrySummary {
 
   const avgLatency = logs.length > 0 ? Math.round(totalLatency / logs.length) : 0;
   const successRate = logs.length > 0 ? Math.round((successCount / logs.length) * 100) : 100;
+
+  const totalHelpful = Math.max(helpfulCount, store.totalHelpful || 0);
+  const totalUnhelpful = Math.max(unhelpfulCount, store.totalUnhelpful || 0);
+  const totalRatings = totalHelpful + totalUnhelpful;
+  const satisfactionRate = totalRatings > 0 ? Math.round((totalHelpful / totalRatings) * 100) : 100;
 
   // Context metadata
   let docsCount = 62;
@@ -207,6 +290,9 @@ export function getAiTelemetrySummary(): AiTelemetrySummary {
     totalCostUsd: store.totalCostUsd || 0,
     avgLatencyMs: avgLatency,
     successRate,
+    totalHelpful,
+    totalUnhelpful,
+    satisfactionRate,
     model: "gemini-3.5-flash-lite",
     docsContextCount: docsCount,
     docsContextChars: docsChars,
@@ -222,6 +308,8 @@ export function clearAiTelemetry(): void {
     totalPromptTokens: 0,
     totalCandidatesTokens: 0,
     totalCostUsd: 0,
+    totalHelpful: 0,
+    totalUnhelpful: 0,
     logs: [],
   };
   saveTelemetryStore(empty);

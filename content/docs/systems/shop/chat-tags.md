@@ -1,146 +1,101 @@
 ---
-title: Chat & Tag-uri
-description: >-
-  Descopera totul despre Chat & Tag-uri pe platforma Wildfire.ro. Resurse
-  complete, ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Chat Tags & Culori Personalizate
+description: Ghidul complet pentru personalizarea chat-ului pe serverele WildFire CS2 — comenzi !shop, Custom Tags (!settag), Name Colors si Tag Colors.
 outline: deep
 ---
-**Shop** **Chat & Tag-uri**
-Pe server avem un sistem foarte bine gandit de **!shop** unde jucatorii isi pot cumpara diverse lucruri, printre care si **tag-uri**. Aceste tag-uri sunt afisate in chat inaintea numelui jucatorului.
 
-Totul incepe cu comanda `!shop` — aceasta deschide meniul principal din care poti naviga catre toate categoriile disponibile.
+Sistemul **Chat & Tag-uri (`!shop`)** iti ofera libertate deplina in personalizarea profilului tau in caseta de chat de pe serverul **WildFire.ro**. Folosind **Creditele** castigate gratuit din playtime, poti alege combinatii spectaculoase de culori si prefixe exclusive.
 
-![!shop menu](/shop/shop1.gif)
+---
 
-!shop
+> [!NOTE]
+> Toate tag-urile si culorile achizitionate din `!shop` au o durata de valabilitate de **7 zile** de la achizitie si raman salvate permanent pe durata celor 7 zile.
 
-Meniul principal !shop
+---
 
-Toate optiunile din shop pot fi achizitionate cu **credite** castigate pe server. Scrie `!shop` in chat pentru a deschide meniul.
+## 1. Meniul Principal de Magazin (`!shop`)
 
-## 1.0 CE VARIANTE AI?
-1.0 CE VARIANTE AI?
+Tasteaza comanda `!shop` in chat pentru a deschide interfata interactiva a magazinului cosmetic:
 
-**Categorii disponibile in shop:**
+![Meniul Principal !shop](/shop/shop1.gif)
 
-- **Chat Colors** — schimba culoarea mesajelor tale din chat
+Meniul include cele 4 mari categorii de stilizare:
 
-- **Chat Tags** — adauga un tag vizibil inaintea numelui tau
+![Categoriile din Magazin](/shop/shop2.gif)
 
-- **Name Colors** — schimba culoarea numelui tau din chat
+---
 
-- **Tag Colors** — schimba culoarea tag-ului tau din chat
+## 2. Cele 4 Categorii de Personalizare
 
-![shop categories](/shop/shop2.gif)
+### A. Chat Colors (Culori pentru Mesaje)
+Schimba culoarea textului pe care il trimiti in chat. Poti alege dintre zeci de nuante vibrante (verde, cyan, galben, roz, portocaliu etc.):
 
-categorii
+![Previzualizare Chat Colors](/shop/shop3.gif)
 
-Categoriile disponibile in shop
+![Demonstratie Chat Colors](/shop/shop4.gif)
 
-## 2.0 CHAT COLORS
-2.0 CHAT COLORS
+### B. Chat Tags (Prefixe inainte de Nume)
+Adauga un tag exclusiv afisat inaintea numelui tau in chat (ex: `[VIP]`, `[LEGEND]`, `[KILLER]` sau un tag personalizat):
 
-**Chat Colors — Culori pentru mesaje**
-Cu optiunea **Chat Colors** iti poti personaliza culoarea mesajelor tale din chat. Fiecare culoare disponibila poate fi previzualizata direct in meniul shop, astfel incat sa stii exact cum vor arata mesajele tale inainte de achizitie.
+![Previzualizare Chat Tags](/shop/shop5.gif)
 
-Odata achizitionata, culoarea se aplica automat pe toate mesajele pe care le trimiti in chat. Poti schimba oricand culoarea accesand din nou meniul `!shop`.
+![Demonstratie Chat Tags](/shop/shop6.gif)
 
-![chat colors preview](/shop/shop3.gif)
+### C. Name Colors (Culoarea Numelui Tau)
+Personalizeaza nuanta cu care este scris nickname-ul tau de fiecare data cand trimiti un mesaj:
 
-chat colors
+![Previzualizare Name Colors](/shop/shop7.gif)
 
-Previzualizare Chat Colors
+![Demonstratie Name Colors](/shop/shop8.gif)
 
-![chat colors demo](/shop/shop4.gif)
+### D. Tag Colors (Culoarea Prefixului)
+Daca ai deja un tag activ, aceasta optiune iti permite sa colorezi prefixul independent de restul numelui:
 
-demo
+![Previzualizare Tag Colors](/shop/shop9.gif)
 
-Demonstratie Chat Colors in actiune
+![Demonstratie Tag Colors](/shop/shop10.gif)
 
-## 3.0 CHAT TAGS
-3.0 CHAT TAGS
+---
 
-**Chat Tags — Tag-uri pentru chat**
-Cu optiunea **Chat Tags** iti poti adauga un tag personalizat care apare inaintea numelui tau in chat. Tag-urile sunt vizibile pentru toti jucatorii si ofera un mod unic de a te diferentia.
+## 3. Comenzi Rapide & Optiuni Custom
 
-Tag-urile sunt afisate doar in **chat**. Poti alege dintr-o varietate de tag-uri predefinite sau poti crea unul custom cu comanda `!settag`.
+Poti seta oricand tag-uri sau culori personalizate folosind comenzile directe:
 
-![chat tags preview](/shop/shop5.gif)
+| Comanda | Sintaxa Oficiala | Descriere & Rol |
+| :--- | :--- | :--- |
+| `!shop` | `!shop` | Deschide meniul grafic principal al magazinului |
+| `!settag` | `!settag [text_tag]` | Creeaza si echipeaza un tag personalizat in chat |
+| `!setnamecolor` | `!setnamecolor` | Deschide selectorul rapid de culoare pentru nickname |
+| `!eco` | `!eco` | Verifica balanta ta curenta de credite inainte de achizitie |
 
-chat tags
+---
 
-Previzualizare Chat Tags
+## 4. Cum se Combina Personalizarile?
 
-![chat tags demo](/shop/shop6.gif)
+Toate optiunile cosmetice pot fi combinate simultan pentru un look complet:
 
-demo
+```text
+[TAG AURIU] NumeCyan: Mesaj scris cu text alb curat!
+```
 
-Demonstratie Chat Tags in actiune
+> [!IMPORTANT]
+> **Reguli de Bun-Simt pentru Custom Tags (`!settag`):**  
+> Este strict interzisa crearea de tag-uri care contin injurii, cuvinte vulgare, reclama la alte servere sau imitarea gradelor administrative (`[ADMIN]`, `[OWNER]`, `[HELPER]`). Incalcarea acestei reguli atrage resetarea tag-ului si sanctionarea cu `!gag`.
 
-## 4.0 NAME COLORS
-4.0 NAME COLORS
+---
 
-**Name Colors — Culori pentru nume**
-Cu optiunea **Name Colors** iti poti personaliza culoarea numelui tau din chat. Numele tau va aparea in culoarea aleasa de fiecare data cand scrii un mesaj, facandu-te usor de recunoscut. Poti folosi si comanda rapida `!setnamecolor`.
+## Resurse si Sisteme Conexe
 
-![name colors preview](/shop/shop7.gif)
+<Cards>
+  <Card title="Ghidul Creditelor In-Game" href="/docs/currency/credits">
+    Afla cum acumulezi credite gratuite prin playtime (+50 la 5 min) si MVP-uri.
+  </Card>
 
-name colors
+  <Card title="Weapon Laser Tracers" href="/docs/systems/shop/tracers">
+    Efecte luminoase laser pe traiectoria fiecarui glont tras de armele tale.
+  </Card>
 
-Previzualizare Name Colors
-
-![name colors demo](/shop/shop8.gif)
-
-demo
-
-Demonstratie Name Colors in actiune
-
-## 5.0 TAG COLORS
-5.0 TAG COLORS
-
-**Tag Colors — Culori pentru tag-uri**
-Cu optiunea **Tag Colors** iti poti schimba culoarea tag-ului tau din chat. Daca ai deja un tag activ, aceasta optiune iti permite sa il personalizezi si mai mult prin alegerea unei culori unice.
-
-Culorile pentru tag-uri sunt afisate in **chat**, oferindu-ti un look complet personalizat.
-
-![tag colors preview](/shop/shop9.gif)
-
-tag colors
-
-Previzualizare Tag Colors
-
-![tag colors demo](/shop/shop10.gif)
-
-demo
-
-Demonstratie Tag Colors in actiune
-
-## 6.0 OPTIUNI CUSTOM
-6.0 OPTIUNI CUSTOM
-
-Asa cum ati vazut si in gif-urile atasate, in marea majoritate a cazurilor, optiunile sunt aceleasi — dar va puteti adauga si **custom color / tag / name color / tag color**.
-
-**Comenzi disponibile:**
-
-- !settag — seteaza un tag custom personalizat
-
-- !setnamecolor — seteaza o culoare custom pentru numele tau
-
- Mai multe comenzi custom vor fi adaugate in curand (TBD).
-
-## 7.0 CUM SE FOLOSESC?
-7.0 CUM SE FOLOSESC?
-
-**1** **Chat Colors**
-Se folosesc in chat dupa numele jucatorului — culoarea mesajelor tale va fi schimbata.
-
-**2** **Chat Tags**
-Se folosesc in chat inaintea numelui jucatorului. Tag-urile sunt afisate doar in chat.
-
-**3** **Name Colors**
-Se folosesc in chat afisand culoarea numelui jucatorului. Numele tau va aparea colorat de fiecare data cand scrii in chat.
-
-**4** **Tag Colors**
-Se folosesc in chat inaintea numelui jucatorului, schimband culoarea tag-ului.
-
-Toate personalizarile pot fi combinate — poti avea simultan un **tag colorat**, un **nume colorat** si **mesaje colorate** pentru un look complet unic!
+  <Card title="Fumigene Colorate (Color Smokes)" href="/docs/systems/shop/color-smokes">
+    Grenade fumigene spectaculoase cu particule de fum viu colorate.
+  </Card>
+</Cards>

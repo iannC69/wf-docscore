@@ -1,63 +1,87 @@
 ---
-title: Missions System
-description: >-
-  Sistemul de misiuni zilnice si saptamanale pe Wildfire.ro. Indeplineste
-  obiectivele si castiga premii in PHX!
+title: Sistemul de Misiuni (!missions)
+description: Ghidul complet al misiunilor zilnice si saptamanale pe serverele WildFire CS2 — comenzi !missions, recompense in Phoenix Coins si controale in-game.
 outline: deep
 ---
-## 1.0 INFORMATII GENERALE
-1.0 INFORMATII GENERALE
 
-**Daily/Weekly** **Sistemul de Misiuni**
-Sistemul de Missions este conceput pentru a recompensa jucatorii activi ai comunitatii Wildfire. Prin simpla participare pe server si indeplinirea unor obiective specifice, poti acumula **Phoenix Coins (PHX)**.
+Sistemul de **Misiuni (`!missions`)** este mecanismul principal prin care poti castiga **Phoenix Coins (PHX)** in mod 100% gratuit prin simpla ta participare si performanta pe serverul **WildFire.ro**.
 
-Foloseste urmatoarele comenzi pentru a interactiona cu sistemul:
+---
 
-Meniu Principal
-`!missions`
+> [!NOTE]
+> Progresul misiunilor este monitorizat automat in fundal de catre server, iar monedele castigate sunt virate instantaneu in balanta ta `!eco` in momentul indeplinirii obiectivelor.
 
-Top Jucatori
-`!missiontop`
+---
 
-## 2.0 INTERFATA SI CONTROL
-2.0 INTERFATA SI CONTROL
+## 1. Interfata Misiunilor si Controale In-Game
 
-![Missions Menu Navigation](/missions/missions2.png)
+Tasteaza comanda `!missions` in chat pentru a deschide panoul grafic interactiv pe ecran:
 
-!missions menu
+![Navigare Meniu Misiuni](/missions/missions2.png)
 
-Foloseste tastele **E**, **F** si **SHIFT** pentru a naviga prin meniul de misiuni
+Navigarea prin meniul de misiuni se face fluid folosind tastele de control ale caracterului:
 
-Navigarea in meniu se face rapid folosind tastele de control standard:
+* **Tasta SHIFT (Walk) / F (Inspect):** Navigare in sus si in jos prin lista de obiective.
+* **Tasta E (Use):** Selectare misiune activa si vizualizare cerinte detaliate de progres.
+* **Tasta TAB / ESC:** Inchiderea rapida a interfetei.
 
-- **SHIFT / F:** Navigare prin lista (Sus/Jos).
+---
 
-- **E (Use):** Selectare misiune / Vizualizare detalii.
+## 2. Categorii de Misiuni & Recompense
 
-- **TAB:** Inchidere rapida meniu.
+Misiunile sunt impartite in doua categorii principale in functie de durata si dificultate:
 
-## 3.0 TIPURI DE MISIUNI
-3.0 TIPURI DE MISIUNI
+### A. Misiuni Zilnice (Daily Quests)
+Obiective rapide concepute pentru fiecare sesiune de joc. Poti finaliza pana la **3 misiuni zilnice**, iar lista se reseteaza automat in fiecare noapte la **ora 00:00**.
 
-- **3.1** **Misiuni Zilnice (Daily)**
-Misiuni scurte care se reseteaza zilnic la ora 00:00. Poti finaliza pana la 3 astfel de misiuni pe zi pentru un boost rapid de PHX.
+![Exemplu Misiune Zilnica](/missions/missions.png)
 
-![Daily Mission Example](/missions/missions.png)
+* **Exemple de Obiective:** 25 de eliminari cu arme din categoria Rifles, 10 headshot-uri, plantarea bombei de 3 ori.
+* **Recompensa Medie:** **50 - 150 PHX** per misiune finalizata.
 
-daily quest info
+### B. Misiuni Saptamanale (Weekly Quests)
+Obiective complexe pe termen mediu care necesita consecventa si spirit de echipa pe parcursul intregii saptamani.
 
-- **3.2** **Misiuni Saptamanale (Weekly)**
-Obiective mai complexe care necesita efort pe parcursul intregii saptamani. Ofera recompense substantiate de pana la 1000 PHX.
+![Exemplu Misiune Saptamanala](/missions/missions3.png)
 
-![Weekly Mission Example](/missions/missions3.png)
+* **Exemple de Obiective:** 150 de kill-uri totale, 30 de titluri MVP, castigarea a 15 runde competitive.
+* **Recompensa Medie:** **500 - 1.000 PHX** per obiectiv completat.
 
-weekly quest info
+---
 
-## 4.0 LOGICA DE PROGRES
-4.0 LOGICA DE PROGRES
+## 3. Tabel Sinoptic al Categoriilor de Misiuni
 
-- **Activare:** Misiunile sunt urmarite automat in fundal din momentul conectarii.
+| Categorie Misiune | Frecventa Resetare | Numar Misiuni | Recompensa Per Obiectiv | Moneda Acordata |
+| :--- | :--- | :--- | :--- | :--- |
+| **Misiuni Zilnice (Daily)** | Zilnic la 00:00 | Pana la 3 | **50 - 150 PHX** | Phoenix Coins |
+| **Misiuni Saptamanale (Weekly)** | In fiecare Luni | 1 - 2 Majore | **500 - 1.000 PHX** | Phoenix Coins |
+| **Evenimente Speciale / Sezon** | Anuntate pe Discord | Variabil | **1.000 - 2.500 PHX** | Phoenix Coins |
 
-- **Premii:** Phoenix Coins sunt adaugati instant in portofel dupa indeplinirea obiectivului.
+---
 
-Sfat: Verifica saptamanal categoria **Weekly** pentru a nu rata bonusurile mari de monede!
+## 4. Comenzi Rapide pentru Misiuni
+
+* `!missions` — Deschide interfata grafica a misiunilor active si progresul curent.
+* `!missiontop` — Afiseaza clasamentul jucatorilor cu cele mai multe misiuni completate.
+* `!eco` — Verifica soldul tau actualizat de Phoenix Coins si Credite.
+
+> [!TIP]
+> Foloseste monedele PHX castigate din misiuni in meniul `!ws` pentru a-ti debloca permanent skin-uri de arme, cutite si manusi premium.
+
+---
+
+## Resurse si Sisteme Conexe
+
+<Cards>
+  <Card title="Ghidul Phoenix Coins (PHX)" href="/docs/currency/phoenixcoins">
+    Afla cum functioneaza moneda premium si unde o poti cheltui.
+  </Card>
+
+  <Card title="Sistemul WeaponSkins (!ws)" href="/docs/systems/skins">
+    Personalizeaza-ti intregul arsenal de arme, cutite si manusi.
+  </Card>
+
+  <Card title="Sistemul de Rank & ELO" href="/docs/systems/other/ranks">
+    Consulta clasamentul competitiv si modul de calcul al punctelor ELO.
+  </Card>
+</Cards>

@@ -1,88 +1,93 @@
 ---
-title: Roulette
-description: >-
-  Descopera totul despre Roulette pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Ruleta In-Game (Roulette)
+description: Ghidul complet al sistemului de Ruleta pe serverele WildFire CS2 — comenzi !rl, multiplicatori de cota de la 2x la 36x si pariuri pe Credite / PHX.
 outline: deep
 ---
-**Gambling** **Roulette System**
-Ruleta este cel mai popular joc de gambling de pe server. Functioneaza exact ca o ruleta reala — alegi un tip de pariu, plasezi suma dorita si astepti rezultatul. Castigurile variaza in functie de riscul asumat: de la **2x** pe culori, pana la **36x** pe un numar exact.
 
-Sistemul accepta atat **credite** cat si **Phoenix Coins**, iar castigurile se adauga instant in balanta. Totul se face din chat, fara meniuri complicate.
+**Ruleta (`!rl`)** este cel mai popular modul de cazino de pe serverul **WildFire.ro**. Conceputa pe baza mecanicii clasice de ruleta europeana (37 de numere: 0-36), iti permite sa plasezi pariuri rapide direct din meniul de joc pe o varietate larga de cote, de la pariuri sigure de **2x** pana la castiguri uriase de **36x**.
 
-Gambling-ul este optional si **100% bazat pe noroc**. Joaca responsabil — nu paria mai mult decat iti permiti sa pierzi.
+---
 
-## 1.0 CUM ACCESEZI RULETA
-1.0 CUM ACCESEZI RULETA
+> [!NOTE]
+> Sistemul accepta atat **Credite** (acumulate prin playtime), cat si **Phoenix Coins (PHX)**. Castigurile sunt virate automat si instantaneu in contul tau la finalul fiecarei rotiri.
 
-Totul incepe cu o singura comanda scrisa in chat:
+---
 
-Scrie `!rl` in chat pentru a deschide meniul principal al **ruletei**.
+## 1. Cum Functioneaza Ruleta in 4 Pasi
 
-Meniul iti va afisa toate optiunile de pariu disponibile, balanta ta curenta si un istoric al ultimelor trageri.
+<Steps>
+  <Step title="Deschiderea Meniului de Ruleta">
+    Tasteaza comanda `!rl` in chat pentru a deschide interfata grafica interactiva a ruletei.
+    
+    ![Meniul Principal Ruleta - !rl](/roulette/gif_roulette_1.gif)
+  </Step>
 
-![Roulette Menu - !rl](/roulette/gif_roulette_1.gif)
+  <Step title="Selectarea Monedei de Joc">
+    Alege moneda cu care doresti sa pariezi: **Credite** sau **Phoenix Coins (PHX)**. Nu poti combina ambele monede intr-un singur bilet de pariu.
+    
+    ![Selectare Moneda Ruleta](/roulette/gif_roulette_2.gif)
+  </Step>
 
-!rl menu
+  <Step title="Alegerea Tipului de Pariu si a Mizei">
+    Selecteaza optiunea de pariu dorita (Culori, Numere, Dozine, Par/Impar) si introdu suma pe care vrei sa o pui in joc.
+    
+    ![Optiuni de Pariu Ruleta](/roulette/gif_roulette_3.gif)
+  </Step>
 
-Comanda **!rl** — deschide interfata principala a ruletei
+  <Step title="Rotirea Rotii & Plata Automata">
+    Roata ruletei se invarte cu animatie grafica in chat/ecran. Daca bila se opreste pe selectia ta, castigul multiplicat este transferat instant in balanta ta.
+  </Step>
+</Steps>
 
-## 2.0 MONEDA DE JOC
-2.0 MONEDA DE JOC
+---
 
-La ruleta poti juca cu oricare dintre cele doua monede ale serverului:
+## 2. Tabelul Cotelor si Multiplicatorilor de Castig
 
-- **Credite** — moneda castigata jucand pe server (kill-uri, MVP-uri, bonus zilnic)
+Iata matricea completa a optiunilor de pariere disponibile la Ruleta:
 
-- **Phoenix Coins** — moneda premium, obtinuta din market sau evenimente
+| Tip Pariu | Optiuni Selectabile | Multiplicator Castig | Nivel de Risc |
+| :--- | :--- | :--- | :--- |
+| **Pick a Number (Numar Exact)** | Un singur numar ales intre `0` si `36` | **36x** (Miza x36) | Foarte Mare |
+| **Verde (Numarul 0)** | Culoarea verde (`0`) | **14x** (Miza x14) | Mare |
+| **Dozens (Dozine)** | `1-12` (1st), `13-24` (2nd), `25-36` (3rd) | **3x** (Miza x3) | Mediu |
+| **Columns (Coloane)** | Coloana 1, Coloana 2 sau Coloana 3 | **3x** (Miza x3) | Mediu |
+| **Colors (Culori)** | Rosu (`Red`) sau Negru (`Black`) | **2x** (Miza x2) | Mic (Echilibrat) |
+| **Simple (Proprietati)** | Par (`Even`), Impar (`Odd`), Mic (`1-18`), Mare (`19-36`) | **2x** (Miza x2) | Mic (Echilibrat) |
 
-Alegi moneda **inainte de a plasa pariul**. Nu poti mixa cele doua monede intr-un singur pariu.
+---
 
-![Selectare moneda - Roulette](/roulette/gif_roulette_2.gif)
+## 3. Demonstrație Video In-Game
 
-currency select
+Urmareste o demonstratie live a modului in care decurge o sesiune de pariere la Ruleta pe server:
 
-Selecteaza moneda cu care vrei sa joci — **Credite** sau **Phoenix Coins**
+<DocVideo src="/roulette/video_roulette.mp4" title="Demonstratie Live Ruleta CS2" />
 
-## 3.0 OPTIUNI DE PARIU
-3.0 OPTIUNI DE PARIU
+---
 
-Ruleta ofera **5 tipuri de pariuri**, fiecare cu riscuri si castiguri diferite:
+## 4. Comenzi Rapide pentru Ruleta
 
-- **Colors** (Rosu / Negru / Verde) — pariezi pe culoarea numarului castigator. Verde = cel mai rar, cel mai mare castig.
+* `!rl` — Deschide meniul principal al ruletei.
+* `!eco` — Afiseaza balanta ta curenta de Credite si Phoenix Coins inainte de pariere.
+* `!eco pay [jucator] [suma] [moneda]` — Transfera castigurile catre alti colegi.
 
-- **Simple** (Par / Impar / Mic) — pariezi pe proprietati generale: numar par, impar sau mic (1-18).
+> [!IMPORTANT]
+> **Joc Responsabil:**  
+> Jocurile de casino sunt 100% bazate pe generare aleatorie (RNG) si sunt concepute pentru divertisment. Pariaza intotdeauna cumpatat si nu risca fonduri de care ai nevoie pentru alte achizitii.
 
-- **Dozens** (1-12 / 13-24 / 25-36) — pariezi pe una dintre cele trei grupe de cate 12 numere.
+---
 
-- **Columns** (Col 1 / Col 2 / Col 3) — pariezi pe una dintre cele trei coloane verticale.
+## Alte Jocuri de Casino Disponibile
 
-- **Pick a Number** (0-36) — pariezi pe un numar exact. Cel mai mare risc, dar castig de **36x**!
+<Cards>
+  <Card title="Slots / Pacanele (!sl)" href="/docs/systems/gambling/slots">
+    Trage de maneta aparatelor clasice de pacanele, potriveste liniile si castiga jackpotul.
+  </Card>
 
-Cu cat riscul e mai mare, cu atat **multiplicatorul de castig** este mai mare. Alege strategic!
+  <Card title="Barbut & Zaruri 1v1 (!bb)" href="/docs/systems/gambling/dices">
+    Provoaca un alt jucator la un duel direct de zaruri pe miza dubla.
+  </Card>
 
-![Optiuni de pariu - Roulette](/roulette/gif_roulette_3.gif)
-
-betting options
-
-Toate optiunile de pariu — de la **Colors** la **Pick a Number**
-
-## 4.0 PREVIEW LIVE
-4.0 PREVIEW LIVE
-
-Vizioneaza un **preview complet** al sistemului de ruleta inainte de a-l incerca pe server:
-
-<DocVideo src="/roulette/video_roulette.mp4" title="Preview Ruleta CS2" />
-
-Demonstratie live — sistemul de ruleta in actiune
-
-Castigurile sunt **creditate instant** in balanta ta. Poti vedea rezultatul si animatia direct in joc.
-
-## 5.0 ALTE JOCURI DE GAMBLING
-5.0 ALTE JOCURI DE GAMBLING
-
-Pe langa ruleta, serverul ofera inca **2 jocuri de gambling**:
-
-- [Slots](/systems/gambling/slots) — trage de maner, potriveste simboluri, castiga jackpot. Comanda: !slot
-
-- [Dices (Barbut)](/systems/gambling/dices) — jocul clasic de barbut 1v1 cu alt jucator. Comanda: !bb
+  <Card title="Ghidul Creditelor (!shop)" href="/docs/currency/credits">
+    Afla cum poti castiga credite automate prin simplul timp petrecut pe server.
+  </Card>
+</Cards>

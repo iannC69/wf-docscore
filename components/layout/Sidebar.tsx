@@ -14,6 +14,8 @@ import {
   ChevronRight,
   Compass,
   Sparkles,
+  ChevronsDownUp,
+  ChevronsUpDown,
 } from "lucide-react";
 import { LiquidFireWave } from "@/components/ui/LiquidEffects";
 import { useLayout } from "@/context/LayoutContext";
@@ -42,10 +44,12 @@ function NavItemRow({
   item,
   pathname,
   depth = 0,
+  globalExpandState,
 }: {
   item: NavItem;
   pathname: string;
   depth?: number;
+  globalExpandState?: boolean | null;
 }) {
   const hasChildren = item.children && item.children.length > 0;
   const isExact = pathname === item.href;
@@ -54,6 +58,13 @@ function NavItemRow({
 
   // Default to expanded so sub-pages are immediately accessible, but user can collapse at will
   const [isOpen, setIsOpen] = useState(true);
+
+  // Sync with global Collapse All / Expand All button trigger
+  useEffect(() => {
+    if (globalExpandState !== null && globalExpandState !== undefined) {
+      setIsOpen(globalExpandState);
+    }
+  }, [globalExpandState]);
 
   useEffect(() => {
     if (isExact || isAncestor || isChildActive) {
@@ -111,6 +122,7 @@ function NavItemRow({
               item={child}
               pathname={pathname}
               depth={depth + 1}
+              globalExpandState={globalExpandState}
             />
           ))}
         </ul>
@@ -120,14 +132,16 @@ function NavItemRow({
 }
 
 /**
- * Collapsible NavGroup component for top-level groups
+ * Collapsible NavGroup component for top-level groups (always keeps categories visible)
  */
 function CollapsibleNavGroup({
   group,
   pathname,
+  globalExpandState,
 }: {
   group: NavGroup;
   pathname: string;
+  globalExpandState?: boolean | null;
 }) {
   const [isGroupOpen, setIsGroupOpen] = useState(true);
 
@@ -149,7 +163,12 @@ function CollapsibleNavGroup({
       {isGroupOpen && (
         <ul role="list" className="nav-list">
           {group.items.map(item => (
-            <NavItemRow key={item.slug} item={item} pathname={pathname} />
+            <NavItemRow
+              key={item.slug}
+              item={item}
+              pathname={pathname}
+              globalExpandState={globalExpandState}
+            />
           ))}
         </ul>
       )}
@@ -160,6 +179,16 @@ function CollapsibleNavGroup({
 export function Sidebar({ nav }: SidebarProps) {
   const pathname = usePathname();
   const { sidebarOpen, toggleSidebar } = useLayout();
+  const [isAllExpanded, setIsAllExpanded] = useState(true);
+  const [globalExpandState, setGlobalExpandState] = useState<boolean | null>(null);
+
+  const toggleExpandAll = () => {
+    setIsAllExpanded(prev => {
+      const next = !prev;
+      setGlobalExpandState(next);
+      return next;
+    });
+  };
 
   return (
     <>
@@ -200,16 +229,35 @@ export function Sidebar({ nav }: SidebarProps) {
             <span className="sidebar-top-title">Navigation</span>
             <span className="sidebar-top-badge">Explorer</span>
           </div>
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="sidebar-collapse-btn"
-            title="Collapse Sidebar (Shortcut: [)"
-            aria-label="Collapse sidebar"
-          >
-            <PanelLeftClose size={14} />
-            <kbd className="sidebar-collapse-kbd" aria-hidden="true">[</kbd>
-          </button>
+
+          <div className="sidebar-top-actions">
+            {/* Collapse All / Expand All Sections Button */}
+            <button
+              type="button"
+              onClick={toggleExpandAll}
+              className="sidebar-action-btn sidebar-expand-all-btn"
+              title={isAllExpanded ? "Restrânge toate secțiunile (Collapse All)" : "Extinde toate secțiunile (Expand All)"}
+              aria-label={isAllExpanded ? "Collapse All Sections" : "Expand All Sections"}
+            >
+              {isAllExpanded ? (
+                <ChevronsDownUp size={13} aria-hidden="true" />
+              ) : (
+                <ChevronsUpDown size={13} aria-hidden="true" />
+              )}
+            </button>
+
+            {/* Sidebar Collapse Toggle */}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="sidebar-collapse-btn"
+              title="Collapse Sidebar (Shortcut: [)"
+              aria-label="Collapse sidebar"
+            >
+              <PanelLeftClose size={14} />
+              <kbd className="sidebar-collapse-kbd" aria-hidden="true">[</kbd>
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Navigation Area with Smooth Fade-down Mask */}
@@ -261,6 +309,7 @@ export function Sidebar({ nav }: SidebarProps) {
                   key={group.title}
                   group={group}
                   pathname={pathname}
+                  globalExpandState={globalExpandState}
                 />
               ))}
             </nav>

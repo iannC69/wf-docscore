@@ -1,86 +1,89 @@
 ---
-title: Dices (Barbut)
-description: >-
-  Descopera totul despre Dices (Barbut) pe platforma Wildfire.ro. Resurse
-  complete, ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Barbut & Zaruri (Dices)
+description: Ghidul complet al sistemului de Barbut 1v1 pe serverele WildFire CS2 — comenzi !bb, mize pe Credite sau Phoenix Coins si plata automata.
 outline: deep
 ---
-**Gambling** **Dices / Barbut System**
-Barbut-ul este jocul de gambling **1v1** al serverului — provoci un alt jucator, ambii puneti o suma egala pe masa si zarurile decid cine pleaca cu tot. Este singurul joc de gambling care implica un **adversar real**, nu doar noroc impotriva casei.
 
-Sistemul accepta atat **credite** cat si **Phoenix Coins**. Provocarea se face din chat, iar adversarul trebuie sa accepte inainte sa inceapa jocul.
+**Barbut-ul (Dices)** este modulul de gambling **1v1** de pe serverul **WildFire.ro** — provoci un alt jucator conectat, ambii mizati o suma egala pe masa, iar zarurile decid instantaneu cine castiga potul total. Este un duel direct de noroc intre doi jucatori reali.
 
-Barbut-ul este un joc **1v1 real** — ambii jucatori pariaza aceeasi suma, iar castigatorul ia totul. Joaca responsabil!
+---
 
-## 1.0 CUM PROVOCI UN JUCATOR
-1.0 CUM PROVOCI UN JUCATOR
+> [!IMPORTANT]
+> **Generare 100% Corecta (Server-Side RNG):**  
+> Zarurile sunt aruncate si calculate automat pe server printr-un algoritm aleatoriu securizat. Niciun jucator si niciun membru staff nu poate influenta sau manipula rezultatul zarurilor.
 
-Ai doua moduri de a initia un joc de barbut:
+---
 
-Scrie `!bb` in chat pentru a deschide meniul de barbut, sau `!barbut [suma] [player]` pentru provocare directa.
+## 1. Cum Functioneaza Duelul de Barbut
 
-Dupa ce trimiti provocarea, adversarul primeste un mesaj in chat si trebuie sa accepte:
+Un meci de Barbut se desfasoara rapid in 4 etape simple:
 
-- !bb — deschide meniul principal de barbut
+<Steps>
+  <Step title="Initierea Provocarii">
+    Tasteaza comanda `!bb` in chat pentru a deschide meniul grafic sau lanseaza o provocare directa folosind comanda:
+    
+    ```bash
+    !barbut [suma] [jucator]
+    ```
+    
+    ![Meniul Principal Barbut - !bb](/barbut/gif_barbut_1.gif)
+  </Step>
 
-- !barbut [suma] [player] — provocare directa cu suma specificata
+  <Step title="Alegerea Monedei de Joc">
+    Poti alege sa pariezi pe **Credite** (acumulate prin playtime) sau pe **Phoenix Coins (PHX)** (moneda premium pentru skin-uri). Ambii participanti trebuie sa detina suma pariata in balanta.
+    
+    ![Selectare Moneda Barbut](/barbut/gif_barbut_2.gif)
+  </Step>
 
-- !bbaccept — accepta o provocare de barbut primita
+  <Step title="Acceptarea Duelului de catre Adversar">
+    Jucatorul provocat va primi o notificare pe ecran si in chat. Pentru a accepta meciul, acesta tasteaza:
+    
+    ```bash
+    !bbaccept
+    ```
+  </Step>
 
-![Barbut Menu - !bb](/barbut/gif_barbut_1.gif)
+  <Step title="Aruncarea Zarurilor & Plata Instantanee">
+    Serverul arunca automat cele doua perechi de zaruri. Jucatorul cu suma totala mai mare castiga intregul pot (**2x miza**), iar fondurile sunt virate instantaneu in contul castigatorului.
+  </Step>
+</Steps>
 
-!bb menu
+---
 
-Comanda **!bb** — deschide meniul de provocare barbut
+## 2. Comenzi Rapide pentru Barbut
 
-Provocarea expira daca adversarul nu accepta intr-un timp scurt. Poti provoca orice jucator de pe server.
+| Comanda | Sintaxa de Utilizare | Descriere & Rol |
+| :--- | :--- | :--- |
+| `!bb` / `!dice` | `!bb` | Deschide meniul principal grafic de Barbut |
+| `!bb [suma]` | `!bb [suma]` | Deschide meniul precompletat cu miza dorita |
+| `!barbut` | `!barbut [suma] [jucator]` | Lanseaza o provocare directa unui jucator specific |
+| `!bbaccept` | `!bbaccept` | Accepta cea mai recenta provocare de barbut primita |
+| `!eco` | `!eco` | Verifica balanta ta curenta inainte de a plasa un pariu |
 
-## 2.0 MONEDA DE JOC
-2.0 MONEDA DE JOC
+---
 
-La barbut poti juca cu oricare dintre cele doua monede ale serverului:
+## 3. Demonstrație Video In-Game
 
-- **Credite** — moneda castigata jucand pe server (kill-uri, MVP-uri, bonus zilnic)
+Urmareste o demonstratie live a modului in care decurge o runda rapida de Barbut 1v1 pe server:
 
-- **Phoenix Coins** — moneda premium, obtinuta din market sau evenimente
+<DocVideo src="/barbut/video_barbut.mp4" title="Demonstratie Live Barbut CS2" />
 
-Ambii jucatori pariaza **aceeasi suma** si aceeasi moneda. Castigatorul ia totul.
+---
 
-![Selectare moneda - Barbut](/barbut/gif_barbut_2.gif)
+## Alte Jocuri de Casino Disponibile
 
-currency select
+Exploreaza si celelalte module interactive de gambling de pe server:
 
-Selecteaza moneda cu care vrei sa joci — **Credite** sau **Phoenix Coins**
+<Cards>
+  <Card title="Ruleta In-Game (!rl)" href="/docs/systems/gambling/roulette">
+    Plaseaza pariuri pe culori (Rosu, Negru, Verde), numere si multiplicatori clasici de cazino.
+  </Card>
 
-## 3.0 CUM SE JOACA
-3.0 CUM SE JOACA
+  <Card title="Slots / Pacanele (!sl)" href="/docs/systems/gambling/slots">
+    Invarte rolele aparatelor de pacanele, potriveste simbolurile si declanseaza castiguri mari.
+  </Card>
 
-Barbut-ul functioneaza in **3 pasi simpli**:
-
-- **Pas 1** — Provoci un jucator cu !bb sau !barbut [suma] [player]
-
-- **Pas 2** — Adversarul accepta cu !bbaccept
-
-- **Pas 3** — Zarurile se arunca automat, castigatorul ia totul
-
-Rezultatul este **complet aleatoriu** — zarurile sunt generate de server, nu pot fi manipulate de niciun jucator.
-
-## 4.0 PREVIEW LIVE
-4.0 PREVIEW LIVE
-
-Vizioneaza un **preview complet** al sistemului de barbut inainte de a-l incerca pe server:
-
-<DocVideo src="/barbut/video_barbut.mp4" title="Preview Barbut CS2" />
-
-Demonstratie live — barbut 1v1 in actiune
-
-Castigurile sunt **transferate instant** catre castigator. Totul dureaza cateva secunde.
-
-## 5.0 ALTE JOCURI DE GAMBLING
-5.0 ALTE JOCURI DE GAMBLING
-
-Pe langa barbut, serverul ofera inca **2 jocuri de gambling**:
-
-- [Roulette](/systems/gambling/roulette) — pariezi pe culori, numere, grupuri sau coloane. Comanda: !rl
-
-- [Slots](/systems/gambling/slots) — trage de maner, potriveste simboluri, castiga jackpot. Comanda: !slot
+  <Card title="Economie & Valute" href="/docs/currency">
+    Afla mai multe despre diferenta dintre Creditele in-game si Phoenix Coins (PHX).
+  </Card>
+</Cards>

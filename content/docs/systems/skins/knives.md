@@ -1,221 +1,105 @@
 ---
-title: Knives
-description: >-
-  Descopera totul despre Knives pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Modele si Finisaje de Cutite (Knives)
+description: Ghidul complet al colectiei de cutite pe serverele WildFire CS2 — comenzi !ws, animatii unice de inspectare, catalog complet de 19 modele si sincronizare inventar.
 outline: deep
 ---
-**Melee Weapons** **Knives System**
-Cutitele sunt iteme cosmetice care inlocuiesc cutitul default al personajului. Nu ofera niciun avantaj in joc in afara aspectului vizual, dar sunt printre cele mai cautate si valoroase iteme din server.
 
-Odata castigate, cutitele sunt adaugate automat in inventarul tau si pot fi echipate direct din meniul `!ws` sau de pe site. Fiecare model are animatii unice si poate fi combinat cu diferite skin-uri de manusi.
+Modulul **Knives** iti ofera acces complet la toate cele **19 modele de cutite** din Counter-Strike 2 pe serverul **WildFire.ro**. Fiecare cutit dispune de animatii spectaculoase de scoatere (draw), atac si inspectare, putand fi personalizat cu orice finisaj legendar (Doppler, Gamma Doppler, Fade, Crimson Web, Case Hardened, Marble Fade etc.).
 
-Cutitele sunt iteme **cosmetice rare** si nu ofera niciun avantaj in joc. Fiecare model are animatii unice de inspect si atac.
+---
 
-## 1.0 INFORMATII
-1.0 INFORMATII
+> [!NOTE]
+> Toate cutitele se acceseaza centralizat din meniul **`!ws`**. Schimbarea cutitului se aplica instantaneu in mana caracterului tau fara a fi necesara reconectarea sau aruncarea armei pe jos.
 
-Totul incepe cu o comanda simpla si o interfata intuitiva, controlata complet din **tastatura**.
+---
 
-Scrie `!ws` in chat pentru a deschide interfata principala a **skin-urilor si cutitelor**.
+## 1. Meniul de Cutite & Controale In-Game
 
-![Knives Menu Navigation - !ws](/knives/gif_knives_1.gif)
+Tasteaza comanda `!ws` in chat si acceseaza categoria **Knives**:
 
-!ws knives menu
+![Navigare Meniu Cutite in !ws](/knives/gif_knives_1.gif)
 
-Foloseste tastele **E**, **F** si **SHIFT** pentru a naviga prin meniul !ws
+Navigarea se face fluid folosind tastele de control ale caracterului:
+* **Tasta E:** Deschide panoul modelului de cutit / Echipeaza lama.
+* **Tasta F (Inspect):** Navigheaza in sus prin lista de modele.
+* **Tasta SHIFT (Walk):** Navigheaza in jos prin lista de modele.
+* **Tasta TAB / ESC:** Inchide meniul.
 
-Navigarea prin meniul de cutite se face cu ajutorul tastelor:
+![Selectare si Echipare Cutit](/knives/gif_knives_2.gif)
 
-ETasta **E** - **Selecteaza** cutitul
-FTasta **F** - **Navigheaza in sus** prin categorii
-SHIFTTasta **SHIFT** - **Navigheaza in jos** prin categorii
+In panoul fiecarui cutit poti alege:
+* **Preview 3D:** Examineaza modelul si animatiile lamei inainte de achizitie.
+* **Buy Now:** Deblocheaza permanent cutitul folosind Phoenix Coins (PHX).
+* **Equip:** Echipeaza cutitul imediat pe echipamentul activ.
 
-Meniul `!ws` iti va afisa toate **cutitele disponibile**, grupate pe tipuri (Karambit, M9 Bayonet, Butterfly etc.), cu preview-uri si pretul in Phoenix Coins.
+---
 
-![Knives Selection - !ws](/knives/gif_knives_2.gif)
+## 2. Catalogul Complet al Celor 19 Modele de Cutite CS2
 
-select knife
+Iata lista integrala a tuturor cutitelor disponibile in meniul `!ws`, cu mini-pictograme vizuale si stilul specific fiecarei lame:
 
-Apasa **E** pentru a selecta cutitul dorit
+| Model Cutit | Aspect Vizual | Stil & Animatie | Finisaje Legendare |
+| :--- | :---: | :--- | :--- |
+| **Karambit** | ![Karambit](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9rYXJhbWJpdC4zMTQzNTI0MzE3ODMwYjY2OGVkMTdkMTgzYzlhZmVhMDc2ZmNiMTNiLnBuZw--/auto/auto/85/notrim/f626fe6b3555e993f3f5ee8c023048f3.webp) | Lama curbata de tip gheara de tigru, rotire rapida la inspect | Fade, Doppler Sapphire/Ruby, Lore, Gamma |
+| **Butterfly Knife** | ![Butterfly Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9idXR0ZXJmbHkuMTVkYzdjYzUzYjE4ZjYyMWUxNWUyZDljYTJjODViMjQ4MzdmNmYxNi5wbmc-/auto/auto/85/notrim/2f10bc24054d400de7758453e78de394.webp) | Balisong cu trucuri spectaculoase de rotire continua | Marble Fade, Doppler, Crimson Web, Tiger Tooth |
+| **M9 Bayonet** | ![M9 Bayonet](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9tOV9iYXlvbmV0Ljg4M2NhNTlhN2NjZmE2MTYzOTYzYjYwYzY5Y2RkMzk0YzJiODdhNWUucG5n/auto/auto/85/notrim/1ac339a2f6491076625be3d396daf996.webp) | Baioneta masiva de lupta cu zimti agresivi | Autotronic, Lore, Fade, Slaughter |
+| **Skeleton Knife** | ![Skeleton Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9za2VsZXRvbi5jYzhhNTFlNmEyNWViNzcwZjkxMTkxYjYwZTE3ODUxZjQzZDU4NGRkLnBuZw--/auto/auto/85/notrim/fd430bd232a67315a7cee81e4fb41b04.webp) | Maner scheletat cu inel central pentru rotire acrobatica | Slaughter, Fade, Crimson Web, Case Hardened |
+| **Talon Knife** | ![Talon Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV93aWRvd21ha2VyLjYxNzcwNDliZDg4OWQ4ZjZiNWU2NzE5ZTUxZmZjOWY5OTRlZGEwMWEucG5n/auto/auto/85/notrim/11e9ddb0856ea6417b212cd925fe085b.webp) | Lama curbata cu maner alb din fildes si rotire infinita | Doppler, Fade, Tiger Tooth, Rust Coat |
+| **Bayonet** | ![Bayonet](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9iYXlvbmV0LjRhMzg1Njg1M2MwZTc2MjYyZTg2MTVmOThhODg4NGFlZTY2ZGEzOGIucG5n/auto/auto/85/notrim/99f374cb24987a880e31b5da97815131.webp) | Baioneta clasica cu scoatere eleganta prin invartire | Gamma Doppler, Lore, Autotronic, Fade |
+| **Kukri Knife** | ![Kukri Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9rdWtyaS4zNDQ0NzZjMmNhNGRkOTgyOTQyMjViOTM5M2ZjMDlmODViODcwYzZmLnBuZw--/auto/auto/85/notrim/3f2f9a2c1afe13acb3f92a74f39ec2fe.webp) | Lama traditionala nepaleza grea pentru taieturi puternice | Slaughter, Fade, Case Hardened, Vanilla |
+| **Stiletto Knife** | ![Stiletto Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9zdGlsZXR0by5jNGZiNzAwNGFkMjk5ZDZiZWZjN2M5NmFmNWE0MTE3NjcwNWUzMTJkLnBuZw--/auto/auto/85/notrim/79abdddb23864b0b70d112621bdff947.webp) | Cutit automat cu deschidere cu arc si lama fina ascutita | Doppler, Tiger Tooth, Marble Fade, Damascus |
+| **Nomad Knife** | ![Nomad Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9vdXRkb29yLjBjOWIwM2MxNmQ5ZTliMDg0NjI5MjI3NGJiNmZhN2M3YWU1ODY5NmQucG5n/auto/auto/85/notrim/ab63176a80d901dbd434a145e4343807.webp) | Cutit de vanatoare tactic cu animatie rara de intepare | Fade, Case Hardened Blue Gem, Slaughter |
+| **Ursus Knife** | ![Ursus Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV91cnN1cy4yZjIxOGNkYmVlMTIxZjYxZWFkY2NlZjg5ZWUxN2ZjNDZmZDQyZWY2LnBuZw--/auto/auto/85/notrim/202cfb970c4667a52980632b14349aab.webp) | Cutit tactic estilo tanto cu lama solida dintr-o bucata | Doppler, Marble Fade, Ultraviolet, Crimson |
+| **Paracord Knife** | ![Paracord Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9jb3JkLjM1MDVkZWNkYjY5MjMxZmRhODJkODIzZTA5OWQ3OTFjNGYxZTEwMDUucG5n/auto/auto/85/notrim/4539f176c554de63cceedcfc4a5f4a05.webp) | Maner infasurat in snur paracord militar multifunctional | Slaughter, Fade, Case Hardened, Boreal |
+| **Survival Knife** | ![Survival Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9jYW5pcy4zM2E1MTUzMmM0NDVlZTMwNjFkNjhlYWE5Mjg3MjVlNThmOGRhZjkwLnBuZw--/auto/auto/85/notrim/5959b0aa64921e3c201fb3d8c2e25479.webp) | Cutit de supravietuire robust cu carlig jupuitor pe varf | Crimson Web, Fade, Case Hardened, Blue Steel |
+| **Classic Knife** | ![Classic Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9jc3MuY2M1MjU4ZWY1YTUzZGNjYWNiYjA3ZmE5NDk0ZDNhMDUyYzYyZDMxYi5wbmc-/auto/auto/85/notrim/495da4a30a61a33fe5e41722894442f0.webp) | Modelul nostalgic din Counter-Strike 1.6 / Source | Fade, Crimson Web, Case Hardened, Slaughter |
+| **Flip Knife** | ![Flip Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9mbGlwLmExZWVlZDVhNGExOGM2ODFmNDNkMWI0YWEyZjY1Yjg0YzM3OTBjNWUucG5n/auto/auto/85/notrim/ff0308f8e546acb6c52c0abbfd5d7213.webp) | Cutit pliant compact cu deschidere rapida prin flip | Gamma Doppler, Lore, Autotronic, Tiger Tooth |
+| **Huntsman Knife** | ![Huntsman Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV90YWN0aWNhbC45N2M1NmYyMTBlMWJlMTQ2YWE4ZWJkMDgyYjI0M2Q3NTQ4OGEwNDNiLnBuZw--/auto/auto/85/notrim/fa2f75126da9a9a7646e612793e05a7f.webp) | Lama masiva de vanatoare cu tais dublu | Marble Fade, Doppler, Tiger Tooth, Fade |
+| **Bowie Knife** | ![Bowie Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9zdXJ2aXZhbF9ib3dpZS40MTVjMjhlYjdkODViYTIyOTc2MmNiMzVmNzUwNjFlMzAzODM0MzlmLnBuZw--/auto/auto/85/notrim/2254c36c877064475e49a334f652fd67.webp) | Cutit legendar american cu lama gigantica | Doppler, Gamma Doppler, Lore, Slaughter |
+| **Falchion Knife** | ![Falchion Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9mYWxjaGlvbi5jNDY3ZWUzYzY3NTIxNzNkOTg5OTRlZDhmMTg3YWU1N2VmNzg2NGUwLnBuZw--/auto/auto/85/notrim/b8d71a470b4b34144ab8088a8af19ba2.webp) | Cutit medieval cu animatie rara de echilibristica pe palma | Marble Fade, Doppler, Tiger Tooth, Slaughter |
+| **Shadow Daggers** | ![Shadow Daggers](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9wdXNoLjgyNjg5M2U4MTc3ODIwYzkyMTBlNGQxZGNjM2E4NmRiNDQ1ZWFhNzUucG5n/auto/auto/85/notrim/8bdb8e271d6222828e92d2c949d7318c.webp) | Pumnale duble de asasin (Push Daggers) | Doppler, Fade, Tiger Tooth, Crimson Web |
+| **Gut Knife** | ![Gut Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9ndXQuNTIxOTJkY2JhZTEyMDJhOGFhNDhkMjMyMmQ4Y2IyOWUwMTJjMmY3OC5wbmc-/auto/auto/85/notrim/49725a5aaa6956b31c0d61efc23f8ab1.webp) | Lama cu carlig ascutit si maner din lemn | Gamma Doppler, Autotronic, Lore, Fade |
 
-Dupa ce selectezi un cutit, se deschide panoul detaliat:
+---
 
-- **Preview** — poti vedea modelul cutitului inainte de achizitie
+## 3. Gestiunea Inventarului & Sincronizare Loadout Web
 
-- **Buy Now** — cumpara cutitul direct cu Phoenix Coins
+Toate cutitele deblocate raman salvate permanent in contul tau de utilizator:
 
-- **Equip** — daca il detii deja, il echipezi instant
+![Meniul Inventar In-Game !inv](/utility/inventory.png)
 
-Odata cumparate sau echipate, cutitele sunt **vizibile instant** in mana personajului tau. Nu este necesara relogarea.
+![Inventar pe Site](/utility/gif_inventory.gif)
 
-## 2.0 CUM OBTII CUTITE
-2.0 CUM OBTII CUTITE
+![Loadout si Echipare din Browser](/utility/gif_loadout.gif)
 
-Exista mai multe metode prin care poti obtine cutite pe server:
+* **In Joc:** Tasteaza comanda `!inv` pentru a echipa rapid un cutit din colectia ta.
+* **Pe Site:** Acceseaza [wildfire.ro/skins-market](https://wildfire.ro) ➔ **Loadout** pentru a asorta cutitul cu manusile favorite direct din browser.
 
-- **Market** — cumperi din !ws folosind Phoenix Coins
+---
 
-- **Cases** — deschizi un case care contine cutite (raritate extrem de mare)
+## 4. Tabelul Comenzilor Oficiale pentru Cutite
 
-- **Events** — recompense speciale la evenimente
+| Comanda | Sintaxa Oficiala | Descriere & Rol |
+| :--- | :--- | :--- |
+| `!ws` | `!ws` | Deschide meniul central WeaponSkins pentru explorarea si cumpararea cutitelor |
+| `!inv` | `!inv` | Deschide inventarul personal in-game cu toate cutitele salvate |
+| `!cases` | `!cases` | Deschide cutiile cu sanse de drop rar de cutite legendare |
+| `!eco` | `!eco` | Verifica balanta ta de Phoenix Coins |
 
-Cutitele sunt printre cele mai rare iteme — sansa de drop este extrem de mica!
+---
 
-## 3.0 INVENTAR & LOADOUT
-3.0 INVENTAR & LOADOUT
+## Resurse si Sisteme Conexe
 
-Toate item-urile tale sunt stocate in inventar si pot fi gestionate atat din joc, cat si de pe site-ul oficial.
+<Cards>
+  <Card title="Modele si Finisaje de Manusi" href="/docs/systems/skins/gloves">
+    Asorteaza cutitul tau cu o pereche de manusi Sport, Specialist sau Driver.
+  </Card>
 
-![Inventory Menu - !inv](/utility/inventory.png)
+  <Card title="Ghidul Central WeaponSkins (!ws)" href="/docs/systems/skins">
+    Afla cum personalizezi intregul arsenal de arme, float si StatTrak.
+  </Card>
 
-!inv - inventory menu
-
-Foloseste comanda **!inv** in joc pentru a-ti deschide inventarul
-
-**Pe site-ul oficial:** Acceseaza `wildfire.ro/skins-market` si autentifica-te cu Steam pentru a accesa sectiunea **Inventory**. Acolo vei gasi toate skin-urile, cutitele, manusile si agentii pe care ii detii.
-
-![Site Inventory - wildfire.ro/skins-market](/utility/gif_inventory.gif)
-
-site inventory
-
-In sectiunea **Inventory** de pe site poti vedea toate item-urile castigate
-
-Dupa ce ai vizualizat inventarul, acceseaza sectiunea **Loadout** pentru a-ti echipa item-urile direct din browser.
-
-![Site Loadout - Echipa iteme](/utility/gif_loadout.gif)
-
-site loadout - equip items
-
-In sectiunea **Loadout** selecteaza item-ul dorit si apasa Equip
-
-Toate item-urile echipate pe site sunt **sincronizate automat** cu jocul. Nu este nevoie de relogare - schimbarile sunt vizibile instant in CS2!
-
-## 4.0 TIPURI DE CUTITE
-4.0 TIPURI DE CUTITE
-
-![Karambit](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9rYXJhbWJpdC4zMTQzNTI0MzE3ODMwYjY2OGVkMTdkMTgzYzlhZmVhMDc2ZmNiMTNiLnBuZw--/auto/auto/85/notrim/f626fe6b3555e993f3f5ee8c023048f3.webp)
-
-Karambit
-
-Design curbat, animatii iconice
-
-![M9 Bayonet](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9tOV9iYXlvbmV0Ljg4M2NhNTlhN2NjZmE2MTYzOTYzYjYwYzY5Y2RkMzk0YzJiODdhNWUucG5n/auto/auto/85/notrim/1ac339a2f6491076625be3d396daf996.webp)
-
-M9 Bayonet
-
-Design militar, lama robusta
-
-![Butterfly Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9idXR0ZXJmbHkuMTVkYzdjYzUzYjE4ZjYyMWUxNWUyZDljYTJjODViMjQ4MzdmNmYxNi5wbmc-/auto/auto/85/notrim/2f10bc24054d400de7758453e78de394.webp)
-
-Butterfly Knife
-
-Animatii spectaculoase, flip
-
-![Bayonet](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9iYXlvbmV0LjRhMzg1Njg1M2MwZTc2MjYyZTg2MTVmOThhODg4NGFlZTY2ZGEzOGIucG5n/auto/auto/85/notrim/99f374cb24987a880e31b5da97815131.webp)
-
-Bayonet
-
-Design clasic, lama dreapta
-
-![Flip Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9mbGlwLmExZWVlZDVhNGExOGM2ODFmNDNkMWI0YWEyZjY1Yjg0YzM3OTBjNWUucG5n/auto/auto/85/notrim/ff0308f8e546acb6c52c0abbfd5d7213.webp)
-
-Flip Knife
-
-Design compact, animatie flip
-
-![Huntsman Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV90YWN0aWNhbC45N2M1NmYyMTBlMWJlMTQ2YWE4ZWJkMDgyYjI0M2Q3NTQ4OGEwNDNiLnBuZw--/auto/auto/85/notrim/fa2f75126da9a9a7646e612793e05a7f.webp)
-
-Huntsman Knife
-
-Design vanatoare, lama zimtata
-
-![Falchion Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9mYWxjaGlvbi5jNDY3ZWUzYzY3NTIxNzNkOTg5OTRlZDhmMTg3YWU1N2VmNzg2NGUwLnBuZw--/auto/auto/85/notrim/b8d71a470b4b34144ab8088a8af19ba2.webp)
-
-Falchion Knife
-
-Design medieval, lama curba
-
-![Gut Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9ndXQuNTIxOTJkY2JhZTEyMDJhOGFhNDhkMjMyMmQ4Y2IyOWUwMTJjMmY3OC5wbmc-/auto/auto/85/notrim/49725a5aaa6956b31c0d61efc23f8ab1.webp)
-
-Gut Knife
-
-Design curbat, animatie simpla
-
-![Navaja Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9neXBzeV9qYWNra25pZmUuYTY4YzFiZjMxM2Q5MTdhM2ZhMDVjNGM4NzYxYmViODdiYTI4MzBiOC5wbmc-/auto/auto/85/notrim/5c26e3b014d97d5fc86bb9d7996702d1.webp)
-
-Navaja Knife
-
-Design pliant, stil compact
-
-![Shadow Daggers](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9wdXNoLjgyNjg5M2U4MTc3ODIwYzkyMTBlNGQxZGNjM2E4NmRiNDQ1ZWFhNzUucG5n/auto/auto/85/notrim/8bdb8e271d6222828e92d2c949d7318c.webp)
-
-Shadow Daggers
-
-Doua lame, stil asasin
-
-![Bowie Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9zdXJ2aXZhbF9ib3dpZS40MTVjMjhlYjdkODViYTIyOTc2MmNiMzVmNzUwNjFlMzAzODM0MzlmLnBuZw--/auto/auto/85/notrim/2254c36c877064475e49a334f652fd67.webp)
-
-Bowie Knife
-
-Lama lata, design robust
-
-![Paracord Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9jb3JkLjM1MDVkZWNkYjY5MjMxZmRhODJkODIzZTA5OWQ3OTFjNGYxZTEwMDUucG5n/auto/auto/85/notrim/4539f176c554de63cceedcfc4a5f4a05.webp)
-
-Paracord Knife
-
-Design tactic, maner impletit
-
-![Survival Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9jYW5pcy4zM2E1MTUzMmM0NDVlZTMwNjFkNjhlYWE5Mjg3MjVlNThmOGRhZjkwLnBuZw--/auto/auto/85/notrim/5959b0aa64921e3c201fb3d8c2e25479.webp)
-
-Survival Knife
-
-Design utilitar, robust
-
-![Ursus Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV91cnN1cy4yZjIxOGNkYmVlMTIxZjYxZWFkY2NlZjg5ZWUxN2ZjNDZmZDQyZWY2LnBuZw--/auto/auto/85/notrim/202cfb970c4667a52980632b14349aab.webp)
-
-Ursus Knife
-
-Design compact, lama lata
-
-![Kukri Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9rdWtyaS4zNDQ0NzZjMmNhNGRkOTgyOTQyMjViOTM5M2ZjMDlmODViODcwYzZmLnBuZw--/auto/auto/85/notrim/3f2f9a2c1afe13acb3f92a74f39ec2fe.webp)
-
-Kukri Knife
-
-Design curbat, forta bruta
-
-![Classic Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9jc3MuY2M1MjU4ZWY1YTUzZGNjYWNiYjA3ZmE5NDk0ZDNhMDUyYzYyZDMxYi5wbmc-/auto/auto/85/notrim/495da4a30a61a33fe5e41722894442f0.webp)
-
-Classic Knife
-
-Design original CS, nostalgic
-
-![Stiletto Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9zdGlsZXR0by5jNGZiNzAwNGFkMjk5ZDZiZWZjN2M5NmFmNWE0MTE3NjcwNWUzMTJkLnBuZw--/auto/auto/85/notrim/79abdddb23864b0b70d112621bdff947.webp)
-
-Stiletto Knife
-
-Lama subtire, elegant
-
-![Talon Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV93aWRvd21ha2VyLjYxNzcwNDliZDg4OWQ4ZjZiNWU2NzE5ZTUxZmZjOWY5OTRlZGEwMWEucG5n/auto/auto/85/notrim/11e9ddb0856ea6417b212cd925fe085b.webp)
-
-Talon Knife
-
-Design agresiv, lama curba
-
-![Nomad Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9vdXRkb29yLjBjOWIwM2MxNmQ5ZTliMDg0NjI5MjI3NGJiNmZhN2M3YWU1ODY5NmQucG5n/auto/auto/85/notrim/ab63176a80d901dbd434a145e4343807.webp)
-
-Nomad Knife
-
-Design rustic, practic
-
-![Skeleton Knife](https://cdn.csgoskins.gg/public/uih/weapons/aHR0cHM6Ly9jZG4uY3Nnb3NraW5zLmdnL3B1YmxpYy9pbWFnZXMvYnVja2V0cy9lY29uL3dlYXBvbnMvYmFzZV93ZWFwb25zL3dlYXBvbl9rbmlmZV9za2VsZXRvbi5jYzhhNTFlNmEyNWViNzcwZjkxMTkxYjYwZTE3ODUxZjQzZDU4NGRkLnBuZw--/auto/auto/85/notrim/fd430bd232a67315a7cee81e4fb41b04.webp)
-
-Skeleton Knife
-
-Design schelet, unic
-
-Fiecare tip de cutit are **multiple variante de culori si modele** (Doppler, Crimson Web, Fade etc.). Poti inspecta fiecare model inainte de achizitie direct din meniul `!ws`.
-
-- **Atentie!** Cutitele sunt iteme cosmetic rare. Verifica sansele de drop inainte sa deschizi un case care le contine. Preturile variaza in functie de raritate, design si wear rating.
-
-- **Nota:** Poti purta un singur cutit odata, dar il poti schimba oricand din meniul !ws. Cutitele se combina perfect cu manusile pentru un look complet.
+  <Card title="Deschidere Cutii In-Game (!cases)" href="/docs/systems/skins/cases">
+    Incearca-ti norocul la deschiderea cutiilor cu drop de cutite rare.
+  </Card>
+</Cards>

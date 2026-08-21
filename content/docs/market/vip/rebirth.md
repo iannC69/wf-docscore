@@ -1,63 +1,79 @@
 ---
-title: VIP Rebirth
-description: >-
-  Descopera totul despre VIP Rebirth pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Pachetul VIP Rebirth
+description: Ghidul complet al pachetului VIP Rebirth pe serverele WildFire CS2 — 3.0€, 105 HP, 100 AP, +800$/runda, 1.3x credite, tag verde si slot rezervat.
 outline: deep
 ---
-**Pret si Achizitie**
 
-**3 EURO**
-**2000 coins (7 zile)**
-**3500 coins (15 zile)**
-**8000 coins (30 zile)**
+Pachetul **VIP Rebirth** este punctul de pornire ideal pentru jucatorii care doresc sa isi imbunatateasca experienta pe serverul **WildFire.ro**. Oferind un raport calitate-pret excelent, acest pachet deblocheaza avantaje solide de viata, economie accelerata, acces la slotul rezervat si personalizare in chat.
 
 ---
 
-## Avantaje Combat
-## Statistici si Armura
-Avantaje Combat
-
-Armor Status
-100 AP
-
-Movement
-1.1x Speed
-
-Economy
-1500$ Bonus
-
-Refill
-Fast Reload
+> [!NOTE]
+> VIP Rebirth este cel mai accesibil grad permanent, oferind confort deplin si protectie la conectare in orele de varf.
 
 ---
 
-## Identitate si Chat
-## Tag-uri si Culori
-Identitate si Chat
+## 1. Tarife Oficiale & Durate de Achizitie
 
-Chat Color
-Acces la culori personalizate pentru mesajele din chat.
+Gradul VIP Rebirth poate fi achizitionat atat de pe platforma web, cat si prin intermediul Phoenix Coins:
 
-TAG Chat + TAB
-Insigna vizuala in fata numelui in chat si in tabelul de scor.
-
-Sank Sounds
-Acces la sunetele amuzante din sistemul Sank.
-
-Discord Rank
-Grad special pe serverul nostru de Discord.
+| Durata Abonament | Pret in Euro (Web Store) | Pret in Phoenix Coins (In-Game) | Economie / Scop |
+| :--- | :--- | :--- | :--- |
+| **7 Zile** | — | **2.000 PHX** | Testare saptamanala |
+| **15 Zile** | — | **3.500 PHX** | Flexibilitate medie |
+| **30 Zile (1 Luna)** | **3.00 €** | **8.000 PHX** | **Cel mai avantajos tarif** |
 
 ---
 
-## Echipament si Utilitati
-## Items si Slot Rezervat
-Echipament si Utilitati
+## 2. Tabelul Beneficiilor Complete VIP Rebirth
 
-Defuse Kit & Zeus
+| Categorie | Facilitate / Avantaj | Valoare / Detalii Tehnice |
+| :--- | :--- | :--- |
+| **Puncte de Viata (HP)** | **Spawn Health** | **105 HP** la inceputul fiecarei runde |
+| **Protectie & Armura** | **Spawn Armor** | **100 AP** (Armura completa + Casca garantata) |
+| **Regenerare Combat** | **HP la Kill** | **+8 HP** la eliminare / **+15 HP** la Headshot |
+| **Mobilitate** | **Viteza de Deplasare** | **1.10x Viteza** de miscare a caracterului |
+| **Economie Meci** | **Bani Bonus pe Runda** | **+$800** fonduri suplimentare virate la spawn |
+| **Economie Shop** | **Multiplicator Credite** | **1.3x** la toate creditele castigate din playtime |
+| **Echipament Tactic** | **Full Utility & Defuse** | Set complet de grenade + Defuse Kit automat la CT |
+| **Armament Secundar** | **Zeus x27 Incarcat** | Tazer gratuit la spawn in fiecare runda |
+| **Identitate Chat & TAB** | **Tag & Culori Exclusive** | Prefix `[VIP]` verde in chat si pe tabela de scor |
+| **Sunete & Audio** | **Sank Sounds in Chat** | Acces la comanda `!sm` si sunetele comunitatii |
+| **Confort Server** | **Slot Rezervat Garantat** | Intrare garantata chiar daca serverul afiseaza 32/32 |
+| **Comunitate** | **Rol Special Discord** | Gradul VIP Rebirth sincronizat pe Discord |
 
-Full Grenade Set
+---
 
-FOV Customization
+## 3. Ghid de Achizitie & Activare
 
-Reserved Slot
+<Steps>
+  <Step title="Accesarea Magazinului Oficial">
+    Intra pe [wildfire.ro/vip](https://wildfire.ro/vip) si autentifica-te cu contul tau de Steam.
+  </Step>
+
+  <Step title="Selectarea Pachetului VIP Rebirth">
+    Alege durata dorita (30 de zile) si metoda de plata convenabila (Card, Apple/Google Pay, Paysafecard, SMS etc.).
+  </Step>
+
+  <Step title="Activare Instantanee pe Server">
+    Gradul se activeaza automat in mai putin de 3 secunde pe SteamID-ul tau, fara a necesita restart.
+  </Step>
+</Steps>
+
+---
+
+## Resurse si Ghiduri Conexe
+
+<Cards>
+  <Card title="VIP Tiers — Comparatie Master" href="/docs/market/vip/vip-overview">
+    Compara pachetul Rebirth cu Immortal si Mythic.
+  </Card>
+
+  <Card title="Testare Gratuita (!viptest)" href="/docs/market/vip/vip-test">
+    Testeaza gratuit toate avantajele VIP timp de 7 zile inainte de cumparare.
+  </Card>
+
+  <Card title="Capacitate Server & Sloturi Rezervate" href="/docs/market/server-slots">
+    Afla cum functioneaza intrarea prioritara pe server.
+  </Card>
+</Cards>

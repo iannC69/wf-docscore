@@ -1,42 +1,67 @@
 ---
-title: Hit Effects
-description: >-
-  Descopera totul despre Hit Effects pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Sistemul Hit Effects & Damage Feedback
+description: Prezentarea modulului de hitmark, damage numbers pe zone de impact (Head/Body/Legs) si logica anti-exploit Line of Sight.
 outline: deep
 ---
-**Sistem Eliminat.** La cererea comunitatii, acest sistem a fost scos de pe server. Pagina ramane disponibila doar cu rol de prezentare (showcase).
 
-## 1.0 INFORMATII GENERALE
-1.0 INFORMATII GENERALE
+Modulul **Hit Effects & Hitmark** a fost dezvoltat ca o optiune de feedback vizual si auditiv suplimentar pentru confirmarea precisa a fiecarui glont care atinge un adversar in timpul luptelor din Counter-Strike 2.
 
-**Visual Enhancement** **Sistemul de Hit Effects**
-Sistemul de Hit Effects adauga un feedback vizual si auditiv suplimentar atunci cand lovesti sau elimini un adversar. Acest lucru imbunatateste experienta de joc, oferind o confirmare clara si satisfacatoare a fiecarui damage cauzat.
+---
 
-## 2.0 Despre sistem
-2.0 Despre sistem
+> [!NOTE]
+> **Statut Modul — Arhivă / Showcase:**  
+> La cererea comunitatii competitive, acest sistem a fost dezactivat de pe serverul principal pentru a pastra experienta clasica de CS2. Aceasta pagina ramane activa in scop informativ si demonstrativ.
 
-Sistemul de **Hit Effects** proceseaza fiecare impact si afiseaza tipul loviturii in functie de zona atinsa:
+---
 
-- **HEADSHOT** — lovitura in cap, damage maxim.
-- **HEAD** — hit in zona capului (dar nu headshot letal).
-- **BODY** — lovitura in corp (torace, abdomen).
-- **LEGS** — lovitura in picioare, damage redus.
-Fiecare hit afiseaza **damage-ul** cauzat (ex: `-143`) si **HP-ul ramas** al inamicului.
+## 1. Zone de Impact & Feedback Vizual
 
-![Hitmark UI Preview](/hitmark/hitmark_ui.png)
+Sistemul procesa in timp real pachetele de date ale fiecarui glont si afisa o pictograma dinamica cu zona anatomica lovita:
 
-hitmark ui
+| Tip Impact | Zona Anatomica | Feedback Vizual | Indicator Daune |
+| :--- | :--- | :--- | :--- |
+| **HEADSHOT** | Cap (Letal / Fatal) | Pictograma Rosie + Sunet Distinctiv | Daune Maxime (ex: `-143 HP`) |
+| **HEAD HIT** | Cap (Non-Letal / Wallbang) | Pictograma Galbena | Daune Ridicate (ex: `-85 HP`) |
+| **BODY HIT** | Torace / Abdomen / Brate | Pictograma Albastra / Alba | Daune Medii (ex: `-27 HP`) |
+| **LEGS HIT** | Picioare / Gambe | Pictograma Gri | Daune Reduse (ex: `-18 HP`) |
 
-Interfata detaliata de Hitmark (Damage & HP)
+---
 
-## 3.0 LOGICA HITMARK
-3.0 LOGICA HITMARK
+## 2. Interfata Grafica Hitmark
 
-Sistemul de **Hitmark** este conceput sa ofere informatii doar atunci cand exista contact vizual direct cu inamicul. Acesta este un sistem inteligent care respecta integritatea competitiva:
+La inregistrarea unui impact, pe ecranul atacatorului aparea pentru o fractiune de secunda un panou discret de confirmare:
 
-- **Vizibilitate Directa:** UI-ul apare pe ecran doar daca inamicul este in campul tau vizual (fara obstacole).
+![Interfata Grafica Hitmark](/hitmark/hitmark_ui.png)
 
-- **Anti-Wallhack:** Daca lovesti un inamic prin perete sau prin smoke, meniul **NU** va aparea.
+Fiecare notificare includea:
+* **Zona Atinsa:** `HEADSHOT`, `HEAD`, `BODY` sau `LEGS`.
+* **Damage Total:** Valoarea numerica exacta a daunelor provocate de glont.
+* **HP Inamic:** Viata ramasa a adversarului in momentul duelului.
 
-- **Informatii Duel:** La contact vizual, vezi locatia hit-ului (HEAD/BODY), damage-ul dat (ex: -143) si HP-ul ramas.
+---
+
+## 3. Logica de Securitate Anti-Exploit (Line of Sight)
+
+Pentru a respecta integritatea meciurilor si a nu oferi un avantaj nedrept prin "wallhack legal", sistemul implementa un filtru matematic strict:
+
+* **Contact Vizual Direct (Raycast):** Interfata se declansa exclusiv daca exista o linie directa neobstructionata intre ochii jucatorului si modelul inamicului.
+* **Protectie prin Fum (Smoke):** Gloantele trase orbeste prin fumigene **nu** declansau niciun mesaj vizual.
+* **Protectie prin Perete (Wallbang):** Loviturile date prin usi sau pereti grosi nu dezvaluiau locatia sau viata inamicului, prevenind scanarea abuziva.
+
+---
+
+## Resurse si Sisteme Active
+
+<Cards>
+  <Card title="Hide Teammates (!ht)" href="/docs/systems/other/hide-teammates">
+    Optimizarea vizibilitatii si a FPS-urilor la pornirea din spawn.
+  </Card>
+
+  <Card title="Sistemul de Rank & ELO" href="/docs/systems/other/ranks">
+    Afla cum influenteaza eliminarile pozitia ta in clasamentul serverului.
+  </Card>
+
+  <Card title="Setari Client (!settings)" href="/docs/systems/other/settings">
+    Configureaza preferintele tale de afisaj si sunete in-game.
+  </Card>
+</Cards>

@@ -1,25 +1,68 @@
 ---
-title: Custom Entry Songs
-description: >-
-  Descopera totul despre Custom Entry Songs pe platforma Wildfire.ro. Seteaza
-  melodia preferata la conectarea ta pe server.
+title: Custom Entry Songs (Melodie la Conectare)
+description: Ghidul serviciului de Entry Songs pe serverele WildFire CS2 — melodie personalizata la intrarea pe server, gratuit pentru detinatorii de grad VIP.
 outline: deep
 ---
-## 1.0 Premium Entry Songs
-1.0 Premium Entry Songs
 
-Acest pachet iti ofera posibilitatea de a avea o melodie personalizata (**Entry Song**) care va fi redata tuturor jucatorilor in momentul in care te conectezi pe server.
+Serviciul **Custom Entry Songs** iti ofera posibilitatea de a fi intampinat pe serverul **WildFire.ro** cu o secventa muzicala personalizata: in momentul in care intri pe server, piesa aleasa de tine va rula automat pentru toti jucatorii conectati, anuntandu-ti prezenta.
 
-####  Gratuit pentru VIP
+---
 
-Acest beneficiu este oferit **100% gratuit tuturor jucatorilor care detin un grad VIP** activ pe server.
+> [!NOTE]
+> **Beneficiu Gratuit pentru VIP:**  
+> Serviciul de Entry Song este oferit **100% gratuit tuturor membrilor care detin orice grad VIP activ** (Rebirth, Immortal, Mythic).
 
-####  Cum iti setezi Entry Song-ul
+---
 
-Sistemul prin care la conectarea ta pe server ruleaza o melodie personalizata este acum activ!
+## 1. Cum Functioneaza Redarea la Conectare
 
-**Conditie:** Trebuie sa detii **orice grad VIP** inainte de a cere melodia.
+* **Declansare Automata:** In fractiunea de secunda in care conexiunea ta la server este confirmata, sistemul declanseaza secventa ta de sunet (cu o durata optima de 4-6 secunde).
+* **Calitate Audio & Normalizare:** Volumul melodiei este masterizat la nivel standard pentru a se imbina armonios cu sunetele de fundal ale jocului.
+* **Respectarea Preferintelor Client:** Jucatorii care au dezactivat sunetele custom din `!settings` nu vor fi deranjati in timpul meciurilor competitive.
 
-**Pasul Urmator:** Trebuie doar sa ii trimiti un mesaj privat lui **Trapi** pe Discord cu piesa pe care ti-o doresti. El se va ocupa manual de procesarea si setarea melodiei tale pe server.
+---
 
-- **Impact Maxim:** Melodia va fi redata pentru a-ti anunta prezenta de fiecare data cand intri pe server!
+## 2. Procedura Pas cu Pas de Activare
+
+<Steps>
+  <Step title="Detinerea unui Grad VIP Activ">
+    Asigura-te ca ai activat pe contul tau un pachet VIP (fie prin achizitie pe [wildfire.ro/vip](https://wildfire.ro/vip), fie prin clasarea in TOP 3 Skill lunar).
+  </Step>
+
+  <Step title="Alegerea Piesei si Intervalului Secundelor">
+    Alege melodia preferata (link YouTube sau fisier audio) si specifica exact intervalul dorit (de exemplu: `secunda 0:15 pana la 0:20`).
+  </Step>
+
+  <Step title="Trimiterea Solicitarii pe Discord">
+    Trimite un mesaj privat sau deschide un tichet pe serverul oficial [Discord WildFire](https://discord.gg/wildfire) catre conducerea tehnica. Piesa va fi procesata, optimizata si integrata pe server.
+  </Step>
+</Steps>
+
+---
+
+## 3. Sinteza Cerintelor Tehnice
+
+| Parametru | Valoare Recomandata / Limita | Detalii |
+| :--- | :--- | :--- |
+| **Eligibilitate** | Orice grad VIP activ | Rebirth, Immortal, Mythic |
+| **Durata Melodie** | **4 - 7 Secunde** | Optimizat pentru a nu suprapune comunicatiile |
+| **Cost Suplimentar** | **0 Lei / Gratuit** | Inclus in beneficiile gradului VIP |
+| **Efecte Audio** | Fade-in & Fade-out | Integrate automat pentru o tranzitie lina |
+
+---
+
+## Resurse si Sisteme Conexe
+
+<Cards>
+  <Card title="Custom MVP Anthems" href="/docs/market/premium-shop/mvp">
+    Incarca propria melodie pentru finalul rundelor in care iesi MVP.
+  </Card>
+
+  <Card title="Sank Sounds (!sm)" href="/docs/market/premium-shop/sanks">
+    Foloseste comenzi rapide in chat pentru a declansa efecte sonore in timpul meciului.
+  </Card>
+
+  <Card title="Grade VIP & Beneficii" href="/docs/market/vip/vip-overview">
+    Afla toate facilitatile incluse in pachetele noastre VIP.
+  </Card>
+</Cards>

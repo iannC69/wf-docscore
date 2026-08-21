@@ -1,5 +1,92 @@
 [
   {
+    "id": "aud_1787315209265_55e51c36",
+    "timestamp": "2026-08-21T12:26:49.266Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_50f1c32078fafe9742e35bf9e216ff8b75468c8f5c0ce71b",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "55f2293ce113362159cf5bfa29e7c2ed622e81d006ffea9c00cbe7c26120f0a0",
+    "hash": "4f977a7c52d65e3519c36b963588f03c56a132d92fdd1cf441ef39484a2b90f5"
+  },
+  {
+    "id": "aud_1787315195761_7f09b5e8",
+    "timestamp": "2026-08-21T12:26:35.761Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_ebecd9ab5dfe6f30df99111f4656f9935be103fb93342ef4"
+    },
+    "previousHash": "9512c925fbab50dc5b44dcbf65ee472c17df1fe9e4a9855fd1de1e59238941a2",
+    "hash": "55f2293ce113362159cf5bfa29e7c2ed622e81d006ffea9c00cbe7c26120f0a0"
+  },
+  {
+    "id": "aud_1787315195758_37538b02",
+    "timestamp": "2026-08-21T12:26:35.759Z",
+    "action": "SESSION_REVOKED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_ebecd9ab5dfe6f30df99111f4656f9935be103fb93342ef4",
+      "username": "iannC69"
+    },
+    "previousHash": "7ed8bc557224b01e2d56718f48f00dc5f5682677493d8fa510904327d90a85a3",
+    "hash": "9512c925fbab50dc5b44dcbf65ee472c17df1fe9e4a9855fd1de1e59238941a2"
+  },
+  {
+    "id": "aud_1787314912494_defd2172",
+    "timestamp": "2026-08-21T12:21:52.494Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_ebecd9ab5dfe6f30df99111f4656f9935be103fb93342ef4",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "3ec04ea05a0f28b0baf17459b8d4f7ee91ca7c2379630b050294bd51b81eab97",
+    "hash": "7ed8bc557224b01e2d56718f48f00dc5f5682677493d8fa510904327d90a85a3"
+  },
+  {
+    "id": "aud_1787307614878_b6026e39",
+    "timestamp": "2026-08-21T10:20:14.878Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_a05e3f785217577b0f4e3c109c51423ee8a9cc401d8bc237",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "e351db48a9ac1cab3bf885d166d8a1f99b28ed6f75e193db938c1a62e9a8182e",
+    "hash": "3ec04ea05a0f28b0baf17459b8d4f7ee91ca7c2379630b050294bd51b81eab97"
+  },
+  {
+    "id": "aud_1787266287439_6a51ee90",
+    "timestamp": "2026-08-20T22:51:27.439Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_4e9afb42f93b2877618a8fd680221087d8969fbc62bf78be",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "929ac6a1e7ae16a3266bac1efd0da91268f42971dd5a1f8edf2da4a0f925fd11",
+    "hash": "e351db48a9ac1cab3bf885d166d8a1f99b28ed6f75e193db938c1a62e9a8182e"
+  },
+  {
     "id": "aud_1787259075834_9c21a894",
     "timestamp": "2026-08-20T20:51:15.836Z",
     "action": "AUTH_LOGIN_SUCCESS",

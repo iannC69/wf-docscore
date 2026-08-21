@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, Image as ImageIcon } from "lucide-react";
 import { useLightbox } from "./MediaLightbox";
 
 interface DocImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -24,6 +24,8 @@ export function DocImage({ src, alt, className = "", ...props }: DocImageProps) 
     });
   };
 
+  const isGif = src.toLowerCase().endsWith(".gif");
+
   return (
     <figure
       className="doc-image-figure not-prose"
@@ -33,24 +35,49 @@ export function DocImage({ src, alt, className = "", ...props }: DocImageProps) 
       title="Apasă pentru a mări imaginea (Lightbox HD)"
     >
       <div className="doc-image-wrap">
-        <img
-          src={src}
-          alt={alt || "Doc image"}
-          className={`doc-image-element ${className}`}
-          loading="lazy"
-          {...props}
-        />
+        {/* Sleek Showcase Top Bar */}
+        <div className="doc-image-topbar">
+          <div className="doc-image-dots">
+            <span className="doc-image-dot" />
+            <span className="doc-image-dot" />
+            <span className="doc-image-dot" />
+          </div>
+          <div className="doc-image-meta">
+            <span className="doc-image-badge">
+              <ImageIcon size={10} className="text-amber-400" />
+              <span>{isGif ? "DEMO ANIMAT" : "PREVIZUALIZARE"}</span>
+            </span>
+          </div>
+        </div>
 
-        {/* Hover Zoom Overlay Badge */}
-        <div className={`doc-image-zoom-overlay ${isHovered ? "doc-image-zoom-overlay--visible" : ""}`}>
-          <span className="doc-image-zoom-pill">
-            <Maximize2 size={13} aria-hidden="true" />
-            <span>Mărește Imaginea</span>
-          </span>
+        {/* Media Frame */}
+        <div className="doc-image-media-container">
+          <img
+            src={src}
+            alt={alt || "Doc image"}
+            className={`doc-image-element ${className}`}
+            loading="lazy"
+            {...props}
+          />
+
+          {/* Hover Zoom Overlay Badge */}
+          <div
+            className={`doc-image-zoom-overlay ${
+              isHovered ? "doc-image-zoom-overlay--visible" : ""
+            }`}
+          >
+            <span className="doc-image-zoom-pill">
+              <Maximize2 size={13} aria-hidden="true" />
+              <span>Mărește Imaginea HD</span>
+            </span>
+          </div>
         </div>
       </div>
+
       {alt && alt.trim() !== "" && alt !== "Doc image" && (
-        <figcaption className="doc-image-caption">{alt}</figcaption>
+        <figcaption className="doc-image-caption">
+          <span className="doc-image-caption-pill">{alt}</span>
+        </figcaption>
       )}
     </figure>
   );

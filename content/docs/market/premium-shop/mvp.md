@@ -1,25 +1,69 @@
 ---
-title: Custom MVP
-description: >-
-  Descopera totul despre Custom MVP pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Pachetul Custom MVP Anthem
+description: Ghidul serviciului de Custom MVP pe serverele WildFire CS2 — editor audio din browser pe site, procesare instanta, 15 Lei si tag exclusiv [PREMIUM MVP].
 outline: deep
 ---
-## 1.0 Premium Custom MVP
-1.0 Premium Custom MVP
 
-Acest pachet iti ofera posibilitatea de a adauga un **MVP custom** unic, disponibil exclusiv pentru tine la sfarsitul rundelor in care iesi MVP.
+Serviciul **Custom MVP Anthem** iti permite sa celebrezi victoriile de runda pe serverul **WildFire.ro** folosind exact piesa ta favorita, decupata si personalizata de tine direct din browser pe platforma web oficiala.
 
-####  Pret Pachet: 15 Lei
+---
 
-Achizitionabil direct de pe [Dashboard (Request MVP Anthem)](https://wildfire.ro/mvp-anthem-request). Pachetul iti ofera urmatoarele beneficii exclusive adaugate recent:
+> [!NOTE]
+> Pachetul include procesare automata in timp real: decupezi melodia pe site, confirmi comanda, iar piesa devine activa instantaneu in inventarul tau in-game `!mvp`.
 
-- Editare direct din browser: Poti taia (trim) melodia fix pe portiunea preferata; efectul de fade-in si fade-out se aplica automat pe site.
+---
 
-- Procesare instanta: Sistemul nostru proceseaza melodia rapid, iar MVP-ul este adaugat automat si instant pe server.
+## 1. Avantajele Pachetului Custom MVP
 
-- Tag Exclusiv: Cand iei MVP, vei iesi in evidenta cu tagul **"PREMIUM MVP"** afisat in meniul de final de runda.
+* **Editor Audio Direct din Browser:** Interfata intuitiva iti permite sa selectezi punctul exact de start si final al melodiei, aplicand automat efecte profesionale de Fade-in si Fade-out.
+* **Tag Exclusiv [PREMIUM MVP]:** Cand esti desemnat MVP-ul rundei, pe langa redarea piesei tale, pe ecranul tuturor jucatorilor va fi afisat tag-ul distinctiv **"PREMIUM MVP"**.
+* **Permanenta:** Orice Custom MVP achizitionat ramane salvat definitiv pe contul tau si poate fi selectat oricand prin comanda `!mvp`.
+* **Tarif Accesibil:** Pachetul are costul fix de **15 Lei (sau echivalent in Phoenix Coins)**.
 
-Procesul este complet automatizat. Apesi pe link, iti decupezi piesa, platesti si intr-un minut ai noul tau MVP activat pe server!
+---
 
-- **Permanent:** Orice Custom MVP achizitionat ramane asociat contului tau permanent si il poti selecta oricand folosind !mvp pe server.
+## 2. Ghid Pas cu Pas de Configurare
+
+<Steps>
+  <Step title="Accesarea Platformei Web">
+    Acceseaza panoul dedicat pe [wildfire.ro/mvp-anthem-request](https://wildfire.ro) si autentifica-te cu contul tau de Steam.
+  </Step>
+
+  <Step title="Incarcarea sau Cautarea Melodiei">
+    Introdu link-ul melodiei sau incarca fisierul audio dorit in playerul de configurare.
+  </Step>
+
+  <Step title="Decuparea Portiunii Favorite (Trim & Fade)">
+    Ajusteaza glisoarele pentru a selecta portiunea de maxim 10 secunde. Asculta previzualizarea pentru a te asigura ca piesa suna impecabil.
+  </Step>
+
+  <Step title="Finalizarea si Activarea Instantanee">
+    Achita comanda prin metoda de plata preferata. In mai putin de 60 de secunde, noul tau imn va fi sincronizat pe serverul de CS2.
+  </Step>
+</Steps>
+
+---
+
+## 3. Comenzi Rapide in Joc
+
+* `!mvp` — Deschide selectorul de melodii unde vei gasi piesa ta custom gata de echipat.
+* `!wstokens` — Verifica statisticile si tokenii castigati la fiecare titlu de MVP.
+* `!settings` — Permite ajustarea volumului de redare in functie de preferinte.
+
+---
+
+## Resurse si Sisteme Conexe
+
+<Cards>
+  <Card title="Melodii & Imnuri MVP Anthem (!mvp)" href="/docs/systems/other/mvp">
+    Afla cum functioneaza catalogul general de melodii si optiunea de Random MVP.
+  </Card>
+
+  <Card title="Custom Entry Songs" href="/docs/market/premium-shop/entry-songs">
+    Melodie personalizata la intrarea pe server (gratuit pentru membrii VIP).
+  </Card>
+
+  <Card title="Sistemul de Recompense MVP" href="/docs/systems/other/mvp-rewards">
+    Consulta premiile automate in Phoenix Coins si cutii primite la fiecare MVP.
+  </Card>
+</Cards>

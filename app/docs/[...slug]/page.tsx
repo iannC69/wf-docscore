@@ -11,6 +11,8 @@ import { getPlatformSettings } from "@/lib/security/settingsStore";
 import { getAuthenticatedAdminSession } from "@/lib/security/auth";
 import { DocQuickActions } from "@/components/docs/DocQuickActions";
 import { DocIntegritySeal } from "@/components/docs/DocIntegritySeal";
+import { DocEndAiExplainer } from "@/components/docs/DocEndAiExplainer";
+import { DocAiSummaryCapsule } from "@/components/docs/DocAiSummaryCapsule";
 import { CURRENT_VERSION } from "@/lib/version";
 import {
   Pencil,
@@ -277,10 +279,26 @@ export default async function DocPage({ params }: Props) {
               </div>
             </header>
 
+            {/* Dynamic In-Page AI Quick Summary / TL;DR Capsule */}
+            <DocAiSummaryCapsule
+              docTitle={page.frontmatter.title}
+              docSlug={slug.join("/")}
+              rawContent={page.content}
+              variant="top"
+            />
+
             {/* MDX Content Body */}
             <div className="prose">
               {page.mdxSource as React.ReactNode}
             </div>
+
+            {/* End-of-Page AI Explainer & Q&A Callout Card */}
+            <DocEndAiExplainer
+              docTitle={page.frontmatter.title}
+              docSlug={slug.join("/")}
+              category={categoryLabel}
+              rawContent={page.content}
+            />
 
             {/* Page Footer */}
             <footer className="page-footer">

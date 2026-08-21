@@ -1,135 +1,97 @@
 ---
-title: MVP Anthem
-description: >-
-  Descopera totul despre MVP Anthem pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Melodii & Imnuri MVP Anthem (!mvp)
+description: Ghidul complet al sistemului de MVP Anthem pe serverele WildFire CS2 — comenzi !mvp, previzualizare audio, control volum, Random MVP si melodii Custom.
 outline: deep
 ---
-**Premium Feature** **MVP Anthem**
-MVP-urile (Most Valuable Player) sunt animatii speciale care apar la sfarsitul rundei pentru jucatorul care a avut cea mai buna performanta. Sistemul ** MVP Anthem** iti permite sa personalizezi aceasta animatie cu efecte vizuale si sunete unice.
 
-**Features:**
+Sistemul **MVP Anthem** iti permite sa celebrezi fiecare victorie pe serverul **WildFire.ro** cu stil: in momentul in care esti desemnat jucatorul meciului sau MVP-ul rundei, serverul va reda o piesa muzicala personalizata si o animatie vizuala spectaculoasa pentru toti participantii.
 
-- **Change Volume** — ajusteaza volumul fiecarui MVP independent
+---
 
-- **Random MVP** — activeaza modul aleatoriu pentru varietate maxima
+> [!NOTE]
+> Toate melodiile de MVP beneficiaza de un master audio de inalta calitate cu template-ul vizual oficial WildFire. Poti ajusta oricand volumul sau poti opri sunetele din `!settings`.
 
-- **Preview** — testeaza orice MVP inainte de a-l selecta
+---
 
-- **Select MVP** — schimba oricand MVP-ul activ din meniul !mvp
+## 1. Cum Echipezi o Melodie MVP (`!mvp`)
 
-MVP-urile sunt iteme **cosmetice premium** care nu ofera niciun avantaj in joc, dar iti permit sa te remarci in fata celorlalti jucatori la finalul rundei.
+Tasteaza comanda `!mvp` in chat pentru a deschide catalogul complet de piese disponibile:
 
-## 1.0 Cum Iti Pui Un MVP
-1.0 Cum Iti Pui Un MVP
+<DocVideo src="/videos/mvp_1.mp4" title="Selectare Melodie MVP in Joc" />
 
-Procesul de echipare a unui MVP este simplu si intuitiv:
+* Navigheaza prin lista cu tastele **SHIFT / F** si apasa tasta **E** pentru a echipa melodia dorita.
+* Schimbarea se aplica instantaneu, fara a fi necesara reconectarea pe server.
 
-Scrie `!mvp` in chat pentru a deschide meniul de selectie a MVP-urilor.
+---
 
-<DocVideo src="/videos/mvp_1.mp4" title="Select MVP" />
+## 2. Previzualizare Audio & Ajustare Volum Independent
 
-select mvp
+Poti testa oricare dintre melodiile din catalog inainte de a le echipa sau cumpara:
 
-Apasa **E** pentru a selecta MVP-ul dorit
+<DocVideo src="/videos/mvp_2.mp4" title="Previzualizare Audio MVP" />
 
-Odata selectat, MVP-ul este **vizibil instant** la sfarsitul rundei. Nu este necesara relogarea.
+### Controlul Volumului In-Game
+Daca vrei ca melodiile sa ruleze mai incet pentru a nu acoperi conversatia de pe Discord, poti ajusta volumul dedicat pentru MVP:
 
-## 2.0 Preview MVP
-2.0 Preview MVP
+<DocVideo src="/videos/mvp_3.mp4" title="Ajustare Volum MVP" />
 
-Inainte de a cumpara un MVP, poti testa cum arata si cum suna folosind functia **Preview** din meniul `!mvp`.
+* Foloseste tastele de navigare pentru a creste sau scadea procentul de volum (intre 0% si 100%).
 
-<DocVideo src="/videos/mvp_2.mp4" title="Preview MVP" />
+---
 
-preview mvp
+## 3. Modul Random MVP (Varietate la Fiecare Runda)
 
-Testeaza orice MVP inainte de al selecta.
+Daca detii mai multe piese in inventar si doresti ca la fiecare victorie sa ruleze o melodie surpriza, poti activa optiunea **Random MVP**:
 
-Foloseste optiunea **Preview** pentru a vedea animatia completa si a auzi sunetul inainte de a decide sa cumperi.
+![Modul Random MVP](/utility/random.png)
 
-## 3.0 Change Volume
-3.0 Change Volume
+* La fiecare titlu de MVP obtinut, serverul va alege aleatoriu o piesa din colectia ta.
+* Poti dezactiva oricand modul Random pentru a reveni la o melodie fixa.
 
-Fiecare MVP are un sunet asociat. Poti ajusta volumul independent de celelalte sunete din joc.
+---
 
-<DocVideo src="/videos/mvp_3.mp4" title="Change Volume" />
+## 4. Gestionare din Browser pe Platforma Web
 
-change volume
+Iti poti administra colectia de MVP-uri direct de pe site-ul oficial [wildfire.ro](https://wildfire.ro):
 
-Ajusteaza volumul folosind tastele **SHIFT, F si E**
+<DocVideo src="/videos/mvp_4.mp4" title="Panou Web MVP Manager" />
 
-## 4.0 Random MVP
-4.0 Random MVP
+* **Web Preview:** Asculta si vizioneaza animatiile oricarei piese direct din browser.
+* **Volume Sync:** Ajusteaza sliderul de volum din contul tau de utilizator.
 
-Daca ai mai multe MVP-uri in colectie si nu te poti decide pe care sa-l folosesti, poti activa functia **Random MVP**.
+---
 
-In meniul `!mvp`, selecteaza optiunea **Random MVP** pentru a activa modul aleatoriu.
+## 5. Pachete Custom MVP & Entry Songs
 
-![Random MVP](/utility/random.png)
+Pe langa catalogul general, comunitatea noastra ofera optiuni premium de personalizare:
 
-random mvp
+* **Custom MVP (Melodia Ta Preferata):** Poti incarca si decupa propria melodie din panoul web [Dashboard MVP](https://wildfire.ro). Sistemul aplica automat efecte profesionale de Fade In / Fade Out si adauga tag-ul exclusiv **"PREMIUM MVP"** la final de runda.
+* **Entry Songs (Melodie la Conectare):** O piesa scurta care se reda automat pe server in momentul in care intri pe serverul de CS2.
 
-Activeaza Random MVP pentru a primi un MVP diferit la fiecare runda
+---
 
-Cand modul **Random MVP** este activat, la fiecare sfarsit de runda in care esti MVP, sistemul va selecta aleatoriu unul dintre MVP-urile pe care le detii.
+## 6. Tabelul Comenzilor Rapide pentru MVP
 
-- Fiecare runda poate avea un MVP diferit
+| Comanda | Sintaxa Oficiala | Descriere & Rol |
+| :--- | :--- | :--- |
+| `!mvp` | `!mvp` | Deschide meniul grafic complet de selectie MVP Anthem |
+| `!wstokens` | `!wstokens` | Verifica balanta de tokeni si recompense MVP acumulate |
+| `!settings` | `!settings` | Deschide panoul de preferinte generale (activare / dezactivare audio) |
 
-- Pastreaza surpriza si varietatea in joc
+---
 
-- Poti dezactiva oricand functia si reveni la un MVP preferat
+## Resurse si Sisteme Conexe
 
-Modul **Random MVP** este perfect pentru cei care au o colectie mare de MVP-uri si vor sa le auda pe toate in actiune!
+<Cards>
+  <Card title="Sistemul de Recompense MVP" href="/docs/systems/other/mvp-rewards">
+    Afla ce premii in Phoenix Coins, credite si cutii castigi ca MVP.
+  </Card>
 
-## 5.0 MVP Pe Site
-5.0 MVP Pe Site
+  <Card title="Sistemul WeaponSkins (!ws)" href="/docs/systems/skins">
+    Personalizeaza-ti armele, cutitele si manusile de pe server.
+  </Card>
 
-Toate MVP-urile tale pot fi gestionate si din contul tau de pe **site-ul oficial**. Acceseaza `wildfire.ro/skins-market` si autentifica-te cu Steam pentru a accesa sectiunea **MVP**.
-
-<DocVideo src="/videos/mvp_4.mp4" title="Site MVP Manager" />
-
-site mvp manager
-
-Gestioneaza-ti MVP-urile direct din browser
-
-Pe site poti:
-
-- **Preview MVP** — vezi animatia completa direct in browser
-
-- **Change Volume** — ajusteaza volumul din interfata web
-
-- **Random MVP** — activeaza modul aleatoriu
-
-**Calitate Premium:** Toate MVP-urile dispun acum de un design nou, unde cover-ul original se transforma automat in **Template-ul Wildfire**. Audio-ul a fost de asemenea imbunatatit pentru o claritate impecabila!
-
-## 6.0 Custom MVP & Entry Songs
-6.0 Custom MVP & Entry Songs
-
-Pe langa colectia standard, jucatorii pot obtine sau achizitiona melodii personalizate, beneficiind de sisteme avansate si recunoastere vizuala.
-
-####  Custom MVP (Premium - 15 Lei)
-
-Achizitionabil direct de pe [Dashboard (Request MVP Anthem)](https://wildfire.ro/mvp-anthem-request). Pachetul iti ofera un MVP custom cu urmatoarele beneficii:
-
-- Editare direct din browser: Poti taia (trim) melodia cum doresti; efectul de fade se aplica automat.
-
-- Procesare instanta: MVP-ul se adauga automat si instant pe server.
-
-- Tag Exclusiv: Cand iei MVP, textul **"PREMIUM MVP"** este afisat in meniul de final de runda.
-
-####  MVP-uri Gratuite (Propuneri)
-
-Jucatorii pot propune propriile melodii pentru a fi adaugate. Acestea vor fi trimise catre conducere, care le va revizui (accept sau reject) pentru a fi integrate in catalogul serverului.
-
-####  Entry Songs
-
-Sistemul prin care la conectarea ta pe server ruleaza o melodie personalizata este acum activ!
-
-**Important:** Momentan, dupa ce platesti pachetul pe site ([Request MVP/Entry](https://wildfire.ro/mvp-anthem-request)), trebuie sa ii trimiti un mesaj privat lui **Trapi** pe Discord, iar el se va ocupa manual de procesarea si setarea melodiei tale.
-
-- **Nota:** Poti schimba MVP-ul oricand din meniul !mvp. Toate MVP-urile achizitionate raman in inventarul tau permanent.
-
-- **Recompense:** Vezi ce castigi cand esti MVP pe pagina [MVP Rewards](/systems/other/mvp-rewards).
-
-Foloseste comanda `!wstokens` pentru a vedea premiile random (Coins, Cases sau Random Stuff) pe care le primesti ca MVP.
+  <Card title="Sistemul de Rank & ELO" href="/docs/systems/other/ranks">
+    Vezi cum titlurile MVP iti sporesc punctajul in clasamentul competitiv.
+  </Card>
+</Cards>

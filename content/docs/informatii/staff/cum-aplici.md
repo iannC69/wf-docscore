@@ -1,114 +1,91 @@
 ---
 title: Cum sa intri in STAFF
-description: >-
-  Ghid detaliat despre cum poti aplica pentru functia de Helper pe serverele
-  Wildfire.ro.
+description: Ghid complet pas cu pas pentru aplicatia de Helper pe serverele WildFire CS2, criterii de selectie si beneficii administrative.
 outline: deep
 ---
-**Ghid de aplicare** **Cum sa devii Helper**
-Urmeaza pasii de mai jos pentru a trimite o cerere de intrare in STAFF-ul Wildfire.ro.
+
+Vrei sa contribui activ la dezvoltarea comunitatii si sa asiguri un mediu corect pe serverele **WildFire.ro**? Urmeaza pasii de mai jos pentru a trimite o aplicatie oficiala de recrutare pentru gradul de **Helper**.
 
 ---
 
-## Criterii minime
-CRITERII STAFF
-
-Conform [Regulamentului Staff](/informatii/regulamente/go/regulament-staff-go.html), inainte sa depui o cerere trebuie sa te asiguri ca indeplinesti urmatoarele cerinte de baza:
-
-- **Varsta minima:** Minim 16 ani (facem exceptie la jucatorii de 15 ani daca arata seriozitate si aplicatia este buna).
-
-- **Ore jucate:** Cel putin 500 de ore jucate pe CS2 si cel putin 20 de ore jucate pe server.
-
-- **Istoric si Comportament:** Fara sanctiuni grave (limbaj vulgar, toxic, etc) si comportament exemplar in comunitate.
-
-- **Activitate si Comunicare:** Activ pe discord si pe server. Microfon fara probleme de fundal si activitate pe voice-chat pentru a indruma jucatorii.
-
-- **Cont Prime:** Este obligatoriu sa detii un cont cu Prime pe CS2.
-
-- **In caz de respingere:** Daca aplicatia a fost respinsa, trebuie sa astepti 7 zile inainte de a aplica din nou.
+> [!IMPORTANT]
+> **Redactare Corecta si Raspunsuri Personale:**  
+> Asigura-te ca aplicatia ta este sincera, bine argumentata si redactata corect gramatical. Raspunsurile superficiale, incomplete sau copiate de la alti aplicanti duc la **respingerea automata** a cererii.
 
 ---
 
-## 1.0 Autentificare / Login
-1.0 AUTENTIFICARE (LOGIN)
+## Criterii Minime Obligatorii
 
-**Pas 1** **Logarea pe Site**
-Acceseaza site-ul nostru, **wildfire.ro**, si conecteaza-te folosind contul tau existent prin butonul de login din dreapta sus.
+Conform [Regulamentului Staff](/docs/informatii/regulamente/regulament-staff-go), inainte de a depune o aplicatie trebuie sa te asiguri ca indeplinesti urmatoarele cerinte de baza:
 
-![Pas 1 - Login](/ca_la_noobi/app_staff.png)
-
-wildfire.ro/login
-
-Conecteaza-te la contul tau
-
----
-
-## 2.0 Inregistrare Cont (Register)
-2.0 MENIUL DE REGISTER
-
-**Pas 2** **Crearea Contului**
-Daca nu ai deja un cont, foloseste meniul de **Register** pentru a-ti crea unul nou. Fara un cont activ pe platforma noastra, nu vei putea depune o aplicatie pentru echipa Staff.
-
-![Pas 2 - Register](/ca_la_noobi/app_staff_2.png)
-
-wildfire.ro/register
-
-Creare Cont / Inregistrare
+* **Varsta Minima:** Minim **16 ani** impliniti (facem exceptie si pentru candidatii de 15 ani daca demonstreaza maturitate si seriozitate).
+* **Ore Jucate:** Cel putin **500 de ore** in Counter-Strike 2 si minimum **20 de ore** inregistrate pe serverul WildFire.
+* **Cont Securizat:** Detinerea obligatorie a statutului **Steam Prime**.
+* **Cazier Curat:** Fara sanctiuni grave in istoric (toxicitate, limbaj vulgar, jigniri staff, cheating).
+* **Activitate & Comunicare:** Activitate constanta pe Discord si pe server, microfon clar fara zgomote de fundal si prezenta pe voice chat.
+* **Perioada de Cooldown:** In cazul in care aplicatia a fost respinsa, trebuie sa astepti **7 zile** inainte de a aplica din nou.
 
 ---
 
-## 3.0 Accesarea Dashboard-ului
-3.0 ACCESAREA DASHBOARD-ULUI
+## Ghid de Aplicare Pas cu Pas
 
-**Pas 3** **Panoul de Control**
-Dupa logarea pe site, apasa pe **numele tau** (aflat in coltul din dreapta sus) pentru a deschide meniul si alege optiunea **Dashboard** (sau acceseaza direct link-ul `wildfire.ro/dashboard`). Aici vei gasi panoul principal de control al contului tau, incluzand statisticile si functiile suplimentare.
+<Steps>
+  <Step title="Autentificare pe Platforma Web">
+    Acceseaza site-ul oficial [wildfire.ro](https://wildfire.ro) si conecteaza-te folosind contul tau existent prin butonul de login din coltul din dreapta sus.
+    
+    ![Autentificare pe Site](/ca_la_noobi/app_staff.png)
+  </Step>
 
-![Pas 3 - Dashboard](/ca_la_noobi/app_staff_3.png)
+  <Step title="Inregistrare Cont Nou (daca este cazul)">
+    Daca nu ai deja un cont creat pe platforma noastra, foloseste formularul de **Register** pentru a-ti crea un cont asociat Steam.
+    
+    ![Meniu Inregistrare](/ca_la_noobi/app_staff_2.png)
+  </Step>
 
-Dashboard
+  <Step title="Accesarea Dashboard-ului">
+    Dupa autentificare, da click pe profilul tau din coltul din dreapta sus si selecteaza **Dashboard** (sau navigheaza direct la [wildfire.ro/dashboard](https://wildfire.ro/dashboard)).
+    
+    ![Panoul Principal Dashboard](/ca_la_noobi/app_staff_3.png)
+  </Step>
 
-Panoul principal de control al contului
-
----
-
-## 4.0 Helper Applications
-4.0 HELPER APPLICATIONS
-
-**Pas 4** **Application Management**
-In pagina de Dashboard, deruleaza in jos catre rubrica de actiuni rapide. Cauta cardul numit **Helper Applications** si da click pe butonul portocaliu marcat cu `Application Management`. Acest lucru te va redirectiona direct spre formularul de recrutare. (Acolo va trebui sa iti completezi aplicatia cu cat mai multe detalii!)
-
-![Pas 4 - Helper Applications](/ca_la_noobi/app_staff_4.png)
-
-Application Management
-
-Sectiunea formularului de recrutare
-
----
-
-## Ce Oferim?
-CE OFERIM?
-
-Pe langa ocazia de a face parte dintr-o comunitate de top, echipa Wildfire beneficiaza de un mediu profesionist si avantaje exclusive pe server:
-
-- **Respect si Colaborare:** Echipa noastra este condusa de fondatori cu experienta vasta. Te consideram un coleg si un partener de incredere, mentinand un mediu de lucru corect, lipsit de toxicitate, unde efortul este intotdeauna apreciat.
-
-- **Experienta si Suport:** Vei invata cum se administreaza corect un server la cele mai inalte standarde, avand mereu indrumarea si sustinerea colegilor cu grad superior.
-
-Pachete VIP Oferite Gratuit
-
-**Sistem de Recompensare**
-Munca ta este rasplatita. In functie de gradul tau administrativ, primesti automat avantaje premium pe serverele noastre:
-
-Grad: Helper
-VIP Rebirth
-
-Grad: Administrator
-VIP Immortal
-
-Grad: ServerManager+
-VIP Mythic
+  <Step title="Completarea Formularului de Helper">
+    In pagina de Dashboard, deruleaza pana la rubrica de actiuni rapide, gaseste cardul **Helper Applications** si apasa pe butonul portocaliu **Application Management** pentru a completa intrebarile de recrutare.
+    
+    ![Sectiunea Helper Applications](/ca_la_noobi/app_staff_4.png)
+  </Step>
+</Steps>
 
 ---
 
-**Foarte Important!**
-Asigura-te ca aplicatia ta este sincera, redactata corect gramatical si detaliata. Raspunsurile superficiale sau copiate duc la respingerea instanta a cererii tale. Mult succes!
+## Ce Oferim Echipei Noastre?
+
+Pe langa oportunitatea de a modera alaturi de o echipa cu vasta experienta in CS2, membrii staff beneficiaza de avantaje premium in-game:
+
+* **Mediu de Lucru Profesionist:** O atmosfera placuta, comunicare transparenta si sprijin permanent din partea gradelor superioare.
+* **Dezvoltare si Promovare:** Posibilitatea de a avansa in ierarhie (Helper ➔ Moderator ➔ Administrator ➔ Supervizor) pe baza de meritocratie si implicare.
+
+### Pachete VIP Oferite Membrilor Staff
+
+Munca si timpul investit de echipa administrativa sunt rasplatite automat cu pachete VIP pe server:
+
+| Grad Administrativ | Pachet VIP Inclus | Facilitati Principale |
+| :--- | :--- | :--- |
+| **Helper** | **VIP Rebirth** | Tag personalizat, Double Jump, slot rezervat si skin-uri VIP |
+| **Administrator** | **VIP Immortal** | Beneficii extinse, multiplicator credite si acces audio complet |
+| **Server Manager+** | **VIP Mythic** | Pachet premium suprem cu toate facilitatile deblocate |
+
+---
+
+## Resurse Administrative Recomandate
+
+<Cards>
+  <Card title="Comenzi Administrative" href="/docs/informatii/staff/comenzi">
+    Consulta lista completa si sintaxa comenzilor in-game pe care le vei folosi ca Helper.
+  </Card>
+  <Card title="Regulament Staff & Conduita" href="/docs/informatii/regulamente/regulament-staff-go">
+    Invata normele de etica, obligatiile lunare de activitate si protocoalele de moderare.
+  </Card>
+  <Card title="Motive Oficiale de Sanctiune" href="/docs/informatii/staff/motive-staff">
+    Nomenclatorul standardizat de motive si duratele pentru fiecare abatere.
+  </Card>
+</Cards>

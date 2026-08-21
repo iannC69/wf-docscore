@@ -1,78 +1,91 @@
 ---
-title: Slots
-description: >-
-  Descopera totul despre Slots pe platforma Wildfire.ro. Resurse complete,
-  ghiduri si sisteme detaliate pentru Counter-Strike 2.
+title: Slots / Pacanele In-Game
+description: Ghidul complet al aparatelor de Slots (Pacanele) pe serverele WildFire CS2 — comenzi !sl, combinatii de simboluri, multiplicatori si Jackpot.
 outline: deep
 ---
-**Gambling** **Slots System**
-Slot machine-ul este jocul clasic de noroc — tragi de maner, trei simboluri se rotesc si speri la combinatia castigatoare. Cu mize mici poti castiga **jackpot-uri uriase**, totul intr-o singura tragere.
 
-Sistemul accepta atat **credite** cat si **Phoenix Coins**. Alegi suma, tragi de maner si vezi instantaneu daca ai castigat. Simplu, rapid si plin de adrenalina.
+**Slots / Pacanele (`!sl`)** aduce experienta aparatelor clasice de pacanele direct in Counter-Strike 2. Tragi de maneta, cele 3 role se rotesc cu animatie grafica in HUD, iar potrivirea simbolurilor iti aduce castiguri multiplicate si sansa de a lovi marele **Jackpot**.
 
-Gambling-ul este optional si **100% bazat pe noroc**. Joaca responsabil — nu paria mai mult decat iti permiti sa pierzi.
+---
 
-## 1.0 CUM ACCESEZI SLOTS
-1.0 CUM ACCESEZI SLOTS
+> [!NOTE]
+> Modulul accepta atat **Credite** (castigate prin activitate), cat si **Phoenix Coins (PHX)**. Toate platile se efectueaza automat si instantaneu in balanta ta de joc.
 
-Totul incepe cu o singura comanda scrisa in chat:
+---
 
-Scrie `!slot` in chat pentru a deschide meniul principal al **slot machine-ului**.
+## 1. Cum se Joaca la Slots in 4 Pasi
 
-Meniul iti afiseaza balanta curenta, optiunea de a alege suma si butonul de tragere. Interfata este simpla si rapida.
+<Steps>
+  <Step title="Deschiderea Meniului de Slots">
+    Tasteaza comanda `!sl` sau `!slot` in chat pentru a deschide interfata interactiva a aparatului.
+    
+    ![Meniul Principal Slots - !sl](/slots/gif_slots_1.gif)
+  </Step>
 
-![Slots Menu - !slot](/slots/gif_slots_1.gif)
+  <Step title="Selectarea Monedei de Joc">
+    Alege moneda dorita pentru sesiune: **Credite** sau **Phoenix Coins (PHX)**. Poti schimba moneda oricand inainte de o noua rotire.
+    
+    ![Selectare Moneda Slots](/slots/gif_slots_2.gif)
+  </Step>
 
-!slot menu
+  <Step title="Alegerea Mizei si Tragerea de Maneta">
+    Selecteaza suma pe care vrei sa o pariezi la rotirea curenta si apasa pe butonul de invartire a rolelor.
+  </Step>
 
-Comanda **!slot** — deschide interfata slot machine-ului
+  <Step title="Afisarea Combinatiei si Virarea Castigului">
+    Cele 3 role se opresc succesiv. In cazul unei linii castigatoare, multiplicatorul aferent simbolurilor iti este virat instantaneu in cont.
+  </Step>
+</Steps>
 
-## 2.0 MONEDA DE JOC
-2.0 MONEDA DE JOC
+---
 
-La slots poti juca cu oricare dintre cele doua monede ale serverului:
+## 2. Tabelul Simbolurilor si Multiplicatorilor de Plata
 
-- **Credite** — moneda castigata jucand pe server (kill-uri, MVP-uri, bonus zilnic)
+Fiecare simbol are o cota specifica de plata in functie de raritatea sa:
 
-- **Phoenix Coins** — moneda premium, obtinuta din market sau evenimente
+| Simbol / Combinatie | Numar Linii | Multiplicator Castig | Nivel de Raritate |
+| :--- | :--- | :--- | :--- |
+| **777 (Jackpot Legend)** | 3 Simboluri Identice | **50x** (Miza x50) | Extrem de Rar |
+| **Coroana / Stea Aurie** | 3 Simboluri Identice | **25x** (Miza x25) | Foarte Rar |
+| **Clopotel / Foc (WildFire)** | 3 Simboluri Identice | **15x** (Miza x15) | Rar |
+| **Fructe Mari (Pepene / Struguri)** | 3 Simboluri Identice | **8x** (Miza x8) | Mediu |
+| **Fructe Mici (Cirese / Lamai)** | 3 Simboluri Identice | **4x** (Miza x4) | Comun |
+| **2 Simboluri Identice** | 2 Simboluri + Oricare | **1.5x** (Returnare Miza + Profit) | Frecvent |
 
-Alegi moneda si suma **inainte de fiecare tragere**. Poti schimba oricand intre cele doua monede.
+---
 
-![Selectare moneda - Slots](/slots/gif_slots_2.gif)
+## 3. Demonstrație Video In-Game
 
-currency select
+Urmareste cum functioneaza slot machine-ul in timp real pe server:
 
-Selecteaza moneda cu care vrei sa joci — **Credite** sau **Phoenix Coins**
+<DocVideo src="/slots/video_slots.mp4" title="Demonstratie Live Slots CS2" />
 
-## 3.0 CUM FUNCTIONEAZA
-3.0 CUM FUNCTIONEAZA
+---
 
-Mecanica este simpla — **3 role se rotesc** si trebuie sa se opreasca pe aceeasi combinatie:
+## 4. Comenzi Rapide pentru Slots
 
-- **3 simboluri identice** — castig garantat, multiplicatorul depinde de simbol
+* `!sl` sau `!slot` — Deschide interfata aparatului de Slots.
+* `!eco` — Verifica fondurile disponibile inainte de pariere.
+* `!eco pay [jucator] [suma] [moneda]` — Transfera castigurile altor jucatori.
 
-- **Jackpot** — combinatia rara care ofera cel mai mare castig posibil
+> [!IMPORTANT]
+> **Joc Responsabil:**  
+> Fiecare rotire este independenta si guvernata de un generator de numere aleatorii (RNG). Nu incerca sa recuperezi pierderile mizand sume mari nesustenabile.
 
-- **Fara potrivire** — suma pariata este pierduta
+---
 
-Fiecare tragere este **independenta** — rezultatul nu depinde de tragerile anterioare. Totul este bazat pe noroc pur.
+## Alte Jocuri de Casino Disponibile
 
-## 4.0 PREVIEW LIVE
-4.0 PREVIEW LIVE
+<Cards>
+  <Card title="Ruleta In-Game (!rl)" href="/docs/systems/gambling/roulette">
+    Pariaza pe culori (Rosu/Negru/Verde), numere exacte si cote de pana la 36x.
+  </Card>
 
-Vizioneaza un **preview complet** al sistemului de slots inainte de a-l incerca pe server:
+  <Card title="Barbut & Zaruri 1v1 (!bb)" href="/docs/systems/gambling/dices">
+    Provoaca direct un alt jucator la un duel de zaruri pe miza dubla.
+  </Card>
 
-<DocVideo src="/slots/video_slots.mp4" title="Preview Slots CS2" />
-
-Demonstratie live — slot machine-ul in actiune
-
-Castigurile sunt **creditate instant** in balanta ta. Animatia se deruleaza direct in HUD-ul jocului.
-
-## 5.0 ALTE JOCURI DE GAMBLING
-5.0 ALTE JOCURI DE GAMBLING
-
-Pe langa slots, serverul ofera inca **2 jocuri de gambling**:
-
-- [Roulette](/systems/gambling/roulette) — pariezi pe culori, numere, grupuri sau coloane. Comanda: !rl
-
-- [Dices (Barbut)](/systems/gambling/dices) — jocul clasic de barbut 1v1 cu alt jucator. Comanda: !bb
+  <Card title="Sistemul de Currency" href="/docs/currency">
+    Ghidul complet al Creditelor si monedelor Phoenix Coins (PHX).
+  </Card>
+</Cards>
