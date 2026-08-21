@@ -17,6 +17,8 @@ import {
   Terminal,
   Cpu,
   Database,
+  ListTodo,
+  Archive,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
@@ -38,6 +40,13 @@ const NAV_ITEMS: NavItem[] = [
     badge: "Live",
   },
   {
+    label: "Task Hub & TODO",
+    href: "/admin/tasks",
+    icon: ListTodo,
+    badge: "TODO",
+    permKey: "canEditDocs",
+  },
+  {
     label: "AI Engine Telemetry",
     href: "/admin/ai-analytics",
     icon: Cpu,
@@ -52,6 +61,15 @@ const NAV_ITEMS: NavItem[] = [
     permKey: "canManageSettings",
   },
   {
+    label: "Snapshot Vault",
+    href: "/admin/backups",
+    icon: Archive,
+    badge: "Vault",
+    permKey: "canManageSettings",
+  },
+
+
+  {
     label: "My Team & Access",
     href: "/admin/team",
     icon: Users,
@@ -63,6 +81,7 @@ const NAV_ITEMS: NavItem[] = [
     icon: FileEdit,
     permKey: "canEditDocs",
   },
+
   {
     label: "Doc Health & Linter",
     href: "/admin/health",

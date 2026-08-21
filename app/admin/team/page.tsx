@@ -26,13 +26,27 @@ import {
   Save,
   AlertTriangle,
   FileText,
+  User,
+  ExternalLink,
+  GitCommit,
+  Sparkles,
 } from "lucide-react";
 import type { TeamMember, TeamMemberPermissions } from "@/lib/security/teamStore";
+
+function GithubIcon({ size = 16, className = "" }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  );
+}
 
 export default function AdminTeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [rolePresets, setRolePresets] = useState<Record<string, any>>({});
+  const [repoStats, setRepoStats] = useState<Record<string, { totalCommits: number; docsCommits: number }>>({});
+  const [githubGraphContributors, setGithubGraphContributors] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -65,6 +79,7 @@ export default function AdminTeamPage() {
   const [editRespString, setEditRespString] = useState<string>("");
   const [editBadgesString, setEditBadgesString] = useState<string>("");
   const [editDocsModifiedCount, setEditDocsModifiedCount] = useState<number>(0);
+  const [editGithubUsername, setEditGithubUsername] = useState<string>("");
   const [steamAvatarPreview, setSteamAvatarPreview] = useState<string | null>(null);
   const [savingEdit, setSavingEdit] = useState<boolean>(false);
 
@@ -94,15 +109,38 @@ export default function AdminTeamPage() {
   const fetchTeam = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/team");
-      if (res.status === 401) {
-        window.location.href = "/admin/login";
-        return;
+      const [res, contribRes] = await Promise.allSettled([
+        fetch("/api/admin/team"),
+        fetch("/api/team/contributors"),
+      ]);
+
+      if (res.status === "fulfilled") {
+        if (res.value.status === 401) {
+          window.location.href = "/admin/login";
+          return;
+        }
+        const data = await res.value.json();
+        setMembers(data.members || []);
+        setCurrentUser(data.currentUser || null);
+        setRolePresets(data.rolePresets || {});
       }
-      const data = await res.json();
-      setMembers(data.members || []);
-      setCurrentUser(data.currentUser || null);
-      setRolePresets(data.rolePresets || {});
+
+      if (contribRes.status === "fulfilled" && contribRes.value.ok) {
+        const cData = await contribRes.value.json();
+        if (cData?.githubGraphContributors && Array.isArray(cData.githubGraphContributors)) {
+          setGithubGraphContributors(cData.githubGraphContributors);
+        }
+        if (cData?.contributors && Array.isArray(cData.contributors)) {
+          const map: Record<string, { totalCommits: number; docsCommits: number }> = {};
+          for (const c of cData.contributors) {
+            map[c.username.toLowerCase()] = {
+              totalCommits: c.stats?.totalCommits || 0,
+              docsCommits: c.stats?.docsCommits || c.docsModifiedCount || 0,
+            };
+          }
+          setRepoStats(map);
+        }
+      }
     } catch (err) {
       console.error("Failed to load team data", err);
     } finally {
@@ -131,6 +169,7 @@ export default function AdminTeamPage() {
     setEditRespString(member.responsibilities ? member.responsibilities.join(", ") : "");
     setEditBadgesString(member.badges ? member.badges.join(", ") : "");
     setEditDocsModifiedCount(member.docsModifiedCount || 0);
+    setEditGithubUsername((member as any).githubUsername || "");
     setStatusMessage(null);
   };
 
@@ -195,6 +234,7 @@ export default function AdminTeamPage() {
           bio: editBio.trim(),
           discord: editDiscord.trim(),
           steamId: editSteamId.trim(),
+          githubUsername: editGithubUsername.trim(),
           responsibilities,
           badges,
           docsModifiedCount: Number(editDocsModifiedCount) || 0,
@@ -401,6 +441,128 @@ export default function AdminTeamPage() {
         </div>
       </div>
 
+      {/* ── GitHub Contributors Graph Reconciliation Panel ── */}
+      {githubGraphContributors.length > 0 && (
+        <div
+          style={{
+            marginBottom: "24px",
+            padding: "16px 20px",
+            borderRadius: "14px",
+            background: "hsl(220 14% 10% / 0.7)",
+            border: "1px solid hsl(220 14% 24% / 0.8)",
+            backdropFilter: "blur(16px)",
+            boxShadow: "0 8px 32px hsl(0 0% 0% / 0.35)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "hsl(220 14% 20% / 0.8)", border: "1px solid hsl(220 14% 35% / 0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <GithubIcon size={16} className="text-zinc-200" />
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: "0.88rem", fontWeight: 700, color: "var(--color-text)", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span>Sincronizare GitHub Contributors Graph</span>
+                  <span style={{ fontSize: "0.65rem", padding: "2px 7px", borderRadius: "5px", background: "hsl(142 71% 45% / 0.15)", border: "1px solid hsl(142 71% 45% / 0.3)", color: "hsl(142 71% 70%)", fontWeight: 800 }}>
+                    LIVE SYNC ACTIV
+                  </span>
+                </h4>
+                <span style={{ fontSize: "0.72rem", color: "var(--color-text-tertiary)" }}>
+                  Reconciliere automată între committerii din repository (graphs/contributors) și membrii din My Team
+                </span>
+              </div>
+            </div>
+
+            <a
+              href="https://github.com/iannC69/wf-docscore/graphs/contributors"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                background: "hsl(220 14% 18% / 0.7)",
+                border: "1px solid hsl(220 14% 35% / 0.6)",
+                fontSize: "0.74rem",
+                fontWeight: 600,
+                color: "var(--color-text)",
+                textDecoration: "none",
+                transition: "all 0.18s ease",
+              }}
+              title="Deschide graficul oficial pe GitHub"
+            >
+              <GithubIcon size={12} />
+              <span>Vezi GitHub Contributors Graph</span>
+              <ExternalLink size={11} />
+            </a>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "10px" }}>
+            {githubGraphContributors.map((gc) => {
+              const matchedMember = members.find(
+                (m) =>
+                  ((m as any).githubUsername && (m as any).githubUsername.toLowerCase() === gc.login.toLowerCase()) ||
+                  m.username.toLowerCase() === gc.login.toLowerCase() ||
+                  m.displayName.toLowerCase() === gc.login.toLowerCase()
+              );
+
+              return (
+                <div
+                  key={gc.login}
+                  style={{
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    background: "hsl(0 0% 100% / 0.03)",
+                    border: "1px solid var(--glass-border)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                    <img
+                      src={gc.avatarUrl || `https://github.com/${gc.login}.png`}
+                      alt={gc.login}
+                      style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--glass-border)", flexShrink: 0 }}
+                    />
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--color-text)" }}>@{gc.login}</span>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "hsl(215 90% 65%)", fontFamily: "var(--font-mono, monospace)" }}>
+                          {gc.totalCommits} commits
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "0.68rem", color: "var(--color-text-tertiary)" }}>
+                        {matchedMember ? (
+                          <span style={{ color: "hsl(142 71% 70%)" }}>
+                            ✓ Reconciliat cu <strong>@{matchedMember.username}</strong>
+                          </span>
+                        ) : (
+                          <span style={{ color: "hsl(38 92% 65%)" }}>
+                            Neasociat în My Team
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ fontSize: "0.68rem", fontFamily: "var(--font-mono, monospace)", textAlign: "right", flexShrink: 0 }}>
+                    {gc.totalAdditions > 0 && (
+                      <span style={{ color: "hsl(142 71% 65%)", display: "block" }}>+{gc.totalAdditions.toLocaleString()}</span>
+                    )}
+                    {gc.totalDeletions > 0 && (
+                      <span style={{ color: "hsl(0 84% 65%)", display: "block" }}>-{gc.totalDeletions.toLocaleString()}</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Search & Filter Toolbar */}
       <div className="admin-team-toolbar">
         <div className="admin-team-search-box">
@@ -547,21 +709,43 @@ export default function AdminTeamPage() {
                       {activePermCount} / 10 Permisiuni Active
                     </span>
                     <span style={{ fontSize: "0.68rem", color: "var(--color-text-tertiary)", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                      <FileText size={10} className="text-amber-400" />
-                      <strong>{member.docsModifiedCount || 0}</strong> ghiduri modificate
+                      {repoStats[member.username.toLowerCase()]?.totalCommits ? (
+                        <>
+                          <GitCommit size={10} className="text-cyan-400" />
+                          <span><strong>{repoStats[member.username.toLowerCase()].totalCommits}</strong> commit-uri repo</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileText size={10} className="text-zinc-500" />
+                          <span><strong>{repoStats[member.username.toLowerCase()]?.docsCommits ?? 0}</strong> ghiduri modificate</span>
+                        </>
+                      )}
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openInspector(member);
-                    }}
-                    className="admin-member-inspect-btn"
-                  >
-                    <span>Vezi Profil</span>
-                  </button>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <a
+                      href={`/docs/team/${encodeURIComponent(member.username)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="admin-member-inspect-btn"
+                      style={{ textDecoration: "none", background: "hsl(0 0% 100% / 0.04)", display: "inline-flex", alignItems: "center", gap: "5px" }}
+                      title="Deschide profilul public"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink size={12} />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openInspector(member);
+                      }}
+                      className="admin-member-inspect-btn"
+                    >
+                      <span>Inspector</span>
+                    </button>
+                  </div>
                 </div>
 
               </div>
@@ -736,6 +920,20 @@ export default function AdminTeamPage() {
                         data-lpignore="true"
                         onChange={(e) => setEditSteamId(e.target.value)}
                         placeholder="Ex: 1iannc sau 76561198... sau link complet"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">GitHub Username (Profil Contribuitor)</label>
+                      <input
+                        type="text"
+                        value={editGithubUsername}
+                        autoComplete="off"
+                        data-lpignore="true"
+                        data-1p-ignore="true"
+                        onChange={(e) => setEditGithubUsername(e.target.value)}
+                        placeholder="Ex: iannC69"
                         className="admin-form-input"
                       />
                     </div>

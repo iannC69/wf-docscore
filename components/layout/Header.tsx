@@ -1,13 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame, Search } from "lucide-react";
+import {
+  Search,
+  ShieldCheck,
+  LayoutDashboard,
+} from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LayoutControls } from "@/components/ui/LayoutControls";
 import { MobileMenuToggle } from "@/components/layout/MobileMenuToggle";
 import { SearchModal } from "@/components/ui/SearchModal";
 import { AnnouncementBanner } from "@/components/ui/AnnouncementBanner";
+import { AdminNotificationsCenter } from "@/components/admin/AdminNotificationsCenter";
 import { CURRENT_VERSION } from "@/lib/version";
+
 
 function GithubIcon({ size = 16 }: { size?: number }) {
   return (
@@ -17,9 +23,19 @@ function GithubIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+interface AdminHeaderUser {
+  username: string;
+  displayName: string;
+  role: string;
+  isRoot: boolean;
+  avatarUrl: string;
+  customTitle?: string;
+}
+
 export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [isMac, setIsMac] = useState(false);
+  const [adminUser, setAdminUser] = useState<AdminHeaderUser | null>(null);
 
   useEffect(() => {
     setIsMac(typeof navigator !== "undefined" && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform));
@@ -37,6 +53,18 @@ export function Header() {
 
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, []);
+
+  // Fetch logged in admin status
+  useEffect(() => {
+    fetch("/api/admin/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.authenticated && data.user) {
+          setAdminUser(data.user);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -84,7 +112,7 @@ export function Header() {
             </button>
           </div>
 
-          {/* Right: Layout Switcher + Mobile Search + GitHub Link + Theme toggle */}
+          {/* Right: Layout Switcher + Mobile Search + Admin PFP Button + GitHub Link + Theme toggle */}
           <div className="header-right">
             <button
               type="button"
@@ -95,8 +123,43 @@ export function Header() {
             >
               <Search size={16} />
             </button>
+
             <LayoutControls />
+
+            {/* ── Direct Admin PFP Circle Icon (1-Click straight to /admin) ── */}
+            {adminUser && (
+              <>
+                <div className="header-divider" aria-hidden="true" />
+                <AdminNotificationsCenter currentUsername={adminUser.username} />
+                <a
+                  href="/admin"
+                  className="header-admin-avatar-btn"
+                  title={`Panou Administrare (Mission Control) · @${adminUser.username}`}
+                  aria-label={`Deschide Panoul Admin - @${adminUser.username}`}
+                >
+                  <img
+                    src={adminUser.avatarUrl}
+                    alt={adminUser.displayName}
+                    className="header-admin-circle-img"
+                    width={26}
+                    height={26}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        "https://cdn.discordapp.com/embed/avatars/0.png";
+                    }}
+                  />
+                </a>
+              </>
+            )}
+
+
+
+
+
+
+
             <div className="header-divider" aria-hidden="true" />
+
             <a
               href="https://github.com/iannC69/wf-docscore"
               target="_blank"
@@ -107,6 +170,7 @@ export function Header() {
             >
               <GithubIcon size={16} />
             </a>
+
             <ThemeToggle />
           </div>
         </div>

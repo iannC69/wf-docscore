@@ -10,13 +10,17 @@ import {
   Sparkles,
   Flame,
   HelpCircle,
+  AlertTriangle,
+  FilePlus,
 } from "lucide-react";
 import type { FeedbackStats } from "@/lib/db/types";
+import { DocReportModal } from "@/components/docs/DocReportModal";
 
 interface FeedbackWidgetProps {
   slug?: string;
   initialStats?: FeedbackStats;
 }
+
 
 export function FeedbackWidget({ slug, initialStats }: FeedbackWidgetProps) {
   const [voted, setVoted] = useState<"helpful" | "unhelpful" | null>(null);
@@ -25,6 +29,8 @@ export function FeedbackWidget({ slug, initialStats }: FeedbackWidgetProps) {
   const [comment, setComment] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [commentSent, setCommentSent] = useState<boolean>(false);
+  const [reportModalOpen, setReportModalOpen] = useState<boolean>(false);
+  const [modalTab, setModalTab] = useState<"issue" | "request">("issue");
   const [stats, setStats] = useState<FeedbackStats>(
     initialStats || { helpful: 0, unhelpful: 0, total: 0, percentage: 100 }
   );
@@ -54,7 +60,19 @@ export function FeedbackWidget({ slug, initialStats }: FeedbackWidgetProps) {
       } catch {}
     }
     loadStats();
+
+    const handleOpenReport = (e: any) => {
+      if (e?.detail?.tab) {
+        setModalTab(e.detail.tab);
+      }
+      setReportModalOpen(true);
+    };
+
+    window.addEventListener("open-doc-report", handleOpenReport);
+    return () => window.removeEventListener("open-doc-report", handleOpenReport);
   }, [cleanSlug]);
+
+
 
   const handleVote = async (rating: "helpful" | "unhelpful") => {
     if (!cleanSlug || submitting) return;
@@ -223,7 +241,50 @@ export function FeedbackWidget({ slug, initialStats }: FeedbackWidgetProps) {
             <span>Sugestia ta a fost trimisă cu succes către echipa de documentație!</span>
           </div>
         )}
+
+        {/* Bottom Report / Request Action Link Bar */}
+        <div className="feedback-liquid-report-footer">
+          <div className="feedback-report-pills-cluster">
+            <button
+              type="button"
+              className="feedback-report-pill-btn feedback-report-pill-btn--issue"
+              onClick={() => {
+                setModalTab("issue");
+                setReportModalOpen(true);
+              }}
+              aria-label="Raportează o problemă sau eroare în acest ghid"
+            >
+              <AlertTriangle size={12} className="feedback-pill-icon feedback-pill-icon--amber" />
+              <span>Raportează o eroare în ghid</span>
+            </button>
+
+            <span className="feedback-report-cluster-sep" aria-hidden="true" />
+
+            <button
+              type="button"
+              className="feedback-report-pill-btn feedback-report-pill-btn--request"
+              onClick={() => {
+                setModalTab("request");
+                setReportModalOpen(true);
+              }}
+              aria-label="Solicită un ghid nou pentru comunitate"
+            >
+              <FilePlus size={12} className="feedback-pill-icon feedback-pill-icon--cyan" />
+              <span>Solicită ghid nou</span>
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Interactive Liquid Glass Report Modal */}
+      <DocReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        currentSlug={cleanSlug}
+        initialTab={modalTab}
+      />
     </div>
   );
 }
+
+

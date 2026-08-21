@@ -19,8 +19,11 @@ export type AuditAction =
   | "SYSTEM_INIT"
   | "MAINTENANCE_TOGGLED"
   | "BACKUP_EXPORT"
+  | "BACKUP_SNAPSHOT_CREATED"
+  | "BACKUP_SNAPSHOT_RESTORED"
   | "DOC_ROLLBACK"
   | "DOC_VERSION_SAVE";
+
 
 export interface AuditEvent {
   id: string;

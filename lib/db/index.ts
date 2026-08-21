@@ -1,10 +1,13 @@
 import type {
   DocViewRecord,
   DocFeedbackRecord,
+  DocReportRecord,
   FeedbackStats,
   DatabaseConfig,
   DatabaseStatus,
 } from "./types";
+import type { AdminTask } from "@/types/tasks";
+import type { AdminNotification, NotificationFilterOptions } from "@/types/notifications";
 import {
   localIncrementDocView,
   localGetDocViews,
@@ -13,9 +16,42 @@ import {
   localGetDocFeedbackStats,
   localGetAllFeedbacks,
   localDeleteFeedback,
+  localSubmitDocReport,
+  localGetAllReports,
+  localUpdateReportStatus,
+  localDeleteReport,
+  localCreateTask,
+  localGetAllTasks,
+  localGetTaskById,
+  localUpdateTask,
+  localDeleteTask,
+  localToggleTaskSubtask,
+  localAddTaskComment,
+  localCreateNotification,
+  localGetNotifications,
+  localMarkNotificationRead,
+  localMarkAllNotificationsRead,
+  localDeleteNotification,
+  localClearOldNotifications,
   getLocalDatabaseConfig,
   saveLocalDatabaseConfig,
 } from "./localStore";
+
+export * from "./types";
+export * from "@/types/tasks";
+export * from "@/types/notifications";
+
+export {
+  localCreateNotification,
+  localGetNotifications,
+  localMarkNotificationRead,
+  localMarkAllNotificationsRead,
+  localDeleteNotification,
+  localClearOldNotifications,
+};
+
+
+
 import {
   testSupabaseConnection,
   supabaseIncrementDocView,
@@ -157,16 +193,85 @@ export async function deleteFeedback(id: string): Promise<boolean> {
   return localDeleted;
 }
 
+// ─── Unified Report Operations ──────────────────────────────────────────────
+
+export async function submitDocReport(
+  params: Omit<DocReportRecord, "id" | "created_at" | "status">
+): Promise<DocReportRecord> {
+  const localRecord = localSubmitDocReport(params);
+  return localRecord;
+}
+
+export async function getAllDocReports(): Promise<DocReportRecord[]> {
+  return localGetAllReports();
+}
+
+export async function updateDocReportStatus(
+  id: string,
+  status: "open" | "in_progress" | "resolved",
+  resolvedBy?: string
+): Promise<DocReportRecord | null> {
+  return localUpdateReportStatus(id, status, resolvedBy);
+}
+
+export async function deleteDocReport(id: string): Promise<boolean> {
+  return localDeleteReport(id);
+}
+
+// ─── Unified Task Operations ────────────────────────────────────────────────
+
+export async function createAdminTask(
+  taskData: Omit<AdminTask, "id" | "createdAt" | "updatedAt">
+): Promise<AdminTask> {
+  return localCreateTask(taskData);
+}
+
+export async function getAllAdminTasks(): Promise<AdminTask[]> {
+  return localGetAllTasks();
+}
+
+export async function getAdminTaskById(id: string): Promise<AdminTask | null> {
+  return localGetTaskById(id);
+}
+
+export async function updateAdminTask(
+  id: string,
+  updates: Partial<AdminTask>
+): Promise<AdminTask | null> {
+  return localUpdateTask(id, updates);
+}
+
+export async function deleteAdminTask(id: string): Promise<boolean> {
+  return localDeleteTask(id);
+}
+
+export async function toggleAdminTaskSubtask(
+  taskId: string,
+  subtaskId: string
+): Promise<AdminTask | null> {
+  return localToggleTaskSubtask(taskId, subtaskId);
+}
+
+export async function addAdminTaskComment(
+  taskId: string,
+  comment: { author: string; text: string; avatarUrl?: string }
+): Promise<AdminTask | null> {
+  return localAddTaskComment(taskId, comment);
+}
+
+
 // ─── Unified Database Status & Config ─────────────────────────────────────────
 
 export async function getDatabaseStatus(): Promise<DatabaseStatus> {
   const config = getLocalDatabaseConfig();
   const allViews = await getAllDocViews();
   const allFeedbacks = await getAllFeedbacks();
+  const allReports = await getAllDocReports();
 
   const totalViews = allViews.reduce((sum, v) => sum + (v.total_views || 0), 0);
   const totalTrackedDocs = allViews.length;
   const totalFeedbacks = allFeedbacks.length;
+  const totalReports = allReports.length;
 
   let isConnected = true;
   if (config.provider === "supabase" && config.supabaseUrl && config.supabaseAnonKey) {
@@ -179,6 +284,7 @@ export async function getDatabaseStatus(): Promise<DatabaseStatus> {
     isConnected,
     totalViews,
     totalFeedbacks,
+    totalReports,
     totalTrackedDocs,
     lastSyncAt: new Date().toISOString(),
     supabaseUrl: config.supabaseUrl,
@@ -195,3 +301,4 @@ export function updateDatabaseConfig(updates: Partial<DatabaseConfig>): Database
   saveLocalDatabaseConfig(next);
   return next;
 }
+

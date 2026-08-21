@@ -97,16 +97,29 @@ function rebuildContextFile() {
 
   scan(docsDir);
 
+  let teamMembers: any[] = [];
+  try {
+    const teamPath = path.join(process.cwd(), "content", "team.json");
+    if (fs.existsSync(teamPath)) {
+      const raw = JSON.parse(fs.readFileSync(teamPath, "utf-8"));
+      if (Array.isArray(raw)) {
+        teamMembers = raw.filter((m) => m.status === "active").map(({ passwordHash, salt, email, ...safe }) => safe);
+      }
+    }
+  } catch {}
+
   const totalChars = docsList.reduce((acc, d) => acc + d.content.length, 0);
   const payload = {
     generatedAt: new Date().toISOString(),
     docCount: docsList.length,
+    teamCount: teamMembers.length,
     totalChars,
     docs: docsList,
+    team: teamMembers,
   };
 
   fs.writeFileSync(outputPath, JSON.stringify(payload, null, 2), "utf-8");
-  return { docCount: docsList.length, totalChars, generatedAt: payload.generatedAt };
+  return { docCount: docsList.length, teamCount: teamMembers.length, totalChars, generatedAt: payload.generatedAt };
 }
 
 export async function GET(req: NextRequest) {

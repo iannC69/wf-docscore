@@ -42,7 +42,11 @@ function countDocs(dir = path.join(process.cwd(), "content", "docs")): number {
   return count;
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminDashboardPage() {
+
   const session = await getAuthenticatedAdminSession();
 
   if (!session) {

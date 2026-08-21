@@ -26,13 +26,19 @@ import {
   Server,
   FileText,
   Filter,
+  AlertTriangle,
+  FilePlus,
+  ShieldAlert,
+  HelpCircle,
+  Zap,
 } from "lucide-react";
-import type { DocViewRecord, DocFeedbackRecord, DatabaseStatus } from "@/lib/db/types";
+import type { DocViewRecord, DocFeedbackRecord, DocReportRecord, DatabaseStatus } from "@/lib/db/types";
 
 export default function AdminDatabasePage() {
   const [status, setStatus] = useState<DatabaseStatus | null>(null);
   const [views, setViews] = useState<DocViewRecord[]>([]);
   const [feedbacks, setFeedbacks] = useState<DocFeedbackRecord[]>([]);
+  const [reports, setReports] = useState<DocReportRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -41,9 +47,12 @@ export default function AdminDatabasePage() {
   const [viewFilter, setViewFilter] = useState<"all" | "top5" | "recent">("all");
   const [feedbackSearch, setFeedbackSearch] = useState<string>("");
   const [feedbackFilter, setFeedbackFilter] = useState<"all" | "helpful" | "unhelpful" | "with_comments">("all");
+  const [reportSearch, setReportSearch] = useState<string>("");
+  const [reportFilter, setReportFilter] = useState<"all" | "issues" | "requests" | "open" | "resolved">("all");
 
-  // Config Tab State
-  const [activeTab, setActiveTab] = useState<"views" | "feedbacks" | "config">("views");
+  // Tab State
+  const [activeTab, setActiveTab] = useState<"views" | "feedbacks" | "reports" | "config">("views");
+
   const [dbProvider, setDbProvider] = useState<"local" | "supabase">("local");
   const [supabaseUrl, setSupabaseUrl] = useState<string>("");
   const [supabaseAnonKey, setSupabaseAnonKey] = useState<string>("");
@@ -69,6 +78,7 @@ export default function AdminDatabasePage() {
         setStatus(data.status);
         setViews(data.views || []);
         setFeedbacks(data.feedbacks || []);
+        setReports(data.reports || []);
         if (data.config) {
           setDbProvider(data.config.provider || "local");
           setSupabaseUrl(data.config.supabaseUrl || "");
@@ -124,11 +134,69 @@ export default function AdminDatabasePage() {
     });
   }, [feedbacks, feedbackFilter, feedbackSearch]);
 
+  // Filtered reports list
+  const filteredReports = useMemo(() => {
+    return reports.filter((rep) => {
+      if (reportFilter === "issues" && rep.type !== "issue") return false;
+      if (reportFilter === "requests" && rep.type !== "new_guide_request") return false;
+      if (reportFilter === "open" && rep.status === "resolved") return false;
+      if (reportFilter === "resolved" && rep.status !== "resolved") return false;
+
+      if (reportSearch.trim()) {
+        const q = reportSearch.toLowerCase();
+        const matchSlug = rep.slug?.toLowerCase().includes(q);
+        const matchDesc = rep.description?.toLowerCase().includes(q);
+        const matchTitle = rep.title?.toLowerCase().includes(q);
+        const matchDiscord = rep.contactDiscord?.toLowerCase().includes(q);
+        return matchSlug || matchDesc || matchTitle || matchDiscord;
+      }
+      return true;
+    });
+  }, [reports, reportFilter, reportSearch]);
+
   // Positive feedback calculations
   const helpfulCount = feedbacks.filter((f) => f.rating === "helpful").length;
   const unhelpfulCount = feedbacks.length - helpfulCount;
   const commentsCount = feedbacks.filter((f) => f.comment && f.comment.trim()).length;
   const helpfulPct = feedbacks.length > 0 ? Math.round((helpfulCount / feedbacks.length) * 100) : 100;
+
+  const openReportsCount = reports.filter((r) => r.status === "open" || r.status === "in_progress").length;
+  const newGuidesRequestsCount = reports.filter((r) => r.type === "new_guide_request").length;
+
+  const handleUpdateReportStatus = async (id: string, newStatus: "open" | "in_progress" | "resolved") => {
+    try {
+      const res = await fetch("/api/admin/database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update_report_status", id, status: newStatus }),
+      });
+
+      if (res.ok) {
+        setReports((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+        );
+      }
+    } catch (err) {
+      console.error("Failed to update report status", err);
+    }
+  };
+
+  const handleDeleteReport = async (id: string) => {
+    try {
+      const res = await fetch("/api/admin/database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_report", id }),
+      });
+
+      if (res.ok) {
+        setReports((prev) => prev.filter((r) => r.id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to delete report", err);
+    }
+  };
+
 
   const handleTestConnection = async () => {
     if (!supabaseUrl || !supabaseAnonKey) {
@@ -190,6 +258,41 @@ export default function AdminDatabasePage() {
     }
   };
 
+  const [syncingAll, setSyncingAll] = useState<boolean>(false);
+
+  const handleSyncAllToSupabase = async () => {
+    setSyncingAll(true);
+    setActionMessage(null);
+    try {
+      const res = await fetch("/api/admin/database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "sync_all_to_supabase" }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const c = data.counts || {};
+        setActionMessage({
+          type: "success",
+          text: `Sincronizare completă reușită! ${c.viewsCount || 0} vizualizări, ${c.feedbacksCount || 0} feedback-uri, ${c.reportsCount || 0} rapoarte, ${c.tasksCount || 0} sarcini, ${c.notificationsCount || 0} notificări și ${c.teamCount || 0} membri au fost scriși direct în Supabase.`,
+        });
+        loadData(true);
+      } else {
+        setActionMessage({
+          type: "error",
+          text: data.error || "Eroare la sincronizarea în Supabase. Asigură-te că ai rulat Schema SQL în Supabase!",
+        });
+      }
+    } catch (err: any) {
+      setActionMessage({
+        type: "error",
+        text: `Eroare de rețea: ${err.message}`,
+      });
+    } finally {
+      setSyncingAll(false);
+    }
+  };
+
   const handleDeleteFeedback = async (id: string) => {
     try {
       const res = await fetch("/api/admin/database", {
@@ -206,8 +309,14 @@ export default function AdminDatabasePage() {
     }
   };
 
+
+
   const copySqlScript = () => {
-    const sql = `-- WildFire Docs Supabase Migration Schema
+    const sql = `-- ══════════════════════════════════════════════════════════════════
+-- WILDFIRE DOCS ENGINE — FULL SUPABASE POSTGRESQL SCHEMA MIGRATION
+-- ══════════════════════════════════════════════════════════════════
+
+-- 1. Tabel Vizualizări Ghiduri (Page Views & Traffic)
 create table if not exists doc_views (
   slug text primary key,
   total_views integer default 0,
@@ -215,6 +324,7 @@ create table if not exists doc_views (
   last_viewed_at timestamp with time zone default now()
 );
 
+-- 2. Tabel Feedback Jucători (Ratings & Comments)
 create table if not exists doc_feedbacks (
   id text primary key,
   slug text not null,
@@ -223,6 +333,53 @@ create table if not exists doc_feedbacks (
   created_at timestamp with time zone default now()
 );
 
+-- 3. Tabel Rapoarte Erori & Cereri Ghiduri (Player Reports)
+create table if not exists doc_reports (
+  id text primary key,
+  type text not null default 'issue', -- 'issue' | 'request'
+  slug text,
+  title text not null,
+  description text not null,
+  author text not null default 'Vizitator Anonim',
+  status text not null default 'open', -- 'open' | 'investigating' | 'resolved' | 'dismissed'
+  created_at timestamp with time zone default now(),
+  resolved_at timestamp with time zone,
+  resolved_by text
+);
+
+-- 4. Tabel Sarcini & TODO Kanban (Admin Tasks)
+create table if not exists admin_tasks (
+  id text primary key,
+  title text not null,
+  description text,
+  category text not null default 'DOCS_UPDATE',
+  priority text not null default 'medium', -- 'low' | 'medium' | 'high' | 'urgent'
+  status text not null default 'todo', -- 'todo' | 'in_progress' | 'review' | 'done'
+  assigned_to text not null,
+  created_by text not null,
+  deadline timestamp with time zone,
+  subtasks jsonb default '[]'::jsonb,
+  comments jsonb default '[]'::jsonb,
+  created_at timestamp with time zone default now(),
+  updated_at timestamp with time zone default now()
+);
+
+-- 5. Tabel Notificări & Alerte Administrative (Notification Hub)
+create table if not exists admin_notifications (
+  id text primary key,
+  target_user text,
+  is_global boolean default false,
+  title text not null,
+  message text not null,
+  category text not null default 'system', -- 'task' | 'report' | 'feedback' | 'security' | 'system' | 'ai' | 'health'
+  severity text not null default 'info', -- 'info' | 'success' | 'warning' | 'urgent'
+  link text,
+  read_by jsonb default '[]'::jsonb,
+  created_at timestamp with time zone default now(),
+  metadata jsonb default '{}'::jsonb
+);
+
+-- 6. Tabel Membri Echipă & Permisiuni (Staff & Team Matrix)
 create table if not exists team_members (
   id text primary key,
   username text not null unique,
@@ -247,24 +404,48 @@ create table if not exists team_members (
   last_login_at timestamp with time zone
 );
 
--- Enable Row Level Security (RLS) & Public Policies
+-- ── Securitate & Politici Row Level Security (RLS) ───────────────
 alter table doc_views enable row level security;
 alter table doc_feedbacks enable row level security;
+alter table doc_reports enable row level security;
+alter table admin_tasks enable row level security;
+alter table admin_notifications enable row level security;
 alter table team_members enable row level security;
 
+-- Curățare politici existente pentru a evita erorile de duplicat
+drop policy if exists "Allow public read on doc_views" on doc_views;
+drop policy if exists "Allow public insert/update on doc_views" on doc_views;
+drop policy if exists "Allow public read on doc_feedbacks" on doc_feedbacks;
+drop policy if exists "Allow public insert on doc_feedbacks" on doc_feedbacks;
+drop policy if exists "Allow public read on doc_reports" on doc_reports;
+drop policy if exists "Allow public insert on doc_reports" on doc_reports;
+drop policy if exists "Allow all on admin_tasks" on admin_tasks;
+drop policy if exists "Allow all on admin_notifications" on admin_notifications;
+drop policy if exists "Allow read on team_members" on team_members;
+drop policy if exists "Allow all on team_members" on team_members;
+
+-- Politici de acces public & admin
 create policy "Allow public read on doc_views" on doc_views for select using (true);
 create policy "Allow public insert/update on doc_views" on doc_views for all using (true);
 
 create policy "Allow public read on doc_feedbacks" on doc_feedbacks for select using (true);
 create policy "Allow public insert on doc_feedbacks" on doc_feedbacks for insert with check (true);
 
+create policy "Allow public read on doc_reports" on doc_reports for select using (true);
+create policy "Allow public insert on doc_reports" on doc_reports for insert with check (true);
+
+create policy "Allow all on admin_tasks" on admin_tasks for all using (true);
+create policy "Allow all on admin_notifications" on admin_notifications for all using (true);
+
 create policy "Allow read on team_members" on team_members for select using (true);
 create policy "Allow all on team_members" on team_members for all using (true);`;
+
 
     navigator.clipboard.writeText(sql);
     setCopiedSql(true);
     setTimeout(() => setCopiedSql(false), 2000);
   };
+
 
   return (
     <div className="admin-page-container">
@@ -282,6 +463,17 @@ create policy "Allow all on team_members" on team_members for all using (true);`
         </div>
 
         <div className="admin-header-actions">
+          <button
+            type="button"
+            onClick={handleSyncAllToSupabase}
+            disabled={syncingAll}
+            className="admin-btn admin-btn--primary"
+            title="Sincronizează toate datele locale (vizualizări, feedback, rapoarte, sarcini, notificări, echipă) direct în tabelele Supabase"
+          >
+            <Zap size={13} className={syncingAll ? "admin-spin" : ""} />
+            <span>{syncingAll ? "Se sincronizează în Supabase..." : "Auto-Sync în Supabase"}</span>
+          </button>
+
           <button
             type="button"
             onClick={() => loadData(true)}
@@ -303,6 +495,7 @@ create policy "Allow all on team_members" on team_members for all using (true);`
             <span>{copiedSql ? "SQL Copiat!" : "Copiază Schema SQL"}</span>
           </button>
         </div>
+
       </div>
 
       {actionMessage && (
@@ -432,6 +625,20 @@ create policy "Allow all on team_members" on team_members for all using (true);`
 
         <button
           type="button"
+          onClick={() => setActiveTab("reports")}
+          className={`admin-db-tab-btn ${
+            activeTab === "reports" ? "admin-db-tab-btn--active-rose" : ""
+          }`}
+        >
+          <AlertTriangle size={14} />
+          <span>Rapoarte &amp; Cereri Ghiduri</span>
+          <span className="admin-db-tab-badge" style={{ background: openReportsCount > 0 ? "hsl(350 89% 60% / 0.3)" : undefined, color: openReportsCount > 0 ? "#fda4af" : undefined }}>
+            {reports.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab("config")}
           className={`admin-db-tab-btn ${
             activeTab === "config" ? "admin-db-tab-btn--active-emerald" : ""
@@ -441,6 +648,7 @@ create policy "Allow all on team_members" on team_members for all using (true);`
           <span>Configurare Supabase &amp; Migrare SQL</span>
         </button>
       </div>
+
 
       {/* ── TAB 1: Top Views Explorer ────────────────────────────────── */}
       {activeTab === "views" && (
@@ -767,8 +975,256 @@ create policy "Allow all on team_members" on team_members for all using (true);`
         </div>
       )}
 
-      {/* ── TAB 3: Supabase Config & SQL Studio ──────────────────────── */}
+      {/* ── TAB 3: Reports & Guide Requests Hub ──────────────────────── */}
+      {activeTab === "reports" && (
+        <div className="admin-panel-card">
+          <div className="admin-panel-header">
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div className="admin-quota-icon-box admin-quota-icon-box--rose">
+                <AlertTriangle size={16} className="text-rose-400" />
+              </div>
+              <div>
+                <h3 className="admin-section-title">Centru Raportare Erori &amp; Cereri Ghiduri Noi</h3>
+                <p className="admin-panel-sub">
+                  Semnalări primite direct de la jucători din documentație, sincronizate cu Discord
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+              <span className="admin-perm-tag admin-perm-tag--orange">
+                <AlertTriangle size={11} /> {openReportsCount} Deschise / În Lucru
+              </span>
+              <span className="admin-perm-tag admin-perm-tag--cyan">
+                <FilePlus size={11} /> {newGuidesRequestsCount} Cereri Ghid Nou
+              </span>
+            </div>
+          </div>
+
+          {/* Table Toolbar */}
+          <div className="admin-table-toolbar">
+            <div className="admin-table-filters">
+              <button
+                type="button"
+                className={`admin-filter-pill ${reportFilter === "all" ? "admin-filter-pill--active" : ""}`}
+                onClick={() => setReportFilter("all")}
+              >
+                Toate ({reports.length})
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-pill ${reportFilter === "issues" ? "admin-filter-pill--active" : ""}`}
+                onClick={() => setReportFilter("issues")}
+              >
+                Erori Ghiduri
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-pill ${reportFilter === "requests" ? "admin-filter-pill--active" : ""}`}
+                onClick={() => setReportFilter("requests")}
+              >
+                Cereri Ghiduri
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-pill ${reportFilter === "open" ? "admin-filter-pill--active" : ""}`}
+                onClick={() => setReportFilter("open")}
+              >
+                Doar Active ({openReportsCount})
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-pill ${reportFilter === "resolved" ? "admin-filter-pill--active" : ""}`}
+                onClick={() => setReportFilter("resolved")}
+              >
+                Rezolvate
+              </button>
+            </div>
+
+            <div className="admin-table-search">
+              <div className="admin-search-input-wrap">
+                <Search size={13} className="admin-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Caută în rapoarte, slug sau descriere..."
+                  value={reportSearch}
+                  onChange={(e) => setReportSearch(e.target.value)}
+                  className="admin-search-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Reports Table */}
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: "130px" }}>Tip &amp; Severitate</th>
+                  <th style={{ width: "200px" }}>Ghid Sursă / Subiect</th>
+                  <th>Descriere &amp; Detalii Raport</th>
+                  <th style={{ width: "130px" }}>Status</th>
+                  <th style={{ textAlign: "right", width: "130px" }}>Acțiuni</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredReports.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="admin-table-empty">
+                      <AlertTriangle size={24} style={{ margin: "0 auto 8px", opacity: 0.35 }} />
+                      <p>
+                        {reportSearch || reportFilter !== "all"
+                          ? "Niciun raport nu corespunde filtrelor selectate."
+                          : "Niciun raport sau cerere de ghid înregistrată încă."}
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredReports.map((rep) => {
+                    const isRequest = rep.type === "new_guide_request";
+
+                    return (
+                      <tr key={rep.id}>
+                        <td>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <span
+                              className={`admin-status-pill ${
+                                isRequest ? "admin-status-pill--cyan" : "admin-status-pill--danger"
+                              }`}
+                              style={{ fontSize: "0.68rem" }}
+                            >
+                              {isRequest ? <FilePlus size={10} /> : <AlertTriangle size={10} />}
+                              {isRequest ? "CERERE GHID" : "EROARE GHID"}
+                            </span>
+                            {rep.severity && !isRequest && (
+                              <span
+                                className="admin-table-mono"
+                                style={{
+                                  fontSize: "0.65rem",
+                                  color: rep.severity === "high" ? "#f43f5e" : rep.severity === "medium" ? "#fbbf24" : "#10b981",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {rep.severity.toUpperCase()}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div>
+                            {rep.slug && rep.slug !== "general" ? (
+                              <a
+                                href={`/docs/${rep.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="admin-perm-tag admin-perm-tag--blue"
+                                style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}
+                              >
+                                <BookOpen size={11} />
+                                /docs/{rep.slug}
+                                <ExternalLink size={10} style={{ opacity: 0.6 }} />
+                              </a>
+                            ) : (
+                              <span className="admin-perm-tag admin-perm-tag--purple">
+                                {rep.category || "General"}
+                              </span>
+                            )}
+                            {rep.title && (
+                              <p style={{ margin: "4px 0 0", fontSize: "0.76rem", fontWeight: 600, color: "#f8fafc" }}>
+                                {rep.title}
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            <p style={{ margin: 0, fontSize: "0.8rem", color: "#f1f5f9", lineHeight: 1.45 }}>
+                              {rep.description}
+                            </p>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                              {rep.contactDiscord && (
+                                <span className="admin-table-mono" style={{ fontSize: "0.68rem", color: "#818cf8", background: "hsl(235 85% 65% / 0.12)", padding: "2px 6px", borderRadius: "4px", border: "1px solid hsl(235 85% 65% / 0.25)" }}>
+                                  Discord: {rep.contactDiscord}
+                                </span>
+                              )}
+                              <span className="admin-table-mono admin-table-muted" style={{ fontSize: "0.68rem" }}>
+                                <Clock size={10} style={{ display: "inline", verticalAlign: "middle", marginRight: "3px" }} />
+                                {new Date(rep.created_at).toLocaleDateString("ro-RO", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span
+                            className={`admin-status-pill ${
+                              rep.status === "resolved"
+                                ? "admin-status-pill--success"
+                                : rep.status === "in_progress"
+                                ? "admin-status-pill--amber"
+                                : "admin-status-pill--danger"
+                            }`}
+                            style={{ fontSize: "0.7rem" }}
+                          >
+                            {rep.status === "resolved"
+                              ? "REZOLVAT"
+                              : rep.status === "in_progress"
+                              ? "ÎN LUCRU"
+                              : "DESCHIS"}
+                          </span>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                            {rep.status !== "resolved" ? (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateReportStatus(rep.id, "resolved")}
+                                className="admin-btn admin-btn--secondary"
+                                style={{ padding: "4px 8px", fontSize: "0.7rem", color: "#34d399", borderColor: "hsl(142 71% 45% / 0.3)" }}
+                                title="Marchează ca rezolvat"
+                              >
+                                <Check size={11} />
+                                <span>Rezolvă</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateReportStatus(rep.id, "open")}
+                                className="admin-btn admin-btn--secondary"
+                                style={{ padding: "4px 8px", fontSize: "0.7rem", color: "#94a3b8" }}
+                                title="Redeschide raportul"
+                              >
+                                <span>Redeschide</span>
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteReport(rep.id)}
+                              className="admin-feedback-delete-action"
+                              title="Șterge raportul"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 4: Supabase Config & SQL Studio ──────────────────────── */}
       {activeTab === "config" && (
+
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: "20px" }}>
           {/* Configuration Card */}
           <div className="admin-panel-card" style={{ marginBottom: 0 }}>

@@ -2,39 +2,77 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Sliders,
   CheckCircle2,
   AlertCircle,
   RefreshCw,
   Server,
   Zap,
   Wrench,
-  Sparkles,
   Save,
-  Radio,
   Eye,
   Lock,
+  Unlock,
   Download,
   Archive,
   FileCode,
   Megaphone,
   Layers,
-  ExternalLink,
   Database,
-  ThumbsUp,
-  ThumbsDown,
-  Trash2,
-  Copy,
-  Check,
-  MessageSquare,
   ShieldCheck,
+  ShieldAlert,
   Activity,
-  Table,
+  Settings2,
+  ToggleLeft,
+  ToggleRight,
+  Flame,
+  Info,
+  AlertTriangle,
+  ChevronRight,
 } from "lucide-react";
 import { CURRENT_VERSION, PLATFORM_NAME } from "@/lib/version";
 
+/* ── tiny sub-components ─────────────────────────────────────────────── */
+function SectionDivider({ label }: { label: string }) {
+  return (
+    <div className="st-section-divider">
+      <span className="st-section-divider-line" />
+      <span className="st-section-divider-label">{label}</span>
+      <span className="st-section-divider-line" />
+    </div>
+  );
+}
+
+function Toggle({
+  checked,
+  onChange,
+  id,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  id?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      id={id}
+      onClick={() => onChange(!checked)}
+      className={`st-toggle${checked ? " st-toggle--on" : ""}`}
+    >
+      <span className="st-toggle-thumb" />
+    </button>
+  );
+}
+
 export default function AdminSettingsPage() {
-  // Maintenance State
+  // ── state ───────────────────────────────────────────────────────────
+  const [currentUser, setCurrentUser] = useState<{ isRoot: boolean; username: string; role: string } | null>(null);
+  const [isPanicLocked, setIsPanicLocked] = useState<boolean>(false);
+  const [panicModalOpen, setPanicModalOpen] = useState<boolean>(false);
+  const [panicProcessing, setPanicProcessing] = useState<boolean>(false);
+  const [panicError, setPanicError] = useState<string>("");
+
   const [maintenanceEnabled, setMaintenanceEnabled] = useState<boolean>(false);
   const [maintenanceMessage, setMaintenanceMessage] = useState<string>(
     "Wildfire Docs is currently undergoing scheduled platform upgrades and engine optimizations. We'll be back online shortly."
@@ -45,7 +83,6 @@ export default function AdminSettingsPage() {
   const [estimatedEndTime, setEstimatedEndTime] = useState<string>("30 minutes");
   const [allowAdmins, setAllowAdmins] = useState<boolean>(true);
 
-  // Announcement State
   const [bannerEnabled, setBannerEnabled] = useState<boolean>(false);
   const [bannerText, setBannerText] = useState<string>(
     "Wildfire Docs v1.5.0 este live cu Ghiduri CS2, Media Vault & Sistem de Securitate!"
@@ -62,239 +99,110 @@ export default function AdminSettingsPage() {
     text: string;
   } | null>(null);
 
-  // ─── Database & Analytics Hub State ─────────────────────────────────────────
-  const [dbProvider, setDbProvider] = useState<"local" | "supabase">("local");
-  const [supabaseUrl, setSupabaseUrl] = useState<string>("");
-  const [supabaseAnonKey, setSupabaseAnonKey] = useState<string>("");
   const [dbStatus, setDbStatus] = useState<any>(null);
-  const [dbViews, setDbViews] = useState<any[]>([]);
-  const [dbFeedbacks, setDbFeedbacks] = useState<any[]>([]);
-  const [dbTableTab, setDbTableTab] = useState<"views" | "feedbacks" | "config">("views");
-  const [testingDb, setTestingDb] = useState<boolean>(false);
-  const [testDbResult, setTestDbResult] = useState<{ success: boolean; message: string; latencyMs?: number } | null>(null);
-  const [savingDbConfig, setSavingDbConfig] = useState<boolean>(false);
-  const [copiedSql, setCopiedSql] = useState<boolean>(false);
 
-  // Load initial settings from disk
+  // ── load ────────────────────────────────────────────────────────────
   useEffect(() => {
     async function loadSettings() {
       try {
         const res = await fetch("/api/admin/settings");
-        if (res.status === 401) {
-          window.location.href = "/admin/login";
-          return;
-        }
+        if (res.status === 401) { window.location.href = "/admin/login"; return; }
         const data = await res.json();
         if (data.maintenance) {
           setMaintenanceEnabled(data.maintenance.enabled || false);
-          if (data.maintenance.message) setMaintenanceMessage(data.maintenance.message);
-          if (data.maintenance.reason) setMaintenanceReason(data.maintenance.reason);
-          if (data.maintenance.estimatedEndTime)
-            setEstimatedEndTime(data.maintenance.estimatedEndTime);
-          if (data.maintenance.allowAdmins !== undefined)
-            setAllowAdmins(data.maintenance.allowAdmins);
+          if (data.maintenance.message)          setMaintenanceMessage(data.maintenance.message);
+          if (data.maintenance.reason)           setMaintenanceReason(data.maintenance.reason);
+          if (data.maintenance.estimatedEndTime) setEstimatedEndTime(data.maintenance.estimatedEndTime);
+          if (data.maintenance.allowAdmins !== undefined) setAllowAdmins(data.maintenance.allowAdmins);
         }
         if (data.announcement) {
           setBannerEnabled(data.announcement.enabled || false);
-          if (data.announcement.text) setBannerText(data.announcement.text);
-          if (data.announcement.link) setBannerLink(data.announcement.link);
+          if (data.announcement.text)     setBannerText(data.announcement.text);
+          if (data.announcement.link)     setBannerLink(data.announcement.link);
           if (data.announcement.linkText) setBannerLinkText(data.announcement.linkText);
-          if (data.announcement.type) setBannerType(data.announcement.type);
-          if (data.announcement.dismissible !== undefined)
-            setBannerDismissible(data.announcement.dismissible);
+          if (data.announcement.type)     setBannerType(data.announcement.type);
+          if (data.announcement.dismissible !== undefined) setBannerDismissible(data.announcement.dismissible);
         }
-      } catch (err) {
-        console.error("Failed to load settings:", err);
-      }
+      } catch (err) { console.error("Failed to load settings:", err); }
     }
+
+    async function loadDbStatus() {
+      try {
+        const res = await fetch("/api/admin/database");
+        if (res.ok) {
+          const data = await res.json();
+          setDbStatus(data.status);
+        }
+      } catch {}
+    }
+
     loadSettings();
-    loadDatabaseData();
+    loadDbStatus();
+
+    fetch("/api/admin/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data?.authenticated && data.user) setCurrentUser(data.user); })
+      .catch(() => {});
+
+    fetch("/api/admin/auth/panic")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data) setIsPanicLocked(data.locked || false); })
+      .catch(() => {});
   }, []);
 
-  const loadDatabaseData = async () => {
+  // ── handlers ────────────────────────────────────────────────────────
+  const handleTriggerPanic = async (action: "trigger" | "release") => {
+    setPanicProcessing(true);
+    setPanicError("");
     try {
-      const res = await fetch("/api/admin/database");
-      if (res.ok) {
-        const data = await res.json();
-        setDbStatus(data.status);
-        setDbViews(data.views || []);
-        setDbFeedbacks(data.feedbacks || []);
-        if (data.config) {
-          setDbProvider(data.config.provider || "local");
-          setSupabaseUrl(data.config.supabaseUrl || "");
-          setSupabaseAnonKey(data.config.supabaseAnonKey || "");
-        }
-      }
-    } catch (err) {
-      console.error("Failed to load database info", err);
-    }
-  };
-
-  const handleTestDbConnection = async () => {
-    if (!supabaseUrl || !supabaseAnonKey) {
-      setTestDbResult({ success: false, message: "Te rugăm să introduci Supabase URL și Cheia Anon." });
-      return;
-    }
-
-    setTestingDb(true);
-    setTestDbResult(null);
-
-    try {
-      const res = await fetch("/api/admin/database", {
+      const res = await fetch("/api/admin/auth/panic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "test_connection",
-          url: supabaseUrl,
-          anonKey: supabaseAnonKey,
-        }),
+        body: JSON.stringify({ action }),
       });
-
       const data = await res.json();
-      setTestDbResult(data);
-    } catch (err: any) {
-      setTestDbResult({ success: false, message: `Eroare de rețea: ${err.message}` });
-    } finally {
-      setTestingDb(false);
-    }
-  };
-
-  const handleSaveDbConfig = async () => {
-    setSavingDbConfig(true);
-    try {
-      const res = await fetch("/api/admin/database", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "save_config",
-          provider: dbProvider,
-          supabaseUrl,
-          supabaseAnonKey,
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setDbStatus(data.status);
+      if (data.success) {
+        setPanicModalOpen(false);
+        setIsPanicLocked(action === "trigger");
         setStatusMessage({
-          type: "success",
-          text: `Configurația bazei de date a fost salvată! (${dbProvider === "supabase" ? "Supabase Cloud" : "Local Engine"})`,
+          type: action === "trigger" ? "error" : "success",
+          text:
+            action === "trigger"
+              ? "Panic Lockdown a fost declanșat cu succes! Toate sesiunile active au fost revocate."
+              : "Panic Lockdown a fost ridicat. Platforma a revenit la starea normală de funcționare.",
         });
+      } else {
+        setPanicError(data.error || "Eroare la executarea comenzii Panic Lockdown.");
       }
-    } catch (err) {
-      setStatusMessage({ type: "error", text: "Eșec la salvarea configurației bazei de date." });
-    } finally {
-      setSavingDbConfig(false);
-    }
-  };
-
-  const handleDeleteFeedback = async (id: string) => {
-    try {
-      const res = await fetch("/api/admin/database", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "delete_feedback", id }),
-      });
-
-      if (res.ok) {
-        setDbFeedbacks((prev) => prev.filter((f) => f.id !== id));
-      }
-    } catch (err) {
-      console.error("Failed to delete feedback", err);
-    }
-  };
-
-  const copySqlScript = () => {
-    const sql = `-- WildFire Docs Supabase Migration Schema
-create table if not exists doc_views (
-  slug text primary key,
-  total_views integer default 0,
-  today_views integer default 0,
-  last_viewed_at timestamp with time zone default now()
-);
-
-create table if not exists doc_feedbacks (
-  id text primary key,
-  slug text not null,
-  rating text not null,
-  comment text,
-  created_at timestamp with time zone default now()
-);
-
--- Enable Row Level Security (RLS) & Public Policies
-alter table doc_views enable row level security;
-alter table doc_feedbacks enable row level security;
-
-create policy "Allow public read on doc_views" on doc_views for select using (true);
-create policy "Allow public insert/update on doc_views" on doc_views for all using (true);
-
-create policy "Allow public read on doc_feedbacks" on doc_feedbacks for select using (true);
-create policy "Allow public insert on doc_feedbacks" on doc_feedbacks for insert with check (true);`;
-
-    navigator.clipboard.writeText(sql);
-    setCopiedSql(true);
-    setTimeout(() => setCopiedSql(false), 2000);
+    } catch { setPanicError("Eroare de conexiune la server."); }
+    finally    { setPanicProcessing(false); }
   };
 
   const saveConfiguration = async (overrides?: {
     maintenanceEnabled?: boolean;
     bannerEnabled?: boolean;
   }) => {
-    const maintActive =
-      overrides?.maintenanceEnabled !== undefined
-        ? overrides.maintenanceEnabled
-        : maintenanceEnabled;
-    const bannerActive =
-      overrides?.bannerEnabled !== undefined
-        ? overrides.bannerEnabled
-        : bannerEnabled;
-
+    const maintActive = overrides?.maintenanceEnabled !== undefined ? overrides.maintenanceEnabled : maintenanceEnabled;
+    const bannerActive = overrides?.bannerEnabled !== undefined ? overrides.bannerEnabled : bannerEnabled;
     setSaving(true);
     setStatusMessage(null);
-
     try {
       const res = await fetch("/api/admin/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          maintenance: {
-            enabled: maintActive,
-            message: maintenanceMessage,
-            reason: maintenanceReason,
-            estimatedEndTime,
-            allowAdmins,
-          },
-          announcement: {
-            enabled: bannerActive,
-            text: bannerText,
-            link: bannerLink,
-            linkText: bannerLinkText,
-            type: bannerType,
-            dismissible: bannerDismissible,
-          },
+          maintenance: { enabled: maintActive, message: maintenanceMessage, reason: maintenanceReason, estimatedEndTime, allowAdmins },
+          announcement: { enabled: bannerActive, text: bannerText, link: bannerLink, linkText: bannerLinkText, type: bannerType, dismissible: bannerDismissible },
         }),
       });
-
       const data = await res.json();
       if (data.success) {
-        setStatusMessage({
-          type: "success",
-          text: "Configurațiile platformei au fost salvate și aplicate pe disc.",
-        });
+        setStatusMessage({ type: "success", text: "Configurațiile platformei au fost salvate și aplicate pe disc." });
       } else {
-        setStatusMessage({
-          type: "error",
-          text: data.error || "Salvarea setărilor a eșuat.",
-        });
+        setStatusMessage({ type: "error", text: data.error || "Salvarea setărilor a eșuat." });
       }
-    } catch {
-      setStatusMessage({
-        type: "error",
-        text: "Eroare de conexiune la server.",
-      });
-    } finally {
-      setSaving(false);
-    }
+    } catch { setStatusMessage({ type: "error", text: "Eroare de conexiune la server." }); }
+    finally   { setSaving(false); }
   };
 
   const handleRevalidateCache = async () => {
@@ -306,404 +214,457 @@ create policy "Allow public insert on doc_feedbacks" on doc_feedbacks for insert
         body: JSON.stringify({ action: "revalidate" }),
       });
       const data = await res.json();
-      if (data.success) {
-        setStatusMessage({
-          type: "success",
-          text: "Cache-ul ISR al platformei și rutele statice au fost regenerate.",
-        });
-      }
-    } catch {
-      setStatusMessage({
-        type: "error",
-        text: "Eroare la invalidarea cache-ului.",
-      });
-    } finally {
-      setRevalidating(false);
-    }
+      if (data.success) setStatusMessage({ type: "success", text: "Cache-ul ISR al platformei și rutele statice au fost regenerate." });
+    } catch { setStatusMessage({ type: "error", text: "Eroare la invalidarea cache-ului." }); }
+    finally   { setRevalidating(false); }
   };
+
+  const BANNER_TYPES = [
+    { key: "fire"    as const, label: "Wildfire Ember",    icon: <Flame       size={13} />, cls: "st-banner-type--fire"    },
+    { key: "info"    as const, label: "Informativ",        icon: <Info        size={13} />, cls: "st-banner-type--info"    },
+    { key: "warning" as const, label: "Atenționare",       icon: <AlertTriangle size={13}/>, cls: "st-banner-type--warning" },
+  ];
 
   return (
     <div className="admin-page-container">
-      {/* Header */}
-      <div className="admin-page-header">
-        <div>
-          <div className="admin-breadcrumb-tag">ENGINE CONFIGURATION</div>
-          <h1 className="admin-page-title">Setări Globale Platformă & Backup</h1>
-          <p className="admin-page-description">
-            Controlează bannerele publice de anunțuri, modul de mentenanță și descarcă backup-uri complete ale bazei de documentație.
+
+      {/* ── HEADER ──────────────────────────────────────────────────── */}
+      <div className="st-header">
+        <div className="st-header-left">
+          <div className="st-breadcrumb">
+            <Settings2 size={11} />
+            <span>PLATFORM CONTROL</span>
+            <span className="st-breadcrumb-sep">/</span>
+            <span>ENGINE CONFIGURATION</span>
+          </div>
+          <h1 className="st-title">Setări Globale Platformă</h1>
+          <p className="st-subtitle">
+            Controlează bannerele publice, modul de mentenanță, cache-ul ISR și securitatea administrației.
           </p>
         </div>
-
-        <div className="admin-header-actions">
+        <div className="st-header-actions">
           <button
             type="button"
+            id="settings-save-all-btn"
             onClick={() => saveConfiguration()}
             disabled={saving}
-            className="admin-btn admin-btn--primary"
+            className="st-save-btn"
           >
-            <Save size={14} />
+            <Save size={13} className={saving ? "st-spin" : ""} />
             <span>{saving ? "Se salvează..." : "Salvează Toate Setările"}</span>
           </button>
         </div>
       </div>
 
-      {/* Status Feedback */}
+      {/* ── STATUS ALERT ────────────────────────────────────────────── */}
       {statusMessage && (
-        <div
-          className={`admin-alert-box ${
-            statusMessage.type === "success"
-              ? "admin-alert-box--success"
-              : "admin-alert-box--danger"
-          }`}
-        >
-          {statusMessage.type === "success" ? (
-            <CheckCircle2 size={16} />
-          ) : (
-            <AlertCircle size={16} />
-          )}
+        <div className={`st-alert st-alert--${statusMessage.type}`}>
+          {statusMessage.type === "success" ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
           <span>{statusMessage.text}</span>
         </div>
       )}
 
-      <div className="admin-settings-layout-grid">
-        {/* Left Column: Announcement Banner & Maintenance */}
-        <div className="flex flex-col gap-6">
-          {/* Global Announcement Banner Card */}
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <div className="flex items-center gap-3">
-                <div className="admin-card-icon-box text-orange-400">
-                  <Megaphone size={16} />
-                </div>
-                <div>
-                  <h3 className="admin-card-title">Banner Public de Anunțuri</h3>
-                  <p className="admin-card-subtitle">
-                    Afișează un banner proeminent în antetul tuturor paginilor de documentație
-                  </p>
-                </div>
-              </div>
+      {/* ── MAIN GRID ───────────────────────────────────────────────── */}
+      <div className="st-grid">
 
-              <label className="admin-toggle-switch">
-                <input
-                  type="checkbox"
+        {/* ══ LEFT COLUMN ════════════════════════════════════════════ */}
+        <div className="st-col">
+
+          {/* ── ANNOUNCEMENT BANNER CARD ─────────────────────────── */}
+          <div className="st-card">
+            <div className="st-card-header">
+              <div className="st-card-icon st-card-icon--orange">
+                <Megaphone size={17} />
+              </div>
+              <div className="st-card-heading">
+                <h3 className="st-card-title">Banner Public de Anunțuri</h3>
+                <p className="st-card-sub">Afișează un banner proeminent în antetul tuturor paginilor de documentație</p>
+              </div>
+              <div className="st-card-toggle-area">
+                <span className={`st-card-status-dot ${bannerEnabled ? "st-card-status-dot--on" : ""}`} />
+                <span className="st-card-status-text">{bannerEnabled ? "Activ" : "Inactiv"}</span>
+                <Toggle
                   checked={bannerEnabled}
-                  onChange={(e) => {
-                    setBannerEnabled(e.target.checked);
-                    saveConfiguration({ bannerEnabled: e.target.checked });
-                  }}
+                  id="banner-enabled-toggle"
+                  onChange={(v) => { setBannerEnabled(v); saveConfiguration({ bannerEnabled: v }); }}
                 />
-                <span className="admin-toggle-slider" />
-              </label>
+              </div>
             </div>
 
-            <div className="admin-card-body">
-              <div className="admin-form-group">
-                <label className="admin-form-label">Tip Banner & Culoare</label>
-                <div className="admin-banner-type-picker">
-                  <button
-                    type="button"
-                    onClick={() => setBannerType("fire")}
-                    className={`admin-banner-type-btn ${
-                      bannerType === "fire" ? "admin-banner-type-btn--fire-active" : ""
-                    }`}
-                  >
-                    <span className="admin-banner-type-dot bg-orange-500" />
-                    <span>Wildfire Ember (Portocaliu)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setBannerType("info")}
-                    className={`admin-banner-type-btn ${
-                      bannerType === "info" ? "admin-banner-type-btn--info-active" : ""
-                    }`}
-                  >
-                    <span className="admin-banner-type-dot bg-blue-500" />
-                    <span>Informativ (Albastru)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setBannerType("warning")}
-                    className={`admin-banner-type-btn ${
-                      bannerType === "warning" ? "admin-banner-type-btn--warning-active" : ""
-                    }`}
-                  >
-                    <span className="admin-banner-type-dot bg-amber-500" />
-                    <span>Atenționare (Chihlimbar)</span>
-                  </button>
+            <div className="st-card-body">
+              {/* Banner type picker */}
+              <div className="st-field">
+                <label className="st-label">Tip Banner &amp; Culoare</label>
+                <div className="st-banner-type-row">
+                  {BANNER_TYPES.map(({ key, label, icon, cls }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      id={`banner-type-${key}`}
+                      onClick={() => setBannerType(key)}
+                      className={`st-banner-type-btn ${cls}${bannerType === key ? " st-banner-type-btn--active" : ""}`}
+                    >
+                      {icon}
+                      <span>{label}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              <div className="admin-form-group">
-                <label className="admin-form-label">Mesaj Anunț</label>
+              <div className="st-field">
+                <label className="st-label">Mesaj Anunț</label>
                 <input
                   type="text"
+                  id="banner-text-input"
                   value={bannerText}
                   onChange={(e) => setBannerText(e.target.value)}
-                  placeholder="Ex: Am actualizat ghidul de Currency și regulamentul..."
-                  className="admin-form-input"
+                  placeholder="Ex: Am actualizat ghidul de Currency..."
+                  className="st-input"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="admin-form-group">
-                  <label className="admin-form-label">Link Buton (Opțional)</label>
+              <div className="st-field-row">
+                <div className="st-field">
+                  <label className="st-label">Link Buton</label>
                   <input
                     type="text"
+                    id="banner-link-input"
                     value={bannerLink}
                     onChange={(e) => setBannerLink(e.target.value)}
-                    placeholder="/changelog sau https://..."
-                    className="admin-form-input"
+                    placeholder="/changelog"
+                    className="st-input"
                   />
                 </div>
-
-                <div className="admin-form-group">
-                  <label className="admin-form-label">Text Buton</label>
+                <div className="st-field">
+                  <label className="st-label">Text Buton</label>
                   <input
                     type="text"
+                    id="banner-link-text-input"
                     value={bannerLinkText}
                     onChange={(e) => setBannerLinkText(e.target.value)}
                     placeholder="Vezi Noutățile"
-                    className="admin-form-input"
+                    className="st-input"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-[var(--color-border-subtle)]">
+              <div className="st-toggle-row">
                 <div>
-                  <span className="text-xs font-semibold text-white">Poate fi închis de vizitator</span>
-                  <p className="text-xs text-[var(--color-text-tertiary)]">
-                    Permite utilizatorilor să ascundă bannerul cu butonul X
-                  </p>
+                  <span className="st-toggle-row-label">Poate fi închis de vizitator</span>
+                  <p className="st-toggle-row-sub">Permite utilizatorilor să ascundă bannerul cu butonul X</p>
                 </div>
-
-                <label className="admin-toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={bannerDismissible}
-                    onChange={(e) => setBannerDismissible(e.target.checked)}
-                  />
-                  <span className="admin-toggle-slider" />
-                </label>
+                <Toggle
+                  checked={bannerDismissible}
+                  id="banner-dismissible-toggle"
+                  onChange={setBannerDismissible}
+                />
               </div>
             </div>
           </div>
 
-          {/* Maintenance Mode Card */}
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <div className="flex items-center gap-3">
-                <div className="admin-card-icon-box text-red-400">
-                  <Wrench size={16} />
-                </div>
-                <div>
-                  <h3 className="admin-card-title">Mod Mentenanță Platformă Docs</h3>
-                  <p className="admin-card-subtitle">
-                    Blochează temporar accesul public și redirecționează către ecranul de mentenanță
-                  </p>
-                </div>
+          {/* ── MAINTENANCE CARD ─────────────────────────────────── */}
+          <div className="st-card">
+            <div className="st-card-header">
+              <div className="st-card-icon st-card-icon--red">
+                <Wrench size={17} />
               </div>
-
-              <label className="admin-toggle-switch">
-                <input
-                  type="checkbox"
+              <div className="st-card-heading">
+                <h3 className="st-card-title">Mod Mentenanță Platformă Docs</h3>
+                <p className="st-card-sub">Blochează temporar accesul public și redirecționează la ecranul de mentenanță</p>
+              </div>
+              <div className="st-card-toggle-area">
+                <span className={`st-card-status-dot ${maintenanceEnabled ? "st-card-status-dot--red" : ""}`} />
+                <span className="st-card-status-text">{maintenanceEnabled ? "LIVE" : "Inactiv"}</span>
+                <Toggle
                   checked={maintenanceEnabled}
-                  onChange={(e) => {
-                    setMaintenanceEnabled(e.target.checked);
-                    saveConfiguration({ maintenanceEnabled: e.target.checked });
-                  }}
+                  id="maintenance-enabled-toggle"
+                  onChange={(v) => { setMaintenanceEnabled(v); saveConfiguration({ maintenanceEnabled: v }); }}
                 />
-                <span className="admin-toggle-slider" />
-              </label>
+              </div>
             </div>
 
-            <div className="admin-card-body">
-              <div className="admin-form-group">
-                <label className="admin-form-label">Motiv Mentenanță (Intern)</label>
+            {maintenanceEnabled && (
+              <div className="st-maintenance-warning">
+                <AlertTriangle size={13} />
+                <span>Platforma este în prezent în modul de mentenanță. Vizitatorii sunt redirecționați.</span>
+              </div>
+            )}
+
+            <div className="st-card-body">
+              <div className="st-field">
+                <label className="st-label">Motiv Mentenanță (Intern)</label>
                 <input
                   type="text"
+                  id="maintenance-reason-input"
                   value={maintenanceReason}
                   onChange={(e) => setMaintenanceReason(e.target.value)}
                   placeholder="Actualizare regulamente și structură foldere"
-                  className="admin-form-input"
+                  className="st-input"
                 />
               </div>
-
-              <div className="admin-form-group">
-                <label className="admin-form-label">Mesaj Public pentru Jucători</label>
+              <div className="st-field">
+                <label className="st-label">Mesaj Public pentru Jucători</label>
                 <textarea
+                  id="maintenance-message-input"
                   value={maintenanceMessage}
                   onChange={(e) => setMaintenanceMessage(e.target.value)}
                   rows={2}
-                  className="admin-form-input"
+                  className="st-input st-textarea"
                 />
               </div>
-
-              <div className="admin-form-group">
-                <label className="admin-form-label">Timp Estimat Rămas</label>
+              <div className="st-field">
+                <label className="st-label">Timp Estimat Rămas</label>
                 <input
                   type="text"
+                  id="maintenance-eta-input"
                   value={estimatedEndTime}
                   onChange={(e) => setEstimatedEndTime(e.target.value)}
                   placeholder="15 minute"
-                  className="admin-form-input"
+                  className="st-input"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Database Hub + Backup + System Optimization */}
-        <div className="flex flex-col gap-6">
-          {/* ── Database & Analytics Dedicated Shortcut Card ───────── */}
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <div className="flex items-center gap-3">
-                <div className="admin-card-icon-box text-cyan-400">
-                  <Database size={16} />
-                </div>
-                <div>
-                  <h3 className="admin-card-title">Bază de Date & Telemetrie</h3>
-                  <p className="admin-card-subtitle">
-                    Panou dedicat pentru vizualizări pagini, recenzii comunitate și Supabase
-                  </p>
-                </div>
+        {/* ══ RIGHT COLUMN ═══════════════════════════════════════════ */}
+        <div className="st-col">
+
+          {/* ── DATABASE HUB CARD ────────────────────────────────── */}
+          <div className="st-card">
+            <div className="st-card-header">
+              <div className="st-card-icon st-card-icon--cyan">
+                <Database size={17} />
+              </div>
+              <div className="st-card-heading">
+                <h3 className="st-card-title">Bază de Date &amp; Telemetrie</h3>
+                <p className="st-card-sub">Panou dedicat pentru vizualizări pagini, recenzii comunitate și Supabase</p>
               </div>
             </div>
-
-            <div className="admin-card-body">
-              <div className="p-3.5 rounded-lg bg-[hsl(220_18%_10%/0.65)] border border-[var(--glass-border)] flex items-center justify-between mb-3">
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold text-white">Status Conexiune Live</span>
-                  <span className="text-[0.7rem] text-emerald-400 font-mono flex items-center gap-1.5 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="st-card-body">
+              <div className="st-db-status-row">
+                <div className="st-db-status-info">
+                  <span className="st-db-status-label">Status Conexiune Live</span>
+                  <span className="st-db-online-pill">
+                    <span className="st-db-pulse" />
                     Supabase PostgreSQL Cloud
                   </span>
                 </div>
-
-                <a
-                  href="/admin/database"
-                  className="admin-btn admin-btn--primary text-xs py-1.5 px-3"
-                >
-                  <Database size={13} />
+                <a href="/admin/database" className="st-db-open-btn" id="open-database-hub-btn">
+                  <Database size={12} />
                   <span>Deschide Database Hub</span>
+                  <ChevronRight size={12} />
                 </a>
               </div>
             </div>
           </div>
 
-          {/* One-Click Backup & Export Card */}
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <div className="flex items-center gap-3">
-                <div className="admin-card-icon-box text-emerald-400">
-                  <Archive size={16} />
-                </div>
-                <div>
-                  <h3 className="admin-card-title">Backup & Export Repository</h3>
-                  <p className="admin-card-subtitle">
-                    Descarcă instantaneu arhiva completă cu toate cele 62+ articole Markdown
-                  </p>
-                </div>
+          {/* ── BACKUP CARD ──────────────────────────────────────── */}
+          <div className="st-card">
+            <div className="st-card-header">
+              <div className="st-card-icon st-card-icon--green">
+                <Archive size={17} />
+              </div>
+              <div className="st-card-heading">
+                <h3 className="st-card-title">Backup &amp; Export Repository</h3>
+                <p className="st-card-sub">Descarcă instantaneu arhiva completă cu toate cele 62+ articole Markdown</p>
               </div>
             </div>
+            <div className="st-card-body">
+              <div className="st-backup-list">
+                <a href="/api/admin/backup?format=zip" download className="st-backup-item" id="backup-zip-btn">
+                  <div className="st-backup-icon st-backup-icon--green">
+                    <Download size={16} />
+                  </div>
+                  <div className="st-backup-text">
+                    <strong>Descarcă Arhivă ZIP (.zip)</strong>
+                    <span>Include toate fișierele .md și structura de foldere</span>
+                  </div>
+                  <ChevronRight size={14} className="st-backup-arrow" />
+                </a>
 
-            <div className="admin-card-body flex flex-col gap-3">
-              {/* ZIP Download */}
-              <a
-                href="/api/admin/backup?format=zip"
-                download
-                className="admin-backup-action-card"
-              >
-                <div className="admin-backup-icon-box text-emerald-400">
-                  <Download size={18} />
-                </div>
-                <div className="admin-backup-text-box">
-                  <strong>Descarcă Arhivă ZIP (.zip)</strong>
-                  <span>Include toate fișierele .md și structura de foldere intactă</span>
-                </div>
-              </a>
+                <a href="/api/admin/backup?format=json" download className="st-backup-item" id="backup-json-btn">
+                  <div className="st-backup-icon st-backup-icon--blue">
+                    <FileCode size={16} />
+                  </div>
+                  <div className="st-backup-text">
+                    <strong>Export Bază de Date JSON (.json)</strong>
+                    <span>Conține toate documentele cu frontmatter structurat</span>
+                  </div>
+                  <ChevronRight size={14} className="st-backup-arrow" />
+                </a>
 
-              {/* JSON Database Export */}
-              <a
-                href="/api/admin/backup?format=json"
-                download
-                className="admin-backup-action-card"
-              >
-                <div className="admin-backup-icon-box text-blue-400">
-                  <FileCode size={18} />
-                </div>
-                <div className="admin-backup-text-box">
-                  <strong>Export Bază de Date JSON (.json)</strong>
-                  <span>Conține toate documentele cu frontmatter și conținut structurat</span>
-                </div>
-              </a>
-
-              {/* Single Markdown Bundle */}
-              <a
-                href="/api/admin/backup?format=bundle"
-                download
-                className="admin-backup-action-card"
-              >
-                <div className="admin-backup-icon-box text-orange-400">
-                  <Layers size={18} />
-                </div>
-                <div className="admin-backup-text-box">
-                  <strong>Export Markdown Unificat (.md)</strong>
-                  <span>Fișier unic concatenat pentru căutare și citire offline</span>
-                </div>
-              </a>
+                <a href="/api/admin/backup?format=bundle" download className="st-backup-item" id="backup-bundle-btn">
+                  <div className="st-backup-icon st-backup-icon--orange">
+                    <Layers size={16} />
+                  </div>
+                  <div className="st-backup-text">
+                    <strong>Export Markdown Unificat (.md)</strong>
+                    <span>Fișier unic concatenat pentru căutare și citire offline</span>
+                  </div>
+                  <ChevronRight size={14} className="st-backup-arrow" />
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Engine Optimization Card */}
-          <div className="admin-card">
-            <div className="admin-card-header">
-              <div className="flex items-center gap-3">
-                <div className="admin-card-icon-box text-purple-400">
-                  <Server size={16} />
-                </div>
-                <div>
-                  <h3 className="admin-card-title">Optimizare & Cache ISR</h3>
-                  <p className="admin-card-subtitle">
-                    Regenerează paginile statice și indexul de căutare
-                  </p>
-                </div>
+          {/* ── ENGINE / CACHE CARD ──────────────────────────────── */}
+          <div className="st-card">
+            <div className="st-card-header">
+              <div className="st-card-icon st-card-icon--purple">
+                <Server size={17} />
+              </div>
+              <div className="st-card-heading">
+                <h3 className="st-card-title">Optimizare &amp; Cache ISR</h3>
+                <p className="st-card-sub">Regenerează paginile statice și indexul de căutare</p>
               </div>
             </div>
-
-            <div className="admin-card-body">
-              <div className="admin-engine-spec-list">
-                <div className="admin-engine-spec-item">
-                  <span>Engine:</span>
-                  <strong>{PLATFORM_NAME}</strong>
-                </div>
-                <div className="admin-engine-spec-item">
-                  <span>Versiune:</span>
-                  <strong>v{CURRENT_VERSION}</strong>
-                </div>
-                <div className="admin-engine-spec-item">
-                  <span>Framework:</span>
-                  <strong>Next.js 16 (Turbopack)</strong>
-                </div>
+            <div className="st-card-body">
+              <div className="st-engine-spec-list">
+                {[
+                  { label: "Engine",     value: PLATFORM_NAME },
+                  { label: "Versiune",   value: `v${CURRENT_VERSION}` },
+                  { label: "Framework",  value: "Next.js 16 (Turbopack)" },
+                  { label: "Runtime",    value: "Node.js Edge Runtime" },
+                ].map(({ label, value }) => (
+                  <div key={label} className="st-engine-spec-row">
+                    <span className="st-engine-spec-key">{label}</span>
+                    <span className="st-engine-spec-val">{value}</span>
+                  </div>
+                ))}
               </div>
-
-              <div className="pt-4 border-t border-[var(--color-border-subtle)]">
-                <button
-                  type="button"
-                  onClick={handleRevalidateCache}
-                  disabled={revalidating}
-                  className="admin-btn admin-btn--secondary w-full"
-                >
-                  <RefreshCw size={14} className={revalidating ? "animate-spin" : ""} />
-                  <span>{revalidating ? "Se regenerează cache-ul..." : "Regenerează Cache ISR"}</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                id="revalidate-cache-btn"
+                onClick={handleRevalidateCache}
+                disabled={revalidating}
+                className="st-revalidate-btn"
+              >
+                <RefreshCw size={13} className={revalidating ? "st-spin" : ""} />
+                <span>{revalidating ? "Se regenerează cache-ul..." : "Regenerează Cache ISR"}</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* ── PANIC DANGER ZONE ───────────────────────────────────────── */}
+      <div className="st-danger-zone">
+        <div className="st-danger-zone-header">
+          <div className="st-danger-title-group">
+            <div className="st-danger-icon">
+              <ShieldAlert size={22} />
+            </div>
+            <div>
+              <div className="st-danger-title-row">
+                <h3 className="st-danger-title">Zona de Urgență Super Admin (Root Danger Zone)</h3>
+                <span className="st-danger-root-badge">STRICT ROOT ONLY</span>
+              </div>
+              <p className="st-danger-sub">
+                Mecanism de urgență pentru blocarea imediată a întregii platforme și invalidarea tuturor sesiunilor administrative active.
+              </p>
+            </div>
+          </div>
+          {isPanicLocked ? (
+            <span className="st-panic-status st-panic-status--locked">
+              <ShieldAlert size={12} />
+              LOCKDOWN ACTIV
+            </span>
+          ) : (
+            <span className="st-panic-status st-panic-status--normal">
+              <ShieldCheck size={12} />
+              SISTEM NORMAL
+            </span>
+          )}
+        </div>
+
+        <div className="st-danger-zone-body">
+          <div className="st-danger-info-box">
+            <strong className="st-danger-info-title">Ce face Panic Lockdown?</strong>
+            <p className="st-danger-info-text">
+              1. <strong>Revocă instantaneu</strong> toate tokenurile de sesiune pentru toți administratorii non-root.<br />
+              2. <strong>Blochează</strong> toate modificările de articole, ștergerile și mutațiile din studio.<br />
+              3. Doar Super Adminul Root (<code>@iannC69</code>) poate ridica starea de urgență.
+            </p>
+          </div>
+
+          <div className="st-danger-action-box">
+            <div>
+              <strong className="st-danger-info-title">Stare Permisiuni &amp; Control</strong>
+              {currentUser?.isRoot ? (
+                <p className="st-danger-root-ok">Ești autentificat ca Root Super Admin. Ai autoritate absolută de intervenție.</p>
+              ) : (
+                <p className="st-danger-root-restricted">Acces restricționat: Doar Root Super Admin @iannC69 poate declanșa sau anula starea de panică.</p>
+              )}
+            </div>
+            <div className="st-danger-btn-wrap">
+              {isPanicLocked ? (
+                <button
+                  type="button"
+                  id="panic-release-btn"
+                  onClick={() => handleTriggerPanic("release")}
+                  disabled={!currentUser?.isRoot || panicProcessing}
+                  className="st-panic-release-btn"
+                >
+                  <Unlock size={14} />
+                  <span>{panicProcessing ? "Se deblochează..." : "Deblochează Platforma"}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  id="panic-trigger-btn"
+                  onClick={() => setPanicModalOpen(true)}
+                  disabled={!currentUser?.isRoot || panicProcessing}
+                  className="st-panic-trigger-btn"
+                >
+                  <ShieldAlert size={14} />
+                  <span>Declanșează Emergency Panic Lockdown</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── PANIC MODAL ─────────────────────────────────────────────── */}
+      {panicModalOpen && (
+        <div className="st-modal-overlay" role="dialog" aria-modal="true">
+          <div className="st-modal">
+            <div className="st-modal-header">
+              <div className="st-modal-danger-orb">
+                <ShieldAlert size={22} />
+              </div>
+              <h3 className="st-modal-title">Declanșează Emergency Panic Lockdown?</h3>
+            </div>
+            <p className="st-modal-body">
+              Această acțiune va <strong>revoca instantaneu toate sesiunile active</strong> ale administratorilor,
+              va deconecta toți membrii echipei și va bloca mutațiile de conținut.
+            </p>
+            {panicError && (
+              <div className="st-alert st-alert--error">
+                <AlertCircle size={14} />
+                <span>{panicError}</span>
+              </div>
+            )}
+            <div className="st-modal-actions">
+              <button type="button" onClick={() => setPanicModalOpen(false)} className="st-modal-cancel-btn">
+                Anulează
+              </button>
+              <button
+                type="button"
+                id="panic-confirm-btn"
+                onClick={() => handleTriggerPanic("trigger")}
+                disabled={panicProcessing}
+                className="st-modal-confirm-btn"
+              >
+                <Lock size={13} />
+                <span>{panicProcessing ? "Se declanșează..." : "Confirmă Panic Lockdown"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

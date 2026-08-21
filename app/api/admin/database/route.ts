@@ -5,6 +5,9 @@ import {
   getAllDocViews,
   getAllFeedbacks,
   deleteFeedback,
+  getAllDocReports,
+  updateDocReportStatus,
+  deleteDocReport,
   updateDatabaseConfig,
   testSupabaseConnection,
 } from "@/lib/db";
@@ -20,6 +23,7 @@ export async function GET(req: NextRequest) {
     const status = await getDatabaseStatus();
     const views = await getAllDocViews();
     const feedbacks = await getAllFeedbacks();
+    const reports = await getAllDocReports();
     const config = getLocalDatabaseConfig();
 
     return NextResponse.json({
@@ -32,6 +36,7 @@ export async function GET(req: NextRequest) {
       },
       views,
       feedbacks,
+      reports,
     });
   } catch (err: any) {
     console.error("[API Admin Database GET] Error:", err);
@@ -86,9 +91,40 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: deleted });
     }
 
+    // 4. Update Report Status
+    if (action === "update_report_status") {
+      const { id, status: reportStatus } = body;
+      if (!id || !reportStatus) {
+        return NextResponse.json({ error: "ID and status are required" }, { status: 400 });
+      }
+
+      const updated = await updateDocReportStatus(id, reportStatus, session.username || "Admin");
+      return NextResponse.json({ success: Boolean(updated), report: updated });
+    }
+
+    // 5. Delete Report
+    if (action === "delete_report") {
+      const { id } = body;
+      if (!id) {
+        return NextResponse.json({ error: "ID is required" }, { status: 400 });
+      }
+
+      const deleted = await deleteDocReport(id);
+      return NextResponse.json({ success: deleted });
+    }
+
+    // 6. Full Sync All Local Data to Supabase Tables
+    if (action === "sync_all_to_supabase") {
+      const { syncAllLocalDataToSupabase } = await import("@/lib/db/localStore");
+      const counts = await syncAllLocalDataToSupabase();
+      return NextResponse.json({ success: true, counts });
+    }
+
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   } catch (err: any) {
     console.error("[API Admin Database POST] Error:", err);
-    return NextResponse.json({ error: "Failed to execute database action" }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Failed to execute database action" }, { status: 500 });
   }
 }
+
+

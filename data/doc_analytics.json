@@ -2,9 +2,9 @@
   "views": {
     "informatii/faq": {
       "slug": "informatii/faq",
-      "total_views": 5,
-      "today_views": 5,
-      "last_viewed_at": "2026-08-21T15:33:28.806Z"
+      "total_views": 6,
+      "today_views": 6,
+      "last_viewed_at": "2026-08-21T18:15:52.514Z"
     },
     "informatii/staff": {
       "slug": "informatii/staff",
@@ -14,15 +14,15 @@
     },
     "informatii/about": {
       "slug": "informatii/about",
-      "total_views": 3,
-      "today_views": 3,
-      "last_viewed_at": "2026-08-21T15:33:27.142Z"
+      "total_views": 5,
+      "today_views": 5,
+      "last_viewed_at": "2026-08-21T18:15:22.240Z"
     },
     "informatii/getting-started": {
       "slug": "informatii/getting-started",
-      "total_views": 3,
-      "today_views": 3,
-      "last_viewed_at": "2026-08-21T15:33:29.712Z"
+      "total_views": 4,
+      "today_views": 4,
+      "last_viewed_at": "2026-08-21T18:24:08.385Z"
     },
     "systems/other/anti-rush": {
       "slug": "systems/other/anti-rush",
@@ -93,6 +93,14 @@
   },
   "feedbacks": [
     {
+      "id": "fb_1787337572148_q3qx5",
+      "slug": "informatii/faq",
+      "rating": "helpful",
+      "comment": "Foarte clar explicat pasul cu comanda de connect cs2!",
+      "created_at": "2026-08-21T18:39:32.148Z",
+      "ip_hash": "Ojox"
+    },
+    {
       "id": "fb_1787317596070_lgj69",
       "slug": "informatii/getting-started",
       "rating": "unhelpful",
@@ -115,5 +123,140 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-21T15:34:00.239Z"
+  "updatedAt": "2026-08-21T19:46:17.760Z",
+  "reports": [],
+  "tasks": [
+    {
+      "id": "task_1787335900001_yakuza",
+      "title": "Actualizare ghid Anti-Rush cu noile reguli de sancțiuni",
+      "description": "Revizuirea capitolelor de penalizări automate și adăugarea noilor excepții pentru rundele speciale.",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "docs_update",
+      "assignees": [
+        "Yakuza"
+      ],
+      "assignedBy": "iannC69",
+      "targetDoc": "systems/other/anti-rush",
+      "dueDate": "2026-08-25",
+      "subtasks": [
+        {
+          "id": "sub_1",
+          "title": "Revizuire text regulament și penalizări",
+          "completed": true
+        },
+        {
+          "id": "sub_2",
+          "title": "Actualizare tabel durată sancțiuni temporare",
+          "completed": false
+        },
+        {
+          "id": "sub_3",
+          "title": "Verificare comenzi in-game /rush",
+          "completed": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "cmt_1",
+          "author": "iannC69",
+          "text": "Am verificat primele modificări, arată bine. Continuă cu tabelul.",
+          "createdAt": "2026-08-21T18:09:00.000Z"
+        }
+      ],
+      "createdAt": "2026-08-21T17:00:00.000Z",
+      "updatedAt": "2026-08-21T18:09:00.000Z"
+    },
+    {
+      "id": "task_1787335900002_v1ccx",
+      "title": "Ghid Nou: Configurare & Utilizare Sistem VIP Custom",
+      "description": "Redactarea documentației complete pentru permisiunile și beneficiile pachetelor VIP.",
+      "status": "todo",
+      "priority": "medium",
+      "category": "docs_creation",
+      "assignees": [
+        "V1ccX"
+      ],
+      "assignedBy": "iannC69",
+      "targetDoc": "sisteme-jucatori/vip",
+      "dueDate": "2026-08-28",
+      "subtasks": [
+        {
+          "id": "sub_4",
+          "title": "Structurare avantaje pe ranguri (Gold / Diamond)",
+          "completed": false
+        },
+        {
+          "id": "sub_5",
+          "title": "Adăugare capturi de ecran meniu VIP",
+          "completed": false
+        }
+      ],
+      "comments": [],
+      "createdAt": "2026-08-21T17:30:00.000Z",
+      "updatedAt": "2026-08-21T17:30:00.000Z"
+    },
+    {
+      "id": "task_1787335900003_iannc",
+      "title": "Audit & Verificare integritate linkuri și imagini FAQ",
+      "description": "Verificare meticuloasă a tuturor ancorelor și a imaginilor din secțiunea de întrebări frecvente.",
+      "status": "completed",
+      "priority": "urgent",
+      "category": "review",
+      "assignees": [
+        "iannC69"
+      ],
+      "assignedBy": "iannC69",
+      "targetDoc": "informatii/faq",
+      "dueDate": "2026-08-23",
+      "subtasks": [
+        {
+          "id": "sub_6",
+          "title": "Scanare linkuri externe și ancore TOC",
+          "completed": true
+        },
+        {
+          "id": "sub_7",
+          "title": "Optimizare renderizare componente Liquid Glass",
+          "completed": true
+        }
+      ],
+      "comments": [],
+      "createdAt": "2026-08-21T16:00:00.000Z",
+      "updatedAt": "2026-08-21T19:10:48.455Z",
+      "completedAt": "2026-08-21T19:10:48.455Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "notif_task_seed_1",
+      "targetUser": "Yakuza",
+      "isGlobal": false,
+      "title": "Sarcină Asignată: Actualizare Anti-Rush",
+      "message": "Ai fost asignat pentru revizuirea regulilor de penalizări și adăugarea excepțiilor de pauză.",
+      "category": "task",
+      "severity": "urgent",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T17:52:05.622Z",
+      "metadata": {
+        "taskId": "task_seed_1"
+      }
+    },
+    {
+      "id": "notif_task_seed_2",
+      "targetUser": "V1ccX",
+      "isGlobal": false,
+      "title": "Sarcină Asignată: Ghid Nou VIP Custom",
+      "message": "Redactarea ghidului complet pentru pachetele VIP și beneficiile donatorilor.",
+      "category": "task",
+      "severity": "info",
+      "link": "/admin/tasks",
+      "readBy": [],
+      "createdAt": "2026-08-21T17:07:05.623Z",
+      "metadata": {
+        "taskId": "task_seed_2"
+      }
+    }
+  ]
 }

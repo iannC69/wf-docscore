@@ -23,7 +23,8 @@
     ],
     "discord": "371621920162185216",
     "steamId": "https://steamcommunity.com/id/1iannc/",
-    "docsModifiedCount": 56,
+    "githubUsername": "iannC69",
+    "docsModifiedCount": 0,
     "passwordHash": "b3f609a854dcf6bf00b3150c55dcbe132ca37b3e2ea88ad0e23e07985ba5969dda8689fe17b08c007137cf932f3d7e56c01359dc24037ed3b898da3f1ba1255c",
     "salt": "wf_root_salt_2026",
     "permissions": {
@@ -41,7 +42,7 @@
     "status": "active",
     "isRoot": true,
     "createdAt": "2026-08-17T18:20:32.349Z",
-    "lastLoginAt": "2026-08-21T14:27:20.018Z"
+    "lastLoginAt": "2026-08-21T18:55:01.044Z"
   },
   {
     "id": "user_83750fc6a71f918f089d8f783542baf9",
@@ -64,7 +65,7 @@
       "VERIFIED GUIDE"
     ],
     "discord": "778170514036228097",
-    "docsModifiedCount": 14,
+    "docsModifiedCount": 0,
     "passwordHash": "7eb8b52585353bfe6826730d4627ed5915015709603d0ad3c37ec734120038e140b9da8c6ee5f87a55a500b1b2025cda2514f80006cb80beaab2eae07413b854",
     "salt": "salt_c5c81a592f35bf933b792f34",
     "permissions": {
@@ -82,7 +83,7 @@
     "status": "active",
     "isRoot": false,
     "createdAt": "2026-08-21T14:15:00.610Z",
-    "lastLoginAt": "2026-08-21T14:27:13.966Z",
+    "lastLoginAt": "2026-08-21T18:08:57.393Z",
     "steamId": "https://steamcommunity.com/id/YakuzaTheImmortal"
   },
   {
@@ -104,7 +105,7 @@
       "CONTRIBUTOR"
     ],
     "discord": "996796351587287100",
-    "docsModifiedCount": 6,
+    "docsModifiedCount": 0,
     "passwordHash": "e97ac2d631e47628fddf311740a8d7e0d38a44f674db11e41f470685cc0fbddbbb7b6bbaaa92d07d420ccfd65ee1eb0bbad76b4611ad6d10cd9b8fa2ff1903b5",
     "salt": "salt_da53b79e2fc003caa5c29ccd",
     "permissions": {

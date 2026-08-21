@@ -13,31 +13,27 @@ import {
   Radio,
   Wrench,
 } from "lucide-react";
+import { AdminNotificationsCenter } from "./AdminNotificationsCenter";
+
 
 interface AdminHeaderProps {
   username?: string;
   displayName?: string;
+  avatarUrl?: string;
   role?: string;
   isRoot?: boolean;
-  canTriggerPanic?: boolean;
-  isPanicLocked?: boolean;
 }
 
 export function AdminHeader({
   username = "admin",
   displayName,
+  avatarUrl,
   role = "super_admin",
   isRoot = false,
-  canTriggerPanic = false,
-  isPanicLocked = false,
 }: AdminHeaderProps) {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
-  const [panicModalOpen, setPanicModalOpen] = useState(false);
-  const [panicError, setPanicError] = useState("");
   const [isMaintenance, setIsMaintenance] = useState(false);
-
-  const showPanic = isRoot || canTriggerPanic || username.toLowerCase() === "iannc69" || username.toLowerCase() === "iannc";
 
   useEffect(() => {
     async function checkMaintenance() {
@@ -60,26 +56,6 @@ export function AdminHeader({
     }
   };
 
-  const handleTriggerPanic = async () => {
-    setPanicError("");
-    try {
-      const res = await fetch("/api/admin/auth/panic", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "trigger" }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setPanicModalOpen(false);
-        window.location.href = "/admin/login";
-      } else {
-        setPanicError(data.error || "Failed to trigger panic mode.");
-      }
-    } catch {
-      setPanicError("Connection error.");
-    }
-  };
-
   return (
     <>
       <header className="admin-header">
@@ -95,7 +71,7 @@ export function AdminHeader({
               />
             </span>
             <span className="admin-brand-text">WILDFIRE ADMIN</span>
-            <span className="admin-brand-pill">FORTRESS</span>
+            <span className="admin-brand-pill">ADMIN CENTER</span>
           </Link>
 
           <div className="admin-header-divider" aria-hidden="true" />
@@ -115,37 +91,46 @@ export function AdminHeader({
 
         <div className="admin-header-right">
           {/* Main Docs Link */}
-          <Link
+          <a
             href="/docs"
             target="_blank"
+            rel="noopener noreferrer"
             className="admin-header-nav-link"
             title="Open Live Documentation"
           >
             <span>Live Docs</span>
             <ArrowUpRight size={13} />
-          </Link>
+          </a>
 
-          {/* Panic Killswitch Button (Strictly Root iannC69 or authorized) */}
-          {showPanic && (
-            <button
-              type="button"
-              onClick={() => setPanicModalOpen(true)}
-              className="admin-panic-btn"
-              title="Emergency Panic Lockdown: Invalidate all sessions immediately"
-            >
-              <ShieldAlert size={14} />
-              <span>Panic Lockdown</span>
-            </button>
-          )}
+          {/* Centru de Notificări & Alerte Interactive */}
+          <AdminNotificationsCenter currentUsername={username} />
 
-          {/* User Session Pill */}
+          {/* User Session Profile Pill */}
           <div className="admin-user-pill">
-            <span className="admin-user-avatar-indicator">
-              <ShieldCheck size={13} className="admin-user-shield" />
-            </span>
+            {avatarUrl ? (
+              <div className="admin-user-avatar-wrap">
+                <img
+                  src={avatarUrl}
+                  alt={displayName || username}
+                  className="admin-user-avatar-img"
+                  width={24}
+                  height={24}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src =
+                      "https://cdn.discordapp.com/embed/avatars/0.png";
+                  }}
+                />
+              </div>
+            ) : (
+              <span className="admin-user-avatar-indicator">
+                <ShieldCheck size={13} className="admin-user-shield" />
+              </span>
+            )}
             <div className="admin-user-details">
               <span className="admin-user-name">{displayName || username}</span>
-              <span className="admin-user-role">{isRoot ? "ROOT ADMIN" : role.replace("_", " ")}</span>
+              <span className={`admin-user-role ${isRoot ? "admin-user-role--root" : ""}`}>
+                {isRoot ? "ROOT ADMIN" : role.replace("_", " ")}
+              </span>
             </div>
           </div>
 
@@ -162,41 +147,7 @@ export function AdminHeader({
           </button>
         </div>
       </header>
-
-      {/* Panic Modal */}
-      {panicModalOpen && (
-        <div className="admin-modal-overlay" role="dialog" aria-modal="true">
-          <div className="admin-modal-card admin-modal-card--danger">
-            <div className="admin-modal-header">
-              <span className="admin-modal-danger-icon">
-                <ShieldAlert size={24} />
-              </span>
-              <h3 className="admin-modal-title">Trigger Emergency Panic Lockdown?</h3>
-            </div>
-            <p className="admin-modal-body">
-              This action will <strong>immediately revoke all active sessions</strong>, kick out all logged-in administrators, and freeze all content mutations.
-            </p>
-            {panicError && <div className="admin-alert-box admin-alert-box--danger">{panicError}</div>}
-            <div className="admin-modal-actions">
-              <button
-                type="button"
-                onClick={() => setPanicModalOpen(false)}
-                className="admin-btn admin-btn--secondary"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleTriggerPanic}
-                className="admin-btn admin-btn--danger"
-              >
-                <Lock size={14} />
-                <span>Confirm Panic Lockdown</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
+

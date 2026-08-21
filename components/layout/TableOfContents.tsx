@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { AlignLeft, PanelRightClose, PanelRightOpen } from "lucide-react";
+import { AlignLeft, PanelRightClose, PanelRightOpen, AlertTriangle, FilePlus } from "lucide-react";
+
 import { useLayout } from "@/context/LayoutContext";
 import type { TocItem } from "@/types/docs";
 
@@ -245,3 +246,5 @@ export function TableOfContents({ items }: TableOfContentsProps) {
     </>
   );
 }
+
+

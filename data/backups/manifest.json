@@ -1,0 +1,25 @@
+{
+  "version": "1.8.0",
+  "autoBackupEnabled": true,
+  "intervalDays": 3,
+  "retentionLimit": 10,
+  "lastAutoBackupAt": "2026-08-21T19:03:11.071Z",
+  "snapshots": [
+    {
+      "id": "snap_20260821_220311_75t1",
+      "createdAt": "2026-08-21T19:03:11.071Z",
+      "type": "auto",
+      "createdBy": "SYSTEM_SCHEDULER",
+      "label": "Backup Automat Programat (Interval 3 Zile)",
+      "totalDocs": 57,
+      "totalTasks": 3,
+      "totalReports": 1,
+      "totalFeedbacks": 4,
+      "totalNotifications": 9,
+      "sizeBytes": 284720,
+      "sha256": "c0e7d3906ba8c74993c95d0b22926626a8f12d619c3dab7f14aad1b4a6505065"
+    }
+  ],
+  "totalStorageBytes": 284720,
+  "updatedAt": "2026-08-21T19:09:37.481Z"
+}

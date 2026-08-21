@@ -2,7 +2,8 @@ import fs from "fs";
 import path from "path";
 import { hashPassword, verifyPassword, generateRandomToken } from "./crypto";
 import { getLocalDatabaseConfig } from "../db/localStore";
-import { supabaseSaveTeamMember } from "../db/supabase";
+import { supabaseSaveTeamMember, supabaseDeleteTeamMember } from "../db/supabase";
+
 
 export interface TeamMemberPermissions {
   canEditDocs: boolean;       // Acces la Content Studio (editare/creare)
@@ -31,6 +32,7 @@ export interface TeamMember {
   badges?: string[];            // List of highlight badges
   discord?: string;             // Discord username or User ID
   steamId?: string;             // Steam ID, Steam64, or Steam profile link
+  githubUsername?: string;      // GitHub profile username (for profile page integration)
   docsModifiedCount?: number;   // Number of doc files created/modified
   status: "active" | "suspended";
   isRoot: boolean;
@@ -335,6 +337,7 @@ export function updateTeamMember(
     bio?: string;
     discord?: string;
     steamId?: string;
+    githubUsername?: string;
     responsibilities?: string[];
     badges?: string[];
     docsModifiedCount?: number;
@@ -375,6 +378,7 @@ export function updateTeamMember(
   if (updates.bio !== undefined) target.bio = updates.bio.trim();
   if (updates.discord !== undefined) target.discord = updates.discord.trim();
   if (updates.steamId !== undefined) target.steamId = updates.steamId.trim();
+  if (updates.githubUsername !== undefined) target.githubUsername = updates.githubUsername.trim();
   if (updates.responsibilities !== undefined) target.responsibilities = updates.responsibilities;
   if (updates.badges !== undefined) target.badges = updates.badges;
   if (updates.docsModifiedCount !== undefined) target.docsModifiedCount = Math.max(0, updates.docsModifiedCount);
@@ -450,9 +454,18 @@ export function deleteTeamMember(id: string): { success: boolean; error?: string
   const filtered = members.filter((m) => m.id !== id);
   saveTeamMembers(filtered);
 
+  // Background delete from Supabase
+  try {
+    const config = getLocalDatabaseConfig();
+    if (config.provider === "supabase" && config.supabaseUrl && config.supabaseAnonKey) {
+      supabaseDeleteTeamMember({ url: config.supabaseUrl, anonKey: config.supabaseAnonKey }, id).catch(() => {});
+    }
+  } catch {}
+
   // Remove from .env.local
   syncAdminToEnv(target.username, undefined, "remove");
 
   return { success: true };
 }
+
 

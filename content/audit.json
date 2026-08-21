@@ -1,5 +1,299 @@
 [
   {
+    "id": "aud_1787341480462_fef6fc66",
+    "timestamp": "2026-08-21T19:44:40.463Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "7ef1cf250083ec1aa1fe6b87d12a74e6d832f4301721ae17c790625b02fd3947",
+    "hash": "1e120c28bf86e3b998618cc9e7dceb0447e74c942592f764ffa5c32832ac3f41"
+  },
+  {
+    "id": "aud_1787341479090_7cbfb0f4",
+    "timestamp": "2026-08-21T19:44:39.091Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "fe1fe4f58e184cca655d7249b637f59673329580a5f1a215920b7211d3a27215",
+    "hash": "7ef1cf250083ec1aa1fe6b87d12a74e6d832f4301721ae17c790625b02fd3947"
+  },
+  {
+    "id": "aud_1787341463497_05b9a90d",
+    "timestamp": "2026-08-21T19:44:23.497Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "d5f9fe60278088f399107f17d5eb22aa2b3b19b8bf489b7548d68362dcab4a21",
+    "hash": "fe1fe4f58e184cca655d7249b637f59673329580a5f1a215920b7211d3a27215"
+  },
+  {
+    "id": "aud_1787341446718_b29edef0",
+    "timestamp": "2026-08-21T19:44:06.719Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "ae2f884a04c00ff0a204442e7f06860bff503a9a81e7cb55b2518808da07c187",
+    "hash": "d5f9fe60278088f399107f17d5eb22aa2b3b19b8bf489b7548d68362dcab4a21"
+  },
+  {
+    "id": "aud_1787341413130_c820c7d9",
+    "timestamp": "2026-08-21T19:43:33.130Z",
+    "action": "MAINTENANCE_TOGGLED",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "event": "PLATFORM_RESTORED",
+      "dispatchedToSubscribers": 1,
+      "subscribers": [
+        "solwolfs@gmail.com"
+      ]
+    },
+    "previousHash": "99d93acba0fe0a2c76334acd9413065cafa98f1d5c5d84baacc3d18751c5428b",
+    "hash": "ae2f884a04c00ff0a204442e7f06860bff503a9a81e7cb55b2518808da07c187"
+  },
+  {
+    "id": "aud_1787341413126_8a341ee0",
+    "timestamp": "2026-08-21T19:43:33.126Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "e2d11b954aa66c46cd47b189f6a58720121f1f86f5de669a0252797e37468fd9",
+    "hash": "99d93acba0fe0a2c76334acd9413065cafa98f1d5c5d84baacc3d18751c5428b"
+  },
+  {
+    "id": "aud_1787341412733_befe0bca",
+    "timestamp": "2026-08-21T19:43:32.733Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": true,
+      "announcementEnabled": true
+    },
+    "previousHash": "11c3fbd4fe2c9fc075962b46f6e9ec10bde987be01113a819b48a61d56f48c1b",
+    "hash": "e2d11b954aa66c46cd47b189f6a58720121f1f86f5de669a0252797e37468fd9"
+  },
+  {
+    "id": "aud_1787340233487_2e19a282",
+    "timestamp": "2026-08-21T19:23:53.487Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": true
+    },
+    "previousHash": "5f30f77bdac69f32acc20cae6bb7afd9c79609cbbd66c8a662a687fab4dfd25c",
+    "hash": "11c3fbd4fe2c9fc075962b46f6e9ec10bde987be01113a819b48a61d56f48c1b"
+  },
+  {
+    "id": "aud_1787340227909_3fa73823",
+    "timestamp": "2026-08-21T19:23:47.910Z",
+    "action": "MAINTENANCE_TOGGLED",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "event": "PLATFORM_RESTORED",
+      "dispatchedToSubscribers": 1,
+      "subscribers": [
+        "solwolfs@gmail.com"
+      ]
+    },
+    "previousHash": "0d8a9d1d454663981ac91b57c7425a758c35d296d676e5755218b2f1e02c39d5",
+    "hash": "5f30f77bdac69f32acc20cae6bb7afd9c79609cbbd66c8a662a687fab4dfd25c"
+  },
+  {
+    "id": "aud_1787340227900_ea551abd",
+    "timestamp": "2026-08-21T19:23:47.901Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": false,
+      "announcementEnabled": false
+    },
+    "previousHash": "81c30dccf36bf0bb9a2b657c84e1a246ee1c684157d1dbb66a76bd121a08a4b5",
+    "hash": "0d8a9d1d454663981ac91b57c7425a758c35d296d676e5755218b2f1e02c39d5"
+  },
+  {
+    "id": "aud_1787340206375_de39a7b6",
+    "timestamp": "2026-08-21T19:23:26.376Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "maintenanceEnabled": true,
+      "announcementEnabled": false
+    },
+    "previousHash": "d2999cca4f4c993e107e04d4aa136cbba75dcb9e6ebc5d79ba13a94619ba9309",
+    "hash": "81c30dccf36bf0bb9a2b657c84e1a246ee1c684157d1dbb66a76bd121a08a4b5"
+  },
+  {
+    "id": "aud_1787338991103_b20014ab",
+    "timestamp": "2026-08-21T19:03:11.104Z",
+    "action": "BACKUP_SNAPSHOT_CREATED",
+    "actor": "SYSTEM_SCHEDULER",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "snapshotId": "snap_20260821_220311_75t1",
+      "type": "auto",
+      "sizeBytes": 284720,
+      "sha256": "c0e7d3906ba8c74993c95d0b22926626a8f12d619c3dab7f14aad1b4a6505065",
+      "totalDocs": 57
+    },
+    "previousHash": "0daffa7711110026b6db2bd579c2b6c2d061c67fe5455ebc89803cd338b5ea6c",
+    "hash": "d2999cca4f4c993e107e04d4aa136cbba75dcb9e6ebc5d79ba13a94619ba9309"
+  },
+  {
+    "id": "aud_1787338818217_8e7e307e",
+    "timestamp": "2026-08-21T19:00:18.217Z",
+    "action": "BACKUP_SNAPSHOT_CREATED",
+    "actor": "SYSTEM_SCHEDULER",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "snapshotId": "snap_20260821_220018_0v3a",
+      "type": "auto",
+      "sizeBytes": 284047,
+      "sha256": "4b7c5a78cf3e61772f027d421291e201f633a2051372df8be7594bfb6e4b8801",
+      "totalDocs": 57
+    },
+    "previousHash": "10493b14e7be319385c16deb3eb5a5d12314385f145e0742645a48330e8ee4b4",
+    "hash": "0daffa7711110026b6db2bd579c2b6c2d061c67fe5455ebc89803cd338b5ea6c"
+  },
+  {
+    "id": "aud_1787338501049_ac09e584",
+    "timestamp": "2026-08-21T18:55:01.049Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+    "details": {
+      "sessionId": "sess_56e00dfce9a0ad90ce0752ca1a3cb0821697342f4e3b11a8",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "7d328892da56fffe1c07c9b515bb744f3e1b0501d317ad4511f3e9492b7d340d",
+    "hash": "10493b14e7be319385c16deb3eb5a5d12314385f145e0742645a48330e8ee4b4"
+  },
+  {
+    "id": "aud_1787338489806_c13f6bb7",
+    "timestamp": "2026-08-21T18:54:49.806Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+    "details": {
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "remainingAttempts": 99
+    },
+    "previousHash": "581a38637a3b6824dd0d9e43108dc303cb5a628fad1011f6588f07619ad4221d",
+    "hash": "7d328892da56fffe1c07c9b515bb744f3e1b0501d317ad4511f3e9492b7d340d"
+  },
+  {
+    "id": "aud_1787338485709_4bee28ca",
+    "timestamp": "2026-08-21T18:54:45.710Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+    "details": {
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "remainingAttempts": 99
+    },
+    "previousHash": "66bd43db312e7f86d069f7d2799dbd701b4bf364a1580fc91993b58176ef9c31",
+    "hash": "581a38637a3b6824dd0d9e43108dc303cb5a628fad1011f6588f07619ad4221d"
+  },
+  {
+    "id": "aud_1787335751559_5295da3e",
+    "timestamp": "2026-08-21T18:09:11.560Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_87fcb3e78df4607d86a5d0d419d80837cffa0d690b6981d1",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "2c64e981e9c6ad847b8414e92ea63e6a4a13c64837def5b0ee88e2364ea40e51",
+    "hash": "66bd43db312e7f86d069f7d2799dbd701b4bf364a1580fc91993b58176ef9c31"
+  },
+  {
+    "id": "aud_1787335749634_8409923d",
+    "timestamp": "2026-08-21T18:09:09.634Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_253aedfc012dfe92b369313ab14e3b7cc0a24cc100cc63a4"
+    },
+    "previousHash": "39549b801fc6b4a6fa9b2c0e756cc29e33527bf06b46d2682798cfe47f1067b1",
+    "hash": "2c64e981e9c6ad847b8414e92ea63e6a4a13c64837def5b0ee88e2364ea40e51"
+  },
+  {
+    "id": "aud_1787335749629_04755511",
+    "timestamp": "2026-08-21T18:09:09.630Z",
+    "action": "SESSION_REVOKED",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_253aedfc012dfe92b369313ab14e3b7cc0a24cc100cc63a4",
+      "username": "Yakuza"
+    },
+    "previousHash": "fdaa3df3ff7bd4c415b22bb36df0344580ad15e25e0d9cf4b95b02019e95ffe2",
+    "hash": "39549b801fc6b4a6fa9b2c0e756cc29e33527bf06b46d2682798cfe47f1067b1"
+  },
+  {
+    "id": "aud_1787335737402_855e0378",
+    "timestamp": "2026-08-21T18:08:57.402Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_253aedfc012dfe92b369313ab14e3b7cc0a24cc100cc63a4",
+      "role": "content_editor",
+      "isRoot": false
+    },
+    "previousHash": "248b7a406ebba2de7f9b11f71a32b10e1a0a1a64f3d2942aff2b974c4883769c",
+    "hash": "fdaa3df3ff7bd4c415b22bb36df0344580ad15e25e0d9cf4b95b02019e95ffe2"
+  },
+  {
     "id": "aud_1787326043983_e8524fcc",
     "timestamp": "2026-08-21T15:27:23.984Z",
     "action": "SETTINGS_UPDATE",

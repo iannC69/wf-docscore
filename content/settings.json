@@ -12,8 +12,8 @@
     "link": "/changelog",
     "linkText": "Vezi Noutățile",
     "type": "fire",
-    "dismissible": true
+    "dismissible": false
   },
-  "updatedAt": "2026-08-17T19:02:03.021Z",
-  "updatedBy": "ceva"
+  "updatedAt": "2026-08-21T19:44:40.460Z",
+  "updatedBy": "iannC69"
 }

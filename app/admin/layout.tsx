@@ -1,8 +1,12 @@
 import React from "react";
 import { getAuthenticatedAdminSession, isPanicLockdown } from "@/lib/security/auth";
+import { findTeamMemberByUsername } from "@/lib/security/teamStore";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { LiquidBackground } from "@/components/ui/LiquidEffects";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = {
   title: "Admin Mission Control | Wildfire Docs",
@@ -16,6 +20,7 @@ export default async function AdminLayout({
 }) {
   const session = await getAuthenticatedAdminSession();
   const isLocked = isPanicLockdown();
+  const member = session ? findTeamMemberByUsername(session.username) : null;
 
   return (
     <div className="admin-root-container">
@@ -25,13 +30,14 @@ export default async function AdminLayout({
       {session && (
         <AdminHeader
           username={session.username}
-          displayName={session.displayName}
+          displayName={session.displayName || member?.displayName}
+          avatarUrl={member?.avatarUrl}
           role={session.role}
           isRoot={session.isRoot}
-          canTriggerPanic={session.isRoot || session.permissions?.canTriggerPanic}
-          isPanicLocked={isLocked}
         />
       )}
+
+
 
       <div className="admin-body-container">
         {session && (

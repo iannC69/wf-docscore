@@ -389,3 +389,152 @@ export async function supabaseDeleteTeamMember(
   }
 }
 
+// ─── Player Reports Sync (doc_reports) ───────────────────────────────────────
+
+export async function supabaseSaveReport(
+  config: SupabaseConfig,
+  report: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const row = {
+      id: report.id,
+      type: report.type || "issue",
+      slug: report.slug || null,
+      title: report.title,
+      description: report.description,
+      author: report.author || "Vizitator Anonim",
+      status: report.status || "open",
+      created_at: report.createdAt || new Date().toISOString(),
+      resolved_at: report.resolvedAt || null,
+      resolved_by: report.resolvedBy || null,
+    };
+
+    const { error } = await supabase.from("doc_reports").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert report:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in saveReport", err);
+    return false;
+  }
+}
+
+export async function supabaseDeleteReport(
+  config: SupabaseConfig,
+  id: string
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const { error } = await supabase.from("doc_reports").delete().eq("id", id);
+    return !error;
+  } catch (err) {
+    console.error("[Supabase] Error in deleteReport", err);
+    return false;
+  }
+}
+
+// ─── Admin Tasks Sync (admin_tasks) ──────────────────────────────────────────
+
+export async function supabaseSaveTask(
+  config: SupabaseConfig,
+  task: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const assignedUser = task.assignedTo || (Array.isArray(task.assignees) && task.assignees[0]) || "iannC69";
+    const creatorUser = task.createdBy || task.assignedBy || "iannC69";
+    const row = {
+      id: task.id,
+      title: task.title,
+      description: task.description || null,
+      category: task.category || "DOCS_UPDATE",
+      priority: task.priority || "medium",
+      status: task.status || "todo",
+      assigned_to: assignedUser,
+      created_by: creatorUser,
+      deadline: task.deadline || task.dueDate || null,
+      subtasks: task.subtasks || [],
+      comments: task.comments || [],
+      created_at: task.createdAt || new Date().toISOString(),
+      updated_at: task.updatedAt || new Date().toISOString(),
+    };
+
+    const { error } = await supabase.from("admin_tasks").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert task:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in saveTask", err);
+    return false;
+  }
+}
+
+
+export async function supabaseDeleteTask(
+  config: SupabaseConfig,
+  id: string
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const { error } = await supabase.from("admin_tasks").delete().eq("id", id);
+    return !error;
+  } catch (err) {
+    console.error("[Supabase] Error in deleteTask", err);
+    return false;
+  }
+}
+
+// ─── Admin Notifications Sync (admin_notifications) ──────────────────────────
+
+export async function supabaseSaveNotification(
+  config: SupabaseConfig,
+  notif: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const row = {
+      id: notif.id,
+      target_user: notif.targetUser || null,
+      is_global: Boolean(notif.isGlobal),
+      title: notif.title,
+      message: notif.message,
+      category: notif.category || "system",
+      severity: notif.severity || "info",
+      link: notif.link || null,
+      read_by: notif.readBy || [],
+      created_at: notif.createdAt || new Date().toISOString(),
+      metadata: notif.metadata || {},
+    };
+
+    const { error } = await supabase.from("admin_notifications").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert notification:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in saveNotification", err);
+    return false;
+  }
+}
+
+export async function supabaseDeleteNotification(
+  config: SupabaseConfig,
+  id: string
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const { error } = await supabase.from("admin_notifications").delete().eq("id", id);
+    return !error;
+  } catch (err) {
+    console.error("[Supabase] Error in deleteNotification", err);
+    return false;
+  }
+}
+
+
