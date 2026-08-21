@@ -1,50 +1,228 @@
 "use client";
-import { useState } from "react";
-import { ThumbsUp, ThumbsDown, CheckCircle2, MessageSquare } from "lucide-react";
 
-export function FeedbackWidget() {
-  const [voted, setVoted] = useState<"yes" | "no" | null>(null);
+import React, { useState, useEffect } from "react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  CheckCircle2,
+  MessageSquare,
+  Send,
+  Sparkles,
+  Flame,
+  HelpCircle,
+} from "lucide-react";
+import type { FeedbackStats } from "@/lib/db/types";
 
-  if (voted) {
-    return (
-      <div className="feedback">
-        {voted === "yes" ? (
-          <span className="feedback-thanks">
-            <CheckCircle2 size={15} className="feedback-thanks-icon" aria-hidden="true" />
-            Thank you for your feedback!
-          </span>
-        ) : (
-          <span className="feedback-thanks">
-            <MessageSquare size={15} className="feedback-thanks-icon" aria-hidden="true" />
-            Thank you. We will work on improving this guide.
-          </span>
-        )}
-      </div>
-    );
-  }
+interface FeedbackWidgetProps {
+  slug?: string;
+  initialStats?: FeedbackStats;
+}
+
+export function FeedbackWidget({ slug, initialStats }: FeedbackWidgetProps) {
+  const [voted, setVoted] = useState<"helpful" | "unhelpful" | null>(null);
+  const [feedbackId, setFeedbackId] = useState<string | null>(null);
+  const [showCommentBox, setShowCommentBox] = useState<boolean>(false);
+  const [comment, setComment] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [commentSent, setCommentSent] = useState<boolean>(false);
+  const [stats, setStats] = useState<FeedbackStats>(
+    initialStats || { helpful: 0, unhelpful: 0, total: 0, percentage: 100 }
+  );
+
+  const cleanSlug = slug?.replace(/^\/+|\/+$/g, "") || "";
+
+  useEffect(() => {
+    if (!cleanSlug) return;
+    const localVote = localStorage.getItem(`wf_voted_${cleanSlug}`) as "helpful" | "unhelpful" | null;
+    const localFbId = localStorage.getItem(`wf_fbid_${cleanSlug}`);
+    if (localVote) {
+      setVoted(localVote);
+    }
+    if (localFbId) {
+      setFeedbackId(localFbId);
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`/api/docs/feedback?slug=${encodeURIComponent(cleanSlug)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.stats) {
+            setStats(data.stats);
+          }
+        }
+      } catch {}
+    }
+    loadStats();
+  }, [cleanSlug]);
+
+  const handleVote = async (rating: "helpful" | "unhelpful") => {
+    if (!cleanSlug || submitting) return;
+
+    setVoted(rating);
+    localStorage.setItem(`wf_voted_${cleanSlug}`, rating);
+    setShowCommentBox(true);
+
+    try {
+      const res = await fetch("/api/docs/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: cleanSlug, rating }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.feedback?.id) {
+          setFeedbackId(data.feedback.id);
+          localStorage.setItem(`wf_fbid_${cleanSlug}`, data.feedback.id);
+        }
+        if (data.stats) {
+          setStats(data.stats);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to submit vote", err);
+    }
+  };
+
+  const handleSendComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cleanSlug || !comment.trim() || submitting) return;
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/docs/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: cleanSlug,
+          rating: voted || "helpful",
+          comment: comment.trim(),
+          feedbackId: feedbackId || undefined,
+        }),
+      });
+
+      if (res.ok) {
+        setCommentSent(true);
+        setShowCommentBox(false);
+      }
+    } catch (err) {
+      console.error("Failed to submit comment", err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="feedback">
-      <span className="feedback-label">Was this page helpful?</span>
-      <div className="feedback-btns">
-        <button
-          type="button"
-          className="feedback-btn feedback-btn--yes"
-          onClick={() => setVoted("yes")}
-          aria-label="Mark page as helpful"
-        >
-          <ThumbsUp size={13} aria-hidden="true" />
-          <span>Yes</span>
-        </button>
-        <button
-          type="button"
-          className="feedback-btn feedback-btn--no"
-          onClick={() => setVoted("no")}
-          aria-label="Mark page as not helpful"
-        >
-          <ThumbsDown size={13} aria-hidden="true" />
-          <span>No</span>
-        </button>
+    <div className="feedback-liquid-wrapper" aria-label="Feedback documentație">
+      <div className="feedback-liquid-card">
+        {/* Glow Specular Aura */}
+        <div className="feedback-liquid-glow" aria-hidden="true" />
+
+        {/* Top Header Row */}
+        <div className="feedback-liquid-header">
+          <div className="feedback-liquid-left">
+            <div className="feedback-liquid-icon-box">
+              <Flame size={16} className="feedback-flame-icon" />
+            </div>
+
+            <div className="feedback-liquid-title-group">
+              <div className="feedback-liquid-title-row">
+                <span className="feedback-liquid-title">A fost util acest ghid?</span>
+                <span className="feedback-liquid-pill-tag">Feedback Comunitate</span>
+              </div>
+              <p className="feedback-liquid-subtitle">
+                Părerea ta ajută echipa WildFire să mențină informațiile la zi.
+              </p>
+            </div>
+          </div>
+
+          {/* Real Community Rating Pill */}
+          {stats.total > 0 && (
+            <div className="feedback-liquid-stats-pill" title={`${stats.helpful} din ${stats.total} voturi pozitive`}>
+              <span className="feedback-liquid-stats-dot" />
+              <span className="feedback-liquid-stats-pct font-mono">{stats.percentage}% util</span>
+              <span className="feedback-liquid-stats-count font-mono">({stats.total} {stats.total === 1 ? "vot" : "voturi"})</span>
+            </div>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        {!voted ? (
+          <div className="feedback-liquid-actions">
+            <button
+              type="button"
+              className="feedback-liquid-btn feedback-liquid-btn--yes"
+              onClick={() => handleVote("helpful")}
+              aria-label="Marchează ghidul ca util"
+            >
+              <span className="feedback-btn-icon-wrap feedback-btn-icon-wrap--emerald">
+                <ThumbsUp size={14} />
+              </span>
+              <span className="feedback-btn-text">Da, foarte util</span>
+            </button>
+
+            <button
+              type="button"
+              className="feedback-liquid-btn feedback-liquid-btn--no"
+              onClick={() => handleVote("unhelpful")}
+              aria-label="Marchează ghidul ca necesitând îmbunătățiri"
+            >
+              <span className="feedback-btn-icon-wrap feedback-btn-icon-wrap--rose">
+                <ThumbsDown size={14} />
+              </span>
+              <span className="feedback-btn-text">Nu, am nevoie de detalii</span>
+            </button>
+          </div>
+        ) : (
+          <div className="feedback-liquid-voted-banner">
+            <div className="feedback-liquid-thanks-box">
+              <CheckCircle2 size={16} className="text-emerald-400" />
+              <span>
+                {voted === "helpful"
+                  ? "Mulțumim! Votul tău pozitiv a fost salvat."
+                  : "Mulțumim! Am înregistrat votul și vom actualiza acest ghid."}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Optional Comment / Suggestion Box */}
+        {showCommentBox && !commentSent && (
+          <form onSubmit={handleSendComment} className="feedback-liquid-form">
+            <div className="feedback-liquid-form-header">
+              <MessageSquare size={13} className="text-cyan-400" />
+              <span>Ce putem adăuga sau clarifica în acest document? (opțional)</span>
+            </div>
+
+            <div className="feedback-liquid-input-row">
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Ex: Adăugați o comandă suplimentară sau clarificați durata..."
+                rows={2}
+                className="feedback-liquid-textarea"
+                maxLength={400}
+              />
+              <button
+                type="submit"
+                disabled={submitting || !comment.trim()}
+                className="feedback-liquid-submit-btn"
+                title="Trimite feedback-ul"
+              >
+                <Send size={13} />
+                <span>Trimite</span>
+              </button>
+            </div>
+          </form>
+        )}
+
+        {commentSent && (
+          <div className="feedback-liquid-success-box">
+            <Sparkles size={14} className="text-amber-400" />
+            <span>Sugestia ta a fost trimisă cu succes către echipa de documentație!</span>
+          </div>
+        )}
       </div>
     </div>
   );

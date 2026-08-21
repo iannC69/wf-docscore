@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { validateSessionToken, SESSION_COOKIE_NAME } from "@/lib/security/auth";
 import { recordAuditEvent } from "@/lib/security/audit";
+import { incrementMemberDocCount } from "@/lib/security/teamStore";
 
 const DOCS_DIR = path.join(process.cwd(), "content", "docs");
 
@@ -127,6 +128,9 @@ export async function POST(req: NextRequest) {
       ip,
       details: { slug, path: cleanRelPath, action },
     });
+
+    // Increment contributor's modified docs counter
+    incrementMemberDocCount(session.username);
 
     return NextResponse.json({
       success: true,

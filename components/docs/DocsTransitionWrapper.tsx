@@ -18,7 +18,7 @@ export function DocsTransitionWrapper({ children }: DocsTransitionWrapperProps) 
   // When pathname or incoming children update (navigation finished)
   useEffect(() => {
     const elapsed = Date.now() - navigationStartTimeRef.current;
-    const minDisplayTime = 220; // 220ms minimum display so skeleton doesn't vanish in 1 frame
+    const minDisplayTime = 80; // 80ms fast buffer so transitions are snappy
     const remainingTime = Math.max(0, minDisplayTime - elapsed);
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);

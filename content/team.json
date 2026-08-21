@@ -2,10 +2,28 @@
   {
     "id": "user_root_iannc69",
     "username": "iannC69",
-    "displayName": "iannC (Founder & Root)",
+    "displayName": "iannC",
     "email": "iannc@wildfire.ro",
     "role": "root_admin",
+    "customTitle": "Lead Docs & Systems Architect",
+    "avatarUrl": "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg",
     "avatarColor": "#ff6b00",
+    "bio": "Se ocupă de structura, redactarea și actualizarea platformei de documentație, integrarea sistemelor tehnice și experiența generală a ghidurilor WildFire.",
+    "responsibilities": [
+      "Arhitectură Documentație",
+      "Redactare & Ghiduri Tehnice",
+      "Optimizare Docs Engine",
+      "Supervizare Echipă Docs",
+      "Securitate & 2FA"
+    ],
+    "badges": [
+      "LEAD ARCHITECT",
+      "DOCS SPECIALIST",
+      "SYSTEMS LEAD"
+    ],
+    "discord": "371621920162185216",
+    "steamId": "https://steamcommunity.com/id/1iannc/",
+    "docsModifiedCount": 56,
     "passwordHash": "b3f609a854dcf6bf00b3150c55dcbe132ca37b3e2ea88ad0e23e07985ba5969dda8689fe17b08c007137cf932f3d7e56c01359dc24037ed3b898da3f1ba1255c",
     "salt": "wf_root_salt_2026",
     "permissions": {
@@ -23,17 +41,72 @@
     "status": "active",
     "isRoot": true,
     "createdAt": "2026-08-17T18:20:32.349Z",
-    "lastLoginAt": "2026-08-21T12:26:49.262Z"
+    "lastLoginAt": "2026-08-21T14:27:20.018Z"
+  },
+  {
+    "id": "user_83750fc6a71f918f089d8f783542baf9",
+    "username": "Yakuza",
+    "displayName": "Yakuza",
+    "email": "yakuza@wildfire.ro",
+    "role": "content_editor",
+    "customTitle": "Senior Content Editor & Reviewer",
+    "avatarUrl": "https://avatars.akamai.steamstatic.com/e2847cb722e1ec8bf9df607659f7f5e3804a0182_full.jpg",
+    "avatarColor": "#10b981",
+    "bio": "Responsabil de elaborarea ghidurilor detaliate pentru jucători, proceduri de joc, revizuirea mecanicii și acuratețea datelor.",
+    "responsibilities": [
+      "Ghiduri Jucători",
+      "Sisteme & MVP",
+      "Media & Asset Vault",
+      "Verificare Acuratețe"
+    ],
+    "badges": [
+      "CONTENT LEAD",
+      "VERIFIED GUIDE"
+    ],
+    "discord": "778170514036228097",
+    "docsModifiedCount": 14,
+    "passwordHash": "7eb8b52585353bfe6826730d4627ed5915015709603d0ad3c37ec734120038e140b9da8c6ee5f87a55a500b1b2025cda2514f80006cb80beaab2eae07413b854",
+    "salt": "salt_c5c81a592f35bf933b792f34",
+    "permissions": {
+      "canEditDocs": true,
+      "canDeleteDocs": false,
+      "canManageMedia": true,
+      "canViewAnalytics": true,
+      "canViewAudit": false,
+      "canManageSettings": false,
+      "canManageSecurity": false,
+      "canManageApiKeys": false,
+      "canTriggerPanic": false,
+      "canManageTeam": false
+    },
+    "status": "active",
+    "isRoot": false,
+    "createdAt": "2026-08-21T14:15:00.610Z",
+    "lastLoginAt": "2026-08-21T14:27:13.966Z",
+    "steamId": "https://steamcommunity.com/id/YakuzaTheImmortal"
   },
   {
     "id": "user_e88ca0b4c008bda646d0b02e79c00938",
-    "username": "ceva",
-    "displayName": "ceva",
-    "email": "",
+    "username": "V1ccX",
+    "displayName": "V1ccX",
+    "email": "ceva@wildfire.ro",
     "role": "content_editor",
+    "customTitle": "Documentation Contributor",
+    "avatarUrl": "https://avatars.akamai.steamstatic.com/4963bca91b1b3edf88de548e459b2092a35312e7_full.jpg",
     "avatarColor": "#3b82f6",
-    "passwordHash": "de1575132a8e9b8f57efbc1104a1b7ffa229ad57e807031f0a6f232087f326eac39da52e379e48d58b042fa6b147d46bdc29fe2cfac06d99e432020893f21450",
-    "salt": "salt_20732be06d2cf765895b7835",
+    "bio": "Contribuie la actualizarea mecanicilor, formularelor și documentelor informative pentru comunitate.",
+    "responsibilities": [
+      "Ghiduri Informative",
+      "Mecanici Joc",
+      "Actualizări Conținut"
+    ],
+    "badges": [
+      "CONTRIBUTOR"
+    ],
+    "discord": "996796351587287100",
+    "docsModifiedCount": 6,
+    "passwordHash": "e97ac2d631e47628fddf311740a8d7e0d38a44f674db11e41f470685cc0fbddbbb7b6bbaaa92d07d420ccfd65ee1eb0bbad76b4611ad6d10cd9b8fa2ff1903b5",
+    "salt": "salt_da53b79e2fc003caa5c29ccd",
     "permissions": {
       "canEditDocs": true,
       "canDeleteDocs": false,
@@ -49,6 +122,7 @@
     "status": "active",
     "isRoot": false,
     "createdAt": "2026-08-17T18:21:41.322Z",
-    "lastLoginAt": "2026-08-17T18:23:23.628Z"
+    "lastLoginAt": "2026-08-17T18:23:23.628Z",
+    "steamId": "https://steamcommunity.com/profiles/76561199698821208"
   }
 ]

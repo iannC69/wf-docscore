@@ -16,6 +16,7 @@ import {
   Users,
   Terminal,
   Cpu,
+  Database,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
@@ -42,6 +43,13 @@ const NAV_ITEMS: NavItem[] = [
     icon: Cpu,
     badge: "AI",
     permKey: "canViewAnalytics",
+  },
+  {
+    label: "Database & Metrics",
+    href: "/admin/database",
+    icon: Database,
+    badge: "SQL",
+    permKey: "canManageSettings",
   },
   {
     label: "My Team & Access",

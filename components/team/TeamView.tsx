@@ -1,0 +1,704 @@
+"use client";
+
+import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import {
+  Users,
+  ShieldCheck,
+  Award,
+  BookOpen,
+  CheckCircle2,
+  Eye,
+  Search,
+  Check,
+  Sparkles,
+  Cpu,
+  Layers,
+  FileText,
+  Lock,
+  Flame,
+  ArrowRight,
+  Shield,
+  Clock,
+  CheckCheck,
+  UserCheck,
+} from "lucide-react";
+import type { PublicTeamMember } from "@/lib/security/teamStore";
+import { CURRENT_VERSION } from "@/lib/version";
+
+interface TeamViewProps {
+  initialMembers: PublicTeamMember[];
+}
+
+function SteamIcon({ size = 11, className = "" }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 2a10 10 0 0 0-10 9.87l5.65 2.33a3.54 3.54 0 0 1 1.95-.58l2.9-4.2a3.7 3.7 0 0 1 7.23-1.22 3.7 3.7 0 0 1-5.18 5.18l-4.2 2.9a3.54 3.54 0 0 1-.58 1.95L4.44 20.9A10 10 0 1 0 12 2zm3.73 6.27a2.22 2.22 0 1 0 2.22 2.22 2.22 2.22 0 0 0-2.22-2.22zm-7.6 9.47a2.08 2.08 0 1 0 2.08 2.08 2.08 2.08 0 0 0-2.08-2.08z" />
+    </svg>
+  );
+}
+
+function DiscordIcon({ size = 11, className = "" }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+    </svg>
+  );
+}
+
+function getSteamProfileUrl(steamId?: string): string | null {
+  if (!steamId) return null;
+  const clean = steamId.trim();
+  if (!clean) return null;
+  if (clean.startsWith("http://") || clean.startsWith("https://")) {
+    return clean;
+  }
+  if (/^7656119\d{10}$/.test(clean)) {
+    return `https://steamcommunity.com/profiles/${clean}`;
+  }
+  return `https://steamcommunity.com/id/${clean}`;
+}
+
+function getDiscordDefaultAvatar(userId?: string): string {
+  if (!userId) return "https://cdn.discordapp.com/embed/avatars/0.png";
+  try {
+    const bigId = BigInt(userId.trim());
+    const idx = Number((bigId >> BigInt(22)) % BigInt(6));
+    return `https://cdn.discordapp.com/embed/avatars/${idx}.png`;
+  } catch {
+    return "https://cdn.discordapp.com/embed/avatars/0.png";
+  }
+}
+
+function getRoleMeta(role: string, isRoot: boolean) {
+  if (isRoot || role === "root_admin") {
+    return {
+      label: "Root Super Admin",
+      categoryName: "Root Admin",
+      iconBoxClass: "recent-card-item-icon--orange",
+      icon: <ShieldCheck size={13} className="text-amber-400" />,
+      accentColor: "#ff7700",
+    };
+  }
+  switch (role) {
+    case "doc_lead":
+      return {
+        label: "Documentation Lead",
+        categoryName: "Doc Lead",
+        iconBoxClass: "recent-card-item-icon--blue",
+        icon: <Award size={13} className="text-cyan-400" />,
+        accentColor: "#06b6d4",
+      };
+    case "content_editor":
+      return {
+        label: "Content Editor",
+        categoryName: "Content Editor",
+        iconBoxClass: "recent-card-item-icon--green",
+        icon: <BookOpen size={13} className="text-emerald-400" />,
+        accentColor: "#10b981",
+      };
+    case "moderator":
+      return {
+        label: "Reviewer & Mod",
+        categoryName: "Reviewer",
+        iconBoxClass: "recent-card-item-icon--purple",
+        icon: <CheckCircle2 size={13} className="text-purple-400" />,
+        accentColor: "#a855f7",
+      };
+    case "viewer":
+    default:
+      return {
+        label: "Auditor Docs",
+        categoryName: "Auditor",
+        iconBoxClass: "recent-card-item-icon--teal",
+        icon: <Eye size={13} className="text-blue-400" />,
+        accentColor: "#3b82f6",
+      };
+  }
+}
+
+function getResponsibilityIcon(tag: string) {
+  const lower = tag.toLowerCase();
+  if (lower.includes("arhitectur") || lower.includes("core") || lower.includes("engine") || lower.includes("sistem")) {
+    return <Cpu size={11} className="text-amber-400" />;
+  }
+  if (lower.includes("securitat") || lower.includes("2fa") || lower.includes("auth")) {
+    return <Lock size={11} className="text-blue-400" />;
+  }
+  if (lower.includes("ghid") || lower.includes("jucator") || lower.includes("continut") || lower.includes("redactare")) {
+    return <BookOpen size={11} className="text-emerald-400" />;
+  }
+  if (lower.includes("media") || lower.includes("asset") || lower.includes("vault")) {
+    return <Layers size={11} className="text-cyan-400" />;
+  }
+  if (lower.includes("verific") || lower.includes("acuratete") || lower.includes("audit") || lower.includes("optimizare")) {
+    return <CheckCheck size={11} className="text-purple-400" />;
+  }
+  return <FileText size={11} className="text-zinc-400" />;
+}
+
+interface DiscordProfileInfo {
+  avatarUrl: string;
+  username?: string;
+  globalName?: string;
+}
+
+export function TeamView({ initialMembers }: TeamViewProps) {
+  const [filter, setFilter] = useState<"all" | "root" | "editors">("all");
+  const [copiedDiscordId, setCopiedDiscordId] = useState<string | null>(null);
+  const [steamAvatars, setSteamAvatars] = useState<Record<string, string>>({});
+  const [discordProfiles, setDiscordProfiles] = useState<Record<string, DiscordProfileInfo>>({});
+
+  // Auto-fetch Steam & Discord avatars for members
+  useEffect(() => {
+    initialMembers.forEach((member) => {
+      // Steam avatar fetch
+      if (member.steamId && !steamAvatars[member.id]) {
+        fetch(`/api/steam/avatar?id=${encodeURIComponent(member.steamId)}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.avatarUrl) {
+              setSteamAvatars((prev) => ({ ...prev, [member.id]: data.avatarUrl }));
+            }
+          })
+          .catch(() => {});
+      }
+
+      // Discord avatar & profile info fetch
+      if (member.discord && !discordProfiles[member.id]) {
+        fetch(`/api/discord/avatar?id=${encodeURIComponent(member.discord)}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.avatarUrl) {
+              setDiscordProfiles((prev) => ({
+                ...prev,
+                [member.id]: {
+                  avatarUrl: data.avatarUrl,
+                  username: data.username,
+                  globalName: data.globalName || data.global_name,
+                },
+              }));
+            }
+          })
+          .catch(() => {});
+      }
+    });
+  }, [initialMembers]);
+
+  const handleCopyDiscord = (e: React.MouseEvent, copyText: string, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!copyText) return;
+    navigator.clipboard.writeText(copyText);
+    setCopiedDiscordId(id);
+    setTimeout(() => {
+      setCopiedDiscordId(null);
+    }, 2000);
+  };
+
+  const rootCount = initialMembers.filter((m) => m.isRoot || m.role === "root_admin").length;
+  const editorCount = initialMembers.filter((m) => m.role === "content_editor" || m.role === "doc_lead").length;
+
+  const filteredMembers = useMemo(() => {
+    return initialMembers.filter((m) => {
+      if (filter === "root" && !m.isRoot && m.role !== "root_admin") return false;
+      if (filter === "editors" && m.role !== "content_editor" && m.role !== "doc_lead") return false;
+      return true;
+    });
+  }, [initialMembers, filter]);
+
+  return (
+    <div className="docs-home-wrapper">
+      <main className="docs-home" id="main-content">
+        {/* ── Hero Section (Identical to Documentation Hub) ─────────── */}
+        <section className="docs-home-hero">
+          <div className="docs-home-badge">
+            <span className="docs-badge-dot" aria-hidden="true" />
+            <span>Wildfire Documentation Workforce v{CURRENT_VERSION}</span>
+          </div>
+
+          <h1 className="docs-home-title">
+            Wildfire Core Team &amp; Contributors
+          </h1>
+
+          <p className="docs-home-desc">
+            Echipa oficială, arhitecții de sisteme și contribuitorii care redactează, revizuiesc și mențin documentația pe serverele CS2 Wildfire.ro.
+          </p>
+
+          {/* Quick Search / Command hint */}
+          <div className="docs-home-search-hint">
+            <div className="search-hint-left">
+              <Search size={15} className="search-hint-icon" aria-hidden="true" />
+              <span>Apasă <kbd>Ctrl K</kbd> oriunde pentru căutare instantanee în documente</span>
+            </div>
+            <Link href="/docs/informatii/staff/cum-aplici" className="docs-hero-btn">
+              <span>Ghid Aplicare Staff</span>
+              <ArrowRight size={14} aria-hidden="true" />
+            </Link>
+          </div>
+        </section>
+
+        {/* ── Main Section: Team Members Grid ────────────────────────── */}
+        <section className="docs-home-section">
+          <div className="section-header section-header--flex">
+            <div className="section-header-left-col">
+              <div className="section-title-badge-row">
+                <h2 className="docs-home-section-title">Echipa Noastră</h2>
+
+                {/* Live Pulse Badge */}
+                <span className="live-pulse-badge">
+                  <span className="pulse-dot" aria-hidden="true" />
+                  <span>Live Team Sync</span>
+                </span>
+
+                {/* Count Pill */}
+                <span className="recent-count-pill" title="Membri activi înregistrați în echipă">
+                  <Sparkles size={12} className="text-amber-400" aria-hidden="true" />
+                  <span><strong>{initialMembers.length}</strong> membri activi</span>
+                  <span className="count-pill-divider">/</span>
+                  <span><strong>{rootCount}</strong> lead &amp; root</span>
+                </span>
+              </div>
+
+              <span className="section-sub">
+                Toți membrii verificați cu acces de editare în documentație • Contactează-i pe Discord sau Steam
+              </span>
+            </div>
+
+            {/* Filter Toggle Buttons */}
+            <div className="section-header-actions">
+              <div className="recent-page-pills">
+                <button
+                  type="button"
+                  onClick={() => setFilter("all")}
+                  className={`recent-collapse-toggle-btn ${filter === "all" ? "admin-filter-pill--active" : ""}`}
+                  style={{ fontSize: "0.72rem", padding: "4px 10px" }}
+                >
+                  Toți ({initialMembers.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilter("root")}
+                  className={`recent-collapse-toggle-btn ${filter === "root" ? "admin-filter-pill--active" : ""}`}
+                  style={{ fontSize: "0.72rem", padding: "4px 10px" }}
+                >
+                  Root &amp; Lead ({rootCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilter("editors")}
+                  className={`recent-collapse-toggle-btn ${filter === "editors" ? "admin-filter-pill--active" : ""}`}
+                  style={{ fontSize: "0.72rem", padding: "4px 10px" }}
+                >
+                  Editori ({editorCount})
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Cards Grid (100% Faithful to Documentation Hub Theme) */}
+          <div className="recent-updates-grid">
+            {filteredMembers.map((member) => {
+              const roleMeta = getRoleMeta(member.role, member.isRoot);
+              const isCopied = copiedDiscordId === member.id;
+              const steamUrl = getSteamProfileUrl(member.steamId);
+
+              // Auto-derive Discord avatar & profile handle if numeric UserID provided
+              const isDiscordUserId = Boolean(member.discord && /^\d{17,20}$/.test(member.discord.trim()));
+              const discordProfile = discordProfiles[member.id];
+              const discordPfp =
+                discordProfile?.avatarUrl ||
+                (isDiscordUserId ? `https://dcdn.dstn.to/avatars/${member.discord!.trim()}` : null) ||
+                (isDiscordUserId ? getDiscordDefaultAvatar(member.discord) : null);
+              const steamPfp = steamAvatars[member.id] || null;
+
+              // Primary Profile Picture: user defined avatarUrl > steamPfp > discordPfp
+              const displayAvatarUrl = member.avatarUrl || steamPfp || discordPfp || (isDiscordUserId ? getDiscordDefaultAvatar(member.discord) : null);
+
+              const discordCopyText = discordProfile?.username
+                ? discordProfile.username
+                : (member.discord?.startsWith("@") ? member.discord.slice(1) : member.discord || "");
+
+              return (
+                <div key={member.id} className="recent-update-card" style={{ cursor: "default", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    {/* Top Bar: Role Category Pill + Stats */}
+                    <div className="recent-card-top">
+                      <span className="recent-card-category">
+                        <span className="recent-card-cat-icon">
+                          {roleMeta.icon}
+                        </span>
+                        <span>{roleMeta.categoryName}</span>
+                      </span>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span className="recent-card-time" title="Ghiduri modificate">
+                          <FileText size={11} className="text-amber-400" aria-hidden="true" />
+                          <span><strong>{member.docsModifiedCount || 0}</strong> ghiduri</span>
+                        </span>
+
+                        <span className="recent-card-time">
+                          <Clock size={11} aria-hidden="true" />
+                          <span>
+                            {new Date(member.createdAt).toLocaleDateString("ro-RO", {
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Title Row with Avatar + Name & Custom Role + Verified Badge */}
+                    <div className="recent-card-title-row" style={{ alignItems: "center", marginBottom: "12px" }}>
+                      <div className="recent-card-title-wrap" style={{ gap: "10px", alignItems: "center" }}>
+                        {/* Avatar Frame (Proportional 46x46) */}
+                        <div
+                          style={{
+                            position: "relative",
+                            width: "46px",
+                            height: "46px",
+                            borderRadius: "11px",
+                            border: `1.5px solid ${roleMeta.accentColor}55`,
+                            background: "hsl(0 0% 12% / 0.8)",
+                            boxShadow: `0 4px 14px ${roleMeta.accentColor}25`,
+                            overflow: "hidden",
+                            flexShrink: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {displayAvatarUrl ? (
+                            <img
+                              src={displayAvatarUrl}
+                              alt={member.displayName}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                background: `linear-gradient(135deg, ${roleMeta.accentColor}50, ${roleMeta.accentColor}15)`,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontWeight: 800,
+                                fontSize: "1rem",
+                                color: "#ffffff",
+                                textTransform: "uppercase",
+                              }}
+                            >
+                              {member.displayName.slice(0, 2)}
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                          <h3 className="recent-card-title" style={{ fontSize: "1rem", lineHeight: 1.25, fontWeight: 800 }}>
+                            {member.displayName}
+                          </h3>
+                          {member.customTitle && (
+                            <span style={{ fontSize: "0.74rem", color: roleMeta.accentColor, fontWeight: 600, marginTop: "2px" }}>
+                              {member.customTitle}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Verified Icon Pill */}
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          padding: "3px 8px",
+                          borderRadius: "6px",
+                          background: "hsl(142 70% 45% / 0.12)",
+                          border: "1px solid hsl(142 70% 45% / 0.3)",
+                          color: "#34d399",
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          flexShrink: 0,
+                        }}
+                        title="Membru Verificat Oficial"
+                      >
+                        <UserCheck size={12} className="text-emerald-400" aria-hidden="true" />
+                        <span>Verificat</span>
+                      </span>
+                    </div>
+
+                    {/* Bio Description */}
+                    <p className="recent-card-desc" style={{ WebkitLineClamp: 3, marginBottom: "12px", fontSize: "0.82rem", lineHeight: 1.5 }}>
+                      {member.bio || "Membru activ în echipa de redactare și mentenanță a documentației WildFire."}
+                    </p>
+
+                    {/* Responsibilities Tags */}
+                    {member.responsibilities && member.responsibilities.length > 0 && (
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "4px" }}>
+                        {member.responsibilities.slice(0, 4).map((resp, idx) => (
+                          <span
+                            key={idx}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              padding: "3px 8px",
+                              borderRadius: "6px",
+                              background: "hsl(0 0% 100% / 0.04)",
+                              border: "1px solid var(--glass-border)",
+                              fontSize: "0.68rem",
+                              color: "var(--color-text-secondary)",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {getResponsibilityIcon(resp)}
+                            <span>{resp}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer: Clean @handle + Steam & Discord Action Buttons */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      paddingTop: "14px",
+                      marginTop: "14px",
+                      borderTop: "1px solid var(--glass-border)",
+                      minHeight: "44px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "5px 10px",
+                        borderRadius: "8px",
+                        background: "hsl(0 0% 100% / 0.04)",
+                        border: "1px solid var(--glass-border)",
+                        boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.08), 0 2px 6px hsl(0 0% 0% / 0.2)",
+                        backdropFilter: "blur(8px)",
+                        WebkitBackdropFilter: "blur(8px)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.78rem",
+                          fontWeight: 700,
+                          color: "#f1f5f9",
+                          fontFamily: "var(--font-mono, monospace)",
+                          letterSpacing: "-0.01em",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "3px",
+                        }}
+                      >
+                        <span style={{ color: roleMeta.accentColor, fontWeight: 900 }}>@</span>
+                        <span>{member.username}</span>
+                      </span>
+                    </div>
+
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      {/* Steam Full-Bleed Button (34x34px with Branded Blue Glow) */}
+                      {steamUrl && (
+                        <a
+                          href={steamUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            position: "relative",
+                            width: "34px",
+                            height: "34px",
+                            borderRadius: "9px",
+                            border: "1.5px solid hsl(215 85% 58% / 0.5)",
+                            background: "hsl(215 45% 16% / 0.8)",
+                            boxShadow: "0 3px 10px hsl(215 85% 45% / 0.25)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            overflow: "hidden",
+                            transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
+                            cursor: "pointer",
+                            flexShrink: 0,
+                          }}
+                          title={`Profil Steam — ${member.displayName}`}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "translateY(-2px) scale(1.06)";
+                            e.currentTarget.style.borderColor = "hsl(215 100% 72% / 0.95)";
+                            e.currentTarget.style.boxShadow = "0 6px 16px hsl(215 90% 50% / 0.45)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "translateY(0) scale(1)";
+                            e.currentTarget.style.borderColor = "hsl(215 85% 58% / 0.5)";
+                            e.currentTarget.style.boxShadow = "0 3px 10px hsl(215 85% 45% / 0.25)";
+                          }}
+                        >
+                          {steamPfp ? (
+                            <img
+                              src={steamPfp}
+                              alt="Steam"
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                          ) : (
+                            <SteamIcon size={16} className="text-blue-400" />
+                          )}
+                        </a>
+                      )}
+
+                      {/* Discord Full-Bleed Button (34x34px with Branded Blurple Glow) */}
+                      {member.discord && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleCopyDiscord(e, discordCopyText, member.id)}
+                          style={{
+                            position: "relative",
+                            width: "34px",
+                            height: "34px",
+                            borderRadius: "9px",
+                            border: isCopied ? "1.5px solid hsl(142 75% 50% / 0.9)" : "1.5px solid hsl(235 85% 68% / 0.5)",
+                            background: isCopied ? "hsl(142 70% 22% / 0.6)" : "hsl(235 45% 18% / 0.8)",
+                            boxShadow: isCopied ? "0 3px 12px hsl(142 70% 40% / 0.4)" : "0 3px 10px hsl(235 80% 60% / 0.25)",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            overflow: "hidden",
+                            transition: "all 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
+                            cursor: "pointer",
+                            flexShrink: 0,
+                          }}
+                          title={isCopied ? `Copiat @${discordCopyText}!` : `Copiază Discord: @${discordCopyText}`}
+                          onMouseEnter={(e) => {
+                            if (!isCopied) {
+                              e.currentTarget.style.transform = "translateY(-2px) scale(1.06)";
+                              e.currentTarget.style.borderColor = "hsl(235 100% 80% / 0.95)";
+                              e.currentTarget.style.boxShadow = "0 6px 16px hsl(235 80% 60% / 0.45)";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isCopied) {
+                              e.currentTarget.style.transform = "translateY(0) scale(1)";
+                              e.currentTarget.style.borderColor = "hsl(235 85% 68% / 0.5)";
+                              e.currentTarget.style.boxShadow = "0 3px 10px hsl(235 80% 60% / 0.25)";
+                            }
+                          }}
+                        >
+                          {isCopied ? (
+                            <Check size={16} className="text-emerald-400" />
+                          ) : discordPfp ? (
+                            <img
+                              src={discordPfp}
+                              alt="Discord"
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              onError={(e) => {
+                                const img = e.currentTarget as HTMLImageElement;
+                                if (member.discord && /^\d{17,20}$/.test(member.discord.trim())) {
+                                  img.src = getDiscordDefaultAvatar(member.discord);
+                                } else {
+                                  img.style.display = "none";
+                                }
+                              }}
+                            />
+                          ) : (
+                            <DiscordIcon size={16} className="text-indigo-300" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+          </div>
+        </section>
+
+        {/* ── Secondary Section: Role Hierarchy & Guidelines ── */}
+        <section className="docs-home-section">
+          <div className="section-header">
+            <h2 className="docs-home-section-title">Roluri &amp; Niveluri de Acces în Echipă</h2>
+            <span className="section-sub">Ierarhia oficială și permisiunile fiecărui grad din echipa de documentație</span>
+          </div>
+
+          <div className="home-cards-grid">
+            <div className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--orange">
+                  <Shield size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">Root Authority</span>
+              </div>
+              <h3 className="home-card-title">Root Super Admin</h3>
+              <p className="home-card-desc">
+                Gestionarea platformei de documentație, arhitectura sistemelor, securitatea și drepturile de acces.
+              </p>
+            </div>
+
+            <div className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--blue">
+                  <Award size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">Management</span>
+              </div>
+              <h3 className="home-card-title">Documentation Lead</h3>
+              <p className="home-card-desc">
+                Supervizează structura ghidurilor, aprobă conținutul nou, gestionează fișierele media și setările platformei.
+              </p>
+            </div>
+
+            <div className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--teal">
+                  <BookOpen size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">Redactare</span>
+              </div>
+              <h3 className="home-card-title">Content Editor</h3>
+              <p className="home-card-desc">
+                Redactează ghiduri Markdown, actualizează mecanici in-game, corectează erori și adaugă capturi media.
+              </p>
+            </div>
+
+            <Link href="/docs/informatii/staff/cum-aplici" className="home-card">
+              <div className="home-card-header">
+                <div className="home-card-icon-wrap home-card-icon--yellow">
+                  <Flame size={18} aria-hidden="true" />
+                </div>
+                <span className="home-card-tag">Recrutare</span>
+                <ArrowRight size={15} className="home-card-arrow" aria-hidden="true" />
+              </div>
+              <h3 className="home-card-title">Vrei să Contribui?</h3>
+              <p className="home-card-desc">
+                Află cum poți deveni redactor de conținut sau cum poți propune ghiduri noi pentru comunitatea Wildfire.
+              </p>
+            </Link>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}

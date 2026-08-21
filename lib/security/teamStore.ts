@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { hashPassword, verifyPassword, generateRandomToken } from "./crypto";
+import { getLocalDatabaseConfig } from "../db/localStore";
+import { supabaseSaveTeamMember } from "../db/supabase";
 
 export interface TeamMemberPermissions {
   canEditDocs: boolean;       // Acces la Content Studio (editare/creare)
@@ -21,15 +23,26 @@ export interface TeamMember {
   displayName: string;
   email?: string;
   role: "root_admin" | "doc_lead" | "content_editor" | "moderator" | "viewer";
+  customTitle?: string;         // ex: "Founder & Lead Architect", "Senior Content Editor"
+  avatarUrl?: string;           // Custom profile image URL (or fallback to avatarColor monogram)
   avatarColor: string;
-  passwordHash: string;
-  salt: string;
-  permissions: TeamMemberPermissions;
+  bio?: string;                 // Short bio / mission statement
+  responsibilities?: string[];  // List of responsibilities / areas
+  badges?: string[];            // List of highlight badges
+  discord?: string;             // Discord username or User ID
+  steamId?: string;             // Steam ID, Steam64, or Steam profile link
+  docsModifiedCount?: number;   // Number of doc files created/modified
   status: "active" | "suspended";
   isRoot: boolean;
   createdAt: string;
   lastLoginAt?: string;
+  passwordHash: string;
+  salt: string;
+  permissions: TeamMemberPermissions;
 }
+
+export type PublicTeamMember = Omit<TeamMember, "passwordHash" | "salt" | "email">;
+
 
 const TEAM_FILE_PATH = path.join(process.cwd(), "content", "team.json");
 const ENV_LOCAL_PATH = path.join(process.cwd(), ".env.local");
@@ -197,6 +210,19 @@ export function loadTeamMembers(): TeamMember[] {
   return initial;
 }
 
+async function syncTeamToSupabase(members: TeamMember[]): Promise<void> {
+  try {
+    const config = getLocalDatabaseConfig();
+    if (config.provider === "supabase" && config.supabaseUrl && config.supabaseAnonKey) {
+      for (const m of members) {
+        await supabaseSaveTeamMember({ url: config.supabaseUrl, anonKey: config.supabaseAnonKey }, m);
+      }
+    }
+  } catch (err) {
+    console.warn("[TeamStore] Background Supabase sync error:", err);
+  }
+}
+
 export function saveTeamMembers(members: TeamMember[]): boolean {
   try {
     const dir = path.dirname(TEAM_FILE_PATH);
@@ -204,12 +230,17 @@ export function saveTeamMembers(members: TeamMember[]): boolean {
       fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(TEAM_FILE_PATH, JSON.stringify(members, null, 2), "utf-8");
+
+    // Asynchronously synchronize all team members, roles, and credentials to database
+    syncTeamToSupabase(members);
+
     return true;
   } catch (err) {
     console.error("Failed to save team members to disk:", err);
     return false;
   }
 }
+
 
 export function findTeamMemberByUsername(username: string): TeamMember | null {
   const members = loadTeamMembers();
@@ -224,6 +255,12 @@ export function createTeamMember(params: {
   role: "root_admin" | "doc_lead" | "content_editor" | "moderator" | "viewer";
   password: string;
   customPermissions?: Partial<TeamMemberPermissions>;
+  customTitle?: string;
+  avatarUrl?: string;
+  discord?: string;
+  steamId?: string;
+  bio?: string;
+  responsibilities?: string[];
 }): { success: boolean; error?: string; member?: TeamMember } {
   const cleanUsername = params.username.trim();
   if (!cleanUsername || cleanUsername.length < 3) {
@@ -256,7 +293,14 @@ export function createTeamMember(params: {
     displayName: params.displayName.trim() || cleanUsername,
     email: params.email?.trim(),
     role: params.role,
+    customTitle: params.customTitle?.trim(),
+    avatarUrl: params.avatarUrl?.trim(),
     avatarColor,
+    bio: params.bio?.trim(),
+    discord: params.discord?.trim(),
+    steamId: params.steamId?.trim(),
+    responsibilities: params.responsibilities,
+    docsModifiedCount: 0,
     passwordHash: hash,
     salt,
     permissions,
@@ -277,12 +321,23 @@ export function createTeamMember(params: {
 export function updateTeamMember(
   id: string,
   updates: {
+    username?: string;
     displayName?: string;
     email?: string;
+
     role?: "root_admin" | "doc_lead" | "content_editor" | "moderator" | "viewer";
     status?: "active" | "suspended";
     permissions?: Partial<TeamMemberPermissions>;
     password?: string;
+    customTitle?: string;
+    avatarUrl?: string;
+    avatarColor?: string;
+    bio?: string;
+    discord?: string;
+    steamId?: string;
+    responsibilities?: string[];
+    badges?: string[];
+    docsModifiedCount?: number;
   }
 ): { success: boolean; error?: string; member?: TeamMember } {
   const members = loadTeamMembers();
@@ -300,8 +355,30 @@ export function updateTeamMember(
     }
   }
 
+  if (updates.username && !target.isRoot) {
+    const cleanUser = updates.username.trim();
+    if (cleanUser && cleanUser.toLowerCase() !== target.username.toLowerCase()) {
+      const exists = members.some((m) => m.id !== id && m.username.toLowerCase() === cleanUser.toLowerCase());
+      if (exists) {
+        return { success: false, error: "Numele de utilizator este deja folosit de un alt membru." };
+      }
+      target.username = cleanUser;
+    }
+  }
+
   if (updates.displayName) target.displayName = updates.displayName.trim();
   if (updates.email !== undefined) target.email = updates.email.trim();
+  if (updates.customTitle !== undefined) target.customTitle = updates.customTitle.trim();
+
+  if (updates.avatarUrl !== undefined) target.avatarUrl = updates.avatarUrl.trim();
+  if (updates.avatarColor !== undefined) target.avatarColor = updates.avatarColor;
+  if (updates.bio !== undefined) target.bio = updates.bio.trim();
+  if (updates.discord !== undefined) target.discord = updates.discord.trim();
+  if (updates.steamId !== undefined) target.steamId = updates.steamId.trim();
+  if (updates.responsibilities !== undefined) target.responsibilities = updates.responsibilities;
+  if (updates.badges !== undefined) target.badges = updates.badges;
+  if (updates.docsModifiedCount !== undefined) target.docsModifiedCount = Math.max(0, updates.docsModifiedCount);
+
   if (updates.role && !target.isRoot) {
     target.role = updates.role;
     target.permissions = {
@@ -338,6 +415,28 @@ export function updateTeamMember(
   return { success: true, member: target };
 }
 
+export function incrementMemberDocCount(username: string): void {
+  try {
+    const members = loadTeamMembers();
+    const clean = username.trim().toLowerCase();
+    const target = members.find((m) => m.username.toLowerCase() === clean);
+    if (target) {
+      target.docsModifiedCount = (target.docsModifiedCount || 0) + 1;
+      saveTeamMembers(members);
+    }
+  } catch (err) {
+    console.error("Failed to increment member doc count:", err);
+  }
+}
+
+export function getPublicTeamMembers(): PublicTeamMember[] {
+
+  const members = loadTeamMembers();
+  return members
+    .filter((m) => m.status === "active")
+    .map(({ passwordHash, salt, email, ...safe }) => safe);
+}
+
 export function deleteTeamMember(id: string): { success: boolean; error?: string } {
   const members = loadTeamMembers();
   const target = members.find((m) => m.id === id);
@@ -356,3 +455,4 @@ export function deleteTeamMember(id: string): { success: boolean; error?: string
 
   return { success: true };
 }
+

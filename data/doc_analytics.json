@@ -1,0 +1,119 @@
+{
+  "views": {
+    "informatii/faq": {
+      "slug": "informatii/faq",
+      "total_views": 5,
+      "today_views": 5,
+      "last_viewed_at": "2026-08-21T15:33:28.806Z"
+    },
+    "informatii/staff": {
+      "slug": "informatii/staff",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T13:02:21.695Z"
+    },
+    "informatii/about": {
+      "slug": "informatii/about",
+      "total_views": 3,
+      "today_views": 3,
+      "last_viewed_at": "2026-08-21T15:33:27.142Z"
+    },
+    "informatii/getting-started": {
+      "slug": "informatii/getting-started",
+      "total_views": 3,
+      "today_views": 3,
+      "last_viewed_at": "2026-08-21T15:33:29.712Z"
+    },
+    "systems/other/anti-rush": {
+      "slug": "systems/other/anti-rush",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T14:13:09.884Z"
+    },
+    "systems/other/c4-planter": {
+      "slug": "systems/other/c4-planter",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T14:13:10.940Z"
+    },
+    "systems/other/faceit-badge": {
+      "slug": "systems/other/faceit-badge",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T14:13:11.826Z"
+    },
+    "systems/other/gold-member": {
+      "slug": "systems/other/gold-member",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T14:13:12.361Z"
+    },
+    "informatii/staff/cum-aplici": {
+      "slug": "informatii/staff/cum-aplici",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T14:42:17.355Z"
+    },
+    "informatii/regulamente/regulament-go": {
+      "slug": "informatii/regulamente/regulament-go",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T15:33:31.440Z"
+    },
+    "informatii/regulamente/regulament-staff-go": {
+      "slug": "informatii/regulamente/regulament-staff-go",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T15:33:32.222Z"
+    },
+    "informatii/regulamente/regulament-vip-go": {
+      "slug": "informatii/regulamente/regulament-vip-go",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T15:33:33.046Z"
+    },
+    "informatii/staff/comenzi": {
+      "slug": "informatii/staff/comenzi",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T15:33:42.907Z"
+    },
+    "market/vip": {
+      "slug": "market/vip",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T15:33:56.475Z"
+    },
+    "market/server-slots": {
+      "slug": "market/server-slots",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-21T15:34:00.239Z"
+    }
+  },
+  "feedbacks": [
+    {
+      "id": "fb_1787317596070_lgj69",
+      "slug": "informatii/getting-started",
+      "rating": "unhelpful",
+      "comment": "cam slab.",
+      "created_at": "2026-08-21T13:06:36.070Z",
+      "ip_hash": "Ojox"
+    },
+    {
+      "id": "fb_1787317591573_ijlmo",
+      "slug": "informatii/getting-started",
+      "rating": "unhelpful",
+      "created_at": "2026-08-21T13:06:31.573Z",
+      "ip_hash": "Ojox"
+    },
+    {
+      "id": "fb_1787316704322_z1cnj",
+      "slug": "informatii/faq",
+      "rating": "helpful",
+      "created_at": "2026-08-21T12:51:44.322Z",
+      "ip_hash": "Ojox"
+    }
+  ],
+  "updatedAt": "2026-08-21T15:34:00.239Z"
+}

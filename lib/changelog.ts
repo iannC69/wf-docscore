@@ -34,8 +34,73 @@ export interface ReleaseEntry {
 
 export const RELEASES_DATA: ReleaseEntry[] = [
   {
+    "version": "v1.8.0",
+    "isLatest": true,
+    "date": "August 21, 2026",
+    "title": "Core Team Liquid Glass Upgrades & Full Admin Inspector",
+    "summary": "Official v1.8.0 update introducing platform enhancements, performance optimizations, and documentation refinements.",
+    "author": {
+      "name": "iannC69",
+      "username": "iannC69",
+      "avatar": "https://github.com/iannC69.png"
+    },
+    "git": {
+      "commitHash": "b58c95f",
+      "commitUrl": "https://github.com/iannC69/wf-docscore/commit/b58c95f",
+      "tagUrl": "https://github.com/iannC69/wf-docscore/releases/tag/v1.8.0"
+    },
+    "changes": [
+      {
+        "type": "feature",
+        "title": "Initialize comprehensive documentation portal with integrated AI-assisted search, admin analytics, and categorized system guides",
+        "description": "Included in commit b58c95f."
+      },
+      {
+        "type": "feature",
+        "title": "Implement AI helper assistant with analytics, telemetry, and customized Aurora-themed UI components",
+        "description": "Included in commit 8706d23."
+      },
+      {
+        "type": "feature",
+        "title": "Implement comprehensive MDX rendering engine and dynamic scroll-aware table of contents components",
+        "description": "Included in commit e9a0af9."
+      },
+      {
+        "type": "feature",
+        "title": "V1.6.0 Granular RBAC 2.0 Team Matrix, Root Session Immunity and Liquid Glass UI Architecture",
+        "description": "Included in commit e81e855."
+      },
+      {
+        "type": "feature",
+        "title": "Complete wildfire wiki migration, studio hd lightbox, orange video player & 61-doc carousel",
+        "description": "Included in commit 271a80e."
+      },
+      {
+        "type": "feature",
+        "title": "Implement platform version 1.4.0 with administrative settings store and UI for maintenance and announcements",
+        "description": "Included in commit f56dc1c."
+      },
+      {
+        "type": "feature",
+        "title": "Implement comprehensive administrative dashboard, security suite, maintenance mode, and search infrastructure",
+        "description": "Included in commit f728058."
+      },
+      {
+        "type": "improvement",
+        "title": "Ensure uninterrupted hardware-accelerated GPU transition on Table of Contents gliding capsule for 100% clean smooth scrolling",
+        "description": "Included in commit 892fa56."
+      }
+    ],
+    "highlights": [
+      "Full release packaging for v1.8.0",
+      "Live synchronization with GitHub commit b58c95f"
+    ],
+    "slug": "v1-8-0"
+  },
+
+  {
     version: "v1.7.0",
-    isLatest: true,
+    isLatest: false,
     date: "August 21, 2026",
     title: "WildFire AI Assistant Engine, LocalStorage Multi-Session History, Search Spotlight & Ambient Liquid Glass Parity",
     summary:

@@ -14,7 +14,9 @@ Aceste comenzi sunt destinate exclusiv membrilor echipei administrative **WildFi
 
 ---
 
-## Tabelul Complet al Comenzilor Administrative
+---
+
+## 1. Tabelul Complet al Comenzilor Administrative
 
 Iata lista oficiala si integrala a comenzilor administrative disponibile pe server:
 
@@ -27,14 +29,14 @@ Iata lista oficiala si integrala a comenzilor administrative disponibile pe serv
 | `!ungag` | `!ungag [jucator]` | Elimina restrictia de chat scris a unui jucator | **Helper** |
 | `!mute` | `!mute [jucator] [timp] [motiv]` | Blocheaza comunicarea audio prin microfon (max. 60m) | **Helper** |
 | `!unmute` | `!unmute [jucator]` | Deblocheaza comunicarea audio a jucatorului | **Helper** |
-| `!silence` | `!silence [jucator] [timp] [motiv]` | Restrictioneaza simultan atat chat-ul scris, cat si microfonul | **Helper** |
+| `!silence` | `!silence [jucator] [timp] [motiv]` | Restrictioneaza simultan atat chat-ul scris, cat si microfonul (max. 60m) | **Helper** |
 | `!unsilence` | `!unsilence [jucator]` | Elimina sanctiunea completa de silence a jucatorului | **Helper** |
 | `!slay` | `!slay [jucator] [motiv]` | Elimina instantaneu un jucator in runda curenta (AFK / Bomb Grief) | **Helper** |
 | `!slap` | `!slap [jucator] [dmg]` | Loveste un jucator aplicand daune (pentru deblocare din pereti) | **Helper** |
 | `!rename` | `!rename [jucator] [nume_nou]` | Redenumeste un jucator cu nume indecent sau reclama | **Helper** |
 | `!team` | `!team [jucator] [T / CT / Spec]` | Muta un jucator in echipa specificata | **Helper** |
 | `!swap` | `!swap [jucator]` | Schimba instant echipa curenta a unui jucator (T ➔ CT / CT ➔ T) | **Helper** |
-| `!ban` | `!ban [jucator] [timp] [motiv]` | Interzice accesul pe durata specificata sau permanent (`0`) | **Moderator** |
+| `!ban` | `!ban [jucator] [timp] [motiv]` | Interzice accesul pe durata specificata (`1d`, `7d`) sau permanent (`0`) | **Moderator** |
 | `!map` | `!map [de_harta]` | Schimba harta curenta a serverului (in ultimele 5m sau server gol) | **Moderator** |
 | `!csay` | `!csay [mesaj]` | Afiseaza un mesaj mare in centrul ecranului pentru anunturi oficiale | **Moderator** |
 | `!unban` | `!unban [steamid]` | Elimina banul asociat unui cont de Steam (aprobat prin ticket) | **Administrator** |
@@ -48,10 +50,46 @@ Iata lista oficiala si integrala a comenzilor administrative disponibile pe serv
 
 ---
 
-## Ierarhia Gradelor si Permisiunilor
+## 2. Formatul & Unitatile de Timp pentru Sanctiuni (`[timp]`)
 
-* **Helper:** Acces complet la comenzi de baza de moderare a chat-ului si comportamentului (`!admin`, `!kick`, `!gag`, `!mute`, `!silence`, `!slay`, `!slap`, `!rename`, `!team`, `!swap`, `!spec`). Durata maxima a sanctiunilor: **60 de minute**.
-* **Moderator:** Mosteneste comenzile de Helper si primeste acces la **`!ban`**, schimbare de harta **`!map`** si anunturi centrale **`!csay`**.
+Pentru comenzile care necesita specificarea unei durate (`!gag`, `!mute`, `!silence`, `!ban`), parametrul `[timp]` trebuie completat obligatoriu utilizand **sufixele de unitate de timp** recunoscute de server:
+
+| Sufix Unitate | Semnificatie | Exemple Valide | Unde se utilizeaza |
+| :--- | :--- | :--- | :--- |
+| `s` | **Secunde** | `30s`, `60s` | Teste administrative sau atentionari ultra-scurte |
+| `m` | **Minute** | `10m`, `15m`, `30m`, `60m` | Sancțiuni uzuale de chat/voice (**Helper limitat la max. 60m**) |
+| `h` | **Ore** | `1h`, `2h`, `12h`, `24h` | Sanctiuni extinse sau ban-uri temporare (Moderator+) |
+| `d` | **Zile** | `1d`, `3d`, `7d`, `30d` | Ban-uri pe termen mediu/lung (Moderator+) |
+| `0` | **Permanent** | `0` sau `perm` | Ban definitiv pentru Cheat / Reclama / Refuz PC (Moderator+) |
+
+### Exemple Practice de Executie in Chat / Consola:
+
+* **Aplicare Gag (Chat Scris):**  
+  `!gag JucatorExemplu 15m Spam Chat`  
+  *(blocheaza chatul scris pentru 15 minute cu motivul specificat)*
+
+* **Aplicare Mute (Microfon):**  
+  `!mute JucatorExemplu 30m Microfon Deranjant`  
+  *(blocheaza microfonul pentru 30 de minute)*
+
+* **Aplicare Silence (Chat + Microfon):**  
+  `!silence JucatorExemplu 60m Limbaj Licentios Repetat`  
+  *(aplica gag + mute simultan pentru 60 de minute — maximul permis gradului de Helper)*
+
+* **Aplicare Ban Temporar (Doar Moderator+):**  
+  `!ban JucatorExemplu 1d Injurii Grave Staff`  
+  *(interzice accesul pe server timp de 24 de ore / 1 zi)*
+
+* **Aplicare Ban Permanent (Doar Moderator+):**  
+  `!ban JucatorExemplu 0 Cheating / Wallhack`  
+  *(interzice permanent accesul; necesita obligatoriu demo video salvat)*
+
+---
+
+## 3. Ierarhia Gradelor si Permisiunilor
+
+* **Helper:** Acces complet la comenzi de baza de moderare a chat-ului si comportamentului (`!admin`, `!kick`, `!gag`, `!mute`, `!silence`, `!slay`, `!slap`, `!rename`, `!team`, `!swap`, `!spec`). Durata maxima a sanctiunilor: **60m (60 minute)**.
+* **Moderator:** Mosteneste comenzile de Helper si primeste acces la **`!ban`** (inclusiv `1d`, `7d` sau `0` permanent), schimbare de harta **`!map`** si anunturi centrale **`!csay`**.
 * **Administrator & Supervizor:** Mostenesc comenzile de Moderator si primesc acces la **`!unban`**, comenzi de control **`!freeze`** / **`!unfreeze`**, reinviere **`!respawn`** si banuri permanente.
 * **Server Manager:** Mosteneste accesul de Administrator si gestioneaza economia in-game (**`!eco give`**, **`!eco take`**) si oferirea de drop-uri speciale (**`!ws_admin givecase`**).
 * **Community Manager & Owner / Root:** Acces complet administrativ la toate modulele, setarile de configurare si comenzi RCON.

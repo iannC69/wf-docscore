@@ -35,6 +35,53 @@ export async function GET() {
   });
 }
 
+async function resolveFallbackAvatar(avatarUrl?: string, steamId?: string, discord?: string): Promise<string | undefined> {
+  if (avatarUrl && avatarUrl.trim()) {
+    return avatarUrl.trim();
+  }
+
+  // Fallback 1: Resolve Steam Avatar
+  if (steamId && steamId.trim()) {
+    const clean = steamId.trim();
+    let xmlUrl = "";
+    if (clean.startsWith("http://") || clean.startsWith("https://")) {
+      try {
+        const urlObj = new URL(clean);
+        xmlUrl = `${urlObj.origin}${urlObj.pathname.replace(/\/+$/, "")}/?xml=1`;
+      } catch {
+        xmlUrl = `${clean.replace(/\/+$/, "")}/?xml=1`;
+      }
+    } else if (/^7656119\d{10}$/.test(clean)) {
+      xmlUrl = `https://steamcommunity.com/profiles/${clean}/?xml=1`;
+    } else {
+      xmlUrl = `https://steamcommunity.com/id/${clean}/?xml=1`;
+    }
+
+    try {
+      const res = await fetch(xmlUrl, {
+        headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+      });
+      if (res.ok) {
+        const text = await res.text();
+        const match =
+          text.match(/<avatarFull><!\[CDATA\[(.*?)\]\]><\/avatarFull>/) ||
+          text.match(/<avatarMedium><!\[CDATA\[(.*?)\]\]><\/avatarMedium>/) ||
+          text.match(/<avatarIcon><!\[CDATA\[(.*?)\]\]><\/avatarIcon>/);
+        if (match && match[1]) {
+          return match[1];
+        }
+      }
+    } catch {}
+  }
+
+  // Fallback 2: Resolve Discord Avatar (if numeric User ID)
+  if (discord && /^\d{17,20}$/.test(discord.trim())) {
+    return `https://dcdn.dstn.to/avatars/${discord.trim()}`;
+  }
+
+  return undefined;
+}
+
 export async function POST(req: NextRequest) {
   const session = await getAuthenticatedAdminSession();
   if (!session) {
@@ -50,7 +97,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { username, displayName, email, role, password, customPermissions } = body;
+    const { username, displayName, email, role, password, customPermissions, customTitle, avatarUrl, discord, steamId, bio, responsibilities } = body;
 
     if (!username || !password) {
       return NextResponse.json(
@@ -59,6 +106,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const resolvedAvatarUrl = await resolveFallbackAvatar(avatarUrl, steamId, discord);
+
     const result = createTeamMember({
       username,
       displayName: displayName || username,
@@ -66,6 +115,12 @@ export async function POST(req: NextRequest) {
       role: role || "content_editor",
       password,
       customPermissions,
+      customTitle,
+      avatarUrl: resolvedAvatarUrl,
+      discord,
+      steamId,
+      bio,
+      responsibilities,
     });
 
     if (!result.success || !result.member) {
@@ -104,19 +159,50 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { id, displayName, email, role, status, permissions, password } = body;
-
-    if (!id) {
-      return NextResponse.json({ error: "BAD_REQUEST", message: "ID-ul este obligatoriu." }, { status: 400 });
-    }
-
-    const result = updateTeamMember(id, {
+    const {
+      id,
+      username,
       displayName,
       email,
       role,
       status,
       permissions,
       password,
+      customTitle,
+      avatarUrl,
+      avatarColor,
+      bio,
+      discord,
+      steamId,
+      responsibilities,
+      badges,
+      docsModifiedCount,
+    } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "BAD_REQUEST", message: "ID-ul este obligatoriu." }, { status: 400 });
+    }
+
+    const resolvedAvatarUrl = await resolveFallbackAvatar(avatarUrl, steamId, discord);
+
+    const result = updateTeamMember(id, {
+      username,
+      displayName,
+      email,
+      role,
+      status,
+      permissions,
+      password,
+      customTitle,
+      avatarUrl: resolvedAvatarUrl,
+
+      avatarColor,
+      bio,
+      discord,
+      steamId,
+      responsibilities,
+      badges,
+      docsModifiedCount: typeof docsModifiedCount === "number" ? docsModifiedCount : undefined,
     });
 
     if (!result.success || !result.member) {

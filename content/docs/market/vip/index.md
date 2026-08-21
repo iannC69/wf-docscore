@@ -1,6 +1,6 @@
 ---
-title: Grade VIP & Beneficii
-description: Comparatia completa a gradelor VIP si avantajele fiecarui nivel: Rebirth, Immortal, Mythic, VIP Night si VIP Test pe serverele WildFire CS2.
+title: "Grade VIP & Beneficii"
+description: "Comparația completă a gradelor VIP și avantajele fiecărui nivel (Rebirth, Immortal, Mythic, VIP Night și VIP Test) pe serverele WildFire CS2."
 outline: deep
 ---
 

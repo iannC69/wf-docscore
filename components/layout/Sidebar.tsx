@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Compass,
   Sparkles,
+  Users,
   ChevronsDownUp,
   ChevronsUpDown,
 } from "lucide-react";
@@ -298,6 +299,21 @@ export function Sidebar({ nav }: SidebarProps) {
                       </span>
                       <span className="nav-item-text">Changelog &amp; Releases</span>
                       <span className="nav-item-badge badge--new">v{CURRENT_VERSION}</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/docs/team"
+                      onClick={closeMobileSidebar}
+                      className={`nav-item${pathname === "/docs/team" ? " nav-item--active" : ""}`}
+                      aria-current={pathname === "/docs/team" ? "page" : undefined}
+                    >
+                      <span className="nav-item-indicator" aria-hidden="true" />
+                      <span className="nav-item-icon">
+                        <Users size={14} aria-hidden="true" />
+                      </span>
+                      <span className="nav-item-text">Our Team &amp; Contributors</span>
+                      <span className="nav-item-badge badge--team">Staff</span>
                     </Link>
                   </li>
                 </ul>

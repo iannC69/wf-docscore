@@ -292,6 +292,38 @@ function renderMarkdownBlocks(content: string): ReactNode[] {
       continue;
     }
 
+    // Handle Github/MDX Callouts (e.g. > [!IMPORTANT] or [!IMPORTANT])
+    const calloutMatch = trimmed.match(/^(?:>\s*)?\[!(NOTE|TIP|IMPORTANT|WARNING|DANGER)\]\s*(.*)$/i);
+    if (calloutMatch) {
+      const type = calloutMatch[1].toLowerCase();
+      const firstLine = calloutMatch[2];
+      const calloutLines: string[] = firstLine ? [firstLine] : [];
+      i++;
+      while (
+        i < lines.length &&
+        lines[i].trim() &&
+        !lines[i].trim().startsWith("#") &&
+        !lines[i].trim().startsWith("```")
+      ) {
+        const cLine = lines[i].trim().replace(/^>\s*/, "");
+        if (/^\[!(NOTE|TIP|IMPORTANT|WARNING|DANGER)\]/i.test(cLine)) break;
+        calloutLines.push(cLine);
+        i++;
+      }
+
+      elements.push(
+        <div key={key++} className={`aimd-callout aimd-callout--${type}`}>
+          <div className="aimd-callout-header">
+            <span className="aimd-callout-badge">{type.toUpperCase()}</span>
+          </div>
+          <div className="aimd-callout-body">
+            {parseInline(calloutLines.join(" "))}
+          </div>
+        </div>
+      );
+      continue;
+    }
+
     if (trimmed.startsWith("> ")) {
       const quoteLines: string[] = [];
       while (i < lines.length && lines[i].trim().startsWith("> ")) {

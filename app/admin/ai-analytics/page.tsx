@@ -341,7 +341,7 @@ export default function AdminAiAnalyticsPage() {
           {/* 1. Daily Requests Card */}
           <div className="admin-quota-card">
             <div className="admin-quota-top">
-              <div className="admin-quota-icon-box">
+              <div className="admin-quota-icon-box admin-quota-icon-box--emerald">
                 <Flame size={15} className="text-emerald-400" />
               </div>
               <div>
@@ -369,7 +369,7 @@ export default function AdminAiAnalyticsPage() {
           {/* 2. Rate Limit & Token Budget Policy */}
           <div className="admin-quota-card">
             <div className="admin-quota-top">
-              <div className="admin-quota-icon-box">
+              <div className="admin-quota-icon-box admin-quota-icon-box--cyan">
                 <Zap size={15} className="text-cyan-400" />
               </div>
               <div>
@@ -394,7 +394,7 @@ export default function AdminAiAnalyticsPage() {
           {/* 3. Context Window Size */}
           <div className="admin-quota-card">
             <div className="admin-quota-top">
-              <div className="admin-quota-icon-box">
+              <div className="admin-quota-icon-box admin-quota-icon-box--amber">
                 <Layers size={15} className="text-amber-400" />
               </div>
               <div>
@@ -422,7 +422,7 @@ export default function AdminAiAnalyticsPage() {
           {/* 4. Billing & Free Tier Status */}
           <div className="admin-quota-card">
             <div className="admin-quota-top">
-              <div className="admin-quota-icon-box">
+              <div className="admin-quota-icon-box admin-quota-icon-box--purple">
                 <DollarSign size={15} className="text-purple-400" />
               </div>
               <div>

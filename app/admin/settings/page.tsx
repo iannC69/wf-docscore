@@ -20,6 +20,16 @@ import {
   Megaphone,
   Layers,
   ExternalLink,
+  Database,
+  ThumbsUp,
+  ThumbsDown,
+  Trash2,
+  Copy,
+  Check,
+  MessageSquare,
+  ShieldCheck,
+  Activity,
+  Table,
 } from "lucide-react";
 import { CURRENT_VERSION, PLATFORM_NAME } from "@/lib/version";
 
@@ -51,6 +61,19 @@ export default function AdminSettingsPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  // ─── Database & Analytics Hub State ─────────────────────────────────────────
+  const [dbProvider, setDbProvider] = useState<"local" | "supabase">("local");
+  const [supabaseUrl, setSupabaseUrl] = useState<string>("");
+  const [supabaseAnonKey, setSupabaseAnonKey] = useState<string>("");
+  const [dbStatus, setDbStatus] = useState<any>(null);
+  const [dbViews, setDbViews] = useState<any[]>([]);
+  const [dbFeedbacks, setDbFeedbacks] = useState<any[]>([]);
+  const [dbTableTab, setDbTableTab] = useState<"views" | "feedbacks" | "config">("views");
+  const [testingDb, setTestingDb] = useState<boolean>(false);
+  const [testDbResult, setTestDbResult] = useState<{ success: boolean; message: string; latencyMs?: number } | null>(null);
+  const [savingDbConfig, setSavingDbConfig] = useState<boolean>(false);
+  const [copiedSql, setCopiedSql] = useState<boolean>(false);
 
   // Load initial settings from disk
   useEffect(() => {
@@ -85,7 +108,133 @@ export default function AdminSettingsPage() {
       }
     }
     loadSettings();
+    loadDatabaseData();
   }, []);
+
+  const loadDatabaseData = async () => {
+    try {
+      const res = await fetch("/api/admin/database");
+      if (res.ok) {
+        const data = await res.json();
+        setDbStatus(data.status);
+        setDbViews(data.views || []);
+        setDbFeedbacks(data.feedbacks || []);
+        if (data.config) {
+          setDbProvider(data.config.provider || "local");
+          setSupabaseUrl(data.config.supabaseUrl || "");
+          setSupabaseAnonKey(data.config.supabaseAnonKey || "");
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load database info", err);
+    }
+  };
+
+  const handleTestDbConnection = async () => {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setTestDbResult({ success: false, message: "Te rugăm să introduci Supabase URL și Cheia Anon." });
+      return;
+    }
+
+    setTestingDb(true);
+    setTestDbResult(null);
+
+    try {
+      const res = await fetch("/api/admin/database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "test_connection",
+          url: supabaseUrl,
+          anonKey: supabaseAnonKey,
+        }),
+      });
+
+      const data = await res.json();
+      setTestDbResult(data);
+    } catch (err: any) {
+      setTestDbResult({ success: false, message: `Eroare de rețea: ${err.message}` });
+    } finally {
+      setTestingDb(false);
+    }
+  };
+
+  const handleSaveDbConfig = async () => {
+    setSavingDbConfig(true);
+    try {
+      const res = await fetch("/api/admin/database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save_config",
+          provider: dbProvider,
+          supabaseUrl,
+          supabaseAnonKey,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setDbStatus(data.status);
+        setStatusMessage({
+          type: "success",
+          text: `Configurația bazei de date a fost salvată! (${dbProvider === "supabase" ? "Supabase Cloud" : "Local Engine"})`,
+        });
+      }
+    } catch (err) {
+      setStatusMessage({ type: "error", text: "Eșec la salvarea configurației bazei de date." });
+    } finally {
+      setSavingDbConfig(false);
+    }
+  };
+
+  const handleDeleteFeedback = async (id: string) => {
+    try {
+      const res = await fetch("/api/admin/database", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete_feedback", id }),
+      });
+
+      if (res.ok) {
+        setDbFeedbacks((prev) => prev.filter((f) => f.id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to delete feedback", err);
+    }
+  };
+
+  const copySqlScript = () => {
+    const sql = `-- WildFire Docs Supabase Migration Schema
+create table if not exists doc_views (
+  slug text primary key,
+  total_views integer default 0,
+  today_views integer default 0,
+  last_viewed_at timestamp with time zone default now()
+);
+
+create table if not exists doc_feedbacks (
+  id text primary key,
+  slug text not null,
+  rating text not null,
+  comment text,
+  created_at timestamp with time zone default now()
+);
+
+-- Enable Row Level Security (RLS) & Public Policies
+alter table doc_views enable row level security;
+alter table doc_feedbacks enable row level security;
+
+create policy "Allow public read on doc_views" on doc_views for select using (true);
+create policy "Allow public insert/update on doc_views" on doc_views for all using (true);
+
+create policy "Allow public read on doc_feedbacks" on doc_feedbacks for select using (true);
+create policy "Allow public insert on doc_feedbacks" on doc_feedbacks for insert with check (true);`;
+
+    navigator.clipboard.writeText(sql);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2000);
+  };
 
   const saveConfiguration = async (overrides?: {
     maintenanceEnabled?: boolean;
@@ -405,8 +554,45 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Right Column: Backup & Export + Engine Info */}
+        {/* Right Column: Database Hub + Backup + System Optimization */}
         <div className="flex flex-col gap-6">
+          {/* ── Database & Analytics Dedicated Shortcut Card ───────── */}
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <div className="flex items-center gap-3">
+                <div className="admin-card-icon-box text-cyan-400">
+                  <Database size={16} />
+                </div>
+                <div>
+                  <h3 className="admin-card-title">Bază de Date & Telemetrie</h3>
+                  <p className="admin-card-subtitle">
+                    Panou dedicat pentru vizualizări pagini, recenzii comunitate și Supabase
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-card-body">
+              <div className="p-3.5 rounded-lg bg-[hsl(220_18%_10%/0.65)] border border-[var(--glass-border)] flex items-center justify-between mb-3">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-white">Status Conexiune Live</span>
+                  <span className="text-[0.7rem] text-emerald-400 font-mono flex items-center gap-1.5 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Supabase PostgreSQL Cloud
+                  </span>
+                </div>
+
+                <a
+                  href="/admin/database"
+                  className="admin-btn admin-btn--primary text-xs py-1.5 px-3"
+                >
+                  <Database size={13} />
+                  <span>Deschide Database Hub</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
           {/* One-Click Backup & Export Card */}
           <div className="admin-card">
             <div className="admin-card-header">

@@ -25,6 +25,7 @@ import {
   UserPlus,
   Save,
   AlertTriangle,
+  FileText,
 } from "lucide-react";
 import type { TeamMember, TeamMemberPermissions } from "@/lib/security/teamStore";
 
@@ -38,6 +39,7 @@ export default function AdminTeamPage() {
 
   // Inspector / Edit Modal State
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [editUsername, setEditUsername] = useState<string>("");
   const [editDisplayName, setEditDisplayName] = useState<string>("");
   const [editEmail, setEditEmail] = useState<string>("");
   const [editRole, setEditRole] = useState<string>("content_editor");
@@ -55,6 +57,15 @@ export default function AdminTeamPage() {
     canManageTeam: false,
   });
   const [editNewPassword, setEditNewPassword] = useState<string>("");
+  const [editCustomTitle, setEditCustomTitle] = useState<string>("");
+  const [editAvatarUrl, setEditAvatarUrl] = useState<string>("");
+  const [editBio, setEditBio] = useState<string>("");
+  const [editDiscord, setEditDiscord] = useState<string>("");
+  const [editSteamId, setEditSteamId] = useState<string>("");
+  const [editRespString, setEditRespString] = useState<string>("");
+  const [editBadgesString, setEditBadgesString] = useState<string>("");
+  const [editDocsModifiedCount, setEditDocsModifiedCount] = useState<number>(0);
+  const [steamAvatarPreview, setSteamAvatarPreview] = useState<string | null>(null);
   const [savingEdit, setSavingEdit] = useState<boolean>(false);
 
   // Add Member Modal State
@@ -64,6 +75,8 @@ export default function AdminTeamPage() {
   const [newEmail, setNewEmail] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [newRole, setNewRole] = useState<string>("content_editor");
+  const [newDiscord, setNewDiscord] = useState<string>("");
+  const [newSteamId, setNewSteamId] = useState<string>("");
   const [newPermissions, setNewPermissions] = useState<TeamMemberPermissions>({
     canEditDocs: true,
     canDeleteDocs: false,
@@ -103,14 +116,38 @@ export default function AdminTeamPage() {
 
   const openInspector = (member: TeamMember) => {
     setSelectedMember(member);
-    setEditDisplayName(member.displayName);
+    setEditUsername(member.username || "");
+    setEditDisplayName(member.displayName || "");
     setEditEmail(member.email || "");
     setEditRole(member.role);
     setEditStatus(member.status);
     setEditPermissions({ ...member.permissions });
     setEditNewPassword("");
+    setEditCustomTitle(member.customTitle || "");
+    setEditAvatarUrl(member.avatarUrl || "");
+    setEditBio(member.bio || "");
+    setEditDiscord(member.discord || "");
+    setEditSteamId(member.steamId || "");
+    setEditRespString(member.responsibilities ? member.responsibilities.join(", ") : "");
+    setEditBadgesString(member.badges ? member.badges.join(", ") : "");
+    setEditDocsModifiedCount(member.docsModifiedCount || 0);
     setStatusMessage(null);
   };
+
+  useEffect(() => {
+    if (editSteamId && editSteamId.trim()) {
+      fetch(`/api/steam/avatar?id=${encodeURIComponent(editSteamId.trim())}`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.avatarUrl) setSteamAvatarPreview(d.avatarUrl);
+          else setSteamAvatarPreview(null);
+        })
+        .catch(() => setSteamAvatarPreview(null));
+    } else {
+      setSteamAvatarPreview(null);
+    }
+  }, [editSteamId]);
+
 
   const handleRolePresetChange = (roleKey: string, isCreate = false) => {
     const preset = rolePresets[roleKey];
@@ -130,24 +167,43 @@ export default function AdminTeamPage() {
     setSavingEdit(true);
     setStatusMessage(null);
 
+    const responsibilities = editRespString
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const badges = editBadgesString
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     try {
       const res = await fetch("/api/admin/team", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: selectedMember.id,
-          displayName: editDisplayName,
-          email: editEmail,
+          username: editUsername.trim() || undefined,
+          displayName: editDisplayName.trim(),
+          email: editEmail.trim(),
           role: editRole,
           status: editStatus,
           permissions: editPermissions,
           password: editNewPassword.trim() ? editNewPassword.trim() : undefined,
+          customTitle: editCustomTitle.trim(),
+          avatarUrl: editAvatarUrl.trim(),
+          bio: editBio.trim(),
+          discord: editDiscord.trim(),
+          steamId: editSteamId.trim(),
+          responsibilities,
+          badges,
+          docsModifiedCount: Number(editDocsModifiedCount) || 0,
         }),
       });
 
       const data = await res.json();
       if (data.success) {
-        setStatusMessage({ type: "success", text: `Modificările pentru ${selectedMember.username} au fost salvate.` });
+        setStatusMessage({ type: "success", text: `Modificările pentru ${editDisplayName || selectedMember.username} au fost salvate cu succes.` });
         fetchTeam();
         setSelectedMember(data.member);
       } else {
@@ -159,6 +215,7 @@ export default function AdminTeamPage() {
       setSavingEdit(false);
     }
   };
+
 
   const handleCreateMember = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -180,6 +237,8 @@ export default function AdminTeamPage() {
           email: newEmail.trim(),
           password: newPassword.trim(),
           role: newRole,
+          discord: newDiscord.trim(),
+          steamId: newSteamId.trim(),
           customPermissions: newPermissions,
         }),
       });
@@ -192,6 +251,8 @@ export default function AdminTeamPage() {
         setNewDisplayName("");
         setNewEmail("");
         setNewPassword("");
+        setNewDiscord("");
+        setNewSteamId("");
         fetchTeam();
       } else {
         setStatusMessage({ type: "error", text: data.message || "Crearea administratorului a eșuat." });
@@ -388,12 +449,21 @@ export default function AdminTeamPage() {
               >
                 <div className="admin-member-card-header">
                   {/* Avatar */}
-                  <div
-                    className="admin-member-avatar"
-                    style={{ backgroundColor: member.avatarColor || "#ff6b00" }}
-                  >
-                    {member.displayName.slice(0, 2).toUpperCase()}
-                  </div>
+                  {member.avatarUrl ? (
+                    <img
+                      src={member.avatarUrl}
+                      alt={member.displayName}
+                      className="admin-member-avatar"
+                      style={{ objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div
+                      className="admin-member-avatar"
+                      style={{ backgroundColor: member.avatarColor || "#ff6b00" }}
+                    >
+                      {member.displayName.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
 
                   <div className="admin-member-title-box">
                     <div className="flex items-center gap-2">
@@ -407,6 +477,7 @@ export default function AdminTeamPage() {
                     </div>
                     <span className="admin-member-username">@{member.username}</span>
                   </div>
+
 
                   <span
                     className={`admin-status-pill ${
@@ -461,9 +532,15 @@ export default function AdminTeamPage() {
                 </div>
 
                 <div className="admin-member-card-footer">
-                  <span className="admin-member-perms-count">
-                    {activePermCount} / 10 Permisiuni Active
-                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                    <span className="admin-member-perms-count">
+                      {activePermCount} / 10 Permisiuni Active
+                    </span>
+                    <span style={{ fontSize: "0.68rem", color: "var(--color-text-tertiary)", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <FileText size={10} className="text-amber-400" />
+                      <strong>{member.docsModifiedCount || 0}</strong> ghiduri modificate
+                    </span>
+                  </div>
 
                   <button
                     type="button"
@@ -476,6 +553,7 @@ export default function AdminTeamPage() {
                     <span>Vezi Profil</span>
                   </button>
                 </div>
+
               </div>
             );
           })
@@ -490,12 +568,22 @@ export default function AdminTeamPage() {
           <div className="admin-modal-container admin-modal-container--large">
             <div className="admin-modal-header">
               <div className="flex items-center gap-3">
-                <div
-                  className="admin-member-avatar"
-                  style={{ backgroundColor: selectedMember.avatarColor || "#ff6b00" }}
-                >
-                  {selectedMember.displayName.slice(0, 2).toUpperCase()}
-                </div>
+                {editAvatarUrl || steamAvatarPreview || selectedMember.avatarUrl ? (
+                  <img
+                    src={editAvatarUrl || steamAvatarPreview || selectedMember.avatarUrl || ""}
+                    alt={selectedMember.displayName}
+                    className="admin-member-avatar"
+                    style={{ objectFit: "cover" }}
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                  />
+                ) : (
+                  <div
+                    className="admin-member-avatar"
+                    style={{ backgroundColor: selectedMember.avatarColor || "#ff6b00" }}
+                  >
+                    {selectedMember.displayName.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="admin-modal-title">
@@ -531,30 +619,181 @@ export default function AdminTeamPage() {
 
             <div className="admin-modal-body">
               {/* If Root Super Admin, show editing controls */}
-              {isRootAdmin && !selectedMember.isRoot && (
-                <div className="grid grid-cols-2 gap-3 mb-4 p-3 bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-lg">
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Redenumește Afișat</label>
-                    <input
-                      type="text"
-                      value={editDisplayName}
-                      onChange={(e) => setEditDisplayName(e.target.value)}
-                      className="admin-form-input"
-                    />
-                  </div>
+              {isRootAdmin && (
+                <div className="admin-modal-glass-section">
+                  <div className="admin-modal-section-label">Profil Public &amp; Informații Cont</div>
+                  <div className="admin-modal-form-grid">
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Nume Afișat</label>
+                      <input
+                        type="text"
+                        value={editDisplayName}
+                        onChange={(e) => setEditDisplayName(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
 
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Schimbă Parola</label>
-                    <input
-                      type="password"
-                      value={editNewPassword}
-                      onChange={(e) => setEditNewPassword(e.target.value)}
-                      placeholder="Parolă nouă..."
-                      className="admin-form-input"
-                    />
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Username (@login handle)</label>
+                      <input
+                        type="text"
+                        value={editUsername}
+                        disabled={selectedMember.isRoot}
+                        onChange={(e) => setEditUsername(e.target.value)}
+                        placeholder="Ex: iannc69"
+                        className="admin-form-input font-mono"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Email Oficial</label>
+                      <input
+                        type="email"
+                        value={editEmail}
+                        onChange={(e) => setEditEmail(e.target.value)}
+                        placeholder="Ex: user@wildfire.ro"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    {!selectedMember.isRoot && (
+                      <div className="admin-form-group">
+                        <label className="admin-form-label">Status Cont</label>
+                        <select
+                          value={editStatus}
+                          onChange={(e) => setEditStatus(e.target.value as any)}
+                          className="admin-form-input"
+                        >
+                          <option value="active">ACTIV (Acces Complet Permis)</option>
+                          <option value="suspended">SUSPENDAT (Acces Blocat Temporar)</option>
+                        </select>
+                      </div>
+                    )}
+
+                    {!selectedMember.isRoot && (
+                      <div className="admin-form-group">
+                        <label className="admin-form-label">Schimbă Parola</label>
+                        <input
+                          type="password"
+                          value={editNewPassword}
+                          onChange={(e) => setEditNewPassword(e.target.value)}
+                          placeholder="Parolă nouă (opțional)..."
+                          className="admin-form-input"
+                        />
+                      </div>
+                    )}
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Titlu Special / Funcție Card</label>
+                      <input
+                        type="text"
+                        value={editCustomTitle}
+                        onChange={(e) => setEditCustomTitle(e.target.value)}
+                        placeholder="Ex: Lead Docs & Systems Architect"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Tag / UserID Discord</label>
+                      <input
+                        type="text"
+                        value={editDiscord}
+                        onChange={(e) => setEditDiscord(e.target.value)}
+                        placeholder="Ex: iannc sau 371621920162185216"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">SteamID / Link Profil Steam</label>
+                      <input
+                        type="text"
+                        value={editSteamId}
+                        onChange={(e) => setEditSteamId(e.target.value)}
+                        placeholder="Ex: 1iannc sau 76561198... sau link complet"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <label className="admin-form-label">URL Poză Avatar (Imagine Profil)</label>
+                        {!editAvatarUrl && steamAvatarPreview && (
+                          <span style={{ fontSize: "0.68rem", color: "#60a5fa", fontWeight: 700 }}>
+                            ● Preluat automat de pe Steam
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                        {editAvatarUrl || steamAvatarPreview ? (
+                          <img
+                            src={editAvatarUrl || steamAvatarPreview || ""}
+                            alt="Preview"
+                            style={{ width: "34px", height: "34px", borderRadius: "8px", objectFit: "cover", border: "1px solid var(--glass-border)", flexShrink: 0 }}
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                          />
+                        ) : null}
+                        <input
+                          type="text"
+                          value={editAvatarUrl}
+                          onChange={(e) => setEditAvatarUrl(e.target.value)}
+                          placeholder={steamAvatarPreview ? "Lăsat gol: folosește automat Steam" : "https://... (URL imagine)"}
+                          className="admin-form-input text-xs font-mono"
+                          style={{ flex: 1 }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Fișiere Modificate (Contor Ghiduri)</label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={editDocsModifiedCount}
+                        onChange={(e) => setEditDocsModifiedCount(parseInt(e.target.value) || 0)}
+                        placeholder="Ex: 14"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>
+                      <label className="admin-form-label">Insigne / Badges (Separate prin virgulă)</label>
+                      <input
+                        type="text"
+                        value={editBadgesString}
+                        onChange={(e) => setEditBadgesString(e.target.value)}
+                        placeholder="Ex: LEAD ARCHITECT, DOCS SPECIALIST, VERIFIED GUIDE"
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>
+                      <label className="admin-form-label">Bio / Descriere Publică</label>
+                      <input
+                        type="text"
+                        value={editBio}
+                        onChange={(e) => setEditBio(e.target.value)}
+                        placeholder="Scurtă descriere a activității..."
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>
+                      <label className="admin-form-label">Responsabilități (Separate prin virgulă)</label>
+                      <input
+                        type="text"
+                        value={editRespString}
+                        onChange={(e) => setEditRespString(e.target.value)}
+                        placeholder="Ex: Arhitectură Sisteme, Ghiduri MVP, Securitate"
+                        className="admin-form-input"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
+
+
 
               {/* Role Presets (Only for Root Admin) */}
               {isRootAdmin && !selectedMember.isRoot && (
@@ -698,9 +937,13 @@ export default function AdminTeamPage() {
         <div className="admin-modal-overlay">
           <div className="admin-modal-container">
             <div className="admin-modal-header">
-              <div className="flex items-center gap-2">
-                <UserPlus size={18} className="text-orange-400" />
+              <div>
+                <div className="admin-modal-pretitle">
+                  <UserPlus size={11} />
+                  <span>ACCESS CONTROL — NOU CONT</span>
+                </div>
                 <h3 className="admin-modal-title">Adaugă Administrator Nou</h3>
+                <p className="admin-modal-subtitle">Configurează rolul, acreditivele și permisiunile granulare.</p>
               </div>
               <button
                 type="button"
@@ -713,59 +956,84 @@ export default function AdminTeamPage() {
 
             <form onSubmit={handleCreateMember}>
               <div className="admin-modal-body">
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Username (Cont Logare)</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ex: alex_lead"
-                      value={newUsername}
-                      onChange={(e) => setNewUsername(e.target.value)}
-                      className="admin-form-input"
-                    />
-                  </div>
+                {/* Credentials section */}
+                <div className="admin-modal-glass-section">
+                  <div className="admin-modal-section-label">Credențiale Cont</div>
+                  <div className="admin-modal-form-grid">
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Username (Cont Logare)</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ex: alex_lead"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
 
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Nume Afișat</label>
-                    <input
-                      type="text"
-                      placeholder="Ex: Alex - Doc Lead"
-                      value={newDisplayName}
-                      onChange={(e) => setNewDisplayName(e.target.value)}
-                      className="admin-form-input"
-                    />
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Nume Afișat</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: Alex - Doc Lead"
+                        value={newDisplayName}
+                        onChange={(e) => setNewDisplayName(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Parolă Inițială</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="Parolă complexă..."
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Email Oficial</label>
+                      <input
+                        type="email"
+                        placeholder="alex@wildfire.ro"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">Tag / UserID Discord (Opțional)</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: alex_wf sau 282937..."
+                        value={newDiscord}
+                        onChange={(e) => setNewDiscord(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group">
+                      <label className="admin-form-label">SteamID / Link Profil Steam (Opțional)</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: 76561198... sau alex_cs2"
+                        value={newSteamId}
+                        onChange={(e) => setNewSteamId(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Parolă Inițială</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Parolă complexă..."
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="admin-form-input"
-                    />
-                  </div>
-
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">Email Oficial</label>
-                    <input
-                      type="email"
-                      placeholder="alex@wildfire.ro"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                      className="admin-form-input"
-                    />
-                  </div>
-                </div>
 
                 {/* Role Preset */}
-                <div className="admin-form-group mb-4">
-                  <label className="admin-form-label">Rol & Permisiuni Inițiale</label>
+                <div className="admin-form-group">
+                  <div className="admin-modal-section-label">Rol & Permisiuni Inițiale</div>
                   <div className="admin-role-picker-grid">
                     {Object.entries(rolePresets).map(([key, preset]: [string, any]) => {
                       if (key === "root_admin") return null;

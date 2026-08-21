@@ -157,11 +157,51 @@ export function sanitizeMdxSource(text: string): string {
   return sanitized;
 }
 
+export function safeParseFrontmatter(rawContent: string): { data: Record<string, any>; content: string } {
+
+  try {
+    return matter(rawContent);
+  } catch {
+    // If strict YAML parsing fails (e.g. unquoted colons in text), auto-quote values or strip frontmatter from body
+    const match = rawContent.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+    if (match) {
+      const headerLines = match[1].split("\n");
+      const sanitizedHeader = headerLines
+        .map((line) => {
+          const colonIdx = line.indexOf(":");
+          if (colonIdx > 0) {
+            const key = line.slice(0, colonIdx).trim();
+            const val = line.slice(colonIdx + 1).trim();
+            if (
+              val &&
+              !val.startsWith('"') &&
+              !val.startsWith("'") &&
+              !val.startsWith("[") &&
+              !val.startsWith("{")
+            ) {
+              return `${key}: ${JSON.stringify(val)}`;
+            }
+          }
+          return line;
+        })
+        .join("\n");
+
+      try {
+        return matter(`---\n${sanitizedHeader}\n---\n${match[2]}`);
+      } catch {
+        return { data: {}, content: match[2] };
+      }
+    }
+    return { data: {}, content: rawContent };
+  }
+}
+
 // ─── Compile MDX ──────────────────────────────────────────────────────────────
 
 export async function compileMdxContent(rawContent: string) {
-  const { data: frontmatter, content: markdownBody } = matter(rawContent);
+  const { data: frontmatter, content: markdownBody } = safeParseFrontmatter(rawContent);
   const sanitizedSource = sanitizeMdxSource(markdownBody);
+
 
   const { content } = await compileMDX<PageFrontmatter>({
     source: sanitizedSource,

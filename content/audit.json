@@ -1,5 +1,221 @@
 [
   {
+    "id": "aud_1787326043983_e8524fcc",
+    "timestamp": "2026-08-21T15:27:23.984Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "V1ccX",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "f4cc52796779911e5ff536c3a268f3ca078260e493256c5db0adb478f5d7994a",
+    "hash": "248b7a406ebba2de7f9b11f71a32b10e1a0a1a64f3d2942aff2b974c4883769c"
+  },
+  {
+    "id": "aud_1787324569664_adc53c2f",
+    "timestamp": "2026-08-21T15:02:49.664Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "ceva",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "a380dbc3db4edcc4b2c405a7b19533c1e6aa3690b04f4fc65573a234b25762b5",
+    "hash": "f4cc52796779911e5ff536c3a268f3ca078260e493256c5db0adb478f5d7994a"
+  },
+  {
+    "id": "aud_1787324556649_bb906fc3",
+    "timestamp": "2026-08-21T15:02:36.649Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "Yakuza",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "d2154792007090fbf4669aab12e7a0c383be095c0cca806eb1d4e4a8c9474b9a",
+    "hash": "a380dbc3db4edcc4b2c405a7b19533c1e6aa3690b04f4fc65573a234b25762b5"
+  },
+  {
+    "id": "aud_1787324332907_a890abde",
+    "timestamp": "2026-08-21T14:58:52.907Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "Yakuza",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "5fe79ce7f1e445b8ef513bd76f97790cad76b224a4aeaa0e6fcea9f639eafe6c",
+    "hash": "d2154792007090fbf4669aab12e7a0c383be095c0cca806eb1d4e4a8c9474b9a"
+  },
+  {
+    "id": "aud_1787324281821_310b5076",
+    "timestamp": "2026-08-21T14:58:01.821Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "ceva",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "11e073f8b7f231490197043966f4174c3b54dae0ffc7672ff2fc2051f55a4f66",
+    "hash": "5fe79ce7f1e445b8ef513bd76f97790cad76b224a4aeaa0e6fcea9f639eafe6c"
+  },
+  {
+    "id": "aud_1787324234421_41684b80",
+    "timestamp": "2026-08-21T14:57:14.421Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "ceva",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "286bd2aaf37fa1c0575c55f9e088893a7cce4336cabdf8df25ea96690d0832c0",
+    "hash": "11e073f8b7f231490197043966f4174c3b54dae0ffc7672ff2fc2051f55a4f66"
+  },
+  {
+    "id": "aud_1787323997885_d66e462b",
+    "timestamp": "2026-08-21T14:53:17.886Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "iannC69",
+      "updatedRole": "root_admin",
+      "status": "active"
+    },
+    "previousHash": "23f2ded809ca1b598a3b820f293d1ccbad3227d3b8425ba5c208fa88d7a72bdb",
+    "hash": "286bd2aaf37fa1c0575c55f9e088893a7cce4336cabdf8df25ea96690d0832c0"
+  },
+  {
+    "id": "aud_1787323596607_4be616d3",
+    "timestamp": "2026-08-21T14:46:36.608Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "ceva",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "a910f530153bd3b8ad08e9c4e019a5c4765c459fb44fe768730db75a80bbeec4",
+    "hash": "23f2ded809ca1b598a3b820f293d1ccbad3227d3b8425ba5c208fa88d7a72bdb"
+  },
+  {
+    "id": "aud_1787323392645_76e5915c",
+    "timestamp": "2026-08-21T14:43:12.645Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "UPDATE_TEAM_MEMBER",
+      "targetUser": "ceva",
+      "updatedRole": "content_editor",
+      "status": "active"
+    },
+    "previousHash": "c6157fce75a713fede26682669052d15ebabf134710e5bd012bfb5481c42b625",
+    "hash": "a910f530153bd3b8ad08e9c4e019a5c4765c459fb44fe768730db75a80bbeec4"
+  },
+  {
+    "id": "aud_1787322440019_2fcb2860",
+    "timestamp": "2026-08-21T14:27:20.020Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_33ef2845e781f618a5106d2fc86c59a82a746b4544e9304b",
+      "role": "root_admin",
+      "isRoot": true
+    },
+    "previousHash": "42adb7a096ae5b395b7b35b374d415e7daabcb235631e420412f475ca7825357",
+    "hash": "c6157fce75a713fede26682669052d15ebabf134710e5bd012bfb5481c42b625"
+  },
+  {
+    "id": "aud_1787322437749_26b774c9",
+    "timestamp": "2026-08-21T14:27:17.749Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_e99c759a293473d2a9ca5cf0a588ef75e88b0586fc691ae1"
+    },
+    "previousHash": "dd3f180f2eba6ce440202ce3a2837827fea63a1b703aaaefe70c0a05031b7c10",
+    "hash": "42adb7a096ae5b395b7b35b374d415e7daabcb235631e420412f475ca7825357"
+  },
+  {
+    "id": "aud_1787322437743_83a71836",
+    "timestamp": "2026-08-21T14:27:17.745Z",
+    "action": "SESSION_REVOKED",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_e99c759a293473d2a9ca5cf0a588ef75e88b0586fc691ae1",
+      "username": "Yakuza"
+    },
+    "previousHash": "57ee9b38c27266cff48af0b9a01fc69ed8ffd93ba4d920877957bb5259824573",
+    "hash": "dd3f180f2eba6ce440202ce3a2837827fea63a1b703aaaefe70c0a05031b7c10"
+  },
+  {
+    "id": "aud_1787322433968_763d319d",
+    "timestamp": "2026-08-21T14:27:13.968Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_e99c759a293473d2a9ca5cf0a588ef75e88b0586fc691ae1",
+      "role": "content_editor",
+      "isRoot": false
+    },
+    "previousHash": "39f8e20b165196117b7f2c8e38ca5be15713ff9bf8c8e406c01973e6d6c421e6",
+    "hash": "57ee9b38c27266cff48af0b9a01fc69ed8ffd93ba4d920877957bb5259824573"
+  },
+  {
+    "id": "aud_1787321700616_c792ce06",
+    "timestamp": "2026-08-21T14:15:00.617Z",
+    "action": "SETTINGS_UPDATE",
+    "actor": "iannC69",
+    "ip": "127.0.0.1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "action": "CREATE_TEAM_MEMBER",
+      "createdUser": "Yakuza",
+      "role": "content_editor"
+    },
+    "previousHash": "4f977a7c52d65e3519c36b963588f03c56a132d92fdd1cf441ef39484a2b90f5",
+    "hash": "39f8e20b165196117b7f2c8e38ca5be15713ff9bf8c8e406c01973e6d6c421e6"
+  },
+  {
     "id": "aud_1787315209265_55e51c36",
     "timestamp": "2026-08-21T12:26:49.266Z",
     "action": "AUTH_LOGIN_SUCCESS",

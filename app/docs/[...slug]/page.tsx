@@ -13,6 +13,8 @@ import { DocQuickActions } from "@/components/docs/DocQuickActions";
 import { DocIntegritySeal } from "@/components/docs/DocIntegritySeal";
 import { DocEndAiExplainer } from "@/components/docs/DocEndAiExplainer";
 import { DocAiSummaryCapsule } from "@/components/docs/DocAiSummaryCapsule";
+import { DocViewTracker } from "@/components/docs/DocViewTracker";
+import { localGetDocViews, localGetDocFeedbackStats } from "@/lib/db/localStore";
 import { CURRENT_VERSION } from "@/lib/version";
 import {
   Pencil,
@@ -24,8 +26,7 @@ import {
   UserCheck,
 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface Props {
   params: Promise<{ slug?: string[] }>;
@@ -88,6 +89,11 @@ export default async function DocPage({ params }: Props) {
 
   const showToc = page.frontmatter.showToc !== false && page.toc.length > 0;
   const showFeedback = page.frontmatter.showFeedback !== false;
+  const fullSlug = slug.join("/");
+
+  // Zero-latency instant local store read for initial SSR render
+  const docViews = localGetDocViews(fullSlug);
+  const feedbackStats = localGetDocFeedbackStats(fullSlug);
   
   // Category label derived from top slug
   const rootSlug = slug[0] || "";
@@ -263,6 +269,10 @@ export default async function DocPage({ params }: Props) {
                 />
 
                 <div className="page-meta-right-group">
+                  {/* Real-time Page Views Counter */}
+                  <DocViewTracker slug={fullSlug} initialViews={docViews.total_views} />
+                  <span className="page-header-meta-sep" aria-hidden="true">·</span>
+
                   {/* Reading Time */}
                   <span className="page-meta-item">
                     <Clock size={12} aria-hidden="true" />
@@ -282,7 +292,7 @@ export default async function DocPage({ params }: Props) {
             {/* Dynamic In-Page AI Quick Summary / TL;DR Capsule */}
             <DocAiSummaryCapsule
               docTitle={page.frontmatter.title}
-              docSlug={slug.join("/")}
+              docSlug={fullSlug}
               rawContent={page.content}
               variant="top"
             />
@@ -295,7 +305,7 @@ export default async function DocPage({ params }: Props) {
             {/* End-of-Page AI Explainer & Q&A Callout Card */}
             <DocEndAiExplainer
               docTitle={page.frontmatter.title}
-              docSlug={slug.join("/")}
+              docSlug={fullSlug}
               category={categoryLabel}
               rawContent={page.content}
             />
@@ -303,7 +313,7 @@ export default async function DocPage({ params }: Props) {
             {/* Page Footer */}
             <footer className="page-footer">
               <div className="page-footer-actions">
-                {showFeedback && <FeedbackWidget />}
+                {showFeedback && <FeedbackWidget slug={fullSlug} initialStats={feedbackStats} />}
                 {page.githubEditUrl && (
                   <a
                     href={page.githubEditUrl}
