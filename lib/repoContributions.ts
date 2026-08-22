@@ -52,13 +52,21 @@ export interface ContributorRepoStats {
 const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER || "iannC69";
 const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME || "wf-docscore";
 
-// ── In-Memory Cache (TTL: 2 minutes) ──────────────────────────────────────────
+// ── In-Memory Cache (TTL: 3 seconds for live sync) ───────────────────────────
 let _cachedCommits: RepoCommit[] | null = null;
 let _cachedCommitsTimestamp = 0;
-const COMMITS_CACHE_TTL_MS = 2 * 60 * 1000;
+const COMMITS_CACHE_TTL_MS = 3 * 1000;
 
 let _cachedGithubGraph: GithubGraphContributor[] | null = null;
 let _cachedGithubGraphTimestamp = 0;
+
+/**
+ * Invalidate repo stats cache after saving doc changes.
+ */
+export function invalidateRepoStatsCache(): void {
+  _cachedCommits = null;
+  _cachedCommitsTimestamp = 0;
+}
 
 /**
  * Extracts all commits from the local Git repository with file names and author info.
@@ -227,21 +235,35 @@ function matchCommitToMember(
   commit: RepoCommit,
   member: { username: string; displayName: string; githubUsername?: string; email?: string }
 ): boolean {
-  const authorName = (commit.authorName || "").toLowerCase();
-  const authorEmail = (commit.authorEmail || "").toLowerCase();
+  const authorName = (commit.authorName || "").toLowerCase().trim();
+  const authorEmail = (commit.authorEmail || "").toLowerCase().trim();
   const commitBody = (commit.body || "").toLowerCase();
   const commitMsg = (commit.message || "").toLowerCase();
 
-  const candidates: string[] = [
-    member.username?.toLowerCase(),
-    member.displayName?.toLowerCase(),
-    member.githubUsername?.toLowerCase(),
-    member.email?.toLowerCase(),
-  ].filter(Boolean) as string[];
+  const uname = (member.username || "").toLowerCase().trim();
+  const dname = (member.displayName || "").toLowerCase().trim();
+  const ghUser = (member.githubUsername || "").toLowerCase().trim();
+  const email = (member.email || "").toLowerCase().trim();
 
+  // Root Super Admin direct identity match
+  if ((uname === "iannc69" || uname === "iannc") && (authorEmail.includes("solwolfs") || authorName.includes("iann"))) {
+    return true;
+  }
+
+  // Exact or Substring match on Author Name & Email
+  if (uname && (authorName === uname || authorEmail.includes(uname))) return true;
+  if (dname && (authorName === dname || authorEmail.includes(dname))) return true;
+  if (ghUser && (authorName === ghUser || authorEmail.includes(ghUser))) return true;
+  if (email && authorEmail === email) return true;
+
+  // Conventional commit scope match: docs(yakuza): ... or docs(v1ccx): ...
+  if (uname && (commitMsg.startsWith(`docs(${uname})`) || commitMsg.includes(`(${uname}):`))) return true;
+  if (ghUser && (commitMsg.startsWith(`docs(${ghUser})`) || commitMsg.includes(`(${ghUser}):`))) return true;
+  if (dname && (commitMsg.startsWith(`docs(${dname})`) || commitMsg.includes(`(${dname}):`))) return true;
+
+  // Co-authors or Signed-off signatures
+  const candidates = [uname, dname, ghUser, email].filter(Boolean);
   for (const cand of candidates) {
-    if (!cand) continue;
-    if (authorName.includes(cand) || authorEmail.includes(cand)) return true;
     if (commitBody.includes(`co-authored-by: ${cand}`) || commitBody.includes(`author: ${cand}`)) return true;
     if (commitMsg.includes(`co-authored-by: ${cand}`) || commitMsg.includes(`signed-off-by: ${cand}`)) return true;
   }
@@ -321,9 +343,23 @@ export function getMemberRepoStats(
     }
   }
 
-  const docsCommitsCount = memberCommits.filter((c) =>
-    c.files.some((f) => f.startsWith("content/docs/"))
-  ).length;
+  // Count unique doc files modified across all commits + docsModifiedCount
+  const docsInGit = new Set<string>();
+  for (const c of memberCommits) {
+    for (const file of c.files) {
+      if ((file.startsWith("content/docs/") || file.includes("/docs/")) && (file.endsWith(".md") || file.endsWith(".mdx"))) {
+        docsInGit.add(file.replace(/\\/g, "/"));
+      }
+    }
+  }
+
+  const docsCommitsCount = Math.max(
+    docsInGit.size,
+    memberCommits.filter((c) =>
+      c.files.some((f) => f.startsWith("content/docs/") || f.includes("/docs/"))
+    ).length,
+    member.docsModifiedCount || 0
+  );
 
   const totalCommits = Math.max(memberCommits.length, matchedGraph?.totalCommits || 0);
 

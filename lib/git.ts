@@ -185,6 +185,7 @@ function runGitCommand(cmd: string): string | null {
 export function invalidateGitCache(_filePath?: string): void {
   _firstCommitCache.clear();
   _recentDocsCache = null;
+  _recentDocsCacheTimestamp = 0;
 }
 
 /**
@@ -322,12 +323,15 @@ export function getFileFirstCommitInfo(filePath: string): GitCommitInfo {
 
 /**
  * Get all docs pages sorted by last updated time.
- * Cached in-memory — heavy operation (runs git for all 62 files) done only once per server instance.
+ * Cached with short 3-second TTL for live instant responsiveness across edits.
  */
 let _recentDocsCache: RecentDocItem[] | null = null;
+let _recentDocsCacheTimestamp = 0;
+const RECENT_DOCS_TTL_MS = 3 * 1000;
 
 export function getRecentlyUpdatedDocs(limit?: number): RecentDocItem[] {
-  if (_recentDocsCache) {
+  const now = Date.now();
+  if (_recentDocsCache && now - _recentDocsCacheTimestamp < RECENT_DOCS_TTL_MS) {
     if (typeof limit === "number" && limit > 0) return _recentDocsCache.slice(0, limit);
     return _recentDocsCache;
   }
@@ -377,7 +381,7 @@ export function getRecentlyUpdatedDocs(limit?: number): RecentDocItem[] {
           readingTime,
           lastUpdated: gitInfo.date,
           relativeTime: gitInfo.relativeTime,
-          authorName: gitInfo.authorName,
+          authorName: gitInfo.authorDisplayName || gitInfo.authorName,
           authorAvatar: gitInfo.authorAvatar,
           commitHash: gitInfo.commitHash,
           badge: data.badge,
@@ -394,8 +398,9 @@ export function getRecentlyUpdatedDocs(limit?: number): RecentDocItem[] {
   // Sort descending by date
   filtered.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
 
-  // Store in cache
+  // Store in cache with fresh timestamp
   _recentDocsCache = filtered;
+  _recentDocsCacheTimestamp = now;
 
   if (typeof limit === "number" && limit > 0) {
     return filtered.slice(0, limit);

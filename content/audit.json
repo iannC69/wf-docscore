@@ -1,5 +1,63 @@
 [
   {
+    "id": "aud_1787393823763_0061db35",
+    "timestamp": "2026-08-22T10:17:03.764Z",
+    "action": "DOC_VERSION_SAVE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "currency/phoenixcoins",
+      "versionId": "rev-1787393823759"
+    },
+    "previousHash": "77282522c4d848a1cdde6e0d61c410457cb577e05d353e34472847874c34c43d",
+    "hash": "f9e3b076cb925b94c92c4082a38939a4f90da9096603d33e3b40cee53651cdaf"
+  },
+  {
+    "id": "aud_1787393820922_e79e48fd",
+    "timestamp": "2026-08-22T10:17:00.923Z",
+    "action": "DOC_UPDATE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "currency/phoenixcoins",
+      "path": "currency/phoenixcoins.md",
+      "action": "update"
+    },
+    "previousHash": "77bebcc4065a57df9573e62f8b311c682ed08440aca8d53568518a84334087e4",
+    "hash": "77282522c4d848a1cdde6e0d61c410457cb577e05d353e34472847874c34c43d"
+  },
+  {
+    "id": "aud_1787393781009_6999ee37",
+    "timestamp": "2026-08-22T10:16:21.010Z",
+    "action": "DOC_VERSION_SAVE",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "informatii/faq",
+      "versionId": "rev-1787393781007"
+    },
+    "previousHash": "710a7b75ddfb7bc43b5aabfabe45c747febed2e33ac492ad4be47db27f63f4dd",
+    "hash": "77bebcc4065a57df9573e62f8b311c682ed08440aca8d53568518a84334087e4"
+  },
+  {
+    "id": "aud_1787393778306_8f803d0b",
+    "timestamp": "2026-08-22T10:16:18.306Z",
+    "action": "DOC_UPDATE",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "informatii/faq",
+      "path": "informatii/faq.md",
+      "action": "update"
+    },
+    "previousHash": "28ccfdc62f86e4d43a928b9732127135ea4b73d976cfdf6e9d659e148a75e036",
+    "hash": "710a7b75ddfb7bc43b5aabfabe45c747febed2e33ac492ad4be47db27f63f4dd"
+  },
+  {
     "id": "aud_1787393606770_879c74a1",
     "timestamp": "2026-08-22T10:13:26.771Z",
     "action": "DOC_VERSION_SAVE",

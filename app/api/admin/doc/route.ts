@@ -6,6 +6,7 @@ import { recordAuditEvent } from "@/lib/security/audit";
 import { incrementMemberDocCount, findTeamMemberByUsername } from "@/lib/security/teamStore";
 import { commitDocChange } from "@/lib/admin/gitCommit";
 import { invalidateGitCache } from "@/lib/git";
+import { invalidateRepoStatsCache } from "@/lib/repoContributions";
 
 const DOCS_DIR = path.join(process.cwd(), "content", "docs");
 
@@ -174,6 +175,7 @@ export async function POST(req: NextRequest) {
 
     // Invalidate Git cache so updated author / commit metadata renders fresh
     invalidateGitCache(targetPath);
+    invalidateRepoStatsCache();
 
     return NextResponse.json({
       success: true,
