@@ -1,5 +1,103 @@
 [
   {
+    "id": "aud_1787398348822_bc92d629",
+    "timestamp": "2026-08-22T11:32:28.822Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 2,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 3,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "844ef3d491b103666f946d278e4672e87eeda2a3fb860e4957c6c12e6b665a09",
+    "hash": "19cc68fc520361990a84f54473f7f657c712fc0f86cfb65a28ec4646eaf206bb"
+  },
+  {
+    "id": "aud_1787398327601_458605ab",
+    "timestamp": "2026-08-22T11:32:07.601Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "Yakuza",
+      "accountStatus": "🟢 Existent în Echipă (Yakuza)",
+      "accountRole": "custom",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 4,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "f445ff34fad3e878adcf54a2985c94f6977d3d0e23592b81ed8a3b0093712628",
+    "hash": "844ef3d491b103666f946d278e4672e87eeda2a3fb860e4957c6c12e6b665a09"
+  },
+  {
+    "id": "aud_1787398295401_70b68b82",
+    "timestamp": "2026-08-22T11:31:35.401Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_0e177e983e895c8fcb7268689d9d437ba971866e4eabf2f1"
+    },
+    "previousHash": "b9b0ca5aec697f778f41c74f8299773e9343bddb80cf0c24f8b04a82ae03a9cf",
+    "hash": "f445ff34fad3e878adcf54a2985c94f6977d3d0e23592b81ed8a3b0093712628"
+  },
+  {
+    "id": "aud_1787398295392_0ba91599",
+    "timestamp": "2026-08-22T11:31:35.393Z",
+    "action": "SESSION_REVOKED",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_0e177e983e895c8fcb7268689d9d437ba971866e4eabf2f1",
+      "username": "V1ccX"
+    },
+    "previousHash": "f741d4122d3dec38d939618c8f32da62c7fa44ae353238ddefd6fe0c61528557",
+    "hash": "b9b0ca5aec697f778f41c74f8299773e9343bddb80cf0c24f8b04a82ae03a9cf"
+  },
+  {
+    "id": "aud_1787398276558_7d0b20a3",
+    "timestamp": "2026-08-22T11:31:16.559Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_044947e301cd61f6a52e6a2c60a2452e0de419b721dc3e71"
+    },
+    "previousHash": "ac5bfcfe55ef176a5d99b3abaf3f50510ab8ce2a24e7ea55b10e7d22dd108566",
+    "hash": "f741d4122d3dec38d939618c8f32da62c7fa44ae353238ddefd6fe0c61528557"
+  },
+  {
+    "id": "aud_1787398276541_fc776fa0",
+    "timestamp": "2026-08-22T11:31:16.544Z",
+    "action": "SESSION_REVOKED",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_044947e301cd61f6a52e6a2c60a2452e0de419b721dc3e71",
+      "username": "V1ccX"
+    },
+    "previousHash": "ce9a0cc784fbf83dc58283b86a7d6c24ff16aec02e6bca7f03c9b3137ebaa723",
+    "hash": "ac5bfcfe55ef176a5d99b3abaf3f50510ab8ce2a24e7ea55b10e7d22dd108566"
+  },
+  {
     "id": "aud_1787395129825_3d46c344",
     "timestamp": "2026-08-22T10:38:49.825Z",
     "action": "TEAM_MEMBER_UPDATED",
