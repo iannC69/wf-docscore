@@ -117,32 +117,44 @@ export function runDocHealthCheck(): DocHealthReport {
         });
       }
 
-      // 2. Scan for internal links: [text](/docs/xyz) or [text](/xyz)
-      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-      let match;
+      // 2. Scan for internal links: [text](/docs/xyz) and <Card href="/docs/xyz"> / <a href="/docs/xyz">
       const lines = rawContent.split(/\r?\n/);
 
-      while ((match = linkRegex.exec(rawContent)) !== null) {
-        const href = match[2].trim().split("#")[0].split("?")[0];
+      const processHref = (hrefRaw: string, anchorText?: string, lineNum?: number) => {
+        const href = hrefRaw.trim().split("#")[0].split("?")[0];
         if (href.startsWith("/docs/") || href.startsWith("docs/")) {
           const targetSlug = href.replace(/^\/?docs\//, "").replace(/\/$/, "").toLowerCase();
           referencedSlugs.add(targetSlug);
 
           if (targetSlug && !validSlugs.has(targetSlug) && !validSlugs.has(`${targetSlug}/index`)) {
-            // Find line number
-            const lineNum = lines.findIndex((l) => l.includes(match![0])) + 1;
             issues.push({
               type: "broken_link",
               severity: "error",
               file: doc.relativePath,
               slug: doc.slug,
               message: `Link intern invalid către: /docs/${targetSlug}`,
-              detail: `Text ancoră: "${match[1]}"`,
-              line: lineNum > 0 ? lineNum : undefined,
+              detail: anchorText ? `Text ancoră / element: "${anchorText}"` : undefined,
+              line: lineNum && lineNum > 0 ? lineNum : undefined,
             });
             brokenLinksCount++;
           }
         }
+      };
+
+      // 2a. Markdown Links: [text](href)
+      const mdLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+      let mdMatch;
+      while ((mdMatch = mdLinkRegex.exec(rawContent)) !== null) {
+        const lineNum = lines.findIndex((l) => l.includes(mdMatch![0])) + 1;
+        processHref(mdMatch[2], mdMatch[1], lineNum);
+      }
+
+      // 2b. JSX / HTML Attributes: href="/docs/..." or to="/docs/..." (e.g. <Card href="/docs/...">)
+      const jsxHrefRegex = /(?:href|to)=["']([^"']+)["']/g;
+      let jsxMatch;
+      while ((jsxMatch = jsxHrefRegex.exec(rawContent)) !== null) {
+        const lineNum = lines.findIndex((l) => l.includes(jsxMatch![0])) + 1;
+        processHref(jsxMatch[1], undefined, lineNum);
       }
     } catch (err: any) {
       issues.push({

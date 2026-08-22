@@ -332,17 +332,17 @@ export default function AdminBackupsPage() {
       </div>
 
       {/* ── Auto-Backup Scheduler Config Box ──────────────────────────── */}
-      <div className="admin-card mb-6" style={{ background: "hsl(220 20% 7% / 0.75)", border: "1px solid var(--glass-border)", borderRadius: "14px", padding: "20px" }}>
-        <div className="admin-card-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", paddingBottom: "14px", borderBottom: "1px solid var(--glass-border)" }}>
+      <div className="admin-panel-card mb-6">
+        <div className="admin-panel-header">
           <div className="admin-card-title-group" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div className="admin-card-icon-box--amber" style={{ width: "32px", height: "32px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className="admin-quota-icon-box admin-quota-icon-box--amber">
               <Sliders size={16} />
             </div>
             <div>
-              <h3 className="admin-card-title" style={{ fontSize: "0.95rem", fontWeight: 800, color: "#f8fafc", margin: 0 }}>
+              <h3 className="admin-section-title">
                 Configurare Planificator Automat (Auto-Backup Scheduler)
               </h3>
-              <p className="admin-card-sub" style={{ fontSize: "0.74rem", color: "var(--color-text-secondary)", margin: "2px 0 0 0" }}>
+              <p className="admin-panel-sub">
                 Sistemul execută automat snapshot-uri complete în fundal la fiecare 3 zile fără a întrerupe activitatea.
               </p>
             </div>
@@ -366,9 +366,9 @@ export default function AdminBackupsPage() {
           </div>
         </div>
 
-        <div className="admin-scheduler-form-grid">
+        <div className="admin-scheduler-form-grid" style={{ padding: "20px" }}>
           <div className="admin-form-group">
-            <label className="admin-form-label" style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: "6px", display: "block" }}>
+            <label className="admin-form-label">
               Stare Auto-Backup
             </label>
             <div className="admin-toggle-wrapper">
@@ -388,7 +388,7 @@ export default function AdminBackupsPage() {
           </div>
 
           <div className="admin-form-group">
-            <label className="admin-form-label" style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: "6px", display: "block" }}>
+            <label className="admin-form-label">
               Interval de Rulare
             </label>
             <select
@@ -396,8 +396,7 @@ export default function AdminBackupsPage() {
               onChange={(e) =>
                 setManifest((prev) => ({ ...prev, intervalDays: Number(e.target.value) }))
               }
-              className="admin-select-field"
-              style={{ width: "100%", background: "hsl(220 20% 10% / 0.9)", border: "1px solid var(--glass-border)", color: "#f8fafc", padding: "8px 12px", borderRadius: "8px", fontSize: "0.78rem" }}
+              className="admin-select"
             >
               <option value={1}>Zilnic (La fiecare 24 ore)</option>
               <option value={3}>La fiecare 3 zile (Recomandat)</option>
@@ -408,7 +407,7 @@ export default function AdminBackupsPage() {
           </div>
 
           <div className="admin-form-group">
-            <label className="admin-form-label" style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--color-text-secondary)", marginBottom: "6px", display: "block" }}>
+            <label className="admin-form-label">
               Limită Rotire Automată (Retention)
             </label>
             <select
@@ -416,8 +415,7 @@ export default function AdminBackupsPage() {
               onChange={(e) =>
                 setManifest((prev) => ({ ...prev, retentionLimit: Number(e.target.value) }))
               }
-              className="admin-select-field"
-              style={{ width: "100%", background: "hsl(220 20% 10% / 0.9)", border: "1px solid var(--glass-border)", color: "#f8fafc", padding: "8px 12px", borderRadius: "8px", fontSize: "0.78rem" }}
+              className="admin-select"
             >
               <option value={5}>Păstrează ultimele 5 snapshot-uri</option>
               <option value={10}>Păstrează ultimele 10 snapshot-uri (Optim)</option>
@@ -466,13 +464,13 @@ export default function AdminBackupsPage() {
       </div>
 
       {/* ── Snapshots Matrix Table Card ─────────────────────────────── */}
-      <div className="admin-card" style={{ background: "hsl(220 20% 7% / 0.75)", border: "1px solid var(--glass-border)", borderRadius: "14px", overflow: "hidden" }}>
-        <div className="admin-table-wrapper" style={{ overflowX: "auto" }}>
+      <div className="admin-panel-card">
+        <div className="admin-table-container">
           {filteredSnapshots.length === 0 ? (
-            <div className="admin-empty-table-state" style={{ padding: "40px 20px", textAlign: "center" }}>
+            <div className="admin-table-empty">
               <Archive size={36} className="text-slate-500 mb-2 mx-auto" />
-              <h4 style={{ color: "#f8fafc", fontSize: "0.95rem", fontWeight: 700 }}>Niciun snapshot găsit</h4>
-              <p style={{ color: "var(--color-text-secondary)", fontSize: "0.78rem" }}>
+              <h4 className="font-bold text-sm mb-1">Niciun snapshot găsit</h4>
+              <p className="text-xs">
                 Apasă pe „Generează Snapshot Nou” pentru a crea prima copie de siguranță completă.
               </p>
             </div>

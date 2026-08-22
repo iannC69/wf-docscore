@@ -36,6 +36,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageSnapshots && !session.permissions?.canManageSettings) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea de a exporta conținutul platformei." },
+      { status: 403 }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const format = searchParams.get("format") || "zip";
   const allDocs = collectAllDocFiles();

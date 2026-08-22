@@ -45,6 +45,7 @@ import {
   Award,
   Medal,
   Webhook,
+  ListTodo,
 } from "lucide-react";
 import { getAuthenticatedAdminSession, getActiveSessions, isPanicLockdown } from "@/lib/security/auth";
 import { getAuditEvents, verifyAuditChainIntegrity } from "@/lib/security/audit";
@@ -203,6 +204,7 @@ export default async function AdminDashboardPage() {
   if (!session) redirect("/admin/login");
 
   const member = findTeamMemberByUsername(session.username);
+  const isRoot = Boolean(session.isRoot || member?.isRoot || session.username.toLowerCase() === "iannc69" || session.username.toLowerCase() === "iannc");
   const isLocked = isPanicLockdown();
   const maintenance = getMaintenanceState();
   const searchAnalytics = getSearchAnalytics();
@@ -271,18 +273,31 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
         <div className="adx-hero-actions">
-          <Link href="/admin/content" className="adx-btn adx-btn--primary">
-            <Plus size={14} /> New Document
-          </Link>
-          <Link href="/admin/webhooks" className="adx-btn adx-btn--ghost">
-            <Webhook size={14} /> Webhooks
-          </Link>
-          <Link href="/admin/security" className="adx-btn adx-btn--ghost">
-            <Lock size={14} /> Security
-          </Link>
-          <Link href="/admin/audit" className="adx-btn adx-btn--ghost">
-            <ScrollText size={14} /> Audit Trail
-          </Link>
+          {(isRoot || session.permissions?.canEditDocs) && (
+            <Link href="/admin/content" className="adx-btn adx-btn--primary">
+              <Plus size={14} /> New Document
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageTasks) && (
+            <Link href="/admin/tasks" className="adx-btn adx-btn--ghost">
+              <ListTodo size={14} /> Task Hub
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageWebhooks) && (
+            <Link href="/admin/webhooks" className="adx-btn adx-btn--ghost">
+              <Webhook size={14} /> Webhooks
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageSecurity) && (
+            <Link href="/admin/security" className="adx-btn adx-btn--ghost">
+              <Lock size={14} /> Security
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canViewAudit) && (
+            <Link href="/admin/audit" className="adx-btn adx-btn--ghost">
+              <ScrollText size={14} /> Audit Trail
+            </Link>
+          )}
         </div>
       </div>
 
@@ -747,61 +762,90 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
         <div className="adx-launchpad-grid">
-          <Link href="/admin/content" className="adx-launch-card adx-launch--orange">
-            <FileText size={20} />
-            <span className="adx-launch-title">Conținut & Docs</span>
-            <span className="adx-launch-desc">{totalDocs} ghiduri publicate</span>
-          </Link>
-          <Link href="/admin/webhooks" className="adx-launch-card adx-launch--cyan">
-            <Webhook size={20} />
-            <span className="adx-launch-title">Webhooks & Alerte</span>
-            <span className="adx-launch-desc">Trigger Discord #logs manual</span>
-          </Link>
-          <Link href="/admin/team" className="adx-launch-card adx-launch--emerald">
-            <Users size={20} />
-            <span className="adx-launch-title">Echipa</span>
-            <span className="adx-launch-desc">{allTeamMembers.length} membri activi</span>
-          </Link>
-          <Link href="/admin/media" className="adx-launch-card adx-launch--cyan">
-            <ImageIcon size={20} />
-            <span className="adx-launch-title">Asset Vault</span>
-            <span className="adx-launch-desc">{mediaStats.totalAssets} fișiere · {mediaStats.totalSizeFormatted}</span>
-          </Link>
-          <Link href="/admin/audit" className="adx-launch-card adx-launch--violet">
-            <ScrollText size={20} />
-            <span className="adx-launch-title">Audit Trail</span>
-            <span className="adx-launch-desc">SHA-256 cryptographic chain</span>
-          </Link>
-          <Link href="/admin/security" className="adx-launch-card adx-launch--red">
-            <Shield size={20} />
-            <span className="adx-launch-title">Security</span>
-            <span className="adx-launch-desc">{isLocked ? "PANIC LOCKDOWN ACTIV" : "Systeme operationale"}</span>
-          </Link>
-          <Link href="/admin/search-analytics" className="adx-launch-card adx-launch--amber">
-            <Search size={20} />
-            <span className="adx-launch-title">Search Analytics</span>
-            <span className="adx-launch-desc">{searchAnalytics.totalSearches} cautari · {searchAnalytics.missedCount} gaps</span>
-          </Link>
-          <Link href="/admin/api-keys" className="adx-launch-card adx-launch--blue">
-            <Key size={20} />
-            <span className="adx-launch-title">API Keys</span>
-            <span className="adx-launch-desc">{apiKeys.length} integrari active</span>
-          </Link>
-          <Link href="/admin/settings" className="adx-launch-card adx-launch--gray">
-            <Wrench size={20} />
-            <span className="adx-launch-title">Settings</span>
-            <span className="adx-launch-desc">{maintenance.enabled ? "Maintenance activ" : "Platform config"}</span>
-          </Link>
-          <Link href="/admin/backups" className="adx-launch-card adx-launch--teal">
-            <Database size={20} />
-            <span className="adx-launch-title">Backups</span>
-            <span className="adx-launch-desc">Snapshots & export</span>
-          </Link>
-          <Link href="/admin/ai-analytics" className="adx-launch-card adx-launch--fuchsia">
-            <Brain size={20} />
-            <span className="adx-launch-title">AI Analytics</span>
-            <span className="adx-launch-desc">{aiTelemetry.lifetimeQueries} queries lifetime</span>
-          </Link>
+          {(isRoot || session.permissions?.canEditDocs) && (
+            <Link href="/admin/content" className="adx-launch-card adx-launch--orange">
+              <FileText size={20} />
+              <span className="adx-launch-title">Conținut & Docs</span>
+              <span className="adx-launch-desc">{totalDocs} ghiduri publicate</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageTasks) && (
+            <Link href="/admin/tasks" className="adx-launch-card adx-launch--orange">
+              <ListTodo size={20} />
+              <span className="adx-launch-title">Task Hub & TODO</span>
+              <span className="adx-launch-desc">Gestiune sarcini & Kanban</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageWebhooks) && (
+            <Link href="/admin/webhooks" className="adx-launch-card adx-launch--cyan">
+              <Webhook size={20} />
+              <span className="adx-launch-title">Webhooks & Alerte</span>
+              <span className="adx-launch-desc">Trigger Discord #logs manual</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageTeam) && (
+            <Link href="/admin/team" className="adx-launch-card adx-launch--emerald">
+              <Users size={20} />
+              <span className="adx-launch-title">Echipa</span>
+              <span className="adx-launch-desc">{allTeamMembers.length} membri activi</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageMedia) && (
+            <Link href="/admin/media" className="adx-launch-card adx-launch--cyan">
+              <ImageIcon size={20} />
+              <span className="adx-launch-title">Asset Vault</span>
+              <span className="adx-launch-desc">{mediaStats.totalAssets} fișiere · {mediaStats.totalSizeFormatted}</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canViewAudit) && (
+            <Link href="/admin/audit" className="adx-launch-card adx-launch--violet">
+              <ScrollText size={20} />
+              <span className="adx-launch-title">Audit Trail</span>
+              <span className="adx-launch-desc">SHA-256 cryptographic chain</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageSecurity) && (
+            <Link href="/admin/security" className="adx-launch-card adx-launch--red">
+              <Shield size={20} />
+              <span className="adx-launch-title">Security</span>
+              <span className="adx-launch-desc">{isLocked ? "PANIC LOCKDOWN ACTIV" : "Systeme operationale"}</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canViewAnalytics) && (
+            <Link href="/admin/search-analytics" className="adx-launch-card adx-launch--amber">
+              <Search size={20} />
+              <span className="adx-launch-title">Search Analytics</span>
+              <span className="adx-launch-desc">{searchAnalytics.totalSearches} cautari · {searchAnalytics.missedCount} gaps</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageApiKeys) && (
+            <Link href="/admin/api-keys" className="adx-launch-card adx-launch--blue">
+              <Key size={20} />
+              <span className="adx-launch-title">API Keys</span>
+              <span className="adx-launch-desc">{apiKeys.length} integrari active</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageSettings) && (
+            <Link href="/admin/settings" className="adx-launch-card adx-launch--gray">
+              <Wrench size={20} />
+              <span className="adx-launch-title">Settings</span>
+              <span className="adx-launch-desc">{maintenance.enabled ? "Maintenance activ" : "Platform config"}</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canManageSnapshots) && (
+            <Link href="/admin/backups" className="adx-launch-card adx-launch--teal">
+              <Database size={20} />
+              <span className="adx-launch-title">Backups</span>
+              <span className="adx-launch-desc">Snapshots & export</span>
+            </Link>
+          )}
+          {(isRoot || session.permissions?.canViewAiStats) && (
+            <Link href="/admin/ai-analytics" className="adx-launch-card adx-launch--fuchsia">
+              <Brain size={20} />
+              <span className="adx-launch-title">AI Analytics</span>
+              <span className="adx-launch-desc">{aiTelemetry.lifetimeQueries} queries lifetime</span>
+            </Link>
+          )}
         </div>
       </div>
 

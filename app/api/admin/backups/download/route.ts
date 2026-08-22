@@ -15,6 +15,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!session.isRoot && !session.permissions?.canManageSnapshots) {
+      return NextResponse.json(
+        { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageSnapshots pentru a descărca backup-uri." },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

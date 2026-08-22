@@ -130,6 +130,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canViewAiStats) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canViewAiStats." },
+      { status: 403 }
+    );
+  }
+
   const summary = getAiTelemetrySummary();
   const knowledgeBase = getKnowledgeBaseInfo();
 

@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthenticatedAdminSession } from "@/lib/security/auth";
 import { CURRENT_VERSION } from "@/lib/version";
 import { getActiveSessions } from "@/lib/security/auth";
 import { listApiKeys } from "@/lib/security/apiKeys";
@@ -38,46 +39,45 @@ async function dispatchSystemHealth() {
   const media = scanMediaLibrary();
 
   const statusColor = heapPct > 80 ? 0xef4444 : heapPct > 60 ? 0xf59e0b : 0x10b981;
-  const statusEmoji = heapPct > 80 ? "🔴" : heapPct > 60 ? "🟡" : "🟢";
 
   const embed = {
-    title: `${statusEmoji} System Health — WF-DOCSCORE v${CURRENT_VERSION}`,
-    description: `>>> 🖥️ **Raport de funcționare server generat la ${new Date().toLocaleString("ro-RO")}**`,
+    title: `System Health — WF-DOCSCORE v${CURRENT_VERSION}`,
+    description: `>>> **Raport de funcționare server generat la ${new Date().toLocaleString("ro-RO")}**`,
     color: statusColor,
     fields: [
       {
-        name: "💾 Heap Memory",
+        name: "Heap Memory",
         value: `**${heapUsedMb}MB** / ${heapTotalMb}MB (${heapPct}%)`,
         inline: true,
       },
       {
-        name: "🖥️ RSS Memory",
+        name: "RSS Memory",
         value: `**${rssMb}MB**`,
         inline: true,
       },
       {
-        name: "⏱️ Uptime Server",
+        name: "Uptime Server",
         value: `**${uptimeHrs}h ${uptimeMins}m**`,
         inline: true,
       },
       {
-        name: "👥 Sesiuni Admin Active",
-        value: `**${sessions.length}** sesiune/i active 🟢`,
+        name: "Sesiuni Admin Active",
+        value: `**${sessions.length}** sesiune/i active`,
         inline: true,
       },
       {
-        name: "🔑 API Keys Active",
-        value: `**${apiKeys.length}** chei active 🔐`,
+        name: "API Keys Active",
+        value: `**${apiKeys.length}** chei active`,
         inline: true,
       },
       {
-        name: "🗂️ Asset Vault",
-        value: `**${media.totalAssets}** fișiere (${media.totalSizeFormatted}) 📦`,
+        name: "Asset Vault",
+        value: `**${media.totalAssets}** fișiere (${media.totalSizeFormatted})`,
         inline: true,
       },
       {
-        name: "🔧 Stack Platformă",
-        value: `⚡ Next.js 16.3 Turbopack · Node.js ${process.version} · WF-DOCSCORE v${CURRENT_VERSION}`,
+        name: "Stack Platformă",
+        value: `Next.js 16.3 Turbopack · Node.js ${process.version} · WF-DOCSCORE v${CURRENT_VERSION}`,
         inline: false,
       },
     ],
@@ -97,7 +97,12 @@ async function dispatchSystemHealth() {
   }
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const session = await getAuthenticatedAdminSession();
+  if (!session?.isRoot && !session?.permissions?.canManageWebhooks) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
   try {
     await dispatchSystemHealth();
     return NextResponse.json({
@@ -109,6 +114,6 @@ export async function POST() {
   }
 }
 
-export async function GET() {
-  return POST();
+export async function GET(req: NextRequest) {
+  return POST(req);
 }

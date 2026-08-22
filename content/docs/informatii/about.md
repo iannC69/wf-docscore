@@ -153,13 +153,13 @@ Afla toate detaliile tehnice, ghidurile pas-cu-pas si regulamentele navigand pri
   <Card title="Magazinul Serverului (!shop)" href="/docs/systems/shop/chat-tags">
     Personalizeaza-ti profilul cu Chat Colors, Tags si Name Colors.
   </Card>
-  <Card title="MVP Anthem" href="/docs/systems/other/music-kits">
+  <Card title="MVP Anthem" href="/docs/systems/other/mvp">
     Muzica si animatii spectaculoase declansate automat la final de runda.
   </Card>
   <Card title="Gold Member VIP" href="/docs/systems/other/gold-member">
     Beneficii premium, multiplicator de credite si comenzi exclusive.
   </Card>
-  <Card title="Sank Sounds" href="/docs/systems/other/kill-sound">
+  <Card title="Sank Sounds" href="/docs/market/premium-shop/sanks">
     Sute de sunete si meme-uri declansate direct din chat-ul jocului.
   </Card>
 </Cards>

@@ -552,26 +552,16 @@ export default function AdminTeamPage() {
 
       {/* ── GitHub Contributors Graph Reconciliation Panel ── */}
       {githubGraphContributors.length > 0 && (
-        <div
-          style={{
-            marginBottom: "24px",
-            padding: "16px 20px",
-            borderRadius: "14px",
-            background: "hsl(220 14% 10% / 0.7)",
-            border: "1px solid hsl(220 14% 24% / 0.8)",
-            backdropFilter: "blur(16px)",
-            boxShadow: "0 8px 32px hsl(0 0% 0% / 0.35)",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "14px" }}>
+        <div className="admin-github-sync-panel">
+          <div className="admin-github-sync-header">
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "hsl(220 14% 20% / 0.8)", border: "1px solid hsl(220 14% 35% / 0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div className="admin-github-sync-icon-box">
                 <GithubIcon size={16} className="text-zinc-200" />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: "0.88rem", fontWeight: 700, color: "var(--color-text)", display: "flex", alignItems: "center", gap: "8px" }}>
+                <h4 className="admin-github-sync-title">
                   <span>Sincronizare GitHub Contributors Graph</span>
-                  <span style={{ fontSize: "0.65rem", padding: "2px 7px", borderRadius: "5px", background: "hsl(142 71% 45% / 0.15)", border: "1px solid hsl(142 71% 45% / 0.3)", color: "hsl(142 71% 70%)", fontWeight: 800 }}>
+                  <span className="admin-perm-tag" style={{ background: "hsl(142 71% 45% / 0.15)", border: "1px solid hsl(142 71% 45% / 0.3)", color: "hsl(142 71% 70%)", fontSize: "0.65rem", padding: "2px 7px" }}>
                     LIVE SYNC ACTIV
                   </span>
                 </h4>
@@ -585,20 +575,7 @@ export default function AdminTeamPage() {
               href="https://github.com/iannC69/wf-docscore/graphs/contributors"
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 12px",
-                borderRadius: "8px",
-                background: "hsl(220 14% 18% / 0.7)",
-                border: "1px solid hsl(220 14% 35% / 0.6)",
-                fontSize: "0.74rem",
-                fontWeight: 600,
-                color: "var(--color-text)",
-                textDecoration: "none",
-                transition: "all 0.18s ease",
-              }}
+              className="admin-github-sync-link"
               title="Deschide graficul oficial pe GitHub"
             >
               <GithubIcon size={12} />
@@ -607,7 +584,7 @@ export default function AdminTeamPage() {
             </a>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "10px" }}>
+          <div className="admin-github-sync-grid">
             {githubGraphContributors.map((gc) => {
               const matchedMember = members.find(
                 (m) =>
@@ -617,28 +594,16 @@ export default function AdminTeamPage() {
               );
 
               return (
-                <div
-                  key={gc.login}
-                  style={{
-                    padding: "10px 14px",
-                    borderRadius: "10px",
-                    background: "hsl(0 0% 100% / 0.03)",
-                    border: "1px solid var(--glass-border)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "10px",
-                  }}
-                >
+                <div key={gc.login} className="admin-github-sync-card">
                   <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
                     <img
                       src={gc.avatarUrl || `https://github.com/${gc.login}.png`}
                       alt={gc.login}
-                      style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--glass-border)", flexShrink: 0 }}
+                      className="admin-github-sync-avatar"
                     />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--color-text)" }}>@{gc.login}</span>
+                        <span className="admin-github-sync-username">@{gc.login}</span>
                         <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "hsl(215 90% 65%)", fontFamily: "var(--font-mono, monospace)" }}>
                           {gc.totalCommits} commits
                         </span>

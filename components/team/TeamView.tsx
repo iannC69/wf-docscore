@@ -9,7 +9,6 @@ import {
   BookOpen,
   CheckCircle2,
   Eye,
-  Search,
   Check,
   Sparkles,
   Cpu,
@@ -25,6 +24,8 @@ import {
   User,
   GitCommit,
   ExternalLink,
+  ChevronDown,
+  EyeOff,
 } from "lucide-react";
 import type { PublicTeamMember } from "@/lib/security/teamStore";
 import { CURRENT_VERSION } from "@/lib/version";
@@ -108,11 +109,11 @@ function getRoleMeta(role: string, isRoot: boolean) {
   switch (role) {
     case "doc_lead":
       return {
-        label: "Documentation Lead",
-        categoryName: "Doc Lead",
-        iconBoxClass: "recent-card-item-icon--blue",
-        icon: <Award size={13} className="text-cyan-400" />,
-        accentColor: "#06b6d4",
+        label: "Co-Lead & Systems",
+        categoryName: "Co-Lead & Systems",
+        iconBoxClass: "recent-card-item-icon--orange",
+        icon: <Award size={13} className="text-amber-400" />,
+        accentColor: "#f59e0b",
       };
     case "content_editor":
       return {
@@ -120,6 +121,14 @@ function getRoleMeta(role: string, isRoot: boolean) {
         categoryName: "Content Editor",
         iconBoxClass: "recent-card-item-icon--green",
         icon: <BookOpen size={13} className="text-emerald-400" />,
+        accentColor: "#10b981",
+      };
+    case "custom":
+      return {
+        label: "Content Lead & Reviewer",
+        categoryName: "Content Lead",
+        iconBoxClass: "recent-card-item-icon--green",
+        icon: <Sparkles size={13} className="text-emerald-400" />,
         accentColor: "#10b981",
       };
     case "moderator":
@@ -174,6 +183,21 @@ export function TeamView({ initialMembers }: TeamViewProps) {
   const [steamAvatars, setSteamAvatars] = useState<Record<string, string>>({});
   const [discordProfiles, setDiscordProfiles] = useState<Record<string, DiscordProfileInfo>>({});
   const [repoStats, setRepoStats] = useState<Record<string, { totalCommits: number; docsCommits: number }>>({});
+  const [collapseDescriptions, setCollapseDescriptions] = useState<boolean>(true);
+  const [cardCollapseOverrides, setCardCollapseOverrides] = useState<Record<string, boolean>>({});
+
+  const handleGlobalCollapseToggle = () => {
+    const nextVal = !collapseDescriptions;
+    setCollapseDescriptions(nextVal);
+    setCardCollapseOverrides({});
+  };
+
+  const toggleCardCollapse = (memberId: string) => {
+    setCardCollapseOverrides((prev) => {
+      const currentVal = prev[memberId] !== undefined ? prev[memberId] : collapseDescriptions;
+      return { ...prev, [memberId]: !currentVal };
+    });
+  };
 
   // Auto-fetch Real Repository Contributions and Steam & Discord avatars
   useEffect(() => {
@@ -238,13 +262,13 @@ export function TeamView({ initialMembers }: TeamViewProps) {
     }, 2000);
   };
 
-  const rootCount = initialMembers.filter((m) => m.isRoot || m.role === "root_admin").length;
-  const editorCount = initialMembers.filter((m) => m.role === "content_editor" || m.role === "doc_lead").length;
+  const rootCount = initialMembers.filter((m) => m.isRoot || m.role === "root_admin" || m.role === "doc_lead").length;
+  const editorCount = initialMembers.filter((m) => m.role === "content_editor" || m.role === "custom" || m.role === "moderator" || m.role === "viewer").length;
 
   const filteredMembers = useMemo(() => {
     return initialMembers.filter((m) => {
-      if (filter === "root" && !m.isRoot && m.role !== "root_admin") return false;
-      if (filter === "editors" && m.role !== "content_editor" && m.role !== "doc_lead") return false;
+      if (filter === "root" && !m.isRoot && m.role !== "root_admin" && m.role !== "doc_lead") return false;
+      if (filter === "editors" && m.role !== "content_editor" && m.role !== "custom" && m.role !== "moderator" && m.role !== "viewer") return false;
       return true;
     });
   }, [initialMembers, filter]);
@@ -252,8 +276,8 @@ export function TeamView({ initialMembers }: TeamViewProps) {
   return (
     <div className="docs-home-wrapper">
       <main className="docs-home" id="main-content">
-        {/* ── Hero Section (Identical to Documentation Hub) ─────────── */}
-        <section className="docs-home-hero">
+        {/* ── Hero Section (Compact & Seamless) ─────────── */}
+        <section className="docs-home-hero" style={{ marginBottom: "var(--space-6)", paddingBottom: "var(--space-6)" }}>
           <div className="docs-home-badge">
             <span className="docs-badge-dot" aria-hidden="true" />
             <span>Wildfire Documentation Workforce v{CURRENT_VERSION}</span>
@@ -263,21 +287,9 @@ export function TeamView({ initialMembers }: TeamViewProps) {
             Wildfire Core Team &amp; Contributors
           </h1>
 
-          <p className="docs-home-desc">
+          <p className="docs-home-desc" style={{ marginBottom: 0 }}>
             Echipa oficială, arhitecții de sisteme și contribuitorii care redactează, revizuiesc și mențin documentația pe serverele CS2 Wildfire.ro.
           </p>
-
-          {/* Quick Search / Command hint */}
-          <div className="docs-home-search-hint">
-            <div className="search-hint-left">
-              <Search size={15} className="search-hint-icon" aria-hidden="true" />
-              <span>Apasă <kbd>Ctrl K</kbd> oriunde pentru căutare instantanee în documente</span>
-            </div>
-            <Link href="/docs/informatii/staff/cum-aplici" className="docs-hero-btn">
-              <span>Ghid Aplicare Staff</span>
-              <ArrowRight size={14} aria-hidden="true" />
-            </Link>
-          </div>
         </section>
 
         {/* ── Main Section: Team Members Grid ────────────────────────── */}
@@ -334,6 +346,28 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                 >
                   Editori ({editorCount})
                 </button>
+                <button
+                  type="button"
+                  onClick={handleGlobalCollapseToggle}
+                  className={`recent-collapse-toggle-btn ${collapseDescriptions ? "admin-filter-pill--active" : ""}`}
+                  style={{
+                    fontSize: "0.72rem",
+                    padding: "4px 10px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    borderColor: collapseDescriptions ? "hsl(38 96% 50% / 0.4)" : undefined,
+                    color: collapseDescriptions ? "#fbbf24" : undefined,
+                  }}
+                  title={collapseDescriptions ? "Afișează tag-urile de atribuții pentru toți membrii" : "Ascunde tag-urile de atribuții pentru toți membrii"}
+                >
+                  {collapseDescriptions ? (
+                    <Eye size={11} className="text-amber-400" aria-hidden="true" />
+                  ) : (
+                    <EyeOff size={11} aria-hidden="true" />
+                  )}
+                  <span>{collapseDescriptions ? "Extinde Atribuții" : "Ascunde Atribuții"}</span>
+                </button>
                 <a
                   href="https://github.com/iannC69/wf-docscore/graphs/contributors"
                   target="_blank"
@@ -382,8 +416,23 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                 ? discordProfile.username
                 : (member.discord?.startsWith("@") ? member.discord.slice(1) : member.discord || "");
 
+              const isCardCollapsed = cardCollapseOverrides[member.id] !== undefined ? cardCollapseOverrides[member.id] : collapseDescriptions;
+
+              // ── FULL EXPANDED CARD VIEW ─────────────────────────────────
               return (
-                <div key={member.id} className="recent-update-card" style={{ cursor: "default", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div
+                  key={member.id}
+                  className="recent-update-card"
+                  style={{
+                    cursor: "default",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignSelf: "stretch",
+                    padding: "18px 20px",
+                    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }}
+                >
                   <div>
                     {/* Top Bar: Role Category Pill + Stats */}
                     <div className="recent-card-top">
@@ -419,7 +468,7 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                       </div>
                     </div>
 
-                    {/* Title Row with Avatar + Name & Custom Role + Verified Badge */}
+                    {/* Title Row with Avatar + Name & Custom Role + Verified Badge + Collapse Toggle */}
                     <div className="recent-card-title-row" style={{ alignItems: "center", marginBottom: "12px" }}>
                       <div className="recent-card-title-wrap" style={{ gap: "10px", alignItems: "center" }}>
                         {/* Avatar Frame (Proportional 46x46) */}
@@ -480,56 +529,113 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                         </div>
                       </div>
 
-                      {/* Verified Icon Pill */}
-                      <span
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "4px",
-                          padding: "3px 8px",
-                          borderRadius: "6px",
-                          background: "hsl(142 70% 45% / 0.12)",
-                          border: "1px solid hsl(142 70% 45% / 0.3)",
-                          color: "#34d399",
-                          fontSize: "0.68rem",
-                          fontWeight: 700,
-                          flexShrink: 0,
-                        }}
-                        title="Membru Verificat Oficial"
-                      >
-                        <UserCheck size={12} className="text-emerald-400" aria-hidden="true" />
-                        <span>Verificat</span>
-                      </span>
-                    </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        {/* Verified Icon Pill */}
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            padding: "3px 8px",
+                            borderRadius: "6px",
+                            background: "hsl(142 70% 45% / 0.12)",
+                            border: "1px solid hsl(142 70% 45% / 0.3)",
+                            color: "#34d399",
+                            fontSize: "0.68rem",
+                            fontWeight: 700,
+                            flexShrink: 0,
+                          }}
+                          title="Membru Verificat Oficial"
+                        >
+                          <UserCheck size={12} className="text-emerald-400" aria-hidden="true" />
+                          <span>Verificat</span>
+                        </span>
 
-                    {/* Bio Description */}
-                    <p className="recent-card-desc" style={{ WebkitLineClamp: 3, marginBottom: "12px", fontSize: "0.82rem", lineHeight: 1.5 }}>
-                      {member.bio || "Membru activ în echipa de redactare și mentenanță a documentației WildFire."}
-                    </p>
-
-                    {/* Responsibilities Tags */}
-                    {member.responsibilities && member.responsibilities.length > 0 && (
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "4px" }}>
-                        {member.responsibilities.slice(0, 4).map((resp, idx) => (
-                          <span
-                            key={idx}
+                        {/* Individual Card Collapse / Expand Tags Button */}
+                        {member.responsibilities && member.responsibilities.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => toggleCardCollapse(member.id)}
                             style={{
                               display: "inline-flex",
                               alignItems: "center",
-                              gap: "4px",
-                              padding: "3px 8px",
+                              justifyContent: "center",
+                              width: "24px",
+                              height: "24px",
                               borderRadius: "6px",
-                              background: "hsl(0 0% 100% / 0.04)",
-                              border: "1px solid var(--glass-border)",
-                              fontSize: "0.68rem",
-                              color: "var(--color-text-secondary)",
-                              fontWeight: 600,
+                              background: isCardCollapsed ? "hsl(38 96% 50% / 0.14)" : "hsl(0 0% 100% / 0.05)",
+                              border: isCardCollapsed ? "1px solid hsl(38 96% 50% / 0.4)" : "1px solid var(--glass-border)",
+                              color: isCardCollapsed ? "#fbbf24" : "var(--color-text-secondary)",
+                              cursor: "pointer",
+                              transition: "all 0.18s ease",
+                              padding: 0,
+                              flexShrink: 0,
                             }}
+                            title={isCardCollapsed ? "Afișează tag-urile de atribuții" : "Ascunde tag-urile de atribuții"}
+                            aria-label={isCardCollapsed ? "Afișează atribuții" : "Ascunde atribuții"}
                           >
-                            {getResponsibilityIcon(resp)}
-                            <span>{resp}</span>
-                          </span>
-                        ))}
+                            <ChevronDown
+                              size={13}
+                              style={{
+                                transform: isCardCollapsed ? "rotate(-90deg)" : "rotate(0deg)",
+                                transition: "transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                              }}
+                              aria-hidden="true"
+                            />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bio Description — ALWAYS SHOWN */}
+                    <p
+                      className="recent-card-desc"
+                      style={{
+                        WebkitLineClamp: 3,
+                        marginBottom: isCardCollapsed ? "0px" : "12px",
+                        fontSize: "0.82rem",
+                        lineHeight: 1.55,
+                        minHeight: isCardCollapsed ? "38px" : "48px",
+                        transition: "margin-bottom 0.2s ease",
+                      }}
+                    >
+                      {member.bio || "Membru activ în echipa de redactare și mentenanță a documentației WildFire."}
+                    </p>
+
+                    {/* Collapsible Responsibilities Tags Section */}
+                    {member.responsibilities && member.responsibilities.length > 0 && (
+                      <div
+                        style={{
+                          maxHeight: isCardCollapsed ? "0px" : "180px",
+                          opacity: isCardCollapsed ? 0 : 1,
+                          overflow: "hidden",
+                          transition: "max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, margin 0.2s ease",
+                          marginTop: isCardCollapsed ? "0px" : "2px",
+                          marginBottom: isCardCollapsed ? "0px" : "2px",
+                        }}
+                      >
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", paddingTop: "2px" }}>
+                          {member.responsibilities.slice(0, 5).map((resp, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "4px",
+                                padding: "3px 8px",
+                                borderRadius: "6px",
+                                background: "hsl(0 0% 100% / 0.04)",
+                                border: "1px solid var(--glass-border)",
+                                fontSize: "0.68rem",
+                                color: "var(--color-text-secondary)",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {getResponsibilityIcon(resp)}
+                              <span>{resp}</span>
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -577,7 +683,6 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                       </span>
                     </div>
 
-
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       {/* View Profile Button */}
                       <Link
@@ -598,14 +703,6 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                           flexShrink: 0,
                         }}
                         title={`Profil complet — ${member.displayName}`}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = `${roleMeta.accentColor}25`;
-                          e.currentTarget.style.borderColor = `${roleMeta.accentColor}70`;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = `${roleMeta.accentColor}14`;
-                          e.currentTarget.style.borderColor = `${roleMeta.accentColor}40`;
-                        }}
                       >
                         <User size={11} />
                         Profil
@@ -634,16 +731,6 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                             flexShrink: 0,
                           }}
                           title={`Profil Steam — ${member.displayName}`}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = "translateY(-2px) scale(1.06)";
-                            e.currentTarget.style.borderColor = "hsl(215 100% 72% / 0.95)";
-                            e.currentTarget.style.boxShadow = "0 6px 16px hsl(215 90% 50% / 0.45)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = "translateY(0) scale(1)";
-                            e.currentTarget.style.borderColor = "hsl(215 85% 58% / 0.5)";
-                            e.currentTarget.style.boxShadow = "0 3px 10px hsl(215 85% 45% / 0.25)";
-                          }}
                         >
                           {steamPfp ? (
                             <img

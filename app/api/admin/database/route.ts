@@ -19,6 +19,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageDb) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageDb pentru a vizualiza datele bazei de date." },
+      { status: 403 }
+    );
+  }
+
   try {
     const status = await getDatabaseStatus();
     const views = await getAllDocViews();
@@ -48,6 +55,13 @@ export async function POST(req: NextRequest) {
   const session = await getAuthenticatedAdminSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!session.isRoot && !session.permissions?.canManageDb) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageDb pentru a modifica configurările bazei de date." },
+      { status: 403 }
+    );
   }
 
   try {

@@ -10,6 +10,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canViewAnalytics) {
+    return NextResponse.json({ error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canViewAnalytics." }, { status: 403 });
+  }
+
   const analytics = getSearchAnalytics();
   return NextResponse.json(analytics);
 }

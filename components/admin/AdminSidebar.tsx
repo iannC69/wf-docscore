@@ -141,6 +141,10 @@ export function AdminSidebar({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  if (pathname === "/admin/login" || pathname?.startsWith("/admin/login")) {
+    return null;
+  }
+
   useEffect(() => {
     const handleToggle = () => {
       setMobileOpen((prev) => {

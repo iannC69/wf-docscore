@@ -11,12 +11,13 @@ import {
   ShieldAlert,
   KeyRound,
   Radio,
-  Flame,
   Eye,
   EyeOff,
   Loader2,
-  Sparkles,
   Cpu,
+  Lock,
+  GitCommit,
+  Layers,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
@@ -75,172 +76,218 @@ export default function AdminLoginPage() {
 
   return (
     <div className="admin-login-wrapper">
-      {/* Dynamic Aurora Ambient Background Orbs */}
+      {/* Ambient background layers */}
       <div className="admin-login-aurora-bg" aria-hidden="true">
         <div className="admin-aurora-orb admin-aurora-orb--1" />
         <div className="admin-aurora-orb admin-aurora-orb--2" />
+        <div className="admin-aurora-orb admin-aurora-orb--3" />
         <div className="admin-aurora-grid-overlay" />
       </div>
 
-      <div className="admin-login-card">
-        {/* Top Shimmer Beam */}
-        <div className="admin-login-shimmer-beam" aria-hidden="true" />
+      {/* Split-panel login card */}
+      <div className="admin-login-split">
 
-        {/* Header with Official Wildfire Emblem */}
-        <div className="admin-login-header">
-          <div className="admin-login-brand-icon">
-            <div className="admin-brand-icon-glow" aria-hidden="true" />
-            <img
-              src="/logo.png"
-              alt="Wildfire Logo"
-              className="admin-login-logo-img"
-              width={44}
-              height={44}
-            />
+        {/* ── LEFT PANEL: Brand Identity ───────────────────────────────── */}
+        <div className="admin-login-left-panel">
+          <div className="admin-login-left-glow" aria-hidden="true" />
+
+          <div className="admin-login-brand-stack">
+            {/* Logo */}
+            <div className="admin-login-brand-icon">
+              <div className="admin-brand-icon-glow" aria-hidden="true" />
+              <img
+                src="/logo.png"
+                alt="Wildfire Logo"
+                className="admin-login-logo-img"
+                width={48}
+                height={48}
+              />
+            </div>
+
+            <div>
+              <h1 className="admin-login-title">WILDFIRE ADMIN</h1>
+              <p className="admin-login-subtitle">Mission Control &amp; Fortress Security</p>
+            </div>
+
+            {/* Status badges */}
+            <div className="admin-login-status-pills">
+              <div className="admin-login-badge">
+                <Radio size={9} className="admin-live-pulse-dot" />
+                <span>SECURE GATEWAY</span>
+              </div>
+              <div className="admin-login-pill-tag">
+                <Cpu size={9} />
+                <span>v{CURRENT_VERSION}</span>
+              </div>
+            </div>
           </div>
 
-          <div className="admin-login-title-group">
-            <h1 className="admin-login-title">WILDFIRE ADMIN</h1>
-            <p className="admin-login-subtitle">Fortress Security &amp; Mission Control</p>
-          </div>
+          {/* Left panel feature list */}
+          <ul className="admin-login-features" aria-label="Platform capabilities">
+            <li className="admin-login-feature-item">
+              <span className="admin-login-feature-icon"><Lock size={13} /></span>
+              <span>256-bit HMAC & PBKDF2 SHA-512 Auth</span>
+            </li>
+            <li className="admin-login-feature-item">
+              <span className="admin-login-feature-icon"><ShieldCheck size={13} /></span>
+              <span>TOTP 2FA & Session Isolation</span>
+            </li>
+            <li className="admin-login-feature-item">
+              <span className="admin-login-feature-icon"><GitCommit size={13} /></span>
+              <span>Live Audit Ledger & Geo-IP Logging</span>
+            </li>
+            <li className="admin-login-feature-item">
+              <span className="admin-login-feature-icon"><Layers size={13} /></span>
+              <span>Role-Based Permission Isolation</span>
+            </li>
+          </ul>
 
-          <div className="admin-login-status-pills">
-            <div className="admin-login-badge">
-              <Radio size={10} className="admin-live-pulse-dot" />
-              <span>SECURE ACCESS GATEWAY</span>
-            </div>
-            <div className="admin-login-pill-tag">
-              <Cpu size={10} />
-              <span>v{CURRENT_VERSION}</span>
-            </div>
+          {/* Left panel footer */}
+          <div className="admin-login-left-footer">
+            <span className="admin-login-left-footer-text">wf-docscore &copy; 2026 Wildfire.ro</span>
           </div>
         </div>
 
-        {/* Alerts */}
-        {error && (
-          <div className="admin-alert-box admin-alert-box--danger" role="alert">
-            <ShieldAlert size={16} className="admin-alert-icon" />
-            <span>{error}</span>
+        {/* Vertical divider */}
+        <div className="admin-login-divider" aria-hidden="true" />
+
+        {/* ── RIGHT PANEL: Secure Form ─────────────────────────────────── */}
+        <div className="admin-login-right-panel">
+          {/* Top shimmer accent */}
+          <div className="admin-login-shimmer-beam" aria-hidden="true" />
+
+          <div className="admin-login-form-header">
+            <h2 className="admin-login-form-title">
+              {requireTwoFactor ? "Two-Factor Auth" : "Administrator Sign In"}
+            </h2>
+            <p className="admin-login-form-desc">
+              {requireTwoFactor
+                ? "Introdu codul generat de aplicația ta de autentificare."
+                : "Acces restricționat. Numai personal autorizat."}
+            </p>
           </div>
-        )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="admin-login-form">
-          {!requireTwoFactor ? (
-            <>
-              {/* Username field */}
-              <div className="admin-form-group">
-                <label className="admin-form-label" htmlFor="admin-username">
-                  Administrator ID
-                </label>
-                <div className="admin-input-wrapper">
-                  <User size={16} className="admin-input-icon" />
-                  <input
-                    id="admin-username"
-                    type="text"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Introdu ID-ul de admin (ex. iannC69)"
-                    className="admin-input-field"
-                    autoComplete="username"
-                    spellCheck={false}
-                  />
-                </div>
-              </div>
-
-              {/* Password field with show/hide toggle */}
-              <div className="admin-form-group">
-                <div className="admin-label-row">
-                  <label className="admin-form-label" htmlFor="admin-password">
-                    Master Password
-                  </label>
-                </div>
-                <div className="admin-input-wrapper">
-                  <LockKeyhole size={16} className="admin-input-icon" />
-                  <input
-                    id="admin-password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Introdu parola master"
-                    className="admin-input-field admin-input-field--password"
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="admin-password-toggle-btn"
-                    title={showPassword ? "Ascunde parola" : "Afișează parola"}
-                    aria-label={showPassword ? "Ascunde parola" : "Afișează parola"}
-                  >
-                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                  </button>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="admin-totp">
-                Cod de Securitate 2FA (TOTP)
-              </label>
-              <div className="admin-input-wrapper">
-                <KeyRound size={16} className="admin-input-icon" />
-                <input
-                  id="admin-totp"
-                  type="text"
-                  required
-                  maxLength={14}
-                  value={totpCode}
-                  onChange={(e) => setTotpCode(e.target.value)}
-                  placeholder="Cod 6 cifre sau cheie de backup"
-                  className="admin-input-field admin-input-field--totp"
-                  autoFocus
-                />
-              </div>
-              <p className="admin-form-help">
-                Deschide Google Authenticator, 1Password sau introdu cheia de urgență.
-              </p>
+          {/* Error alert */}
+          {error && (
+            <div className="admin-alert-box admin-alert-box--danger" role="alert">
+              <ShieldAlert size={15} className="admin-alert-icon" />
+              <span>{error}</span>
             </div>
           )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`admin-login-submit-btn ${loading ? "admin-login-submit-btn--loading" : ""}`}
-          >
-            {loading ? (
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="admin-login-form">
+            {!requireTwoFactor ? (
               <>
-                <Loader2 size={16} className="admin-spin" />
-                <span>Se autentifică...</span>
-              </>
-            ) : requireTwoFactor ? (
-              <>
-                <span>Verifică Codul 2FA</span>
-                <ArrowRight size={15} />
+                <div className="admin-form-group">
+                  <label className="admin-form-label" htmlFor="admin-username">
+                    Administrator ID
+                  </label>
+                  <div className="admin-input-wrapper">
+                    <User size={15} className="admin-input-icon" />
+                    <input
+                      id="admin-username"
+                      type="text"
+                      required
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Introdu ID-ul de admin"
+                      className="admin-input-field"
+                      autoComplete="username"
+                      spellCheck={false}
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                <div className="admin-form-group">
+                  <label className="admin-form-label" htmlFor="admin-password">
+                    Master Password
+                  </label>
+                  <div className="admin-input-wrapper">
+                    <LockKeyhole size={15} className="admin-input-icon" />
+                    <input
+                      id="admin-password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Introdu parola master"
+                      className="admin-input-field admin-input-field--password"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="admin-password-toggle-btn"
+                      title={showPassword ? "Ascunde parola" : "Afișează parola"}
+                      aria-label={showPassword ? "Ascunde parola" : "Afișează parola"}
+                    >
+                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
               </>
             ) : (
-              <>
-                <span>Sign In to Mission Control</span>
-                <ArrowRight size={15} />
-              </>
+              <div className="admin-form-group">
+                <label className="admin-form-label" htmlFor="admin-totp">
+                  Cod de Securitate 2FA
+                </label>
+                <div className="admin-input-wrapper">
+                  <KeyRound size={15} className="admin-input-icon" />
+                  <input
+                    id="admin-totp"
+                    type="text"
+                    required
+                    maxLength={14}
+                    value={totpCode}
+                    onChange={(e) => setTotpCode(e.target.value)}
+                    placeholder="000 000"
+                    className="admin-input-field admin-input-field--totp"
+                    autoFocus
+                  />
+                </div>
+                <p className="admin-form-help">
+                  Deschide Google Authenticator, 1Password sau introdu cheia de urgență.
+                </p>
+              </div>
             )}
-          </button>
-        </form>
 
-        {/* Security Seals & Public Docs Link */}
-        <div className="admin-login-footer">
-          <div className="admin-security-seal">
-            <ShieldCheck size={13} className="admin-seal-icon" />
-            <span>256-bit Cryptographic Salt &amp; HMAC Protected</span>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`admin-login-submit-btn ${loading ? "admin-login-submit-btn--loading" : ""}`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={16} className="admin-spin" />
+                  <span>Se autentifică...</span>
+                </>
+              ) : requireTwoFactor ? (
+                <>
+                  <span>Verifică Codul 2FA</span>
+                  <ArrowRight size={15} />
+                </>
+              ) : (
+                <>
+                  <span>Sign In to Mission Control</span>
+                  <ArrowRight size={15} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="admin-login-footer">
+            <div className="admin-security-seal">
+              <ShieldCheck size={12} className="admin-seal-icon" />
+              <span>End-to-End Encrypted &amp; HMAC Protected</span>
+            </div>
+            <Link href="/docs" className="admin-back-btn">
+              <ArrowLeft size={12} />
+              <span>Înapoi la Documentația Publică</span>
+            </Link>
           </div>
-
-          <Link href="/docs" className="admin-back-btn">
-            <ArrowLeft size={13} />
-            <span>Înapoi la Documentația Publică</span>
-          </Link>
         </div>
       </div>
     </div>

@@ -35,6 +35,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageSettings) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageSettings pentru a modifica setările platformei." },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await req.json();
     const { maintenance, announcement } = body;

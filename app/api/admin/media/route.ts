@@ -15,6 +15,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageMedia && !session.permissions?.canEditDocs) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
   const result = scanMediaLibrary();
   return NextResponse.json(result);
 }
@@ -26,6 +30,10 @@ export async function POST(req: NextRequest) {
 
   if (!session) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  if (!session.isRoot && !session.permissions?.canManageMedia && !session.permissions?.canEditDocs) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
   }
 
   try {

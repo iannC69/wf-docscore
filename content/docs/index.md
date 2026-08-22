@@ -45,8 +45,11 @@ React Components (Callout, CodeBlock, Steps, Tabs)
 | Storage | Cloudflare R2 |
 | Deploy | Vercel |
 
-## Quick navigation
-- **[Getting Started](/docs/getting-started)** — install and run in 5 minutes
-- **[Configuration](/docs/getting-started/configuration)** — connect GitHub and configure environment
-- **[Features](/docs/features)** — overview of all platform capabilities
-- **[API Reference](/docs/api-reference)** — programmatic access to your content
+## Navigare Rapidă
+
+- **[Despre Wildfire Docs](/docs/informatii/about)** — arhitectura platformei, echipa și rolurile de administrare
+- **[Întrebări Frecvente (FAQ)](/docs/informatii/faq)** — răspunsuri rapide despre servere, conturi și asistență
+- **[Sistemul de Credite](/docs/currency/credits)** — cum funcționează economia de credite pe servere
+- **[Pachete & Beneficii VIP](/docs/market/vip/vip-overview)** — prezentare ranguri VIP (VIP Test, Mythic, Immortal)
+- **[Aplicație Staff](/docs/informatii/staff/cum-aplici)** — ghid complet pentru aplicarea în echipa administrativă
+- **[Sisteme & Jocuri Live](/docs/systems/gambling/roulette)** — rulete, jocuri de noroc și mecanici interactive

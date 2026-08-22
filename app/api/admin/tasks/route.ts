@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageTasks) {
+    return NextResponse.json({ error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageTasks." }, { status: 403 });
+  }
+
   try {
     const tasks = await getAllAdminTasks();
     const members = getPublicTeamMembers();
@@ -90,6 +94,10 @@ export async function POST(req: NextRequest) {
   const session = await getAuthenticatedAdminSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!session.isRoot && !session.permissions?.canManageTasks) {
+    return NextResponse.json({ error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageTasks." }, { status: 403 });
   }
 
   try {

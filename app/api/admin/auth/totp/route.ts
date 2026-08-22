@@ -16,6 +16,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageSecurity) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageSecurity." },
+      { status: 403 }
+    );
+  }
+
   const admin = getAdminUser();
 
   if (admin.twoFactorEnabled) {
@@ -44,6 +51,13 @@ export async function POST(req: NextRequest) {
 
   if (!session) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  if (!session.isRoot && !session.permissions?.canManageSecurity) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageSecurity." },
+      { status: 403 }
+    );
   }
 
   try {

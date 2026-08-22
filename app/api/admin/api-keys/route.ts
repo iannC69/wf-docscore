@@ -10,6 +10,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageApiKeys) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageApiKeys pentru a vizualiza cheile API." },
+      { status: 403 }
+    );
+  }
+
   const keys = listApiKeys();
   return NextResponse.json({ total: keys.length, keys });
 }
@@ -20,6 +27,13 @@ export async function POST(req: NextRequest) {
 
   if (!session) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  if (!session.isRoot && !session.permissions?.canManageApiKeys) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageApiKeys pentru a modifica cheile API." },
+      { status: 403 }
+    );
   }
 
   try {

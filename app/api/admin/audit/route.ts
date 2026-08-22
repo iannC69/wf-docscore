@@ -10,6 +10,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canViewAudit) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canViewAudit pentru a accesa Audit Ledger." },
+      { status: 403 }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") || "50", 10);
   const actionFilter = searchParams.get("action") as AuditAction | undefined;

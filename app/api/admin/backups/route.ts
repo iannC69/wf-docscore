@@ -24,6 +24,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!session.isRoot && !session.permissions?.canManageSnapshots) {
+      return NextResponse.json(
+        { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageSnapshots pentru a accesa Snapshot Vault." },
+        { status: 403 }
+      );
+    }
+
     // Auto-check if 3 days have elapsed and trigger auto-backup in background
     await checkAndRunAutoBackup(false).catch(() => {});
 
@@ -56,6 +63,13 @@ export async function POST(req: NextRequest) {
     const session = await getAuthenticatedAdminSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!session.isRoot && !session.permissions?.canManageSnapshots) {
+      return NextResponse.json(
+        { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canManageSnapshots pentru a modifica Snapshot Vault." },
+        { status: 403 }
+      );
     }
 
     const body = await req.json();

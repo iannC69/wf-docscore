@@ -2,9 +2,9 @@
   "views": {
     "informatii/faq": {
       "slug": "informatii/faq",
-      "total_views": 9,
-      "today_views": 9,
-      "last_viewed_at": "2026-08-22T10:55:16.613Z"
+      "total_views": 10,
+      "today_views": 10,
+      "last_viewed_at": "2026-08-22T14:06:27.616Z"
     },
     "informatii/staff": {
       "slug": "informatii/staff",
@@ -14,15 +14,15 @@
     },
     "informatii/about": {
       "slug": "informatii/about",
-      "total_views": 7,
-      "today_views": 7,
-      "last_viewed_at": "2026-08-22T10:14:08.874Z"
+      "total_views": 8,
+      "today_views": 8,
+      "last_viewed_at": "2026-08-22T14:06:24.754Z"
     },
     "informatii/getting-started": {
       "slug": "informatii/getting-started",
-      "total_views": 4,
-      "today_views": 4,
-      "last_viewed_at": "2026-08-21T18:24:08.385Z"
+      "total_views": 5,
+      "today_views": 5,
+      "last_viewed_at": "2026-08-22T14:06:26.093Z"
     },
     "systems/other/anti-rush": {
       "slug": "systems/other/anti-rush",
@@ -50,9 +50,9 @@
     },
     "informatii/staff/cum-aplici": {
       "slug": "informatii/staff/cum-aplici",
-      "total_views": 1,
-      "today_views": 1,
-      "last_viewed_at": "2026-08-21T14:42:17.355Z"
+      "total_views": 2,
+      "today_views": 2,
+      "last_viewed_at": "2026-08-22T14:06:32.081Z"
     },
     "informatii/regulamente/regulament-go": {
       "slug": "informatii/regulamente/regulament-go",
@@ -119,6 +119,12 @@
       "total_views": 1,
       "today_views": 1,
       "last_viewed_at": "2026-08-22T11:26:51.700Z"
+    },
+    "systems/skins": {
+      "slug": "systems/skins",
+      "total_views": 1,
+      "today_views": 1,
+      "last_viewed_at": "2026-08-22T13:38:49.660Z"
     }
   },
   "feedbacks": [
@@ -168,13 +174,13 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-22T11:26:51.700Z",
+  "updatedAt": "2026-08-22T14:27:41.888Z",
   "reports": [],
   "tasks": [
     {
       "title": "De facut versiunea mobile la admin panel full la toate categoriile!",
       "description": "Trebuie sa fac si light theme la admin panel",
-      "status": "todo",
+      "status": "completed",
       "priority": "urgent",
       "category": "system",
       "assignees": [
@@ -185,409 +191,23 @@
         {
           "id": "sub_1787344325373_9u8j",
           "title": "Mobile version pt admin panel",
-          "completed": false
+          "completed": true
         },
         {
           "id": "sub_1787344333212_5hao",
           "title": "Light theme pt panel",
-          "completed": false
+          "completed": true
         }
       ],
       "comments": [],
       "id": "task_1787344340776_s8ccd",
       "createdAt": "2026-08-21T20:32:20.776Z",
-      "updatedAt": "2026-08-21T21:38:53.978Z",
-      "dueDate": "2026-08-25"
+      "updatedAt": "2026-08-22T14:26:40.087Z",
+      "dueDate": "2026-08-25",
+      "completedAt": "2026-08-22T14:26:40.087Z"
     }
   ],
   "notifications": [
-    {
-      "id": "notif_1787349620184_06fkb",
-      "isGlobal": true,
-      "title": "Sarcină Finalizată: De verificat gambling",
-      "message": "Sarcina a fost marcată ca finalizată de @iannC69.",
-      "category": "task",
-      "severity": "success",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T22:00:20.184Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349619517_isu84",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "Status Actualizat: De verificat gambling",
-      "message": "@iannC69 a mutat sarcina în starea IN_REVIEW.",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T22:00:19.517Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349595805_515fq",
-      "isGlobal": true,
-      "title": "Sarcină Finalizată: De verificat gambling",
-      "message": "Sarcina a fost marcată ca finalizată de @iannC69.",
-      "category": "task",
-      "severity": "success",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:59:55.805Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349594540_9bvtk",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "⚡ Status Actualizat: De verificat gambling",
-      "message": "@iannC69 a mutat sarcina în starea IN_REVIEW.",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:59:54.541Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349592757_rmnlj",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "⚡ Status Actualizat: De verificat gambling",
-      "message": "@iannC69 a mutat sarcina în starea IN_PROGRESS.",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:59:52.757Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349515446_huo7d",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "💬 Notă Nouă pe Sarcină: De verificat gambling",
-      "message": "@iannC69: \"@V1ccX a\"",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:58:35.446Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349477678_57i22",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "💬 Notă Nouă pe Sarcină: De verificat gambling",
-      "message": "@iannC69: \"@V1ccX ba borfasule\"",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:57:57.678Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349367131_z1wqg",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "💬 Notă Nouă pe Sarcină: De verificat gambling",
-      "message": "@iannC69: \"bau\"",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:56:07.131Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349287861_f048h",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "Comentariu Nou pe Sarcină: De verificat gambling",
-      "message": "@iannC69: \"da\"",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:54:47.861Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349174298_knj1r",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "Comentariu Nou pe Sarcină: De verificat gambling",
-      "message": "@iannC69: \"Salut\"",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:52:54.298Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349150967_znngs",
-      "isGlobal": true,
-      "title": "[ALERTA SARCINĂ URGENTĂ] De verificat gambling",
-      "message": "Creată de @iannC69 · Necesită atenție prioritară imediată.",
-      "category": "task",
-      "severity": "urgent",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:52:30.967Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1"
-      }
-    },
-    {
-      "id": "notif_1787349150959_mrpev",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "Sarcină Nouă Asignată: De verificat gambling",
-      "message": "Ai fost asignat de @iannC69 la sarcina din categoria DOCS_UPDATE.",
-      "category": "task",
-      "severity": "urgent",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:52:30.959Z",
-      "metadata": {
-        "taskId": "task_1787349150940_441c1",
-        "priority": "urgent"
-      }
-    },
-    {
-      "id": "notif_1787348328385_tf5ug",
-      "isGlobal": true,
-      "title": "Sarcină Finalizată: De facut versiunea mobile la admin panel full la toate categoriile!",
-      "message": "Sarcina a fost marcată cu succes ca finalizată de @iannC69.",
-      "category": "task",
-      "severity": "success",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:38:48.385Z",
-      "metadata": {
-        "taskId": "task_1787344340776_s8ccd"
-      }
-    },
-    {
-      "id": "notif_1787348315606_x023f",
-      "isGlobal": true,
-      "title": "Sarcină Finalizată: De facut versiunea mobile la admin panel full la toate categoriile!",
-      "message": "Sarcina a fost marcată cu succes ca finalizată de @iannC69.",
-      "category": "task",
-      "severity": "success",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:38:35.606Z",
-      "metadata": {
-        "taskId": "task_1787344340776_s8ccd"
-      }
-    },
-    {
-      "id": "notif_1787348298529_1kr1t",
-      "isGlobal": true,
-      "title": "Sarcină Finalizată: De verificat ws, cases si ruleta",
-      "message": "Sarcina a fost marcată cu succes ca finalizată de @iannC69.",
-      "category": "task",
-      "severity": "success",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T21:38:18.529Z",
-      "metadata": {
-        "taskId": "task_1787345133738_4jq9r"
-      }
-    },
-    {
-      "id": "notif_1787345133763_4z8cv",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "Sarcină Nouă Asignată: De verificat ws, cases si ruleta",
-      "message": "Ai fost asignat de @iannC69 la sarcina din categoria DOCS_UPDATE.",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T20:45:33.763Z",
-      "metadata": {
-        "taskId": "task_1787345133738_4jq9r",
-        "priority": "medium"
-      }
-    },
-    {
-      "id": "notif_1787344340789_dqq2n",
-      "isGlobal": true,
-      "title": "[ALERTA SARCINĂ URGENTĂ] De facut versiunea mobile la admin panel full la toate categoriile!",
-      "message": "Creată de @iannC69 · Necesită atenție prioritară imediată.",
-      "category": "task",
-      "severity": "urgent",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T20:32:20.789Z",
-      "metadata": {
-        "taskId": "task_1787344340776_s8ccd"
-      }
-    },
-    {
-      "id": "notif_1787344340782_u0tys",
-      "targetUser": "iannC69",
-      "isGlobal": false,
-      "title": "Sarcină Nouă Asignată: De facut versiunea mobile la admin panel full la toate categoriile!",
-      "message": "Ai fost asignat de @iannC69 la sarcina din categoria SYSTEM.",
-      "category": "task",
-      "severity": "urgent",
-      "link": "/admin/tasks",
-      "readBy": [
-        "iannC69"
-      ],
-      "createdAt": "2026-08-21T20:32:20.782Z",
-      "metadata": {
-        "taskId": "task_1787344340776_s8ccd",
-        "priority": "urgent"
-      }
-    },
-    {
-      "id": "notif_1787343995741_m21oz",
-      "isGlobal": true,
-      "title": "Cerere Ghid Nou: da",
-      "message": "da",
-      "category": "report",
-      "severity": "info",
-      "link": "/admin/database",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T20:26:35.741Z",
-      "metadata": {
-        "reportId": "rep_1787343995731_wu978",
-        "slug": "systems/other/c4-planter",
-        "type": "new_guide_request"
-      }
-    },
-    {
-      "id": "notif_1787343991533_vz9f6",
-      "isGlobal": true,
-      "title": "Sugestie / Comentariu Feedback pe /docs/systems/other/c4-planter",
-      "message": "Un jucător a lăsat o sugestie: \"da\" (Vot: Util)",
-      "category": "feedback",
-      "severity": "info",
-      "link": "/docs/systems/other/c4-planter",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T20:26:31.533Z",
-      "metadata": {
-        "slug": "systems/other/c4-planter",
-        "rating": "helpful",
-        "comment": "da",
-        "stats": {
-          "helpful": 2,
-          "unhelpful": 0,
-          "total": 2,
-          "percentage": 100
-        }
-      }
-    },
-    {
-      "id": "notif_1787343989803_g8uh7",
-      "isGlobal": true,
-      "title": "Feedback Pozitiv pe /docs/systems/other/c4-planter",
-      "message": "Un jucător a marcat ghidul ca util! Scorul curent de satisfacție este 100% (2 voturi pozitive).",
-      "category": "feedback",
-      "severity": "success",
-      "link": "/docs/systems/other/c4-planter",
-      "readBy": [
-        "iannC69",
-        "Yakuza",
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T20:26:29.803Z",
-      "metadata": {
-        "slug": "systems/other/c4-planter",
-        "rating": "helpful",
-        "stats": {
-          "helpful": 2,
-          "unhelpful": 0,
-          "total": 2,
-          "percentage": 100
-        }
-      }
-    },
     {
       "id": "notif_task_seed_1",
       "targetUser": "Yakuza",
@@ -603,23 +223,6 @@
       "createdAt": "2026-08-21T17:52:05.622Z",
       "metadata": {
         "taskId": "task_seed_1"
-      }
-    },
-    {
-      "id": "notif_task_seed_2",
-      "targetUser": "V1ccX",
-      "isGlobal": false,
-      "title": "Sarcină Asignată: Ghid Nou VIP Custom",
-      "message": "Redactarea ghidului complet pentru pachetele VIP și beneficiile donatorilor.",
-      "category": "task",
-      "severity": "info",
-      "link": "/admin/tasks",
-      "readBy": [
-        "V1ccX"
-      ],
-      "createdAt": "2026-08-21T17:07:05.623Z",
-      "metadata": {
-        "taskId": "task_seed_2"
       }
     }
   ]

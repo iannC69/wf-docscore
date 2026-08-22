@@ -114,6 +114,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canEditDocs) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Nu ai permisiunea canEditDocs pentru a modifica documente." },
+      { status: 403 }
+    );
+  }
+
   try {
     const { slug, content, action } = await req.json();
 
@@ -185,5 +192,60 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Failed to save document" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const session = token ? validateSessionToken(token) : null;
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
+
+  if (!session) {
+    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  if (!session.isRoot && !session.permissions?.canDeleteDocs) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Acces Refuzat: Doar administratorii cu permisiunea 'canDeleteDocs' sau Super Administratorul Root pot șterge documente!" },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const slug = searchParams.get("slug");
+    if (!slug) {
+      return NextResponse.json({ error: "Parametrul 'slug' este obligatoriu." }, { status: 400 });
+    }
+
+    const cleanRelPath = `${slug.replace(/^\/+/, "").replace(/\.(md|mdx)$/, "")}.md`;
+    const targetPath = path.join(DOCS_DIR, cleanRelPath);
+
+    if (!targetPath.startsWith(DOCS_DIR)) {
+      return NextResponse.json({ error: "Violare de securitate la calea fișierului." }, { status: 400 });
+    }
+
+    if (!fs.existsSync(targetPath)) {
+      return NextResponse.json({ error: "Documentul nu există pe disc." }, { status: 404 });
+    }
+
+    fs.unlinkSync(targetPath);
+
+    recordAuditEvent({
+      action: "DOC_DELETE",
+      actor: session.username,
+      ip,
+      details: { slug, path: cleanRelPath },
+    });
+
+    invalidateGitCache(targetPath);
+    invalidateRepoStatsCache();
+
+    return NextResponse.json({
+      success: true,
+      message: `Articolul '${slug}' a fost șters cu succes.`,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Eroare la ștergerea documentului" }, { status: 500 });
   }
 }

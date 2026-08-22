@@ -81,12 +81,37 @@ export function LiquidBackground() {
         zIndex: 0,
       }}
     >
+      {/* Noise texture overlay */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E")`,
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Grid overlay */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(to right, rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.018) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+          maskImage: "radial-gradient(ellipse at 50% 40%, black 20%, transparent 72%)",
+          WebkitMaskImage: "radial-gradient(ellipse at 50% 40%, black 20%, transparent 72%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Orb 1 — bottom-left fire orange */}
       <div
         className="liquid-blob-1"
         style={{
           animation: "liquidDrift1 22s ease-in-out infinite",
           background:
-            "radial-gradient(ellipse 600px 500px at center, hsl(26 100% 52% / 0.08) 0%, transparent 70%)",
+            "radial-gradient(ellipse 600px 500px at center, hsl(26 100% 52% / 0.13) 0%, transparent 70%)",
           bottom: "-10%",
           left: "-5%",
           position: "absolute",
@@ -95,12 +120,14 @@ export function LiquidBackground() {
           willChange: "transform",
         }}
       />
+
+      {/* Orb 2 — top-right deep red */}
       <div
         className="liquid-blob-2"
         style={{
           animation: "liquidDrift2 30s ease-in-out infinite 4s",
           background:
-            "radial-gradient(ellipse 500px 400px at center, hsl(8 90% 45% / 0.06) 0%, transparent 70%)",
+            "radial-gradient(ellipse 500px 400px at center, hsl(8 90% 45% / 0.09) 0%, transparent 70%)",
           right: "-10%",
           top: "5%",
           position: "absolute",
@@ -109,12 +136,14 @@ export function LiquidBackground() {
           willChange: "transform",
         }}
       />
+
+      {/* Orb 3 — center amber accent */}
       <div
         className="liquid-blob-3"
         style={{
           animation: "liquidDrift3 40s ease-in-out infinite 8s",
           background:
-            "radial-gradient(ellipse 400px 300px at center, hsl(38 100% 52% / 0.05) 0%, transparent 70%)",
+            "radial-gradient(ellipse 400px 300px at center, hsl(38 100% 52% / 0.07) 0%, transparent 70%)",
           left: "30%",
           top: "30%",
           position: "absolute",
@@ -123,11 +152,28 @@ export function LiquidBackground() {
           willChange: "transform",
         }}
       />
+
+      {/* Orb 4 — top-left cool accent (deep crimson) */}
+      <div
+        style={{
+          animation: "liquidDrift2 26s ease-in-out infinite 2s",
+          background:
+            "radial-gradient(ellipse 450px 350px at center, hsl(0 80% 40% / 0.06) 0%, transparent 70%)",
+          left: "-8%",
+          top: "-8%",
+          position: "absolute",
+          height: "55vh",
+          width: "55vw",
+          willChange: "transform",
+        }}
+      />
+
+      {/* Radial edge vignette */}
       <div
         className="liquid-vignette"
         style={{
           background:
-            "radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, hsl(0 0% 7% / 0.6) 100%)",
+            "radial-gradient(ellipse 85% 85% at 50% 50%, transparent 35%, hsl(0 0% 6% / 0.65) 100%)",
           inset: 0,
           position: "absolute",
         }}

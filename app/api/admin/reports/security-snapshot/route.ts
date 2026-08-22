@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthenticatedAdminSession } from "@/lib/security/auth";
 import { getAuditEvents, verifyAuditChainIntegrity } from "@/lib/security/audit";
 import { getActiveSessions, isPanicLockdown } from "@/lib/security/auth";
 import { listApiKeys } from "@/lib/security/apiKeys";
@@ -80,7 +81,12 @@ async function dispatchSecuritySnapshot() {
   }
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const session = await getAuthenticatedAdminSession();
+  if (!session?.isRoot && !session?.permissions?.canManageWebhooks && !session?.permissions?.canManageSecurity) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
   try {
     await dispatchSecuritySnapshot();
     return NextResponse.json({
@@ -92,6 +98,6 @@ export async function POST() {
   }
 }
 
-export async function GET() {
-  return POST();
+export async function GET(req: NextRequest) {
+  return POST(req);
 }

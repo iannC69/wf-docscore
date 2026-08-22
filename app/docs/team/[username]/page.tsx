@@ -75,8 +75,9 @@ function SteamIcon({ size = 16, className = "", style }: { size?: number; classN
 
 const ROLE_META: Record<string, { label: string; accentColor: string; glowColor: string; bgTint: string }> = {
   root_admin:     { label: "Root Super Admin", accentColor: "hsl(26 100% 52%)", glowColor: "hsl(26 100% 52% / 0.35)", bgTint: "hsl(26 100% 52% / 0.12)" },
-  doc_lead:       { label: "Documentation Lead", accentColor: "hsl(38 96% 50%)", glowColor: "hsl(38 96% 50% / 0.35)", bgTint: "hsl(38 96% 50% / 0.12)" },
+  doc_lead:       { label: "Co-Lead & Systems", accentColor: "hsl(38 96% 50%)", glowColor: "hsl(38 96% 50% / 0.35)", bgTint: "hsl(38 96% 50% / 0.12)" },
   content_editor: { label: "Content Editor",   accentColor: "hsl(142 71% 45%)", glowColor: "hsl(142 71% 45% / 0.35)", bgTint: "hsl(142 71% 45% / 0.12)" },
+  custom:         { label: "Content Editor & Reviewer", accentColor: "hsl(142 71% 45%)", glowColor: "hsl(142 71% 45% / 0.35)", bgTint: "hsl(142 71% 45% / 0.12)" },
   moderator:      { label: "Moderator",        accentColor: "hsl(217 91% 60%)", glowColor: "hsl(217 91% 60% / 0.35)", bgTint: "hsl(217 91% 60% / 0.12)" },
   viewer:         { label: "Contributor",      accentColor: "hsl(220 14% 65%)", glowColor: "hsl(220 14% 65% / 0.25)", bgTint: "hsl(220 14% 65% / 0.08)" },
 };

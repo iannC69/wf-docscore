@@ -1001,7 +1001,7 @@ create policy "Allow all on doc_versions" on doc_versions for all using (true);`
                         {fb.comment && fb.comment.trim() ? (
                           <div className="admin-feedback-quote">
                             <Quote size={12} style={{ opacity: 0.6, flexShrink: 0, marginTop: "2px", color: "#fbbf24" }} />
-                            <span style={{ color: "#f1f5f9", fontStyle: "italic" }}>&ldquo;{fb.comment}&rdquo;</span>
+                            <span className="admin-feedback-quote-text">&ldquo;{fb.comment}&rdquo;</span>
                           </div>
                         ) : (
                           <span className="admin-table-muted" style={{ fontStyle: "italic", fontSize: "0.74rem" }}>
@@ -1194,7 +1194,7 @@ create policy "Allow all on doc_versions" on doc_versions for all using (true);`
                               </span>
                             )}
                             {rep.title && (
-                              <p style={{ margin: "4px 0 0", fontSize: "0.76rem", fontWeight: 600, color: "#f8fafc" }}>
+                              <p className="admin-report-title">
                                 {rep.title}
                               </p>
                             )}
@@ -1202,7 +1202,7 @@ create policy "Allow all on doc_versions" on doc_versions for all using (true);`
                         </td>
                         <td>
                           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                            <p style={{ margin: 0, fontSize: "0.8rem", color: "#f1f5f9", lineHeight: 1.45 }}>
+                            <p className="admin-report-desc">
                               {rep.description}
                             </p>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
@@ -1310,7 +1310,7 @@ create policy "Allow all on doc_versions" on doc_versions for all using (true);`
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div>
                   <span className="admin-db-section-label" style={{ display: "block" }}>FURNIZIOR ACTIV</span>
-                  <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#ffffff" }}>
+                  <span className="admin-db-provider-active-name">
                     {dbProvider === "supabase" ? "Supabase Cloud (PostgreSQL)" : "Local Zero-Config Engine"}
                   </span>
                 </div>

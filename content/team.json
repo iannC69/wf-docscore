@@ -42,7 +42,58 @@
     "status": "active",
     "isRoot": true,
     "createdAt": "2026-08-17T18:20:32.349Z",
-    "lastLoginAt": "2026-08-22T11:38:12.803Z"
+    "lastLoginAt": "2026-08-22T14:05:19.097Z"
+  },
+  {
+    "id": "user_umpy_coroot_2026",
+    "username": "umpy",
+    "displayName": "umpy",
+    "email": "umpy@wildfire.ro",
+    "role": "doc_lead",
+    "customTitle": "Co-Root & Systems Lead",
+    "avatarUrl": "https://avatars.fastly.steamstatic.com/562c921ff1c8b59f1c5f9642c39608af2984128b_full.jpg",
+    "avatarColor": "#f59e0b",
+    "bio": "Co-fondator și responsabil de infrastructura tehnică a serverelor CS2 WildFire. Supervizează stabilitatea rețelei, integrarea sistemelor tehnice și calitatea ghidurilor de documentație.",
+    "responsibilities": [
+      "Infrastructură & Servere CS2",
+      "Supervizare Tehnică & Sisteme",
+      "Mentenanță & Stabilitate",
+      "Revizuire Ghiduri Tehnice",
+      "Securitate & Backup"
+    ],
+    "badges": [
+      "CO-ROOT LEAD",
+      "INFRASTRUCTURE ARCHITECT",
+      "SYSTEMS SPECIALIST"
+    ],
+    "discord": "650621084223275010",
+    "steamId": "https://steamcommunity.com/profiles/76561198974838451",
+    "githubUsername": "umpy04",
+    "docsModifiedCount": 1,
+    "passwordHash": "0b57988adf856ec70b4e8169d8490688e91ee3f90651d24979f85b9556841857d1a027d9e8fb0cd956a11cffc066e6c40ef1f52a586e5a8e4e256c156418b014",
+    "salt": "salt_c16cf562e0342585fe8445c2",
+    "permissions": {
+      "canEditDocs": true,
+      "canDeleteDocs": true,
+      "canManageHealth": true,
+      "canManageMedia": true,
+      "canManageTasks": true,
+      "canViewAnalytics": true,
+      "canViewAiStats": true,
+      "canManageDb": true,
+      "canViewAudit": true,
+      "canManageSecurity": true,
+      "canManageApiKeys": true,
+      "canManageSnapshots": true,
+      "canManageWebhooks": true,
+      "canManageSettings": true,
+      "canManageTeam": false,
+      "canTriggerPanic": false
+    },
+    "status": "active",
+    "isRoot": false,
+    "createdAt": "2026-08-22T12:00:00.000Z",
+    "lastLoginAt": "2026-08-22T12:00:00.000Z"
   },
   {
     "id": "user_83750fc6a71f918f089d8f783542baf9",
@@ -122,10 +173,18 @@
     "isRoot": false,
     "createdAt": "2026-08-22T10:01:24.486Z",
     "customTitle": "Senior Content Editor",
-    "bio": "",
-    "responsibilities": [],
-    "badges": [],
-    "lastLoginAt": "2026-08-22T11:33:24.423Z",
+    "bio": "Redactor de conținut responsabil de redactarea ghidurilor administrative, formatarea regulamentelor oficiale și menținerea acurateței informațiilor tehnice din documentație.",
+    "responsibilities": [
+      "Redactare Ghiduri Staff",
+      "Formatare Regulamente",
+      "Actualizări Markdown",
+      "Corectură & Sintaxă"
+    ],
+    "badges": [
+      "CONTENT EDITOR",
+      "STAFF CONTRIBUTOR"
+    ],
+    "lastLoginAt": "2026-08-22T14:24:02.597Z",
     "githubUsername": "Vicc09"
   }
 ]

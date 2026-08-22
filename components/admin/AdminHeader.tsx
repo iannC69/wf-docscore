@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   ShieldAlert,
   ShieldCheck,
@@ -36,6 +36,7 @@ export function AdminHeader({
   isRoot = false,
 }: AdminHeaderProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [loggingOut, setLoggingOut] = useState(false);
   const [isMaintenance, setIsMaintenance] = useState(false);
 
@@ -49,6 +50,10 @@ export function AdminHeader({
     }
     checkMaintenance();
   }, []);
+
+  if (pathname === "/admin/login" || pathname?.startsWith("/admin/login")) {
+    return null;
+  }
 
   const handleLogout = async () => {
     setLoggingOut(true);

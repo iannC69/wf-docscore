@@ -535,8 +535,8 @@ export default function AdminAiAnalyticsPage() {
                   <tr key={idx}>
                     <td>
                       <div className="flex items-center gap-2">
-                        <BookOpen size={12} className="text-amber-400/70" />
-                        <span className="font-semibold text-white">{doc.title}</span>
+                        <BookOpen size={12} className="text-amber-500" />
+                        <span className="font-semibold admin-doc-title">{doc.title}</span>
                       </div>
                     </td>
                     <td>
@@ -654,7 +654,7 @@ export default function AdminAiAnalyticsPage() {
                 <div className="admin-sandbox-result-meta">
                   {sandboxResult.latencyMs !== undefined && (
                     <span>
-                      Latență: <strong className="text-white">{sandboxResult.latencyMs}ms</strong>
+                      Latență: <strong className="admin-sandbox-meta-val">{sandboxResult.latencyMs}ms</strong>
                     </span>
                   )}
                   {sandboxResult.usage && (

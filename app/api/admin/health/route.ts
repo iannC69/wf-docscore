@@ -10,6 +10,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  if (!session.isRoot && !session.permissions?.canManageHealth && !session.permissions?.canEditDocs) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
+  }
+
   const report = runDocHealthCheck();
   return NextResponse.json(report);
 }

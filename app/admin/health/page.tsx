@@ -52,7 +52,7 @@ function ScoreArc({ score }: { score: number }) {
       <circle
         cx="50" cy="50" r={radius}
         fill="none"
-        stroke="rgba(255,255,255,0.06)"
+        className="dh-score-track"
         strokeWidth="8"
       />
       {/* progress */}
@@ -71,7 +71,7 @@ function ScoreArc({ score }: { score: number }) {
       <text x="50" y="46" textAnchor="middle" fontSize="18" fontWeight="900" fill={color} fontFamily="monospace">
         {score}
       </text>
-      <text x="50" y="62" textAnchor="middle" fontSize="9" fontWeight="700" fill="rgba(255,255,255,0.4)" fontFamily="monospace">
+      <text x="50" y="62" textAnchor="middle" fontSize="9" fontWeight="700" className="dh-score-text-lbl" fontFamily="monospace">
         SCORE
       </text>
     </svg>

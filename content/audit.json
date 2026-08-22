@@ -1,5 +1,66 @@
 [
   {
+    "id": "aud_1787408622128_838346af",
+    "timestamp": "2026-08-22T14:23:42.128Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 2,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 3,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "4747f5668f989dc5c873e3890551187aab7d3c0693c94e71d68c70b3d3b1095f",
+    "hash": "e87747939247a3f98985f4cd7a1cbab4c7fbf29fd47ae818d50a8606f15b474b"
+  },
+  {
+    "id": "aud_1787408610149_aaedcc11",
+    "timestamp": "2026-08-22T14:23:30.151Z",
+    "action": "AUTH_LOGIN_FAILURE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "targetedAccount": "V1ccX",
+      "accountStatus": "🟢 Existent în Echipă (V1ccX)",
+      "accountRole": "content_editor",
+      "attemptNumber": 1,
+      "maxAttemptsAllowed": 5,
+      "remainingAttempts": 4,
+      "isLockoutActive": false,
+      "lockoutRemainingSeconds": 0,
+      "reason": "Nume de utilizator sau parolă incorectă.",
+      "clientBrowser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/15..."
+    },
+    "previousHash": "93d45db78cee3bfe6ec5aa3d63959766708deeba3df93ecb2d6e6bf1cf37abc5",
+    "hash": "4747f5668f989dc5c873e3890551187aab7d3c0693c94e71d68c70b3d3b1095f"
+  },
+  {
+    "id": "aud_1787408067430_317294e5",
+    "timestamp": "2026-08-22T14:14:27.431Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "umpy",
+      "displayName": "umpy",
+      "updatedRole": "doc_lead",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "19cc68fc520361990a84f54473f7f657c712fc0f86cfb65a28ec4646eaf206bb",
+    "hash": "93d45db78cee3bfe6ec5aa3d63959766708deeba3df93ecb2d6e6bf1cf37abc5"
+  },
+  {
     "id": "aud_1787398348822_bc92d629",
     "timestamp": "2026-08-22T11:32:28.822Z",
     "action": "AUTH_LOGIN_FAILURE",

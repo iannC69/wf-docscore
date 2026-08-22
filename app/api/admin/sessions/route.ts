@@ -14,7 +14,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
-  const sessions = getActiveSessions();
+  const isActorRoot =
+    session.isRoot ||
+    session.username.toLowerCase() === "iannc69" ||
+    session.username.toLowerCase() === "iannc";
+
+  const allSessions = getActiveSessions();
+  const visibleSessions =
+    isActorRoot || session.permissions?.canManageSecurity
+      ? allSessions
+      : allSessions.filter((s) => s.sessionId === session.sessionId);
+
   return NextResponse.json({
     currentSessionId: session.sessionId,
     currentUser: {
@@ -24,8 +34,8 @@ export async function GET(req: NextRequest) {
       isRoot: session.isRoot,
       permissions: session.permissions,
     },
-    total: sessions.length,
-    sessions,
+    total: visibleSessions.length,
+    sessions: visibleSessions,
   });
 }
 
