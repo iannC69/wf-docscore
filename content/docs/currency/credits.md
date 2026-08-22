@@ -56,7 +56,7 @@ Daca vrei sa iti multiplici creditele castigate, poti participa la modulele noas
 * `!eco` — Afiseaza balanta ta curenta de credite.
 * `!eco pay [jucator] [suma] credits` — Transfera instant credite catre un prieten sau coechipier de pe server.
 * `!shop` — Deschide meniul grafic al magazinului in-game.
-* `!test - nu face nimic.
+* `!test` - nu face nimic.
 
 ---
 
