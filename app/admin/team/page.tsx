@@ -30,6 +30,7 @@ import {
   ExternalLink,
   GitCommit,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
 import type { TeamMember, TeamMemberPermissions } from "@/lib/security/teamStore";
 
@@ -972,31 +973,42 @@ export default function AdminTeamPage() {
                       </div>
                     </div>
 
-                    <div className="admin-form-group">
-                      <label className="admin-form-label">Fișiere Modificate (Contor Ghiduri)</label>
-                      <input
-                        type="number"
-                        min={0}
-                        value={editDocsModifiedCount}
-                        autoComplete="off"
-                        data-lpignore="true"
-                        onChange={(e) => setEditDocsModifiedCount(parseInt(e.target.value) || 0)}
-                        placeholder="Ex: 14"
-                        className="admin-form-input"
-                      />
-                    </div>
-
+                    {/* Auto-Progression Engine Banner */}
                     <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>
-                      <label className="admin-form-label">Insigne / Badges (Separate prin virgulă)</label>
-                      <input
-                        type="text"
-                        value={editBadgesString}
-                        autoComplete="off"
-                        data-lpignore="true"
-                        onChange={(e) => setEditBadgesString(e.target.value)}
-                        placeholder="Ex: LEAD ARCHITECT, DOCS SPECIALIST, VERIFIED GUIDE"
-                        className="admin-form-input"
-                      />
+                      <div
+                        style={{
+                          padding: "12px 16px",
+                          background: "rgba(16, 185, 129, 0.06)",
+                          border: "1px solid rgba(16, 185, 129, 0.22)",
+                          borderRadius: "10px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          gap: "12px",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <Sparkles size={16} className="text-emerald-400" />
+                          <div>
+                            <div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#10b981", letterSpacing: "0.02em" }}>
+                              PROGRES &amp; INSIGNE AUTOMATE
+                            </div>
+                            <div style={{ fontSize: "0.72rem", color: "var(--color-text-secondary)" }}>
+                              Contorul de ghiduri, commit-urile Git și insignele sunt calculate 100% automat în timp real.
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <span className="admin-perm-tag" style={{ background: "rgba(16, 185, 129, 0.12)", color: "#10b981", borderColor: "rgba(16, 185, 129, 0.3)" }}>
+                            <BookOpen size={10} className="inline mr-1" />
+                            {selectedMember.docsModifiedCount || 0} Ghiduri
+                          </span>
+                          <span className="admin-perm-tag" style={{ background: "rgba(6, 182, 212, 0.12)", color: "#06b6d4", borderColor: "rgba(6, 182, 212, 0.3)" }}>
+                            <GitCommit size={10} className="inline mr-1" />
+                            Auto-Sync Git
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>

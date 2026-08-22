@@ -469,6 +469,13 @@ export async function dispatchDiscordAuditLog(event: AuditEvent): Promise<{ succ
     inline: false,
   });
 
+  // Dynamic Webhook Identity & Avatar Resolution
+  const WILDFIRE_BOT_AVATAR = "https://raw.githubusercontent.com/iannC69/wf-docscore/main/public/logo.png";
+  const isSystemActor = !event.actor || event.actor.toUpperCase() === "SYSTEM";
+  const actorAvatar = actorMember?.avatarUrl || (actorMember?.githubUsername ? `https://github.com/${actorMember.githubUsername}.png` : null) || WILDFIRE_BOT_AVATAR;
+  const webhookBotAvatar = isSystemActor ? WILDFIRE_BOT_AVATAR : actorAvatar;
+  const webhookBotName = isSystemActor ? "WF-DOCSCORE Audit Stream" : `WF-DOCSCORE (@${actorMember?.displayName || event.actor})`;
+
   const embed = {
     title: `${meta.icon} ${meta.title}`,
     url: `${siteUrl}/admin/audit`,
@@ -476,9 +483,11 @@ export async function dispatchDiscordAuditLog(event: AuditEvent): Promise<{ succ
     color: meta.color,
     fields,
     author: {
-      name: "WF-DOCSCORE • Security & Admin Audit Stream",
+      name: isSystemActor
+        ? "WF-DOCSCORE • Security & Admin Audit Stream"
+        : `WF-DOCSCORE • @${actorMember?.displayName || event.actor}`,
       url: `${siteUrl}/admin/audit`,
-      icon_url: "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg",
+      icon_url: webhookBotAvatar,
     },
     footer: {
       text: `WildFire Docs v1.8.5 • Security Audit Stream`,
@@ -491,6 +500,8 @@ export async function dispatchDiscordAuditLog(event: AuditEvent): Promise<{ succ
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        username: webhookBotName,
+        avatar_url: webhookBotAvatar,
         content: contentMention,
         embeds: [embed],
         allowed_mentions: {

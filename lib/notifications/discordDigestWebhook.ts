@@ -217,6 +217,8 @@ export async function dispatchDailyTrafficDigest(): Promise<{ success: boolean; 
     },
   ];
 
+  const WILDFIRE_BOT_AVATAR = "https://raw.githubusercontent.com/iannC69/wf-docscore/main/public/logo.png";
+
   const embed = {
     title: "📊 Raport Zilnic de Trafic & Telemetrie • WF-DOCSCORE",
     url: `${siteUrl}/admin`,
@@ -226,7 +228,7 @@ export async function dispatchDailyTrafficDigest(): Promise<{ success: boolean; 
     author: {
       name: "WF-DOCSCORE • Analytics & Intelligence Engine",
       url: `${siteUrl}/admin`,
-      icon_url: "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg",
+      icon_url: WILDFIRE_BOT_AVATAR,
     },
     footer: {
       text: `WildFire Docs v${CURRENT_VERSION} • Daily Midnight Digest`,
@@ -239,6 +241,8 @@ export async function dispatchDailyTrafficDigest(): Promise<{ success: boolean; 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        username: "WF-DOCSCORE Intelligence Engine",
+        avatar_url: WILDFIRE_BOT_AVATAR,
         embeds: [embed],
       }),
     });

@@ -70,6 +70,7 @@ export async function sendDiscordTaskNotification(
       displayName: found?.displayName || assigneeName,
       customTitle: found?.customTitle || found?.role || "Membru Echipă",
       avatarUrl: found?.avatarUrl || null,
+      githubUsername: found?.githubUsername || null,
       discordId: found?.discord && /^\d+$/.test(found.discord.trim()) ? found.discord.trim() : null,
     };
   });
@@ -188,7 +189,10 @@ export async function sendDiscordTaskNotification(
     ? `>>> 📝 **Instrucțiuni & Cerințe:**\n${task.description.slice(0, 1000)}`
     : "*Nicio instrucțiune suplimentară specificată.*";
 
-  const mainAvatar = assignedMembers.find((m) => m.avatarUrl)?.avatarUrl || "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg";
+  const WILDFIRE_BOT_AVATAR = "https://raw.githubusercontent.com/iannC69/wf-docscore/main/public/logo.png";
+  const mainAvatar = assignedMembers.find((m) => m.avatarUrl)?.avatarUrl ||
+    (assignedMembers[0]?.githubUsername ? `https://github.com/${assignedMembers[0]?.githubUsername}.png` : null) ||
+    WILDFIRE_BOT_AVATAR;
 
   const embed = {
     title: embedTitle,
@@ -202,7 +206,7 @@ export async function sendDiscordTaskNotification(
     author: {
       name: "WF-DOCSCORE • Task Hub & Team TODO",
       url: `${siteUrl}/admin/tasks`,
-      icon_url: "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg",
+      icon_url: WILDFIRE_BOT_AVATAR,
     },
     footer: {
       text: `WildFire Docs v${CURRENT_VERSION} • Sistem Notificări Task Hub`,
@@ -215,6 +219,8 @@ export async function sendDiscordTaskNotification(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        username: "WF-DOCSCORE Task Hub",
+        avatar_url: WILDFIRE_BOT_AVATAR,
         content: contentString,
         embeds: [embed],
         allowed_mentions: {
@@ -278,6 +284,7 @@ export async function sendDiscordTaskCommentNotification(
       displayName: found?.displayName || username,
       discordId: found?.discord && /^\d+$/.test(found.discord.trim()) ? found.discord.trim() : null,
       avatarUrl: found?.avatarUrl || null,
+      githubUsername: found?.githubUsername || null,
     };
   });
 
@@ -308,10 +315,12 @@ export async function sendDiscordTaskCommentNotification(
     ? `💬 ${pingsHeader} — ${authorTag} ți-a trimis un mesaj nou pe sarcina **"${task.title}"**!`
     : `💬 ${authorTag} a trimis un update în chat-ul sarcinii **"${task.title}"**!`;
 
+  const WILDFIRE_BOT_AVATAR = "https://raw.githubusercontent.com/iannC69/wf-docscore/main/public/logo.png";
   const authorAvatar =
     comment.avatarUrl ||
     authorMember?.avatarUrl ||
-    "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg";
+    (authorMember?.githubUsername ? `https://github.com/${authorMember.githubUsername}.png` : null) ||
+    WILDFIRE_BOT_AVATAR;
 
   const embed = {
     title: `💬 Mesaj Nou pe Sarcină • ${task.title}`,
@@ -359,6 +368,8 @@ export async function sendDiscordTaskCommentNotification(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        username: `WF-DOCSCORE (@${comment.author})`,
+        avatar_url: authorAvatar,
         content: contentString,
         embeds: [embed],
         allowed_mentions: {
