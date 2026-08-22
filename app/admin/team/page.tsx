@@ -788,14 +788,23 @@ export default function AdminTeamPage() {
                     {member.permissions.canDeleteDocs && (
                       <span className="admin-perm-tag admin-perm-tag--delete">Delete Docs</span>
                     )}
+                    {member.permissions.canManageHealth && (
+                      <span className="admin-perm-tag admin-perm-tag--health">Doc Health</span>
+                    )}
                     {member.permissions.canManageMedia && (
                       <span className="admin-perm-tag admin-perm-tag--media">Media Vault</span>
                     )}
-                    {member.permissions.canManageSettings && (
-                      <span className="admin-perm-tag admin-perm-tag--settings">Setări Platformă</span>
+                    {member.permissions.canManageTasks && (
+                      <span className="admin-perm-tag admin-perm-tag--tasks">Task Hub</span>
                     )}
                     {member.permissions.canViewAnalytics && (
                       <span className="admin-perm-tag admin-perm-tag--telemetry">Telemetry</span>
+                    )}
+                    {member.permissions.canViewAiStats && (
+                      <span className="admin-perm-tag admin-perm-tag--ai">AI Telemetry</span>
+                    )}
+                    {member.permissions.canManageDb && (
+                      <span className="admin-perm-tag admin-perm-tag--db">Database</span>
                     )}
                     {member.permissions.canViewAudit && (
                       <span className="admin-perm-tag admin-perm-tag--audit">Audit Ledger</span>
@@ -806,6 +815,18 @@ export default function AdminTeamPage() {
                     {member.permissions.canManageApiKeys && (
                       <span className="admin-perm-tag admin-perm-tag--api">API Tokens</span>
                     )}
+                    {member.permissions.canManageSnapshots && (
+                      <span className="admin-perm-tag admin-perm-tag--snapshots">Snapshots</span>
+                    )}
+                    {member.permissions.canManageWebhooks && (
+                      <span className="admin-perm-tag admin-perm-tag--webhooks">Webhooks</span>
+                    )}
+                    {member.permissions.canManageSettings && (
+                      <span className="admin-perm-tag admin-perm-tag--settings">Setări Platformă</span>
+                    )}
+                    {member.permissions.canManageTeam && (
+                      <span className="admin-perm-tag admin-perm-tag--team">Gestiune Echipă</span>
+                    )}
                     {member.permissions.canTriggerPanic && (
                       <span className="admin-perm-tag admin-perm-tag--panic">Panic Lockdown</span>
                     )}
@@ -815,7 +836,7 @@ export default function AdminTeamPage() {
                 <div className="admin-member-card-footer">
                   <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                     <span className="admin-member-perms-count">
-                      {activePermCount} / 10 Permisiuni Active
+                      {activePermCount} / 16 Permisiuni Active
                     </span>
                     <span style={{ fontSize: "0.68rem", color: "var(--color-text-tertiary)", display: "inline-flex", alignItems: "center", gap: "4px" }}>
                       {repoStats[member.username.toLowerCase()]?.totalCommits ? (

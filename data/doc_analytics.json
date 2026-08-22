@@ -2,9 +2,9 @@
   "views": {
     "informatii/faq": {
       "slug": "informatii/faq",
-      "total_views": 8,
-      "today_views": 8,
-      "last_viewed_at": "2026-08-21T22:15:23.430Z"
+      "total_views": 9,
+      "today_views": 9,
+      "last_viewed_at": "2026-08-22T10:55:16.613Z"
     },
     "informatii/staff": {
       "slug": "informatii/staff",
@@ -162,7 +162,7 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-22T10:14:08.875Z",
+  "updatedAt": "2026-08-22T10:55:16.613Z",
   "reports": [],
   "tasks": [
     {
@@ -198,7 +198,7 @@
     {
       "id": "notif_1787349620184_06fkb",
       "isGlobal": true,
-      "title": "✅ Sarcină Finalizată: De verificat gambling",
+      "title": "Sarcină Finalizată: De verificat gambling",
       "message": "Sarcina a fost marcată ca finalizată de @iannC69.",
       "category": "task",
       "severity": "success",
@@ -217,7 +217,7 @@
       "id": "notif_1787349619517_isu84",
       "targetUser": "V1ccX",
       "isGlobal": false,
-      "title": "⚡ Status Actualizat: De verificat gambling",
+      "title": "Status Actualizat: De verificat gambling",
       "message": "@iannC69 a mutat sarcina în starea IN_REVIEW.",
       "category": "task",
       "severity": "info",
@@ -233,7 +233,7 @@
     {
       "id": "notif_1787349595805_515fq",
       "isGlobal": true,
-      "title": "✅ Sarcină Finalizată: De verificat gambling",
+      "title": "Sarcină Finalizată: De verificat gambling",
       "message": "Sarcina a fost marcată ca finalizată de @iannC69.",
       "category": "task",
       "severity": "success",

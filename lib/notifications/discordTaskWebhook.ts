@@ -5,27 +5,27 @@ import { CURRENT_VERSION } from "@/lib/version";
 
 export type DiscordTaskAction = "created" | "assigned" | "completed" | "urgent";
 
-const CATEGORY_NAMES: Record<string, { label: string; icon: string }> = {
-  docs_creation: { label: "Ghid Nou", icon: "✨" },
-  docs_update:   { label: "Actualizare Ghid", icon: "📝" },
-  review:        { label: "Audit & Review", icon: "🔍" },
-  media:         { label: "Asset-uri Media", icon: "🎨" },
-  system:        { label: "Mentenanță Sistem", icon: "⚙️" },
-  bug_fix:       { label: "Corecție Bug", icon: "🛠️" },
+const CATEGORY_NAMES: Record<string, { label: string }> = {
+  docs_creation: { label: "Ghid Nou" },
+  docs_update:   { label: "Actualizare Ghid" },
+  review:        { label: "Audit & Review" },
+  media:         { label: "Asset-uri Media" },
+  system:        { label: "Mentenanță Sistem" },
+  bug_fix:       { label: "Corecție Bug" },
 };
 
-const PRIORITY_META: Record<string, { label: string; color: number; icon: string }> = {
-  urgent: { label: "URGENT", color: 0xf43f5e, icon: "🔴" },
-  high:   { label: "RIDICATĂ", color: 0xff6b00, icon: "🟠" },
-  medium: { label: "MEDIE", color: 0xf59e0b, icon: "🟡" },
-  low:    { label: "SCĂZUTĂ", color: 0x06b6d4, icon: "🔵" },
+const PRIORITY_META: Record<string, { label: string; color: number }> = {
+  urgent: { label: "URGENTĂ", color: 0xef4444 },
+  high:   { label: "ÎNALTĂ", color: 0xf97316 },
+  medium: { label: "MEDIE", color: 0xf59e0b },
+  low:    { label: "SCĂZUTĂ", color: 0x06b6d4 },
 };
 
-const STATUS_META: Record<string, { label: string; icon: string }> = {
-  todo:        { label: "De Făcut", icon: "📋" },
-  in_progress: { label: "În Lucru", icon: "⚡" },
-  in_review:   { label: "În Review", icon: "🔍" },
-  completed:   { label: "Finalizat", icon: "✅" },
+const STATUS_META: Record<string, { label: string }> = {
+  todo:        { label: "De Făcut" },
+  in_progress: { label: "În Lucru" },
+  in_review:   { label: "În Review" },
+  completed:   { label: "Finalizat" },
 };
 
 function resolveWebhookUrl(): string | null {
@@ -109,57 +109,57 @@ export async function sendDiscordTaskNotification(
 
   if (action === "completed") {
     embedColor = 0x10b981; // Emerald Green
-    embedTitle = `✅ Sarcină Finalizată cu Succes • ${task.title}`;
-    contentString = `🎉 Felicitări ${pingsHeader}! Sarcina **"${task.title}"** a fost finalizată și marcată ca gata în platformă.`;
+    embedTitle = `Sarcină Finalizată cu Succes • ${task.title}`;
+    contentString = `Felicitări ${pingsHeader}! Sarcina **"${task.title}"** a fost finalizată și marcată ca gata în platformă.`;
   } else if (action === "urgent") {
     embedColor = 0xf43f5e; // Rose Red
-    embedTitle = `🚨 [URGENT] Atenție Imediată Necesară • ${task.title}`;
-    contentString = `🔥 **ATENȚIE URGENTĂ** ${pingsHeader}! Ai fost asignat de ${assignerTag} la o sarcină cu prioritate maximă.`;
+    embedTitle = `[URGENT] Atenție Imediată Necesară • ${task.title}`;
+    contentString = `**ATENȚIE URGENTĂ** ${pingsHeader}! Ai fost asignat de ${assignerTag} la o sarcină cu prioritate maximă.`;
   } else {
     embedColor = 0xff6b00; // WildFire Orange
-    embedTitle = `📋 Sarcină Nouă Asignată • ${task.title}`;
-    contentString = `👋 Salut ${pingsHeader}! ${assignerTag} ți-a asignat o nouă sarcină în panoul administrativ.`;
+    embedTitle = `Sarcină Nouă Asignată • ${task.title}`;
+    contentString = `Salut ${pingsHeader}! ${assignerTag} ți-a asignat o nouă sarcină în panoul administrativ.`;
   }
 
   const fields: Array<{ name: string; value: string; inline: boolean }> = [
     {
-      name: "🏷️ Categorie",
-      value: `${categoryInfo.icon} **${categoryInfo.label}**`,
+      name: "Categorie",
+      value: `**${categoryInfo.label}**`,
       inline: true,
     },
     {
-      name: "⚡ Prioritate",
-      value: `${priorityInfo.icon} **${priorityInfo.label}**`,
+      name: "Prioritate",
+      value: `**${priorityInfo.label}**`,
       inline: true,
     },
     {
-      name: "📊 Status Curent",
-      value: `${statusInfo.icon} **${statusInfo.label}**`,
+      name: "Status Curent",
+      value: `**${statusInfo.label}**`,
       inline: true,
     },
     {
-      name: "👤 Asignat De",
+      name: "Asignat De",
       value: assignerTag,
       inline: true,
     },
     {
-      name: "👥 Responsabili",
+      name: "Responsabili",
       value: assignedMembers.length > 0
         ? assignedMembers.map((m) => (m.discordId ? `<@${m.discordId}>` : `@${m.displayName}`)).join(", ")
         : "_Neasignat_",
       inline: true,
     },
     {
-      name: "📅 Termen Limită (Due Date)",
-      value: task.dueDate ? `🗓️ **${task.dueDate}**` : "_Fără termen specificat_",
+      name: "Termen Limită (Due Date)",
+      value: task.dueDate ? `**${task.dueDate}**` : "_Fără termen specificat_",
       inline: true,
     },
   ];
 
   if (task.targetDoc) {
     fields.push({
-      name: "📖 Ghid Asociat",
-      value: `🔗 [**/docs/${task.targetDoc}**](${siteUrl}/docs/${task.targetDoc})`,
+      name: "Ghid Asociat",
+      value: `[**/docs/${task.targetDoc}**](${siteUrl}/docs/${task.targetDoc})`,
       inline: false,
     });
   }
@@ -168,11 +168,11 @@ export async function sendDiscordTaskNotification(
   if (task.subtasks && task.subtasks.length > 0) {
     const completedCount = task.subtasks.filter((s) => s.completed).length;
     const checklistFormatted = task.subtasks
-      .map((s) => `${s.completed ? "✅" : "⬜"} ${s.title}`)
+      .map((s) => `[${s.completed ? "x" : " "}] ${s.title}`)
       .join("\n");
 
     fields.push({
-      name: `☑️ Checklist Progres (${completedCount}/${task.subtasks.length})`,
+      name: `Checklist Progres (${completedCount}/${task.subtasks.length})`,
       value: checklistFormatted,
       inline: false,
     });
@@ -180,8 +180,8 @@ export async function sendDiscordTaskNotification(
 
   // Quick Action Links
   fields.push({
-    name: "⚡ Acțiuni Rapide",
-    value: `👉 [**Deschide Task Hub & Răspunde**](${siteUrl}/admin/tasks) • [**Documentație Publică**](${siteUrl}/docs)`,
+    name: "Acțiuni Rapide",
+    value: `[**Deschide Task Hub & Răspunde**](${siteUrl}/admin/tasks) • [**Documentație Publică**](${siteUrl}/docs)`,
     inline: false,
   });
 

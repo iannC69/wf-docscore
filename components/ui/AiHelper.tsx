@@ -422,9 +422,9 @@ export function AiHelper() {
 
     messages.forEach((m) => {
       if (m.role === "user") {
-        md += `### 👤 Întrebare Utilizator:\n${m.content}\n\n`;
+        md += `### Întrebare Utilizator:\n${m.content}\n\n`;
       } else {
-        md += `### 🤖 Răspuns WildFire AI Assistant:\n${m.content}\n\n---\n\n`;
+        md += `### Răspuns WildFire AI Assistant:\n${m.content}\n\n---\n\n`;
       }
     });
 
@@ -1058,7 +1058,7 @@ export function AiHelper() {
             {/* Quick Layout Mode Switch */}
             <button
               type="button"
-              className="ai-icon-btn"
+              className="ai-icon-btn ai-header-layout-toggle"
               onClick={cycleLayoutMode}
               title={
                 layoutMode === "side"
@@ -1075,7 +1075,7 @@ export function AiHelper() {
             </button>
 
             {/* Layout Settings Dropdown */}
-            <div className="ai-settings-dropdown-wrap">
+            <div className="ai-settings-dropdown-wrap ai-header-settings-wrap">
               <button
                 type="button"
                 className={`ai-icon-btn ${showSettings ? "ai-icon-btn--active" : ""}`}

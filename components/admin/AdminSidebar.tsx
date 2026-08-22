@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -20,6 +20,7 @@ import {
   ListTodo,
   Archive,
   Webhook,
+  X,
 } from "lucide-react";
 import { CURRENT_VERSION } from "@/lib/version";
 
@@ -138,6 +139,45 @@ export function AdminSidebar({
   isRoot?: boolean;
 }) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => {
+      setMobileOpen((prev) => {
+        const next = !prev;
+        document.body.style.overflow = next ? "hidden" : "";
+        return next;
+      });
+    };
+
+    const handleClose = () => {
+      setMobileOpen(false);
+      document.body.style.overflow = "";
+    };
+
+    window.addEventListener("admin-toggle-mobile-nav", handleToggle);
+    window.addEventListener("admin-close-mobile-nav", handleClose);
+
+    return () => {
+      window.removeEventListener("admin-toggle-mobile-nav", handleToggle);
+      window.removeEventListener("admin-close-mobile-nav", handleClose);
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // Auto close on route change
+  useEffect(() => {
+    setMobileOpen(false);
+    document.body.style.overflow = "";
+  }, [pathname]);
+
+  const handleClose = () => {
+    setMobileOpen(false);
+    document.body.style.overflow = "";
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("admin-close-mobile-nav"));
+    }
+  };
 
   // Filter navigation items by active permissions
   const allowedNavItems = NAV_ITEMS.filter((item) => {
@@ -147,48 +187,75 @@ export function AdminSidebar({
   });
 
   return (
-    <aside className="admin-sidebar" aria-label="Admin Navigation">
-      <div className="admin-sidebar-section-title">
-        <Terminal size={12} />
-        <span>NAVIGATION MATRIX</span>
-      </div>
+    <>
+      <div
+        id="admin-sidebar-overlay"
+        className={`admin-sidebar-overlay ${mobileOpen ? "admin-sidebar-overlay--open" : ""}`}
+        data-open={mobileOpen ? "true" : "false"}
+        onClick={handleClose}
+        aria-hidden="true"
+      />
 
-      <nav className="admin-nav-list">
-        {allowedNavItems.map((item) => {
-          const Icon = item.icon;
-          const isActive =
-            item.href === "/admin"
-              ? pathname === "/admin"
-              : pathname.startsWith(item.href);
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`admin-nav-item ${isActive ? "admin-nav-item--active" : ""}`}
-            >
-              <Icon size={15} className="admin-nav-icon" />
-              <span className="admin-nav-text">{item.label}</span>
-              {item.badge && (
-                <span className="admin-nav-badge">{item.badge}</span>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="admin-sidebar-footer">
-        <div className="admin-engine-status-box">
-          <div className="admin-engine-status-header">
-            <Activity size={12} className="admin-engine-pulse" />
-            <span className="admin-engine-title">WF-DOCSCORE</span>
+      <aside
+        id="admin-sidebar"
+        className={`admin-sidebar ${mobileOpen ? "admin-sidebar--open" : ""}`}
+        data-open={mobileOpen ? "true" : "false"}
+        aria-label="Admin Navigation"
+      >
+        <div className="admin-sidebar-header-row">
+          <div className="admin-sidebar-section-title">
+            <Terminal size={13} />
+            <span>NAVIGATION MATRIX</span>
           </div>
-          <div className="admin-engine-meta">
-            <span>Engine v{CURRENT_VERSION}</span>
-            <span className="admin-status-indicator">SECURE</span>
+
+          <button
+            type="button"
+            className="admin-mobile-sidebar-close"
+            onClick={handleClose}
+            aria-label="Închide meniul de navigare"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <nav className="admin-nav-list">
+          {allowedNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={handleClose}
+                className={`admin-nav-item ${isActive ? "admin-nav-item--active" : ""}`}
+              >
+                <Icon size={16} className="admin-nav-icon" />
+                <span className="admin-nav-text">{item.label}</span>
+                {item.badge && (
+                  <span className="admin-nav-badge">{item.badge}</span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="admin-sidebar-footer">
+          <div className="admin-engine-status-box">
+            <div className="admin-engine-status-header">
+              <Activity size={13} className="admin-engine-pulse" />
+              <span className="admin-engine-title">WF-DOCSCORE</span>
+            </div>
+            <div className="admin-engine-meta">
+              <span>Engine v{CURRENT_VERSION}</span>
+              <span className="admin-status-indicator">SECURE</span>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

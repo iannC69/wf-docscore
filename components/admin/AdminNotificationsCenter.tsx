@@ -118,6 +118,16 @@ function executeChimeNotes(ctx: AudioContext) {
 }
 
 
+function stripEmojis(text?: string): string {
+  if (!text) return "";
+  return text
+    .replace(
+      /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2300}-\u{23FF}]|[\u{2B50}]|[\u{200D}]|[\u{FE0F}]/gu,
+      ""
+    )
+    .trim();
+}
+
 function timeAgo(isoString: string): string {
   try {
     const date = new Date(isoString);
@@ -148,11 +158,11 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
   const [scopeFilter, setScopeFilter] = useState<"all" | "personal" | "global" | "unread">("all");
   const [categoryFilter, setCategoryFilter] = useState<NotificationCategory | "all">("all");
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeToast, setActiveToast] = useState<AdminNotification | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const hasAnnouncedEntryRef = useRef<boolean>(false);
   const prevUnreadCountRef = useRef<number>(0);
 
   const normalizedUser = (currentUsername || "").toLowerCase().trim();
@@ -181,7 +191,6 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
       }
     };
 
-
     window.addEventListener("pointerdown", unlockOnGesture, { passive: true });
     window.addEventListener("click", unlockOnGesture, { passive: true });
     window.addEventListener("keydown", unlockOnGesture, { passive: true });
@@ -194,7 +203,6 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
       window.removeEventListener("touchstart", unlockOnGesture);
     };
   }, []);
-
 
   const toggleSound = () => {
     const next = !soundEnabled;
@@ -225,20 +233,17 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
         setPersonalCount(data.personalCount || 0);
         setGlobalCount(data.globalCount || 0);
 
-        // Always announce and show persistent toast on entry if unread notifications exist
+        // Announce on initial entry if unread notifications exist
         if (isInitial && unread > 0 && list.length > 0) {
           const firstUnread = list.find((n) => {
             return !n.readBy?.includes(currentUsername) && !n.readBy?.includes(normalizedUser);
           }) || list[0];
           
-          // Instant 0ms announcement
           showToastNotification(firstUnread);
         } else if (!isInitial && unread > prevUnreadCountRef.current && list.length > 0) {
-          // New notification arrived in polling - Instant announcement
           const latest = list[0];
           showToastNotification(latest);
         }
-
 
         prevUnreadCountRef.current = unread;
       }
@@ -248,7 +253,6 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
       setLoading(false);
     }
   };
-
 
   // Poll on mount and every 20 seconds
   useEffect(() => {
@@ -305,7 +309,6 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
     } catch {}
   };
 
-
   // Mark all notifications as read
   const handleMarkAllAsRead = async () => {
     try {
@@ -357,52 +360,61 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
       // Category
       if (categoryFilter !== "all" && n.category !== categoryFilter) return false;
 
+      // Search query
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        const matchesTitle = n.title?.toLowerCase().includes(query);
+        const matchesMsg = n.message?.toLowerCase().includes(query);
+        const matchesUser = n.targetUser?.toLowerCase().includes(query);
+        if (!matchesTitle && !matchesMsg && !matchesUser) return false;
+      }
+
       return true;
     });
-  }, [notifications, scopeFilter, categoryFilter, currentUsername, normalizedUser]);
+  }, [notifications, scopeFilter, categoryFilter, searchQuery, currentUsername, normalizedUser]);
 
   const renderCategoryIcon = (category: NotificationCategory) => {
     switch (category) {
       case "task":
         return (
           <div className="admin-notify-cat-icon-wrap admin-notify-cat-icon-wrap--task" title="Sarcini & TODO">
-            <ListTodo size={12} />
+            <ListTodo size={14} />
           </div>
         );
       case "report":
         return (
           <div className="admin-notify-cat-icon-wrap admin-notify-cat-icon-wrap--report" title="Raport Jucător">
-            <AlertTriangle size={12} />
+            <AlertTriangle size={14} />
           </div>
         );
       case "feedback":
         return (
           <div className="admin-notify-cat-icon-wrap admin-notify-cat-icon-wrap--feedback" title="Feedback Document">
-            <MessageSquare size={12} />
+            <MessageSquare size={14} />
           </div>
         );
       case "security":
         return (
           <div className="admin-notify-cat-icon-wrap admin-notify-cat-icon-wrap--security" title="Securitate & 2FA">
-            <ShieldAlert size={12} />
+            <ShieldAlert size={14} />
           </div>
         );
       case "system":
         return (
           <div className="admin-notify-cat-icon-wrap admin-notify-cat-icon-wrap--system" title="Sistem & Mentenanță">
-            <Server size={12} />
+            <Server size={14} />
           </div>
         );
       case "ai":
         return (
           <div className="admin-notify-cat-icon-wrap admin-notify-cat-icon-wrap--ai" title="AI Analytics">
-            <Sparkles size={12} />
+            <Sparkles size={14} />
           </div>
         );
       default:
         return (
           <div className="admin-notify-cat-icon-wrap" title="Notificare">
-            <Bell size={12} />
+            <Bell size={14} />
           </div>
         );
     }
@@ -421,7 +433,6 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
     }
   };
 
-
   return (
     <div className="admin-notifications-center" ref={containerRef}>
       {/* ── Notification Bell Trigger Button ── */}
@@ -435,7 +446,7 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
         title={`Centru de Notificări & Alerte (${unreadCount} necitite)`}
         aria-label="Deschide Centrul de Notificări"
       >
-        <Bell size={15} className="admin-notify-bell-icon" />
+        <Bell size={16} className="admin-notify-bell-icon" />
         {unreadCount > 0 && (
           <span className="admin-notify-counter-badge" aria-label={`${unreadCount} notificări necitite`}>
             {unreadCount > 99 ? "99+" : unreadCount}
@@ -443,138 +454,172 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
         )}
       </button>
 
+      {/* ── Mobile Modal Backdrop Overlay ── */}
+      {isOpen && (
+        <div
+          className="admin-notify-mobile-overlay"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* ── Notification Flyout Panel ── */}
       {isOpen && (
         <div className="admin-notify-flyout" role="dialog" aria-modal="true">
-          {/* Header */}
-          <div className="admin-notify-flyout-header">
-            <div className="admin-notify-title-group">
-              <div className="admin-notify-header-icon-box">
-                <Bell size={15} className="text-amber-400" />
+          {/* Pinned Top Navigation & Filtering Controls */}
+          <div className="admin-notify-top-pinned">
+            {/* Header */}
+            <div className="admin-notify-flyout-header">
+              <div className="admin-notify-title-group">
+                <div className="admin-notify-header-icon-box">
+                  <Bell size={16} className="text-amber-400" />
+                </div>
+                <div>
+                  <h4 className="admin-notify-flyout-title">Centru de Notificări &amp; Alerte</h4>
+                  <p className="admin-notify-flyout-sub">
+                    {unreadCount > 0
+                      ? `${unreadCount} ${unreadCount === 1 ? "notificare necitită" : "notificări necitite"}`
+                      : "Toate notificările sunt la zi"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="admin-notify-flyout-title">Centru de Notificări &amp; Alerte</h4>
-                <p className="admin-notify-flyout-sub">
-                  {unreadCount > 0
-                    ? `${unreadCount} ${unreadCount === 1 ? "notificare necitită" : "notificări necitite"}`
-                    : "Toate notificările sunt la zi"}
-                </p>
-              </div>
-            </div>
 
-            <div className="admin-notify-header-actions">
-              {/* Sound Toggle Button */}
-              <button
-                type="button"
-                onClick={toggleSound}
-                className={`admin-notify-head-btn ${soundEnabled ? "admin-notify-head-btn--active" : ""}`}
-                title={soundEnabled ? "Sunet activat (click pentru silențios)" : "Sunet oprit (click pentru activare)"}
-              >
-                {soundEnabled ? <Volume2 size={12} className="text-emerald-400" /> : <VolumeX size={12} />}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fetchNotifications(false)}
-                disabled={loading}
-                className="admin-notify-head-btn"
-                title="Reîmprospătează notificările"
-              >
-                <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
-              </button>
-
-              {unreadCount > 0 && (
+              <div className="admin-notify-header-actions">
+                {/* Sound Toggle Button */}
                 <button
                   type="button"
-                  onClick={handleMarkAllAsRead}
-                  className="admin-notify-head-btn admin-notify-head-btn--primary"
-                  title="Marchează toate ca citite"
+                  onClick={toggleSound}
+                  className={`admin-notify-head-btn ${soundEnabled ? "admin-notify-head-btn--active" : ""}`}
+                  title={soundEnabled ? "Sunet activat (click pentru silențios)" : "Sunet oprit (click pentru activare)"}
                 >
-                  <CheckCheck size={12} />
-                  <span>Citește Tot</span>
+                  {soundEnabled ? <Volume2 size={14} className="text-emerald-400" /> : <VolumeX size={14} />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => fetchNotifications(false)}
+                  disabled={loading}
+                  className="admin-notify-head-btn"
+                  title="Reîmprospătează notificările"
+                >
+                  <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+                </button>
+
+                {unreadCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleMarkAllAsRead}
+                    className="admin-notify-head-btn admin-notify-head-btn--primary"
+                    title="Marchează toate ca citite"
+                  >
+                    <CheckCheck size={14} />
+                    <span>Citește Tot</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="admin-notify-head-btn admin-notify-head-btn--close"
+                  title="Închide"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Search Box inside flyout */}
+            <div className="admin-notify-search-bar">
+              <Filter size={13} className="text-zinc-500" />
+              <input
+                type="text"
+                placeholder="Caută în notificări & alerte..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="admin-notify-search-input"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="admin-notify-search-clear"
+                  title="Șterge căutarea"
+                >
+                  <X size={12} />
                 </button>
               )}
+            </div>
+
+            {/* Scope Filters (Toate / Personale / Globale / Necitite) */}
+            <div className="admin-notify-scope-tabs">
+              <button
+                type="button"
+                onClick={() => setScopeFilter("all")}
+                className={`admin-notify-scope-btn ${scopeFilter === "all" ? "active" : ""}`}
+              >
+                <span>Toate</span>
+                <span className="admin-notify-tab-count">{notifications.length}</span>
+              </button>
 
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
-                className="admin-notify-head-btn"
-                title="Închide"
+                onClick={() => setScopeFilter("personal")}
+                className={`admin-notify-scope-btn ${scopeFilter === "personal" ? "active" : ""}`}
               >
-                <X size={13} />
+                <UserCheck size={13} className="text-amber-400" />
+                <span>Personale</span>
+                {personalCount > 0 && (
+                  <span className="admin-notify-tab-count admin-notify-tab-count--personal">
+                    {personalCount}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setScopeFilter("global")}
+                className={`admin-notify-scope-btn ${scopeFilter === "global" ? "active" : ""}`}
+              >
+                <Globe size={13} className="text-emerald-400" />
+                <span>Globale</span>
+                <span className="admin-notify-tab-count">{globalCount}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setScopeFilter("unread")}
+                className={`admin-notify-scope-btn ${scopeFilter === "unread" ? "active" : ""}`}
+              >
+                <EyeOff size={13} className="text-rose-400" />
+                <span>Necitite</span>
+                {unreadCount > 0 && (
+                  <span className="admin-notify-tab-count admin-notify-tab-count--unread">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             </div>
-          </div>
 
-          {/* Scope Filters (Toate / Personale / Globale / Necitite) */}
-          <div className="admin-notify-scope-tabs">
-            <button
-              type="button"
-              onClick={() => setScopeFilter("all")}
-              className={`admin-notify-scope-btn ${scopeFilter === "all" ? "active" : ""}`}
-            >
-              <span>Toate</span>
-              <span className="admin-notify-tab-count">{notifications.length}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setScopeFilter("personal")}
-              className={`admin-notify-scope-btn ${scopeFilter === "personal" ? "active" : ""}`}
-            >
-              <UserCheck size={12} className="text-amber-400" />
-              <span>Personale</span>
-              {personalCount > 0 && (
-                <span className="admin-notify-tab-count admin-notify-tab-count--personal">
-                  {personalCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setScopeFilter("global")}
-              className={`admin-notify-scope-btn ${scopeFilter === "global" ? "active" : ""}`}
-            >
-              <Globe size={12} className="text-emerald-400" />
-              <span>Globale</span>
-              <span className="admin-notify-tab-count">{globalCount}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setScopeFilter("unread")}
-              className={`admin-notify-scope-btn ${scopeFilter === "unread" ? "active" : ""}`}
-            >
-              <EyeOff size={12} className="text-rose-400" />
-              <span>Necitite</span>
-              {unreadCount > 0 && (
-                <span className="admin-notify-tab-count admin-notify-tab-count--unread">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Category Filter Chips */}
-          <div className="admin-notify-category-bar">
-            {[
-              { id: "all", label: "Toate Tipurile" },
-              { id: "task", label: "Sarcini TODO" },
-              { id: "report", label: "Rapoarte Jucători" },
-              { id: "feedback", label: "Feedback" },
-              { id: "security", label: "Securitate" },
-              { id: "system", label: "Sistem" },
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setCategoryFilter(cat.id as any)}
-                className={`admin-notify-cat-chip ${categoryFilter === cat.id ? "active" : ""}`}
-              >
-                {cat.label}
-              </button>
-            ))}
+            {/* Category Filter Chips */}
+            <div className="admin-notify-category-bar">
+              {[
+                { id: "all", label: "Toate Tipurile" },
+                { id: "task", label: "Sarcini TODO" },
+                { id: "report", label: "Rapoarte Jucători" },
+                { id: "feedback", label: "Feedback" },
+                { id: "security", label: "Securitate" },
+                { id: "system", label: "Sistem" },
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setCategoryFilter(cat.id as any)}
+                  className={`admin-notify-cat-chip ${categoryFilter === cat.id ? "active" : ""}`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Notifications Scrollable List */}
@@ -582,10 +627,10 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
             {filteredNotifications.length === 0 ? (
               <div className="admin-notify-empty-state">
                 <div className="admin-notify-empty-icon">
-                  <Sparkles size={24} className="text-amber-400" />
+                  <Sparkles size={28} className="text-amber-400" />
                 </div>
                 <h5>Nicio notificare găsită</h5>
-                <p>Nu există evenimente active pentru filtrul curent.</p>
+                <p>Nu există evenimente active pentru filtrul sau căutarea selectată.</p>
               </div>
             ) : (
               filteredNotifications.map((notif) => {
@@ -613,23 +658,22 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                         {/* Scope Pill */}
                         {isPersonal ? (
                           <span className="notif-scope-pill notif-scope-pill--personal">
-                            <UserCheck size={10} />
+                            <UserCheck size={11} />
                             <span>Personal @{notif.targetUser}</span>
                           </span>
                         ) : (
                           <span className="notif-scope-pill notif-scope-pill--global">
-                            <Globe size={10} />
+                            <Globe size={11} />
                             <span>Echipă &amp; Sistem</span>
                           </span>
                         )}
-
 
                         {getSeverityBadge(notif.severity)}
                       </div>
 
                       <div className="admin-notify-card-actions">
                         <span className="admin-notify-time" title={new Date(notif.createdAt).toLocaleString()}>
-                          <Clock size={10} />
+                          <Clock size={11} />
                           <span>{timeAgo(notif.createdAt)}</span>
                         </span>
 
@@ -640,7 +684,7 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                             className="notif-card-mini-btn"
                             title="Marchează ca citit"
                           >
-                            <Check size={11} />
+                            <Check size={13} />
                           </button>
                         )}
 
@@ -650,13 +694,13 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                           className="notif-card-mini-btn notif-card-mini-btn--delete"
                           title="Șterge notificarea"
                         >
-                          <Trash2 size={11} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </div>
 
-                    <h5 className="admin-notify-card-title">{notif.title}</h5>
-                    <p className="admin-notify-card-msg">{notif.message}</p>
+                    <h5 className="admin-notify-card-title">{stripEmojis(notif.title)}</h5>
+                    <p className="admin-notify-card-msg">{stripEmojis(notif.message)}</p>
 
                     {notif.link && (
                       <div className="admin-notify-card-footer">
@@ -669,7 +713,7 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                           className="admin-notify-action-link"
                         >
                           <span>Deschide Modulul Relevant</span>
-                          <ArrowRight size={11} />
+                          <ArrowRight size={12} />
                         </a>
                       </div>
                     )}
@@ -700,26 +744,24 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                 {getSeverityBadge(activeToast.severity)}
               </div>
 
-
               <button
                 type="button"
                 onClick={() => setActiveToast(null)}
                 className="admin-notify-toast-close"
                 aria-label="Închide alerta"
               >
-                <X size={12} />
+                <X size={14} />
               </button>
             </div>
 
-
             <div className="admin-notify-toast-body">
-              <h6 className="admin-notify-toast-title">{activeToast.title}</h6>
-              <p className="admin-notify-toast-msg">{activeToast.message}</p>
+              <h6 className="admin-notify-toast-title">{stripEmojis(activeToast.title)}</h6>
+              <p className="admin-notify-toast-msg">{stripEmojis(activeToast.message)}</p>
             </div>
 
             <div className="admin-notify-toast-footer">
               <span className="admin-notify-toast-time">
-                <Clock size={10} />
+                <Clock size={11} />
                 <span>{timeAgo(activeToast.createdAt)}</span>
               </span>
 
@@ -734,7 +776,7 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                     className="admin-notify-toast-action-btn"
                   >
                     <span>Deschide</span>
-                    <ArrowRight size={10} />
+                    <ArrowRight size={11} />
                   </a>
                 )}
 
@@ -746,7 +788,7 @@ export function AdminNotificationsCenter({ currentUsername }: AdminNotifications
                   }}
                   className="admin-notify-toast-read-btn"
                 >
-                  <Check size={11} />
+                  <Check size={12} />
                   <span>Am văzut</span>
                 </button>
               </div>

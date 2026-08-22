@@ -369,7 +369,7 @@ export async function PATCH(req: NextRequest) {
       sendDiscordTaskNotification(updated, "completed").catch(() => {});
       localCreateNotification({
         isGlobal: true,
-        title: `✅ Sarcină Finalizată: ${updated.title}`,
+        title: `Sarcină Finalizată: ${updated.title}`,
         message: `Sarcina a fost marcată ca finalizată de @${session.username}.`,
         category: "task",
         severity: "success",

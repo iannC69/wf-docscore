@@ -12,8 +12,12 @@ import {
   Lock,
   Radio,
   Wrench,
+  Menu,
+  X,
+  BookOpen,
 } from "lucide-react";
 import { AdminNotificationsCenter } from "./AdminNotificationsCenter";
+import { AdminThemeToggle } from "./AdminThemeToggle";
 
 
 interface AdminHeaderProps {
@@ -56,18 +60,49 @@ export function AdminHeader({
     }
   };
 
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const toggleMobileNav = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("admin-toggle-mobile-nav"));
+    }
+  };
+
+  useEffect(() => {
+    const handleToggle = () => setMobileOpen((prev) => !prev);
+    const handleClose = () => setMobileOpen(false);
+
+    window.addEventListener("admin-toggle-mobile-nav", handleToggle);
+    window.addEventListener("admin-close-mobile-nav", handleClose);
+    return () => {
+      window.removeEventListener("admin-toggle-mobile-nav", handleToggle);
+      window.removeEventListener("admin-close-mobile-nav", handleClose);
+    };
+  }, []);
+
   return (
     <>
       <header className="admin-header">
         <div className="admin-header-left">
+          {/* Mobile Navigation Toggle */}
+          <button
+            type="button"
+            className="admin-mobile-nav-toggle"
+            onClick={toggleMobileNav}
+            aria-label={mobileOpen ? "Închide Meniul Admin" : "Deschide Meniul Admin"}
+            aria-expanded={mobileOpen}
+          >
+            <Menu size={18} />
+          </button>
+
           <Link href="/admin" className="admin-brand-link">
             <span className="admin-brand-icon-box">
               <img
                 src="/logo.png"
                 alt="Wildfire Logo"
                 className="admin-brand-logo-img"
-                width={18}
-                height={18}
+                width={20}
+                height={20}
               />
             </span>
             <span className="admin-brand-text">WILDFIRE ADMIN</span>
@@ -96,14 +131,18 @@ export function AdminHeader({
             target="_blank"
             rel="noopener noreferrer"
             className="admin-header-nav-link"
-            title="Open Live Documentation"
+            title="Deschide Documentația Publică (Live Docs)"
           >
-            <span>Live Docs</span>
-            <ArrowUpRight size={13} />
+            <BookOpen size={14} className="admin-header-docs-icon" />
+            <span className="admin-header-nav-link-text">Live Docs</span>
+            <ArrowUpRight size={11} className="admin-header-docs-arrow" />
           </a>
 
           {/* Centru de Notificări & Alerte Interactive */}
           <AdminNotificationsCenter currentUsername={username} />
+
+          {/* Admin Dark / Light Mode Switch */}
+          <AdminThemeToggle />
 
           {/* User Session Profile Pill */}
           <div className="admin-user-pill">

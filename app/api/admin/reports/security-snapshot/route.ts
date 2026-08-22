@@ -34,32 +34,32 @@ async function dispatchSecuritySnapshot() {
       .join("\n") || "_Niciun eveniment recent._";
 
   const embed = {
-    title: "🛡️ Security Snapshot — WF-DOCSCORE",
-    description: `>>> 🔒 **Raport de securitate generat la ${new Date().toLocaleString("ro-RO")}**`,
+    title: "Security Snapshot — WF-DOCSCORE",
+    description: `>>> **Raport de securitate generat la ${new Date().toLocaleString("ro-RO")}**`,
     color: isLocked ? 0xef4444 : 0x10b981,
     fields: [
       {
-        name: "🚨 Panic Lockdown",
-        value: isLocked ? "**ACTIV (URGENTA)** ⚠️" : "Clear (Operațional) ✅",
+        name: "Panic Lockdown",
+        value: isLocked ? "**ACTIV (URGENT)**" : "Clear (Operațional)",
         inline: true,
       },
       {
-        name: "🔗 Audit Chain",
-        value: chain.isValid ? "Verificată (Integritate 100%) ✅" : "**COMPROMISĂ** 🚨",
+        name: "Audit Chain",
+        value: chain.isValid ? "Verificată (Integritate 100%)" : "**COMPROMISĂ**",
         inline: true,
       },
       {
-        name: "👤 Sesiuni Active",
-        value: `**${sessions.length}** sesiune/i active 🟢`,
+        name: "Sesiuni Active",
+        value: `**${sessions.length}** sesiune/i active`,
         inline: true,
       },
       {
-        name: "🔑 API Keys Active",
-        value: `**${apiKeys.length}** chei active 🔐`,
+        name: "API Keys Active",
+        value: `**${apiKeys.length}** chei active`,
         inline: true,
       },
       {
-        name: "📋 Ultimele 5 Evenimente de Audit",
+        name: "Ultimele 5 Evenimente de Audit",
         value: eventsText,
         inline: false,
       },

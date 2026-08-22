@@ -1,5 +1,39 @@
 [
   {
+    "id": "aud_1787395129825_3d46c344",
+    "timestamp": "2026-08-22T10:38:49.825Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "Yakuza",
+      "displayName": "Yakuza",
+      "updatedRole": "custom",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "325636b26113b1c4d6a33719e49c089ed092322bbb04ec568b071bcfaff675ee",
+    "hash": "ce9a0cc784fbf83dc58283b86a7d6c24ff16aec02e6bca7f03c9b3137ebaa723"
+  },
+  {
+    "id": "aud_1787394929619_8cc5807b",
+    "timestamp": "2026-08-22T10:35:29.620Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "Yakuza",
+      "displayName": "Yakuza",
+      "updatedRole": "custom",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "f9e3b076cb925b94c92c4082a38939a4f90da9096603d33e3b40cee53651cdaf",
+    "hash": "325636b26113b1c4d6a33719e49c089ed092322bbb04ec568b071bcfaff675ee"
+  },
+  {
     "id": "aud_1787393823763_0061db35",
     "timestamp": "2026-08-22T10:17:03.764Z",
     "action": "DOC_VERSION_SAVE",
