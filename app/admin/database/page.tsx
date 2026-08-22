@@ -313,7 +313,7 @@ export default function AdminDatabasePage() {
 
   const copySqlScript = () => {
     const sql = `-- ══════════════════════════════════════════════════════════════════
--- WILDFIRE DOCS ENGINE — FULL SUPABASE POSTGRESQL SCHEMA MIGRATION
+-- WILDFIRE DOCS ENGINE — COMPLETE SUPABASE POSTGRESQL SCHEMA (10 TABLES)
 -- ══════════════════════════════════════════════════════════════════
 
 -- 1. Tabel Vizualizări Ghiduri (Page Views & Traffic)
@@ -336,12 +336,12 @@ create table if not exists doc_feedbacks (
 -- 3. Tabel Rapoarte Erori & Cereri Ghiduri (Player Reports)
 create table if not exists doc_reports (
   id text primary key,
-  type text not null default 'issue', -- 'issue' | 'request'
+  type text not null default 'issue', -- 'issue' | 'new_guide_request'
   slug text,
   title text not null,
   description text not null,
   author text not null default 'Vizitator Anonim',
-  status text not null default 'open', -- 'open' | 'investigating' | 'resolved' | 'dismissed'
+  status text not null default 'open', -- 'open' | 'in_progress' | 'resolved' | 'dismissed'
   created_at timestamp with time zone default now(),
   resolved_at timestamp with time zone,
   resolved_by text
@@ -354,7 +354,7 @@ create table if not exists admin_tasks (
   description text,
   category text not null default 'DOCS_UPDATE',
   priority text not null default 'medium', -- 'low' | 'medium' | 'high' | 'urgent'
-  status text not null default 'todo', -- 'todo' | 'in_progress' | 'review' | 'done'
+  status text not null default 'todo', -- 'todo' | 'in_progress' | 'review' | 'done' | 'completed'
   assigned_to text not null,
   created_by text not null,
   deadline timestamp with time zone,
@@ -394,6 +394,7 @@ create table if not exists team_members (
   badges jsonb default '[]'::jsonb,
   discord text,
   steam_id text,
+  github_username text,
   docs_modified_count integer default 0,
   password_hash text not null,
   salt text not null,
@@ -404,6 +405,56 @@ create table if not exists team_members (
   last_login_at timestamp with time zone
 );
 
+-- 7. Tabel Setări Platformă (Global Settings)
+create table if not exists platform_settings (
+  id text primary key default 'global',
+  settings jsonb not null,
+  updated_at timestamp with time zone default now()
+);
+
+-- 8. Tabel Registru de Audit (Audit Ledger SHA-256)
+create table if not exists audit_ledger (
+  id text primary key,
+  event_id text,
+  action text not null,
+  actor text not null default 'System',
+  ip text,
+  user_agent text,
+  details jsonb default '{}'::jsonb,
+  sha256_hash text,
+  previous_hash text,
+  created_at timestamp with time zone default now()
+);
+
+-- 9. Tabel Telemetrie Căutare (Search Telemetry)
+create table if not exists search_telemetry (
+  id text primary key,
+  query text not null,
+  hits integer default 1,
+  results_count integer default 0,
+  category text,
+  created_at timestamp with time zone default now()
+);
+
+-- 10. Tabel Revizii Articole (Doc Versions & Rollbacks)
+create table if not exists doc_versions (
+  id text primary key,
+  slug text not null,
+  version_number integer default 1,
+  content text not null,
+  summary text,
+  author text default 'System',
+  created_at timestamp with time zone default now()
+);
+
+-- ── Indexuri Performanță ──────────────────────────────────────────
+create index if not exists idx_doc_views_total on doc_views(total_views desc);
+create index if not exists idx_admin_tasks_status on admin_tasks(status);
+create index if not exists idx_team_members_username on team_members(username);
+create index if not exists idx_audit_ledger_created on audit_ledger(created_at desc);
+create index if not exists idx_search_telemetry_query on search_telemetry(query);
+create index if not exists idx_doc_versions_slug on doc_versions(slug);
+
 -- ── Securitate & Politici Row Level Security (RLS) ───────────────
 alter table doc_views enable row level security;
 alter table doc_feedbacks enable row level security;
@@ -411,8 +462,12 @@ alter table doc_reports enable row level security;
 alter table admin_tasks enable row level security;
 alter table admin_notifications enable row level security;
 alter table team_members enable row level security;
+alter table platform_settings enable row level security;
+alter table audit_ledger enable row level security;
+alter table search_telemetry enable row level security;
+alter table doc_versions enable row level security;
 
--- Curățare politici existente pentru a evita erorile de duplicat
+-- Curățare politici existente
 drop policy if exists "Allow public read on doc_views" on doc_views;
 drop policy if exists "Allow public insert/update on doc_views" on doc_views;
 drop policy if exists "Allow public read on doc_feedbacks" on doc_feedbacks;
@@ -423,6 +478,10 @@ drop policy if exists "Allow all on admin_tasks" on admin_tasks;
 drop policy if exists "Allow all on admin_notifications" on admin_notifications;
 drop policy if exists "Allow read on team_members" on team_members;
 drop policy if exists "Allow all on team_members" on team_members;
+drop policy if exists "Allow all on platform_settings" on platform_settings;
+drop policy if exists "Allow all on audit_ledger" on audit_ledger;
+drop policy if exists "Allow all on search_telemetry" on search_telemetry;
+drop policy if exists "Allow all on doc_versions" on doc_versions;
 
 -- Politici de acces public & admin
 create policy "Allow public read on doc_views" on doc_views for select using (true);
@@ -438,7 +497,12 @@ create policy "Allow all on admin_tasks" on admin_tasks for all using (true);
 create policy "Allow all on admin_notifications" on admin_notifications for all using (true);
 
 create policy "Allow read on team_members" on team_members for select using (true);
-create policy "Allow all on team_members" on team_members for all using (true);`;
+create policy "Allow all on team_members" on team_members for all using (true);
+
+create policy "Allow all on platform_settings" on platform_settings for all using (true);
+create policy "Allow all on audit_ledger" on audit_ledger for all using (true);
+create policy "Allow all on search_telemetry" on search_telemetry for all using (true);
+create policy "Allow all on doc_versions" on doc_versions for all using (true);`;
 
 
     navigator.clipboard.writeText(sql);

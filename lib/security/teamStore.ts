@@ -6,16 +6,29 @@ import { supabaseSaveTeamMember, supabaseDeleteTeamMember } from "../db/supabase
 
 
 export interface TeamMemberPermissions {
-  canEditDocs: boolean;       // Acces la Content Studio (editare/creare)
+  // ── Conținut & Workspace ──
+  canEditDocs: boolean;       // Content Studio (editare/creare ghiduri)
   canDeleteDocs: boolean;     // Ștergere articole Markdown
+  canManageHealth: boolean;   // Doc Health & Linter
   canManageMedia: boolean;    // Media & Asset Vault
-  canViewAnalytics: boolean;  // Search Telemetry
-  canViewAudit: boolean;      // Audit Ledger
-  canManageSettings: boolean; // Setări platformă, anunțuri & backup
-  canManageSecurity: boolean; // Securitate & 2FA
-  canManageApiKeys: boolean;  // Chei API
-  canTriggerPanic: boolean;   // Panic Lockdown (Strict Root iannC69)
-  canManageTeam: boolean;     // Gestiune echipă & permisiuni (Strict Root iannC69)
+  canManageTasks: boolean;    // Task Hub & Team TODO
+
+  // ── Telemetrie, AI & Baze de Date ──
+  canViewAnalytics: boolean;  // Search Telemetry & căutări
+  canViewAiStats: boolean;    // AI Engine Telemetry & tokeni
+  canManageDb: boolean;       // Database & Metrics (Supabase Sync)
+  canViewAudit: boolean;      // Audit Ledger & Trasabilitate SHA-256
+
+  // ── Securitate & Infrastructură ──
+  canManageSecurity: boolean; // Securitate 2FA & Sesiuni active
+  canManageApiKeys: boolean;  // API Tokens & Chei Servicii
+  canManageSnapshots: boolean;// Snapshot Vault & Backup-uri
+  canManageWebhooks: boolean; // Discord Webhooks & Notificări
+  canManageSettings: boolean; // Engine Settings & Mentenanță
+
+  // ── Restricționate Root Super Admin ──
+  canManageTeam: boolean;     // Gestiune Echipă & Permisiuni (Root iannC69)
+  canTriggerPanic: boolean;   // Panic Lockdown de Urgență (Root iannC69)
 }
 
 export interface TeamMember {
@@ -23,7 +36,7 @@ export interface TeamMember {
   username: string;
   displayName: string;
   email?: string;
-  role: "root_admin" | "doc_lead" | "content_editor" | "moderator" | "viewer";
+  role: "root_admin" | "doc_lead" | "content_editor" | "moderator" | "viewer" | "security_auditor" | "custom";
   customTitle?: string;         // ex: "Founder & Lead Architect", "Senior Content Editor"
   avatarUrl?: string;           // Custom profile image URL (or fallback to avatarColor monogram)
   avatarColor: string;
@@ -45,21 +58,26 @@ export interface TeamMember {
 
 export type PublicTeamMember = Omit<TeamMember, "passwordHash" | "salt" | "email">;
 
-
 const TEAM_FILE_PATH = path.join(process.cwd(), "content", "team.json");
 const ENV_LOCAL_PATH = path.join(process.cwd(), ".env.local");
 
 const ROOT_PERMISSIONS: TeamMemberPermissions = {
   canEditDocs: true,
   canDeleteDocs: true,
+  canManageHealth: true,
   canManageMedia: true,
+  canManageTasks: true,
   canViewAnalytics: true,
+  canViewAiStats: true,
+  canManageDb: true,
   canViewAudit: true,
-  canManageSettings: true,
   canManageSecurity: true,
   canManageApiKeys: true,
-  canTriggerPanic: true,
+  canManageSnapshots: true,
+  canManageWebhooks: true,
+  canManageSettings: true,
   canManageTeam: true,
+  canTriggerPanic: true,
 };
 
 export const ROLE_PRESETS: Record<string, { label: string; description: string; permissions: TeamMemberPermissions }> = {
@@ -70,66 +88,134 @@ export const ROLE_PRESETS: Record<string, { label: string; description: string; 
   },
   doc_lead: {
     label: "Documentation Lead",
-    description: "Gestionează articolele, fișierele media, setările platformei și backup-urile.",
+    description: "Gestionează articolele, sănătatea documentației, resursele media, sarcinile și setările.",
     permissions: {
       canEditDocs: true,
       canDeleteDocs: true,
+      canManageHealth: true,
       canManageMedia: true,
+      canManageTasks: true,
       canViewAnalytics: true,
+      canViewAiStats: true,
+      canManageDb: false,
       canViewAudit: true,
-      canManageSettings: true,
       canManageSecurity: false,
       canManageApiKeys: false,
-      canTriggerPanic: false,
+      canManageSnapshots: true,
+      canManageWebhooks: true,
+      canManageSettings: true,
       canManageTeam: false,
+      canTriggerPanic: false,
     },
   },
   content_editor: {
     label: "Content Editor",
-    description: "Redactează și actualizează ghiduri Markdown și gestionează resursele media.",
+    description: "Redactează și actualizează ghiduri Markdown, verifică sănătatea docs și gestionează media & task-uri.",
     permissions: {
       canEditDocs: true,
       canDeleteDocs: false,
+      canManageHealth: true,
       canManageMedia: true,
+      canManageTasks: true,
       canViewAnalytics: true,
+      canViewAiStats: false,
+      canManageDb: false,
       canViewAudit: false,
-      canManageSettings: false,
       canManageSecurity: false,
       canManageApiKeys: false,
-      canTriggerPanic: false,
+      canManageSnapshots: false,
+      canManageWebhooks: false,
+      canManageSettings: false,
       canManageTeam: false,
+      canTriggerPanic: false,
+    },
+  },
+  security_auditor: {
+    label: "Security Auditor",
+    description: "Monitorizează registrul de audit, securitatea 2FA, tokenii API și telemetria AI.",
+    permissions: {
+      canEditDocs: false,
+      canDeleteDocs: false,
+      canManageHealth: false,
+      canManageMedia: false,
+      canManageTasks: true,
+      canViewAnalytics: true,
+      canViewAiStats: true,
+      canManageDb: true,
+      canViewAudit: true,
+      canManageSecurity: true,
+      canManageApiKeys: true,
+      canManageSnapshots: true,
+      canManageWebhooks: true,
+      canManageSettings: false,
+      canManageTeam: false,
+      canTriggerPanic: false,
     },
   },
   moderator: {
     label: "Reviewer / Moderator",
-    description: "Revizuiește documentația și analizează căutările jucătorilor.",
+    description: "Revizuiește documentația, gestionează sarcini și monitorizează căutările jucătorilor.",
     permissions: {
       canEditDocs: true,
       canDeleteDocs: false,
+      canManageHealth: true,
       canManageMedia: false,
+      canManageTasks: true,
       canViewAnalytics: true,
+      canViewAiStats: false,
+      canManageDb: false,
       canViewAudit: true,
-      canManageSettings: false,
       canManageSecurity: false,
       canManageApiKeys: false,
-      canTriggerPanic: false,
+      canManageSnapshots: false,
+      canManageWebhooks: false,
+      canManageSettings: false,
       canManageTeam: false,
+      canTriggerPanic: false,
     },
   },
   viewer: {
     label: "Auditor / Read-Only",
-    description: "Acces exclusiv de vizualizare pe documentație și rapoarte de audit.",
+    description: "Acces exclusiv de vizualizare pe documentație, telemetrie și rapoarte.",
     permissions: {
       canEditDocs: false,
       canDeleteDocs: false,
+      canManageHealth: false,
       canManageMedia: false,
+      canManageTasks: false,
       canViewAnalytics: true,
+      canViewAiStats: true,
+      canManageDb: false,
       canViewAudit: true,
-      canManageSettings: false,
       canManageSecurity: false,
       canManageApiKeys: false,
-      canTriggerPanic: false,
+      canManageSnapshots: false,
+      canManageWebhooks: false,
+      canManageSettings: false,
       canManageTeam: false,
+      canTriggerPanic: false,
+    },
+  },
+  custom: {
+    label: "Rol Personalizat (Custom)",
+    description: "Permisiuni configurate individual direct de către Root Super Admin.",
+    permissions: {
+      canEditDocs: true,
+      canDeleteDocs: false,
+      canManageHealth: true,
+      canManageMedia: false,
+      canManageTasks: true,
+      canViewAnalytics: true,
+      canViewAiStats: false,
+      canManageDb: false,
+      canViewAudit: false,
+      canManageSecurity: false,
+      canManageApiKeys: false,
+      canManageSnapshots: false,
+      canManageWebhooks: false,
+      canManageSettings: false,
+      canManageTeam: false,
+      canTriggerPanic: false,
     },
   },
 };

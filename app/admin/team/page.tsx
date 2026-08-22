@@ -31,6 +31,14 @@ import {
   GitCommit,
   Sparkles,
   BookOpen,
+  Activity,
+  ListTodo,
+  Cpu,
+  Database,
+  Archive,
+  Webhook,
+  Palette,
+  Wand2,
 } from "lucide-react";
 import type { TeamMember, TeamMemberPermissions } from "@/lib/security/teamStore";
 
@@ -41,6 +49,93 @@ function GithubIcon({ size = 16, className = "" }: { size?: number; className?: 
     </svg>
   );
 }
+
+export interface PermissionModuleItem {
+  key: keyof TeamMemberPermissions;
+  name: string;
+  desc: string;
+  icon: React.ElementType;
+  color: string;
+  isRestricted?: boolean;
+}
+
+export interface PermissionCategoryGroup {
+  title: string;
+  subtitle: string;
+  icon: React.ElementType;
+  accent: string;
+  modules: PermissionModuleItem[];
+}
+
+export const PERMISSION_GROUPS: PermissionCategoryGroup[] = [
+  {
+    title: "Conținut, Workspace & Documentație",
+    subtitle: "Module de editare ghiduri, verificare integritate, fișiere media și task-uri",
+    icon: FileText,
+    accent: "#10b981",
+    modules: [
+      { key: "canEditDocs", name: "Content Studio", desc: "Redactare și publicare ghiduri Markdown", icon: FileEdit, color: "#10b981" },
+      { key: "canDeleteDocs", name: "Ștergere Docs", desc: "Permisiune de ștergere definitivă fișiere", icon: Trash2, color: "#f43f5e" },
+      { key: "canManageHealth", name: "Doc Health & Linter", desc: "Scanare automată de integritate și erori", icon: Activity, color: "#06b6d4" },
+      { key: "canManageMedia", name: "Media & Asset Vault", desc: "Upload și gestiune galerie de imagini", icon: Folder, color: "#3b82f6" },
+      { key: "canManageTasks", name: "Task Hub & TODO", desc: "Creare, asignare și bifare sarcini în echipă", icon: ListTodo, color: "#8b5cf6" },
+    ],
+  },
+  {
+    title: "Telemetrie, AI & Baze de Date",
+    subtitle: "Vizualizare statistici căutare, telemetrie AI, metrici și audit",
+    icon: Search,
+    accent: "#a855f7",
+    modules: [
+      { key: "canViewAnalytics", name: "Search Telemetry", desc: "Analiză căutări, termeni populari & trends", icon: Search, color: "#a855f7" },
+      { key: "canViewAiStats", name: "AI Engine Telemetry", desc: "Consum tokeni, latență și incidente AI", icon: Cpu, color: "#ec4899" },
+      { key: "canManageDb", name: "Database & Metrics", desc: "Monitorizare stocare și sincronizare Supabase", icon: Database, color: "#06b6d4" },
+      { key: "canViewAudit", name: "Audit Ledger", desc: "Registru criptografic SHA-256 al acțiunilor", icon: ScrollText, color: "#f59e0b" },
+    ],
+  },
+  {
+    title: "Securitate, API & Infrastructură",
+    subtitle: "Autentificare 2FA, tokeni de acces, backup-uri și setări platformă",
+    icon: ShieldCheck,
+    accent: "#3b82f6",
+    modules: [
+      { key: "canManageSecurity", name: "Securitate 2FA", desc: "Configurare TOTP și revocare forțată sesiuni", icon: ShieldCheck, color: "#3b82f6" },
+      { key: "canManageApiKeys", name: "API Tokens", desc: "Generare și revocare chei de acces REST", icon: Key, color: "#6366f1" },
+      { key: "canManageSnapshots", name: "Snapshot Vault", desc: "Creare backup-uri și descărcare bundle complet", icon: Archive, color: "#10b981" },
+      { key: "canManageWebhooks", name: "Discord Webhooks", desc: "Configurare stream-uri de notificare pe Discord", icon: Webhook, color: "#f97316" },
+      { key: "canManageSettings", name: "Engine Settings", desc: "Mod mentenanță, titluri, bannere & config", icon: Sliders, color: "#ff6b00" },
+    ],
+  },
+  {
+    title: "Comenzi Restricționate Root Super Admin",
+    subtitle: "Privilegii de nivel înalt cu imunitate completă și izolare de securitate",
+    icon: ShieldAlert,
+    accent: "#ef4444",
+    modules: [
+      { key: "canManageTeam", name: "Gestiune Echipă & Roluri", desc: "Adăugare, editare și revocare permisiuni administratori", icon: Users, color: "#f59e0b", isRestricted: true },
+      { key: "canTriggerPanic", name: "Panic Lockdown", desc: "Blocare instantanee a platformei în caz de urgență", icon: ShieldAlert, color: "#ef4444", isRestricted: true },
+    ],
+  },
+];
+
+const DEFAULT_EDITOR_PERMISSIONS: TeamMemberPermissions = {
+  canEditDocs: true,
+  canDeleteDocs: false,
+  canManageHealth: true,
+  canManageMedia: true,
+  canManageTasks: true,
+  canViewAnalytics: true,
+  canViewAiStats: false,
+  canManageDb: false,
+  canViewAudit: false,
+  canManageSecurity: false,
+  canManageApiKeys: false,
+  canManageSnapshots: false,
+  canManageWebhooks: false,
+  canManageSettings: false,
+  canManageTeam: false,
+  canTriggerPanic: false,
+};
 
 export default function AdminTeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -59,18 +154,7 @@ export default function AdminTeamPage() {
   const [editEmail, setEditEmail] = useState<string>("");
   const [editRole, setEditRole] = useState<string>("content_editor");
   const [editStatus, setEditStatus] = useState<"active" | "suspended">("active");
-  const [editPermissions, setEditPermissions] = useState<TeamMemberPermissions>({
-    canEditDocs: true,
-    canDeleteDocs: false,
-    canManageMedia: true,
-    canViewAnalytics: true,
-    canViewAudit: false,
-    canManageSettings: false,
-    canManageSecurity: false,
-    canManageApiKeys: false,
-    canTriggerPanic: false,
-    canManageTeam: false,
-  });
+  const [editPermissions, setEditPermissions] = useState<TeamMemberPermissions>({ ...DEFAULT_EDITOR_PERMISSIONS });
   const [editNewPassword, setEditNewPassword] = useState<string>("");
   const [editCustomTitle, setEditCustomTitle] = useState<string>("");
   const [editAvatarUrl, setEditAvatarUrl] = useState<string>("");
@@ -94,18 +178,7 @@ export default function AdminTeamPage() {
   const [newDiscord, setNewDiscord] = useState<string>("");
   const [newSteamId, setNewSteamId] = useState<string>("");
   const [newGithubUsername, setNewGithubUsername] = useState<string>("");
-  const [newPermissions, setNewPermissions] = useState<TeamMemberPermissions>({
-    canEditDocs: true,
-    canDeleteDocs: false,
-    canManageMedia: true,
-    canViewAnalytics: true,
-    canViewAudit: false,
-    canManageSettings: false,
-    canManageSecurity: false,
-    canManageApiKeys: false,
-    canTriggerPanic: false,
-    canManageTeam: false,
-  });
+  const [newPermissions, setNewPermissions] = useState<TeamMemberPermissions>({ ...DEFAULT_EDITOR_PERMISSIONS });
   const [creating, setCreating] = useState<boolean>(false);
 
   const fetchTeam = async () => {
@@ -161,7 +234,24 @@ export default function AdminTeamPage() {
     setEditEmail(member.email || "");
     setEditRole(member.role);
     setEditStatus(member.status);
-    setEditPermissions({ ...member.permissions });
+    setEditPermissions({
+      canEditDocs: Boolean(member.permissions?.canEditDocs),
+      canDeleteDocs: Boolean(member.permissions?.canDeleteDocs),
+      canManageHealth: member.permissions?.canManageHealth ?? Boolean(member.permissions?.canEditDocs),
+      canManageMedia: Boolean(member.permissions?.canManageMedia),
+      canManageTasks: member.permissions?.canManageTasks ?? true,
+      canViewAnalytics: Boolean(member.permissions?.canViewAnalytics),
+      canViewAiStats: Boolean(member.permissions?.canViewAiStats),
+      canManageDb: Boolean(member.permissions?.canManageDb),
+      canViewAudit: Boolean(member.permissions?.canViewAudit),
+      canManageSecurity: Boolean(member.permissions?.canManageSecurity),
+      canManageApiKeys: Boolean(member.permissions?.canManageApiKeys),
+      canManageSnapshots: member.permissions?.canManageSnapshots ?? Boolean(member.permissions?.canManageSettings),
+      canManageWebhooks: member.permissions?.canManageWebhooks ?? Boolean(member.permissions?.canManageSettings),
+      canManageSettings: Boolean(member.permissions?.canManageSettings),
+      canManageTeam: Boolean(member.permissions?.canManageTeam),
+      canTriggerPanic: Boolean(member.permissions?.canTriggerPanic),
+    });
     setEditNewPassword("");
     setEditCustomTitle(member.customTitle || "");
     setEditAvatarUrl(member.avatarUrl || "");
@@ -189,7 +279,6 @@ export default function AdminTeamPage() {
     }
   }, [editSteamId]);
 
-
   const handleRolePresetChange = (roleKey: string, isCreate = false) => {
     const preset = rolePresets[roleKey];
     if (preset) {
@@ -200,6 +289,22 @@ export default function AdminTeamPage() {
         setEditRole(roleKey);
         setEditPermissions({ ...preset.permissions });
       }
+    }
+  };
+
+  const handleCategorySelectAll = (modules: PermissionModuleItem[], selectAll: boolean, isCreate = false) => {
+    const updates: Partial<TeamMemberPermissions> = {};
+    modules.forEach((m) => {
+      if (!m.isRestricted) {
+        updates[m.key] = selectAll;
+      }
+    });
+    if (isCreate) {
+      setNewPermissions((prev) => ({ ...prev, ...updates }));
+      setNewRole("custom");
+    } else {
+      setEditPermissions((prev) => ({ ...prev, ...updates }));
+      setEditRole("custom");
     }
   };
 
@@ -1043,10 +1148,18 @@ export default function AdminTeamPage() {
 
 
 
-              {/* Role Presets (Only for Root Admin) */}
+              {/* Role Presets Bar */}
               {isRootAdmin && !selectedMember.isRoot && (
                 <div className="admin-form-group mb-4">
-                  <label className="admin-form-label">Aplică Șablon Rapid de Rol</label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <label className="admin-form-label" style={{ marginBottom: 0 }}>
+                      <Wand2 size={13} className="inline mr-1 text-amber-400" />
+                      Șabloane Rapide de Rol &amp; Permisiuni
+                    </label>
+                    <span style={{ fontSize: "0.68rem", color: "var(--color-text-tertiary)" }}>
+                      Selectează un rol predefinit sau configurează manual comutatoarele de mai jos
+                    </span>
+                  </div>
                   <div className="admin-role-picker-grid">
                     {Object.entries(rolePresets).map(([key, preset]: [string, any]) => {
                       if (key === "root_admin") return null;
@@ -1068,70 +1181,139 @@ export default function AdminTeamPage() {
                 </div>
               )}
 
-              {/* COMPACT 2-COLUMN PERMISSIONS MATRIX */}
+              {/* CATEGORIZED LIQUID GLASS PERMISSIONS MATRIX */}
               <div className="admin-perms-section">
                 <div className="admin-perms-header-bar">
                   <span className="admin-perms-header-title">
-                    {isRootAdmin && !selectedMember.isRoot ? "COMUTATOARE PERMISIUNI (10 MODULI)" : "PERMISIUNI ACTIVE"}
+                    {isRootAdmin && !selectedMember.isRoot ? "MATRICE PERMISIUNI & ACCES MODULE (16 MODULI)" : "PERMISIUNI ACTIVE"}
                   </span>
                   <span className="admin-perms-header-count">
-                    {Object.values(selectedMember.permissions || {}).filter(Boolean).length} / 10 Active
+                    {Object.values(isRootAdmin && !selectedMember.isRoot ? editPermissions : (selectedMember.permissions || {})).filter(Boolean).length} / 16 Module Active
                   </span>
                 </div>
 
-                <div className="admin-perms-compact-grid">
-                  {[
-                    { key: "canEditDocs" as keyof TeamMemberPermissions, name: "Content Studio", icon: FileEdit, color: "#10b981" },
-                    { key: "canDeleteDocs" as keyof TeamMemberPermissions, name: "Ștergere Docs", icon: Trash2, color: "#f43f5e" },
-                    { key: "canManageMedia" as keyof TeamMemberPermissions, name: "Media Vault", icon: Folder, color: "#06b6d4" },
-                    { key: "canViewAnalytics" as keyof TeamMemberPermissions, name: "Search Telemetry", icon: Search, color: "#a855f7" },
-                    { key: "canViewAudit" as keyof TeamMemberPermissions, name: "Audit Ledger", icon: ScrollText, color: "#f59e0b" },
-                    { key: "canManageSettings" as keyof TeamMemberPermissions, name: "Setări & Backup", icon: Sliders, color: "#ff6b00" },
-                    { key: "canManageSecurity" as keyof TeamMemberPermissions, name: "Securitate 2FA", icon: ShieldCheck, color: "#3b82f6" },
-                    { key: "canManageApiKeys" as keyof TeamMemberPermissions, name: "API Tokens", icon: Key, color: "#6366f1" },
-                    { key: "canTriggerPanic" as keyof TeamMemberPermissions, name: "Panic Lockdown", icon: ShieldAlert, color: "#ef4444", isRestricted: true },
-                    { key: "canManageTeam" as keyof TeamMemberPermissions, name: "Gestiune Echipă", icon: Users, color: "#f59e0b", isRestricted: true },
-                  ].map((item) => {
-                    const isGranted = Boolean(selectedMember.permissions?.[item.key]);
-                    const editVal = Boolean(editPermissions[item.key]);
-                    const IconComp = item.icon;
+                <div className="admin-perms-categories-stack">
+                  {PERMISSION_GROUPS.map((group) => {
+                    const GroupIcon = group.icon;
+                    const groupActiveCount = group.modules.filter((m) =>
+                      Boolean(isRootAdmin && !selectedMember.isRoot ? editPermissions[m.key] : selectedMember.permissions?.[m.key])
+                    ).length;
 
                     return (
-                      <div
-                        key={item.key}
-                        className={`admin-perm-compact-tile ${isGranted ? "admin-perm-compact-tile--active" : "admin-perm-compact-tile--inactive"}`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div
-                            className="admin-perm-compact-icon"
-                            style={{ color: item.color, backgroundColor: `${item.color}15`, borderColor: `${item.color}35` }}
-                          >
-                            <IconComp size={13} />
+                      <div key={group.title} className="admin-perm-category-card">
+                        <div className="admin-perm-cat-header">
+                          <div className="admin-perm-cat-title-wrap">
+                            <div
+                              className="admin-perm-cat-badge-icon"
+                              style={{ backgroundColor: `${group.accent}18`, color: group.accent }}
+                            >
+                              <GroupIcon size={12} />
+                            </div>
+                            <div>
+                              <div className="admin-perm-cat-title">{group.title}</div>
+                              <div className="admin-perm-cat-sub">{group.subtitle}</div>
+                            </div>
                           </div>
-                          <span className="admin-perm-compact-name">{item.name}</span>
+
+                          <div className="admin-perm-cat-actions">
+                            <span
+                              className="admin-perm-tag"
+                              style={{
+                                backgroundColor: `${group.accent}15`,
+                                color: group.accent,
+                                borderColor: `${group.accent}30`,
+                                fontSize: "0.65rem",
+                                padding: "2px 7px",
+                              }}
+                            >
+                              {groupActiveCount} / {group.modules.length} Active
+                            </span>
+                            {isRootAdmin && !selectedMember.isRoot && group.modules.some((m) => !m.isRestricted) && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCategorySelectAll(group.modules, true, false)}
+                                  className="admin-perm-cat-btn"
+                                  title="Activează toate permisiunile din această categorie"
+                                >
+                                  Toate
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCategorySelectAll(group.modules, false, false)}
+                                  className="admin-perm-cat-btn"
+                                  title="Dezactivează toate permisiunile din această categorie"
+                                >
+                                  Niciuna
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
 
-                        {isRootAdmin && !selectedMember.isRoot && !item.isRestricted ? (
-                          <label className="admin-toggle-switch">
-                            <input
-                              type="checkbox"
-                              checked={editVal}
-                              onChange={(e) =>
-                                setEditPermissions({ ...editPermissions, [item.key]: e.target.checked })
-                              }
-                            />
-                            <span className="admin-toggle-slider" />
-                          </label>
-                        ) : (
-                          <span
-                            className={`admin-perm-status-pill ${
-                              isGranted ? "admin-perm-status-pill--granted" : "admin-perm-status-pill--denied"
-                            }`}
-                          >
-                            {isGranted ? <Check size={11} /> : <Lock size={11} />}
-                            <span>{isGranted ? "ACTIV" : "BLOCAT"}</span>
-                          </span>
-                        )}
+                        <div className="admin-perms-compact-grid">
+                          {group.modules.map((item) => {
+                            const isGranted = Boolean(selectedMember.permissions?.[item.key]);
+                            const editVal = Boolean(editPermissions[item.key]);
+                            const IconComp = item.icon;
+
+                            return (
+                              <div
+                                key={item.key}
+                                className={`admin-perm-compact-tile ${
+                                  (isRootAdmin && !selectedMember.isRoot ? editVal : isGranted)
+                                    ? "admin-perm-compact-tile--active"
+                                    : "admin-perm-compact-tile--inactive"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 min-w-0" style={{ flex: 1 }}>
+                                  <div
+                                    className="admin-perm-compact-icon"
+                                    style={{
+                                      color: item.color,
+                                      backgroundColor: `${item.color}15`,
+                                      borderColor: `${item.color}30`,
+                                    }}
+                                  >
+                                    <IconComp size={14} />
+                                  </div>
+                                  <div className="admin-perm-tile-text">
+                                    <span className="admin-perm-compact-name">{item.name}</span>
+                                    <span className="admin-perm-tile-desc" title={item.desc}>
+                                      {item.desc}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {isRootAdmin && !selectedMember.isRoot && !item.isRestricted ? (
+                                  <label className="admin-toggle-switch">
+                                    <input
+                                      type="checkbox"
+                                      checked={editVal}
+                                      onChange={(e) => {
+                                        setEditPermissions((prev) => ({
+                                          ...prev,
+                                          [item.key]: e.target.checked,
+                                        }));
+                                        setEditRole("custom");
+                                      }}
+                                    />
+                                    <span className="admin-toggle-slider" />
+                                  </label>
+                                ) : (
+                                  <span
+                                    className={`admin-perm-status-pill ${
+                                      isGranted ? "admin-perm-status-pill--granted" : "admin-perm-status-pill--denied"
+                                    }`}
+                                  >
+                                    {isGranted ? <Check size={11} /> : <Lock size={11} />}
+                                    <span>{isGranted ? "ACTIV" : "BLOCAT"}</span>
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     );
                   })}
@@ -1292,7 +1474,7 @@ export default function AdminTeamPage() {
 
                 {/* Role Preset */}
                 <div className="admin-form-group">
-                  <div className="admin-modal-section-label">Rol & Permisiuni Inițiale</div>
+                  <div className="admin-modal-section-label">Rol &amp; Șablon Rapid de Permisiuni</div>
                   <div className="admin-role-picker-grid">
                     {Object.entries(rolePresets).map(([key, preset]: [string, any]) => {
                       if (key === "root_admin") return null;
@@ -1309,6 +1491,134 @@ export default function AdminTeamPage() {
                           <div className="admin-role-preset-name">{preset.label}</div>
                           <div className="admin-role-preset-desc">{preset.description}</div>
                         </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Categorized Permissions Grid for New Member */}
+                <div className="admin-perms-section mt-4">
+                  <div className="admin-perms-header-bar">
+                    <span className="admin-perms-header-title">COMUTATOARE PERMISIUNI INIȚIALE (16 MODULI)</span>
+                    <span className="admin-perms-header-count">
+                      {Object.values(newPermissions || {}).filter(Boolean).length} / 16 Active
+                    </span>
+                  </div>
+
+                  <div className="admin-perms-categories-stack">
+                    {PERMISSION_GROUPS.map((group) => {
+                      const GroupIcon = group.icon;
+                      const groupActiveCount = group.modules.filter((m) => Boolean(newPermissions[m.key])).length;
+
+                      return (
+                        <div key={group.title} className="admin-perm-category-card">
+                          <div className="admin-perm-cat-header">
+                            <div className="admin-perm-cat-title-wrap">
+                              <div
+                                className="admin-perm-cat-badge-icon"
+                                style={{ backgroundColor: `${group.accent}18`, color: group.accent }}
+                              >
+                                <GroupIcon size={12} />
+                              </div>
+                              <div>
+                                <div className="admin-perm-cat-title">{group.title}</div>
+                                <div className="admin-perm-cat-sub">{group.subtitle}</div>
+                              </div>
+                            </div>
+
+                            <div className="admin-perm-cat-actions">
+                              <span
+                                className="admin-perm-tag"
+                                style={{
+                                  backgroundColor: `${group.accent}15`,
+                                  color: group.accent,
+                                  borderColor: `${group.accent}30`,
+                                  fontSize: "0.65rem",
+                                  padding: "2px 7px",
+                                }}
+                              >
+                                {groupActiveCount} / {group.modules.length} Active
+                              </span>
+                              {group.modules.some((m) => !m.isRestricted) && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCategorySelectAll(group.modules, true, true)}
+                                    className="admin-perm-cat-btn"
+                                    title="Activează toate permisiunile din această categorie"
+                                  >
+                                    Toate
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCategorySelectAll(group.modules, false, true)}
+                                    className="admin-perm-cat-btn"
+                                    title="Dezactivează toate permisiunile din această categorie"
+                                  >
+                                    Niciuna
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="admin-perms-compact-grid">
+                            {group.modules.map((item) => {
+                              const isGranted = Boolean(newPermissions[item.key]);
+                              const IconComp = item.icon;
+
+                              return (
+                                <div
+                                  key={item.key}
+                                  className={`admin-perm-compact-tile ${
+                                    isGranted ? "admin-perm-compact-tile--active" : "admin-perm-compact-tile--inactive"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 min-w-0" style={{ flex: 1 }}>
+                                    <div
+                                      className="admin-perm-compact-icon"
+                                      style={{
+                                        color: item.color,
+                                        backgroundColor: `${item.color}15`,
+                                        borderColor: `${item.color}30`,
+                                      }}
+                                    >
+                                      <IconComp size={14} />
+                                    </div>
+                                    <div className="admin-perm-tile-text">
+                                      <span className="admin-perm-compact-name">{item.name}</span>
+                                      <span className="admin-perm-tile-desc" title={item.desc}>
+                                        {item.desc}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {!item.isRestricted ? (
+                                    <label className="admin-toggle-switch">
+                                      <input
+                                        type="checkbox"
+                                        checked={isGranted}
+                                        onChange={(e) => {
+                                          setNewPermissions((prev) => ({
+                                            ...prev,
+                                            [item.key]: e.target.checked,
+                                          }));
+                                          setNewRole("custom");
+                                        }}
+                                      />
+                                      <span className="admin-toggle-slider" />
+                                    </label>
+                                  ) : (
+                                    <span className="admin-perm-status-pill admin-perm-status-pill--denied">
+                                      <Lock size={11} />
+                                      <span>BLOCAT</span>
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>

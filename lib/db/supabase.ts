@@ -353,10 +353,11 @@ export async function supabaseSaveTeamMember(
       badges: member.badges || [],
       discord: member.discord || null,
       steam_id: member.steamId || null,
+      github_username: member.githubUsername || null,
       docs_modified_count: member.docsModifiedCount || 0,
       password_hash: member.passwordHash,
       salt: member.salt,
-      permissions: member.permissions,
+      permissions: member.permissions || {},
       status: member.status || "active",
       is_root: Boolean(member.isRoot),
       created_at: member.createdAt,
@@ -474,7 +475,6 @@ export async function supabaseSaveTask(
   }
 }
 
-
 export async function supabaseDeleteTask(
   config: SupabaseConfig,
   id: string
@@ -533,6 +533,120 @@ export async function supabaseDeleteNotification(
     return !error;
   } catch (err) {
     console.error("[Supabase] Error in deleteNotification", err);
+    return false;
+  }
+}
+
+// ─── Platform Settings Sync (platform_settings) ──────────────────────────────
+
+export async function supabaseSavePlatformSettings(
+  config: SupabaseConfig,
+  settings: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const row = {
+      id: "global",
+      settings: settings,
+      updated_at: new Date().toISOString(),
+    };
+    const { error } = await supabase.from("platform_settings").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert platform_settings:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in savePlatformSettings", err);
+    return false;
+  }
+}
+
+// ─── Audit Ledger Sync (audit_ledger) ────────────────────────────────────────
+
+export async function supabaseSaveAuditEntry(
+  config: SupabaseConfig,
+  entry: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const row = {
+      id: entry.id || `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      event_id: entry.eventId || entry.id || null,
+      action: entry.action || "UNKNOWN_ACTION",
+      actor: entry.actor || "System",
+      ip: entry.ip || null,
+      user_agent: entry.userAgent || null,
+      details: entry.details || {},
+      sha256_hash: entry.hash || entry.sha256_hash || null,
+      previous_hash: entry.previousHash || entry.previous_hash || null,
+      created_at: entry.timestamp || new Date().toISOString(),
+    };
+    const { error } = await supabase.from("audit_ledger").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert audit_ledger:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in saveAuditEntry", err);
+    return false;
+  }
+}
+
+// ─── Search Telemetry Sync (search_telemetry) ────────────────────────────────
+
+export async function supabaseSaveSearchQuery(
+  config: SupabaseConfig,
+  queryData: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const row = {
+      id: queryData.id || `st_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      query: queryData.query || "",
+      hits: queryData.hits || 1,
+      results_count: queryData.resultsCount || 0,
+      category: queryData.category || null,
+      created_at: queryData.timestamp || new Date().toISOString(),
+    };
+    const { error } = await supabase.from("search_telemetry").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert search_telemetry:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in saveSearchQuery", err);
+    return false;
+  }
+}
+
+// ─── Doc Versions Sync (doc_versions) ────────────────────────────────────────
+
+export async function supabaseSaveDocVersion(
+  config: SupabaseConfig,
+  version: any
+): Promise<boolean> {
+  try {
+    const supabase = getClient(config.url, config.anonKey);
+    const row = {
+      id: version.id || `ver_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      slug: version.slug,
+      version_number: version.versionNumber || version.version || 1,
+      content: version.content || "",
+      summary: version.summary || null,
+      author: version.author || "System",
+      created_at: version.createdAt || new Date().toISOString(),
+    };
+    const { error } = await supabase.from("doc_versions").upsert(row, { onConflict: "id" });
+    if (error) {
+      console.warn("[Supabase] Failed to upsert doc_versions:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[Supabase] Error in saveDocVersion", err);
     return false;
   }
 }

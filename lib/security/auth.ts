@@ -59,6 +59,44 @@ export const SESSION_COOKIE_NAME = "wf_admin_session";
 export const SESSION_DURATION_MS = 2 * 60 * 60 * 1000; // 2 hours
 export const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
+export const AUTH_ROOT_PERMISSIONS: TeamMemberPermissions = {
+  canEditDocs: true,
+  canDeleteDocs: true,
+  canManageHealth: true,
+  canManageMedia: true,
+  canManageTasks: true,
+  canViewAnalytics: true,
+  canViewAiStats: true,
+  canManageDb: true,
+  canViewAudit: true,
+  canManageSecurity: true,
+  canManageApiKeys: true,
+  canManageSnapshots: true,
+  canManageWebhooks: true,
+  canManageSettings: true,
+  canManageTeam: true,
+  canTriggerPanic: true,
+};
+
+export const AUTH_DEFAULT_PERMISSIONS: TeamMemberPermissions = {
+  canEditDocs: true,
+  canDeleteDocs: false,
+  canManageHealth: true,
+  canManageMedia: true,
+  canManageTasks: true,
+  canViewAnalytics: true,
+  canViewAiStats: false,
+  canManageDb: false,
+  canViewAudit: false,
+  canManageSecurity: false,
+  canManageApiKeys: false,
+  canManageSnapshots: false,
+  canManageWebhooks: false,
+  canManageSettings: false,
+  canManageTeam: false,
+  canTriggerPanic: false,
+};
+
 /**
  * Validates admin master credentials or team member credentials.
  */
@@ -115,26 +153,15 @@ export function verifyAdminCredentials(
       verifyPassword(cleanPassword, DEFAULT_HASH, DEFAULT_SALT);
 
     if (isMasterValid) {
-      const root = loadTeamMembers().find((m) => m.isRoot) || {
-        id: "user_root_iannc69",
+      const root: TeamMember = {
+        id: "member_root_superadmin",
         username: "iannC69",
         displayName: "iannC (Founder & Root)",
         role: "root_admin" as const,
         avatarColor: "#ff6b00",
         passwordHash: DEFAULT_HASH,
         salt: DEFAULT_SALT,
-        permissions: {
-          canEditDocs: true,
-          canDeleteDocs: true,
-          canManageMedia: true,
-          canViewAnalytics: true,
-          canViewAudit: true,
-          canManageSettings: true,
-          canManageSecurity: true,
-          canManageApiKeys: true,
-          canTriggerPanic: true,
-          canManageTeam: true,
-        },
+        permissions: AUTH_ROOT_PERMISSIONS,
         status: "active" as const,
         isRoot: true,
         createdAt: new Date().toISOString(),
@@ -162,32 +189,7 @@ export function createAdminSession(params: {
   const now = Date.now();
 
   const isRoot = params.isRoot ?? (params.username.toLowerCase() === "iannc69" || params.username.toLowerCase() === "iannc");
-
-  const defaultPermissions: TeamMemberPermissions = isRoot
-    ? {
-        canEditDocs: true,
-        canDeleteDocs: true,
-        canManageMedia: true,
-        canViewAnalytics: true,
-        canViewAudit: true,
-        canManageSettings: true,
-        canManageSecurity: true,
-        canManageApiKeys: true,
-        canTriggerPanic: true,
-        canManageTeam: true,
-      }
-    : {
-        canEditDocs: true,
-        canDeleteDocs: false,
-        canManageMedia: true,
-        canViewAnalytics: true,
-        canViewAudit: false,
-        canManageSettings: false,
-        canManageSecurity: false,
-        canManageApiKeys: false,
-        canTriggerPanic: false,
-        canManageTeam: false,
-      };
+  const defaultPermissions: TeamMemberPermissions = isRoot ? AUTH_ROOT_PERMISSIONS : AUTH_DEFAULT_PERMISSIONS;
 
   const session: AdminSession = {
     sessionId,
@@ -206,31 +208,23 @@ export function createAdminSession(params: {
   activeSessions.set(sessionId, session);
 
   const token = signSessionToken({
-    sessionId,
+    sessionId: session.sessionId,
     username: session.username,
     displayName: session.displayName,
     role: session.role,
     isRoot: session.isRoot,
     permissions: session.permissions,
+    createdAt: session.createdAt,
     expiresAt: session.expiresAt,
-  });
-
-  recordAuditEvent({
-    action: "AUTH_LOGIN_SUCCESS",
-    actor: params.username,
-    ip: params.ip,
-    userAgent: params.userAgent,
-    details: { sessionId, role: session.role, isRoot: session.isRoot },
   });
 
   return { token, session };
 }
 
 /**
- * Validates a session token from request or cookie.
+ * Validates a session token, updates activity timestamp, and checks timeout.
  */
 export function validateSessionToken(token: string): AdminSession | null {
-  if (panicLockdownActive) return null;
   if (!token) return null;
 
   const payload = verifySessionToken<{
@@ -243,18 +237,18 @@ export function validateSessionToken(token: string): AdminSession | null {
     expiresAt: number;
     createdAt?: number;
   }>(token);
-
-  if (!payload || !payload.sessionId) return null;
+  if (!payload) return null;
 
   const now = Date.now();
-
-  if (now > payload.expiresAt) {
+  if (payload.expiresAt < now) {
     activeSessions.delete(payload.sessionId);
     return null;
   }
 
-  // Retrieve or reconstruct session
+  // Cross check against live team store
   const member = findTeamMemberByUsername(payload.username);
+
+  // If member was suspended or deleted, destroy session
   if (member && member.status === "suspended") {
     activeSessions.delete(payload.sessionId);
     return null;
@@ -270,31 +264,7 @@ export function validateSessionToken(token: string): AdminSession | null {
       displayName: member?.displayName || payload.displayName || payload.username,
       role: member?.role || payload.role || (isRoot ? "root_admin" : "content_editor"),
       isRoot,
-      permissions: isRoot
-        ? {
-            canEditDocs: true,
-            canDeleteDocs: true,
-            canManageMedia: true,
-            canViewAnalytics: true,
-            canViewAudit: true,
-            canManageSettings: true,
-            canManageSecurity: true,
-            canManageApiKeys: true,
-            canTriggerPanic: true,
-            canManageTeam: true,
-          }
-        : (member?.permissions || payload.permissions || {
-            canEditDocs: true,
-            canDeleteDocs: false,
-            canManageMedia: false,
-            canViewAnalytics: false,
-            canViewAudit: false,
-            canManageSettings: false,
-            canManageSecurity: false,
-            canManageApiKeys: false,
-            canTriggerPanic: false,
-            canManageTeam: false,
-          }),
+      permissions: isRoot ? AUTH_ROOT_PERMISSIONS : (member?.permissions || payload.permissions || AUTH_DEFAULT_PERMISSIONS),
       ip: "127.0.0.1",
       userAgent: "Rehydrated Session",
       createdAt: payload.createdAt || now,
@@ -308,25 +278,12 @@ export function validateSessionToken(token: string): AdminSession | null {
       session.isRoot = isRoot;
       session.role = member.role;
       session.displayName = member.displayName;
-      session.permissions = isRoot
-        ? {
-            canEditDocs: true,
-            canDeleteDocs: true,
-            canManageMedia: true,
-            canViewAnalytics: true,
-            canViewAudit: true,
-            canManageSettings: true,
-            canManageSecurity: true,
-            canManageApiKeys: true,
-            canTriggerPanic: true,
-            canManageTeam: true,
-          }
-        : member.permissions;
+      session.permissions = isRoot ? AUTH_ROOT_PERMISSIONS : member.permissions;
     }
   }
 
   // Check activity timeout
-  if (now - session.lastActiveAt > INACTIVITY_TIMEOUT_MS) {
+  if (!session || now - session.lastActiveAt > INACTIVITY_TIMEOUT_MS) {
     activeSessions.delete(payload.sessionId);
     return null;
   }

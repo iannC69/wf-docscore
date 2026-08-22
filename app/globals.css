@@ -11128,6 +11128,94 @@ textarea.admin-form-input::placeholder {
   color: var(--color-text-tertiary);
 }
 
+/* Categorized Permissions Matrix & Category Groups */
+.admin-perms-categories-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.admin-perm-category-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg, 12px);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all var(--transition-fast);
+}
+
+.admin-perm-category-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.admin-perm-cat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-perm-cat-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-perm-cat-badge-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-perm-cat-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+
+.admin-perm-cat-sub {
+  font-size: 0.68rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.2;
+}
+
+.admin-perm-cat-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-perm-cat-btn {
+  font-size: 0.64rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-perm-cat-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 /* Compact 2-Column Permissions Matrix */
 .admin-perms-compact-grid {
   display: grid;
@@ -11145,7 +11233,7 @@ textarea.admin-form-input::placeholder {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
+  padding: 8px 12px;
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -11159,17 +11247,46 @@ textarea.admin-form-input::placeholder {
   border-color: var(--color-border-strong);
 }
 
+.admin-perm-compact-tile--active {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .admin-perm-compact-tile--inactive {
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
 .admin-perm-compact-icon {
-  width: 24px;
-  border-radius: 99px;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+.admin-perm-tile-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-perm-compact-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.admin-perm-tile-desc {
+  font-size: 0.65rem;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
 }
 
 .admin-perm-status-pill--granted {

@@ -14,6 +14,10 @@ import {
   supabaseSaveNotification,
   supabaseDeleteNotification,
   supabaseSaveTeamMember,
+  supabaseSavePlatformSettings,
+  supabaseSaveAuditEntry,
+  supabaseSaveSearchQuery,
+  supabaseSaveDocVersion,
 } from "./supabase";
 
 
@@ -682,6 +686,10 @@ export async function syncAllLocalDataToSupabase(config?: DatabaseConfig): Promi
   tasksCount: number;
   notificationsCount: number;
   teamCount: number;
+  settingsCount: number;
+  auditCount: number;
+  telemetryCount: number;
+  versionsCount: number;
 }> {
   const cfg = config || getLocalDatabaseConfig();
   if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) {
@@ -742,9 +750,68 @@ export async function syncAllLocalDataToSupabase(config?: DatabaseConfig): Promi
     const teamFilePath = path.join(process.cwd(), "content", "team.json");
     if (fs.existsSync(teamFilePath)) {
       const teamData = JSON.parse(fs.readFileSync(teamFilePath, "utf-8"));
-      for (const member of teamData.members || []) {
+      const membersList = Array.isArray(teamData) ? teamData : (teamData.members || []);
+      for (const member of membersList) {
         await supabaseSaveTeamMember(supabaseCfg, member);
         teamCount++;
+      }
+    }
+  } catch {}
+
+  // 7. Sync Platform Settings
+  let settingsCount = 0;
+  try {
+    const settingsPath = path.join(process.cwd(), "content", "settings.json");
+    if (fs.existsSync(settingsPath)) {
+      const settingsData = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
+      await supabaseSavePlatformSettings(supabaseCfg, settingsData);
+      settingsCount++;
+    }
+  } catch {}
+
+  // 8. Sync Audit Ledger
+  let auditCount = 0;
+  try {
+    const auditPaths = [
+      path.join(process.cwd(), "data", "audit_log.json"),
+      path.join(process.cwd(), "content", "audit.json"),
+    ];
+    for (const aPath of auditPaths) {
+      if (fs.existsSync(aPath)) {
+        const auditData = JSON.parse(fs.readFileSync(aPath, "utf-8"));
+        const entries = Array.isArray(auditData) ? auditData : (auditData.events || auditData.entries || []);
+        for (const entry of entries) {
+          await supabaseSaveAuditEntry(supabaseCfg, entry);
+          auditCount++;
+        }
+      }
+    }
+  } catch {}
+
+  // 9. Sync Search Telemetry
+  let telemetryCount = 0;
+  try {
+    const telemetryPath = path.join(process.cwd(), "data", "search_telemetry.json");
+    if (fs.existsSync(telemetryPath)) {
+      const telData = JSON.parse(fs.readFileSync(telemetryPath, "utf-8"));
+      const queries = Array.isArray(telData) ? telData : (telData.queries || telData.history || []);
+      for (const q of queries) {
+        await supabaseSaveSearchQuery(supabaseCfg, q);
+        telemetryCount++;
+      }
+    }
+  } catch {}
+
+  // 10. Sync Doc Versions
+  let versionsCount = 0;
+  try {
+    const versionsPath = path.join(process.cwd(), "data", "doc_versions.json");
+    if (fs.existsSync(versionsPath)) {
+      const verData = JSON.parse(fs.readFileSync(versionsPath, "utf-8"));
+      const versionList = Array.isArray(verData) ? verData : (verData.versions || []);
+      for (const ver of versionList) {
+        await supabaseSaveDocVersion(supabaseCfg, ver);
+        versionsCount++;
       }
     }
   } catch {}
@@ -756,6 +823,10 @@ export async function syncAllLocalDataToSupabase(config?: DatabaseConfig): Promi
     tasksCount,
     notificationsCount,
     teamCount,
+    settingsCount,
+    auditCount,
+    telemetryCount,
+    versionsCount,
   };
 }
 

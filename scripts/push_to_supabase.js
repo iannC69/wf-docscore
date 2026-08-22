@@ -33,6 +33,7 @@ async function pushAll() {
         badges: m.badges || [],
         discord: m.discord || null,
         steam_id: m.steamId || null,
+        github_username: m.githubUsername || null,
         docs_modified_count: m.docsModifiedCount || 0,
         password_hash: m.passwordHash,
         salt: m.salt,
@@ -124,7 +125,6 @@ async function pushAll() {
       else console.log(`Synced task: ${t.title}`);
     }
 
-
     // Notifications
     const notifs = data.notifications || [];
     console.log(`Pushing ${notifs.length} notifications...`);
@@ -146,7 +146,87 @@ async function pushAll() {
     }
   }
 
-  console.log("ALL DATA SUCCESSFULLY SYNCED TO SUPABASE!");
+  // 3. Platform Settings
+  const settingsPath = path.join(process.cwd(), "content", "settings.json");
+  if (fs.existsSync(settingsPath)) {
+    const settingsData = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
+    const { error } = await supabase.from("platform_settings").upsert({
+      id: "global",
+      settings: settingsData,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "id" });
+    if (error) console.error("Error syncing platform_settings:", error.message);
+    else console.log("Synced platform_settings");
+  }
+
+  // 4. Audit Ledger
+  const auditPaths = [
+    path.join(process.cwd(), "data", "audit_log.json"),
+    path.join(process.cwd(), "content", "audit.json"),
+  ];
+  for (const aPath of auditPaths) {
+    if (fs.existsSync(aPath)) {
+      const auditData = JSON.parse(fs.readFileSync(aPath, "utf-8"));
+      const entries = Array.isArray(auditData) ? auditData : (auditData.events || auditData.entries || []);
+      console.log(`Pushing ${entries.length} audit ledger entries...`);
+      for (const e of entries) {
+        const { error } = await supabase.from("audit_ledger").upsert({
+          id: e.id || `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          event_id: e.eventId || e.id || null,
+          action: e.action || "UNKNOWN_ACTION",
+          actor: e.actor || "System",
+          ip: e.ip || null,
+          user_agent: e.userAgent || null,
+          details: e.details || {},
+          sha256_hash: e.hash || e.sha256_hash || null,
+          previous_hash: e.previousHash || e.previous_hash || null,
+          created_at: e.timestamp || new Date().toISOString(),
+        }, { onConflict: "id" });
+        if (error) console.error(`Error syncing audit entry ${e.id}:`, error.message);
+      }
+    }
+  }
+
+  // 5. Search Telemetry
+  const telPath = path.join(process.cwd(), "data", "search_telemetry.json");
+  if (fs.existsSync(telPath)) {
+    const telData = JSON.parse(fs.readFileSync(telPath, "utf-8"));
+    const queries = Array.isArray(telData) ? telData : (telData.queries || telData.history || []);
+    console.log(`Pushing ${queries.length} search telemetry entries...`);
+    for (const q of queries) {
+      const { error } = await supabase.from("search_telemetry").upsert({
+        id: q.id || `st_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        query: q.query || "",
+        hits: q.hits || 1,
+        results_count: q.resultsCount || 0,
+        category: q.category || null,
+        created_at: q.timestamp || new Date().toISOString(),
+      }, { onConflict: "id" });
+      if (error) console.error(`Error syncing search telemetry ${q.id}:`, error.message);
+    }
+  }
+
+  // 6. Doc Versions
+  const verPath = path.join(process.cwd(), "data", "doc_versions.json");
+  if (fs.existsSync(verPath)) {
+    const verData = JSON.parse(fs.readFileSync(verPath, "utf-8"));
+    const versions = Array.isArray(verData) ? verData : (verData.versions || []);
+    console.log(`Pushing ${versions.length} doc versions...`);
+    for (const v of versions) {
+      const { error } = await supabase.from("doc_versions").upsert({
+        id: v.id || `ver_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        slug: v.slug,
+        version_number: v.versionNumber || v.version || 1,
+        content: v.content || "",
+        summary: v.summary || null,
+        author: v.author || "System",
+        created_at: v.createdAt || new Date().toISOString(),
+      }, { onConflict: "id" });
+      if (error) console.error(`Error syncing doc version ${v.id}:`, error.message);
+    }
+  }
+
+  console.log("ALL DATA (10 TABLES) SUCCESSFULLY SYNCED TO SUPABASE!");
 }
 
 pushAll().catch(console.error);

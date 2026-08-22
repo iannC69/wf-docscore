@@ -45,31 +45,29 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin/tasks",
     icon: ListTodo,
     badge: "TODO",
-    permKey: "canEditDocs",
+    permKey: "canManageTasks",
   },
   {
     label: "AI Engine Telemetry",
     href: "/admin/ai-analytics",
     icon: Cpu,
     badge: "AI",
-    permKey: "canViewAnalytics",
+    permKey: "canViewAiStats",
   },
   {
     label: "Database & Metrics",
     href: "/admin/database",
     icon: Database,
     badge: "SQL",
-    permKey: "canManageSettings",
+    permKey: "canManageDb",
   },
   {
     label: "Snapshot Vault",
     href: "/admin/backups",
     icon: Archive,
     badge: "Vault",
-    permKey: "canManageSettings",
+    permKey: "canManageSnapshots",
   },
-
-
   {
     label: "My Team & Access",
     href: "/admin/team",
@@ -82,12 +80,11 @@ const NAV_ITEMS: NavItem[] = [
     icon: FileEdit,
     permKey: "canEditDocs",
   },
-
   {
     label: "Doc Health & Linter",
     href: "/admin/health",
     icon: Activity,
-    permKey: "canEditDocs",
+    permKey: "canManageHealth",
   },
   {
     label: "Media & Asset Vault",
@@ -123,7 +120,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Webhooks",
     href: "/admin/webhooks",
     icon: Webhook,
-    permKey: "canManageSettings",
+    permKey: "canManageWebhooks",
   },
   {
     label: "Engine Settings",
