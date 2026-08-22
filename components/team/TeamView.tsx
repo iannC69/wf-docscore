@@ -618,18 +618,7 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                           {member.responsibilities.slice(0, 5).map((resp, idx) => (
                             <span
                               key={idx}
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "4px",
-                                padding: "3px 8px",
-                                borderRadius: "6px",
-                                background: "hsl(0 0% 100% / 0.04)",
-                                border: "1px solid var(--glass-border)",
-                                fontSize: "0.68rem",
-                                color: "var(--color-text-secondary)",
-                                fontWeight: 600,
-                              }}
+                              className="team-card-resp-tag"
                             >
                               {getResponsibilityIcon(resp)}
                               <span>{resp}</span>
@@ -642,44 +631,12 @@ export function TeamView({ initialMembers }: TeamViewProps) {
 
                   {/* Footer: Clean @handle + Steam & Discord Action Buttons */}
                   <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      paddingTop: "14px",
-                      marginTop: "14px",
-                      borderTop: "1px solid var(--glass-border)",
-                      minHeight: "44px",
-                    }}
+                    className="team-card-bottom-bar"
                   >
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        padding: "5px 10px",
-                        borderRadius: "8px",
-                        background: "hsl(0 0% 100% / 0.04)",
-                        border: "1px solid var(--glass-border)",
-                        boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.08), 0 2px 6px hsl(0 0% 0% / 0.2)",
-                        backdropFilter: "blur(8px)",
-                        WebkitBackdropFilter: "blur(8px)",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "0.78rem",
-                          fontWeight: 700,
-                          color: "#f1f5f9",
-                          fontFamily: "var(--font-mono, monospace)",
-                          letterSpacing: "-0.01em",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "3px",
-                        }}
-                      >
-                        <span style={{ color: roleMeta.accentColor, fontWeight: 900 }}>@</span>
-                        <span>{member.username}</span>
+                    <div className="team-handle-pill">
+                      <span className="team-handle-pill-text">
+                        <span className="team-handle-at" style={{ color: roleMeta.accentColor }}>@</span>
+                        <span className="team-handle-username">{member.username}</span>
                       </span>
                     </div>
 
@@ -687,25 +644,16 @@ export function TeamView({ initialMembers }: TeamViewProps) {
                       {/* View Profile Button */}
                       <Link
                         href={`/docs/team/${encodeURIComponent(member.username)}`}
+                        className="team-card-profile-action-btn"
                         style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          padding: "5px 10px",
-                          borderRadius: "8px",
                           background: `${roleMeta.accentColor}14`,
-                          border: `1px solid ${roleMeta.accentColor}40`,
+                          borderColor: `${roleMeta.accentColor}40`,
                           color: roleMeta.accentColor,
-                          fontSize: "0.72rem",
-                          fontWeight: 700,
-                          textDecoration: "none",
-                          transition: "all 0.18s ease",
-                          flexShrink: 0,
                         }}
                         title={`Profil complet — ${member.displayName}`}
                       >
                         <User size={11} />
-                        Profil
+                        <span>Profil</span>
                       </Link>
 
                       {/* Steam Full-Bleed Button (34x34px with Branded Blue Glow) */}

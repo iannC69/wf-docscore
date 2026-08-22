@@ -4,6 +4,7 @@ import { PageProgressBar } from "@/components/ui/PageProgressBar";
 import { AiHelper } from "@/components/ui/AiHelper";
 import { CookieConsentBanner } from "@/components/ui/CookieConsentBanner";
 import "./globals.css";
+import "@/styles/light-theme-extras.css";
 
 export const metadata: Metadata = {
   title: {
