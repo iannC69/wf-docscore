@@ -2,11 +2,17 @@ import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { loadTeamMembers } from "@/lib/security/teamStore";
 
 export interface GitCommitInfo {
   authorName: string;
   authorEmail: string;
   authorUsername: string;
+  authorDisplayName?: string;
+  authorGithubUsername?: string;
+  authorProfileUrl?: string;
+  authorCustomTitle?: string;
+  authorRole?: string;
   authorAvatar: string;
   date: string;
   relativeTime: string;
@@ -36,7 +42,7 @@ const DOCS_DIR = path.join(process.cwd(), "content", "docs");
 const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER || "iannC69";
 const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME || "wf-docscore";
 const DEFAULT_AUTHOR = "iannC69";
-const DEFAULT_EMAIL = "solwolfs2@gmail.com";
+const DEFAULT_EMAIL = "iannc@wildfire.ro";
 
 /**
  * Format date into human-readable relative time (e.g. "2 hours ago", "3 days ago")
@@ -69,23 +75,80 @@ export function formatRelativeTime(dateStr: string): string {
   }
 }
 
+export interface ResolvedAuthorProfile {
+  username: string;
+  displayName: string;
+  githubUsername?: string;
+  avatarUrl: string;
+  profileUrl: string;
+  customTitle?: string;
+  role?: string;
+}
+
 /**
- * Derives GitHub username and avatar URL from author name or email
+ * Derives team profile, avatar URL, and GitHub metadata dynamically from author name or email.
+ * Cross-references with team.json / teamStore.
  */
-export function getAuthorProfile(name: string, email: string): { username: string; avatarUrl: string } {
+export function getAuthorProfile(name: string, email: string): ResolvedAuthorProfile {
+  try {
+    const members = loadTeamMembers();
+    const cleanName = (name || "").trim().toLowerCase();
+    const cleanEmail = (email || "").trim().toLowerCase();
+
+    // Check for github noreply pattern: e.g. "Yakuza2377@users.noreply.github.com"
+    const ghNoreplyMatch = cleanEmail.match(/^(\d+\+)?([a-z0-9_-]+)@users\.noreply\.github\.com$/i);
+    const noreplyGhUser = ghNoreplyMatch ? ghNoreplyMatch[2].toLowerCase() : "";
+
+    // Find in teamStore
+    const matchedMember = members.find((m) => {
+      if (m.username.toLowerCase() === cleanName) return true;
+      if (m.displayName.toLowerCase() === cleanName) return true;
+      if (m.githubUsername && m.githubUsername.toLowerCase() === cleanName) return true;
+      if (noreplyGhUser && m.githubUsername && m.githubUsername.toLowerCase() === noreplyGhUser) return true;
+      if (m.email && m.email.toLowerCase() === cleanEmail) return true;
+      return false;
+    });
+
+    if (matchedMember) {
+      const displayName = matchedMember.displayName || matchedMember.username;
+      const ghUser = matchedMember.githubUsername;
+      const avatar = matchedMember.avatarUrl || (ghUser ? `https://github.com/${ghUser}.png` : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=10b981&color=fff&size=64&bold=true`);
+      const profileUrl = ghUser ? `https://github.com/${ghUser}` : `/team`;
+
+      return {
+        username: matchedMember.username,
+        displayName,
+        githubUsername: ghUser,
+        avatarUrl: avatar,
+        profileUrl,
+        customTitle: matchedMember.customTitle,
+        role: matchedMember.role,
+      };
+    }
+  } catch (err) {
+    console.warn("[GitProfile] Error matching team member:", err);
+  }
+
   // If author is repository owner or matches iannC69
   if (name.toLowerCase().includes("iannc") || email.toLowerCase().includes("solwolfs") || name.toLowerCase().includes("iann")) {
     return {
       username: "iannC69",
-      avatarUrl: "https://github.com/iannC69.png",
+      displayName: "iannC",
+      githubUsername: "iannC69",
+      avatarUrl: "https://avatars.fastly.steamstatic.com/f9a2171998ee2677dae87089953177799dbf7dc1_full.jpg",
+      profileUrl: "https://github.com/iannC69",
+      customTitle: "Lead Docs & Systems Architect",
+      role: "root_admin",
     };
   }
 
-  // Generic GitHub avatar lookup or fallback UI Avatars
-  const cleanName = name.replace(/\s+/g, "+");
+  // Fallback for external or unknown committers
+  const cleanFallback = name || "Wildfire Team";
   return {
-    username: name,
-    avatarUrl: `https://ui-avatars.com/api/?name=${cleanName}&background=F47B00&color=fff&size=64&bold=true`,
+    username: cleanFallback,
+    displayName: cleanFallback,
+    avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanFallback)}&background=ff6b00&color=fff&size=64&bold=true`,
+    profileUrl: `https://github.com/${encodeURIComponent(cleanFallback)}`,
   };
 }
 
@@ -127,6 +190,21 @@ function runGitCommand(cmd: string): string | null {
 }
 
 /**
+ * Invalidate all git info caches (called after doc saves).
+ */
+export function invalidateGitCache(filePath?: string): void {
+  if (filePath) {
+    _gitInfoCache.delete(filePath);
+    _firstCommitCache.delete(filePath);
+  } else {
+    _gitInfoCache.clear();
+    _firstCommitCache.clear();
+  }
+  _gitCommandCache.clear();
+  _recentDocsCache = null;
+}
+
+/**
  * Get latest git commit info for a specific file.
  * Cached per file path — runs git only once per server instance.
  */
@@ -151,9 +229,14 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
       const profile = getAuthorProfile(authorName, authorEmail);
 
       const result: GitCommitInfo = {
-        authorName: profile.username,
+        authorName: profile.displayName || profile.username,
         authorEmail,
         authorUsername: profile.username,
+        authorDisplayName: profile.displayName,
+        authorGithubUsername: profile.githubUsername,
+        authorProfileUrl: profile.profileUrl,
+        authorCustomTitle: profile.customTitle,
+        authorRole: profile.role,
         authorAvatar: profile.avatarUrl,
         date,
         relativeTime: formatRelativeTime(date),
@@ -173,9 +256,14 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
     const profile = getAuthorProfile(DEFAULT_AUTHOR, DEFAULT_EMAIL);
 
     const fallback: GitCommitInfo = {
-      authorName: DEFAULT_AUTHOR,
+      authorName: profile.displayName || DEFAULT_AUTHOR,
       authorEmail: DEFAULT_EMAIL,
       authorUsername: DEFAULT_AUTHOR,
+      authorDisplayName: profile.displayName,
+      authorGithubUsername: profile.githubUsername,
+      authorProfileUrl: profile.profileUrl,
+      authorCustomTitle: profile.customTitle,
+      authorRole: profile.role,
       authorAvatar: profile.avatarUrl,
       date,
       relativeTime: formatRelativeTime(date),
@@ -188,9 +276,14 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
   } catch {
     const profile = getAuthorProfile(DEFAULT_AUTHOR, DEFAULT_EMAIL);
     const err: GitCommitInfo = {
-      authorName: DEFAULT_AUTHOR,
+      authorName: profile.displayName || DEFAULT_AUTHOR,
       authorEmail: DEFAULT_EMAIL,
       authorUsername: DEFAULT_AUTHOR,
+      authorDisplayName: profile.displayName,
+      authorGithubUsername: profile.githubUsername,
+      authorProfileUrl: profile.profileUrl,
+      authorCustomTitle: profile.customTitle,
+      authorRole: profile.role,
       authorAvatar: profile.avatarUrl,
       date: new Date().toISOString(),
       relativeTime: "Recently",

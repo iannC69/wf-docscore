@@ -2,9 +2,9 @@
   "views": {
     "informatii/faq": {
       "slug": "informatii/faq",
-      "total_views": 7,
-      "today_views": 7,
-      "last_viewed_at": "2026-08-21T19:57:39.660Z"
+      "total_views": 8,
+      "today_views": 8,
+      "last_viewed_at": "2026-08-21T22:15:23.430Z"
     },
     "informatii/staff": {
       "slug": "informatii/staff",
@@ -56,9 +56,9 @@
     },
     "informatii/regulamente/regulament-go": {
       "slug": "informatii/regulamente/regulament-go",
-      "total_views": 1,
-      "today_views": 1,
-      "last_viewed_at": "2026-08-21T15:33:31.440Z"
+      "total_views": 2,
+      "today_views": 2,
+      "last_viewed_at": "2026-08-21T22:11:28.501Z"
     },
     "informatii/regulamente/regulament-staff-go": {
       "slug": "informatii/regulamente/regulament-staff-go",
@@ -74,9 +74,9 @@
     },
     "informatii/staff/comenzi": {
       "slug": "informatii/staff/comenzi",
-      "total_views": 1,
-      "today_views": 1,
-      "last_viewed_at": "2026-08-21T15:33:42.907Z"
+      "total_views": 2,
+      "today_views": 2,
+      "last_viewed_at": "2026-08-22T09:53:51.880Z"
     },
     "market/vip": {
       "slug": "market/vip",
@@ -104,9 +104,15 @@
     },
     "currency": {
       "slug": "currency",
+      "total_views": 2,
+      "today_views": 2,
+      "last_viewed_at": "2026-08-22T09:53:55.283Z"
+    },
+    "currency/credits": {
+      "slug": "currency/credits",
       "total_views": 1,
       "today_views": 1,
-      "last_viewed_at": "2026-08-21T20:27:20.612Z"
+      "last_viewed_at": "2026-08-22T09:53:57.124Z"
     }
   },
   "feedbacks": [
@@ -156,7 +162,7 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-21T22:03:40.422Z",
+  "updatedAt": "2026-08-22T09:53:57.124Z",
   "reports": [],
   "tasks": [
     {
@@ -198,7 +204,8 @@
       "severity": "success",
       "link": "/admin/tasks",
       "readBy": [
-        "iannC69"
+        "iannC69",
+        "Yakuza"
       ],
       "createdAt": "2026-08-21T22:00:20.184Z",
       "metadata": {
@@ -229,7 +236,8 @@
       "severity": "success",
       "link": "/admin/tasks",
       "readBy": [
-        "iannC69"
+        "iannC69",
+        "Yakuza"
       ],
       "createdAt": "2026-08-21T21:59:55.805Z",
       "metadata": {
@@ -350,7 +358,8 @@
       "severity": "urgent",
       "link": "/admin/tasks",
       "readBy": [
-        "iannC69"
+        "iannC69",
+        "Yakuza"
       ],
       "createdAt": "2026-08-21T21:52:30.967Z",
       "metadata": {
@@ -382,7 +391,8 @@
       "severity": "success",
       "link": "/admin/tasks",
       "readBy": [
-        "iannC69"
+        "iannC69",
+        "Yakuza"
       ],
       "createdAt": "2026-08-21T21:38:48.385Z",
       "metadata": {
@@ -398,7 +408,8 @@
       "severity": "success",
       "link": "/admin/tasks",
       "readBy": [
-        "iannC69"
+        "iannC69",
+        "Yakuza"
       ],
       "createdAt": "2026-08-21T21:38:35.606Z",
       "metadata": {
@@ -414,7 +425,8 @@
       "severity": "success",
       "link": "/admin/tasks",
       "readBy": [
-        "iannC69"
+        "iannC69",
+        "Yakuza"
       ],
       "createdAt": "2026-08-21T21:38:18.529Z",
       "metadata": {

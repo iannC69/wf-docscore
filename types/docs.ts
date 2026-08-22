@@ -37,6 +37,11 @@ export interface GitCommitInfo {
   authorName: string;
   authorEmail: string;
   authorUsername: string;
+  authorDisplayName?: string;
+  authorGithubUsername?: string;
+  authorProfileUrl?: string;
+  authorCustomTitle?: string;
+  authorRole?: string;
   authorAvatar: string;
   date: string;
   relativeTime: string;

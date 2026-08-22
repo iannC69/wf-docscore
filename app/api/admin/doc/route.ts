@@ -3,7 +3,9 @@ import fs from "fs";
 import path from "path";
 import { validateSessionToken, SESSION_COOKIE_NAME } from "@/lib/security/auth";
 import { recordAuditEvent } from "@/lib/security/audit";
-import { incrementMemberDocCount } from "@/lib/security/teamStore";
+import { incrementMemberDocCount, findTeamMemberByUsername } from "@/lib/security/teamStore";
+import { commitDocChange } from "@/lib/admin/gitCommit";
+import { invalidateGitCache } from "@/lib/git";
 
 const DOCS_DIR = path.join(process.cwd(), "content", "docs");
 
@@ -132,10 +134,40 @@ export async function POST(req: NextRequest) {
     // Increment contributor's modified docs counter
     incrementMemberDocCount(session.username);
 
+    // ── Auto-Git Commit with GitHub authorship ──────────────────────────────
+    // Resolves the logged-in member's githubUsername for proper attribution.
+    // Fails silently — doc save always succeeds regardless of Git status.
+    let commitHash: string | undefined;
+    try {
+      const member = findTeamMemberByUsername(session.username);
+      const gitResult = await commitDocChange({
+        filePath: `content/docs/${cleanRelPath}`.replace(/\\/g, "/"),
+        authorName: member?.displayName || session.username,
+        githubUsername: member?.githubUsername,
+        username: session.username,
+        isRoot: member?.isRoot ?? false,
+        slug,
+        action: isNew ? "create" : "update",
+      });
+      if (gitResult.success) {
+        commitHash = gitResult.commitHash;
+        console.info(`[GitCommit] ${session.username} committed ${slug} → ${commitHash}`);
+      } else if (!gitResult.skipped) {
+        console.warn(`[GitCommit] Commit failed for ${slug}:`, gitResult.error);
+      }
+    } catch (gitErr: any) {
+      console.warn("[GitCommit] Unexpected error (non-fatal):", gitErr?.message);
+    }
+    // ────────────────────────────────────────────────────────────────────────
+
+    // Invalidate Git cache so updated author / commit metadata renders fresh
+    invalidateGitCache(targetPath);
+
     return NextResponse.json({
       success: true,
       message: `Document ${isNew ? "created" : "updated"} successfully.`,
       slug,
+      ...(commitHash ? { commitHash } : {}),
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Failed to save document" }, { status: 500 });

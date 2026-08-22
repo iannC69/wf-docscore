@@ -108,8 +108,9 @@ export default async function DocPage({ params }: Props) {
   }));
 
   const git = page.gitInfo;
-  const authorName = page.frontmatter.authors?.[0] || git?.authorUsername || "iannC69";
-  const authorAvatar = git?.authorAvatar || `https://github.com/${authorName}.png`;
+  const authorDisplayName = git?.authorDisplayName || git?.authorName || page.frontmatter.authors?.[0] || "iannC69";
+  const authorAvatar = git?.authorAvatar || `https://github.com/${git?.authorGithubUsername || authorDisplayName}.png`;
+  const authorProfileUrl = git?.authorProfileUrl || (git?.authorGithubUsername ? `https://github.com/${git.authorGithubUsername}` : `/team`);
   const relativeTime = git?.relativeTime || "Recently";
   const commitHash = git?.commitHash || "HEAD";
 
@@ -162,7 +163,7 @@ export default async function DocPage({ params }: Props) {
                 </div>
                 <div className="print-meta-item">
                   <span className="print-meta-lbl">Author:</span>
-                  <span className="print-meta-val">{authorName} ({relativeTime})</span>
+                  <span className="print-meta-val">{authorDisplayName} ({relativeTime})</span>
                 </div>
                 <div className="print-meta-item">
                   <span className="print-meta-lbl">Length:</span>
@@ -223,7 +224,7 @@ export default async function DocPage({ params }: Props) {
                 <div className="page-author-chip">
                   <img
                     src={authorAvatar}
-                    alt={authorName}
+                    alt={authorDisplayName}
                     className="author-avatar-img"
                     width={20}
                     height={20}
@@ -232,12 +233,13 @@ export default async function DocPage({ params }: Props) {
                   <span className="author-text-wrap">
                     <span className="author-action-label">Updated by</span>
                     <a
-                      href={`https://github.com/${authorName}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={authorProfileUrl}
+                      target={authorProfileUrl.startsWith("http") ? "_blank" : undefined}
+                      rel={authorProfileUrl.startsWith("http") ? "noopener noreferrer" : undefined}
                       className="author-name-link"
+                      title={git?.authorCustomTitle || `Profil membru: ${authorDisplayName}`}
                     >
-                      {authorName}
+                      {authorDisplayName}
                     </a>
                   </span>
                   <span className="author-dot-sep" aria-hidden="true">·</span>
@@ -265,7 +267,7 @@ export default async function DocPage({ params }: Props) {
                   sha256={page.sha256}
                   commitHash={commitHash}
                   commitUrl={git?.commitUrl || `https://github.com/iannC69/wf-docscore/commit/${commitHash}`}
-                  authorName={authorName}
+                  authorName={authorDisplayName}
                   relativeTime={relativeTime}
                   slug={slug.join("/")}
                 />
