@@ -1,6 +1,6 @@
 ---
 title: Intrebari Frecvente (FAQ)
-description: Gaseste raspunsuri rapide la cele mai frecvente intrebari despre serverul WildFire.ro, sisteme custom, economie, regulamente si comenzi.
+description: Gaseste raspunsuri rapide la cele mai frecvente intrebari despre serverul nostru, sisteme custom, economie, regulamente si comenzi.
 outline: deep
 ---
 
