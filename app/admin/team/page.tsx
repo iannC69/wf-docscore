@@ -92,6 +92,7 @@ export default function AdminTeamPage() {
   const [newRole, setNewRole] = useState<string>("content_editor");
   const [newDiscord, setNewDiscord] = useState<string>("");
   const [newSteamId, setNewSteamId] = useState<string>("");
+  const [newGithubUsername, setNewGithubUsername] = useState<string>("");
   const [newPermissions, setNewPermissions] = useState<TeamMemberPermissions>({
     canEditDocs: true,
     canDeleteDocs: false,
@@ -279,6 +280,7 @@ export default function AdminTeamPage() {
           role: newRole,
           discord: newDiscord.trim(),
           steamId: newSteamId.trim(),
+          githubUsername: newGithubUsername.trim() || undefined,
           customPermissions: newPermissions,
         }),
       });
@@ -293,6 +295,7 @@ export default function AdminTeamPage() {
         setNewPassword("");
         setNewDiscord("");
         setNewSteamId("");
+        setNewGithubUsername("");
         fetchTeam();
       } else {
         setStatusMessage({ type: "error", text: data.message || "Crearea administratorului a eșuat." });
@@ -1257,6 +1260,17 @@ export default function AdminTeamPage() {
                         placeholder="Ex: 76561198... sau alex_cs2"
                         value={newSteamId}
                         onChange={(e) => setNewSteamId(e.target.value)}
+                        className="admin-form-input"
+                      />
+                    </div>
+
+                    <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>
+                      <label className="admin-form-label">GitHub Username (Profil Contribuitor / Auto-Push)</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: alex_dev (username oficial pe GitHub)"
+                        value={newGithubUsername}
+                        onChange={(e) => setNewGithubUsername(e.target.value)}
                         className="admin-form-input"
                       />
                     </div>

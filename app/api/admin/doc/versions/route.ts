@@ -23,6 +23,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 
+  // Root Super Admin Isolation: Only Root (iannC69) has access to view versions & rollback
+  if (!session.isRoot) {
+    return NextResponse.json(
+      { error: "FORBIDDEN", message: "Doar Root Super Admin (iannC69) are acces la istoricul de revizii." },
+      { status: 403 }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const slug = searchParams.get("slug");
 
@@ -46,7 +54,7 @@ export async function GET(req: NextRequest) {
         const raw = fs.readFileSync(path.join(targetDir, f), "utf-8");
         const parsed = JSON.parse(raw);
         versions.push(parsed);
-      } catch {}
+      } catch { }
     }
   }
 

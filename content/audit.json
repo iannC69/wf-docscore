@@ -1,5 +1,252 @@
 [
   {
+    "id": "aud_1787393606770_879c74a1",
+    "timestamp": "2026-08-22T10:13:26.771Z",
+    "action": "DOC_VERSION_SAVE",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "informatii/about",
+      "versionId": "rev-1787393606768"
+    },
+    "previousHash": "4accfa61adb2f2296d9ed777ef4bc757085195fb78306864d3bd1089addf9d28",
+    "hash": "28ccfdc62f86e4d43a928b9732127135ea4b73d976cfdf6e9d659e148a75e036"
+  },
+  {
+    "id": "aud_1787393604028_ca53bd87",
+    "timestamp": "2026-08-22T10:13:24.028Z",
+    "action": "DOC_UPDATE",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "informatii/about",
+      "path": "informatii/about.md",
+      "action": "update"
+    },
+    "previousHash": "4afbe703fdc7e3d1ed7a9650069a6d3ee657e76c812e469c579c5bdd7aeeeb38",
+    "hash": "4accfa61adb2f2296d9ed777ef4bc757085195fb78306864d3bd1089addf9d28"
+  },
+  {
+    "id": "aud_1787393499124_6e6defa9",
+    "timestamp": "2026-08-22T10:11:39.124Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+    "details": {
+      "sessionId": "sess_03415eb9a48063d5f88bae64901db38379fce95eee5d296c",
+      "role": "content_editor",
+      "isRoot": false
+    },
+    "previousHash": "7e674d143389e9f0eb2182e4ea58935b321b4efe1592573b25a81e4211c58317",
+    "hash": "4afbe703fdc7e3d1ed7a9650069a6d3ee657e76c812e469c579c5bdd7aeeeb38"
+  },
+  {
+    "id": "aud_1787393493117_5b0d2762",
+    "timestamp": "2026-08-22T10:11:33.117Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "Yakuza",
+      "displayName": "Yakuza",
+      "updatedRole": "content_editor",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "1d0f21a2bf5a3a60b2da07419e8500dccd5dababb2e28d292c19019ba13f6cde",
+    "hash": "7e674d143389e9f0eb2182e4ea58935b321b4efe1592573b25a81e4211c58317"
+  },
+  {
+    "id": "aud_1787393185205_8037ceac",
+    "timestamp": "2026-08-22T10:06:25.206Z",
+    "action": "DOC_VERSION_SAVE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "currency/credits",
+      "versionId": "rev-1787393185203"
+    },
+    "previousHash": "fa2374fb14f04057f0fd7a8ca7d6276eb570a0c024a24d427a3469c34d53faf5",
+    "hash": "1d0f21a2bf5a3a60b2da07419e8500dccd5dababb2e28d292c19019ba13f6cde"
+  },
+  {
+    "id": "aud_1787393182677_ae81c83c",
+    "timestamp": "2026-08-22T10:06:22.678Z",
+    "action": "DOC_UPDATE",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "currency/credits",
+      "path": "currency/credits.md",
+      "action": "update"
+    },
+    "previousHash": "c154535f295558b7a7f3c70726ce8edabd7bc2ff16792e42e4063e08ec927bd9",
+    "hash": "fa2374fb14f04057f0fd7a8ca7d6276eb570a0c024a24d427a3469c34d53faf5"
+  },
+  {
+    "id": "aud_1787393151386_bd57d0a1",
+    "timestamp": "2026-08-22T10:05:51.387Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "V1ccX",
+      "displayName": "V1ccX",
+      "updatedRole": "content_editor",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "711a1dda269b4eb9643c1984eba7a7850330e97dca42e8cf9564301ddeffdcc7",
+    "hash": "c154535f295558b7a7f3c70726ce8edabd7bc2ff16792e42e4063e08ec927bd9"
+  },
+  {
+    "id": "aud_1787393096753_87b7c24f",
+    "timestamp": "2026-08-22T10:04:56.754Z",
+    "action": "AUTH_LOGIN_SUCCESS",
+    "actor": "V1ccX",
+    "ip": "::1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "details": {
+      "sessionId": "sess_b58ccc02a3a0cb6ed50528a5234f92fe2f89fd06373b9023",
+      "role": "content_editor",
+      "isRoot": false
+    },
+    "previousHash": "82e57a8b89b64b8e3671edfbe4301a815a56117eafa4d3afa345bc6437a1a1a9",
+    "hash": "711a1dda269b4eb9643c1984eba7a7850330e97dca42e8cf9564301ddeffdcc7"
+  },
+  {
+    "id": "aud_1787393000337_1c52eff8",
+    "timestamp": "2026-08-22T10:03:20.337Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "V1ccX",
+      "displayName": "V1ccX",
+      "updatedRole": "content_editor",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "c218998c15a47171efb2ea698820b8fb8d28f160bc9a5ec261a44c09bc1f9a77",
+    "hash": "82e57a8b89b64b8e3671edfbe4301a815a56117eafa4d3afa345bc6437a1a1a9"
+  },
+  {
+    "id": "aud_1787392996592_55239236",
+    "timestamp": "2026-08-22T10:03:16.592Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "V1ccX",
+      "displayName": "v1ccx",
+      "updatedRole": "content_editor",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "2b956d691e3a0f18666a6ce6562feb556861b1d55ffec1f9d0ec13095433f68e",
+    "hash": "c218998c15a47171efb2ea698820b8fb8d28f160bc9a5ec261a44c09bc1f9a77"
+  },
+  {
+    "id": "aud_1787392985950_af4603dd",
+    "timestamp": "2026-08-22T10:03:05.951Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "V1ccX",
+      "displayName": "v1ccx",
+      "updatedRole": "content_editor",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "11459b818f1d59286001a3f28c6e9e79298613d07e5c3fc77dc055c351de5dde",
+    "hash": "2b956d691e3a0f18666a6ce6562feb556861b1d55ffec1f9d0ec13095433f68e"
+  },
+  {
+    "id": "aud_1787392952582_14a3aad2",
+    "timestamp": "2026-08-22T10:02:32.583Z",
+    "action": "TEAM_MEMBER_UPDATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetUser": "V1ccX",
+      "displayName": "v1ccx",
+      "updatedRole": "content_editor",
+      "status": "active",
+      "permissionsUpdated": true
+    },
+    "previousHash": "bf30b7ed5f869b091df85c95e0aa7ad8036c2944b29603687e008d35dc72141b",
+    "hash": "11459b818f1d59286001a3f28c6e9e79298613d07e5c3fc77dc055c351de5dde"
+  },
+  {
+    "id": "aud_1787392897595_db7461a0",
+    "timestamp": "2026-08-22T10:01:37.595Z",
+    "action": "AUTH_LOGOUT",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "sessionId": "sess_06bbe17cea17d2ed4cbfcaad11dac82f40e84448780acf5d"
+    },
+    "previousHash": "a5efb0240609c4fdefe59abe0c5ed2fbb0cb2faf69b4d6b3f174bb95e192b4be",
+    "hash": "bf30b7ed5f869b091df85c95e0aa7ad8036c2944b29603687e008d35dc72141b"
+  },
+  {
+    "id": "aud_1787392897580_9b119035",
+    "timestamp": "2026-08-22T10:01:37.581Z",
+    "action": "SESSION_REVOKED",
+    "actor": "Yakuza",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "revokedSessionId": "sess_06bbe17cea17d2ed4cbfcaad11dac82f40e84448780acf5d",
+      "username": "Yakuza"
+    },
+    "previousHash": "294e58e8be68e8d09eddccf0bf02c92f4cea640c6d88df27ff0c3fb828835ed6",
+    "hash": "a5efb0240609c4fdefe59abe0c5ed2fbb0cb2faf69b4d6b3f174bb95e192b4be"
+  },
+  {
+    "id": "aud_1787392884503_1adaad2e",
+    "timestamp": "2026-08-22T10:01:24.503Z",
+    "action": "TEAM_MEMBER_CREATED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "createdUser": "V1ccX",
+      "displayName": "v1ccx",
+      "role": "content_editor",
+      "customTitle": "Membru Staff",
+      "discordId": "996796351587287100"
+    },
+    "previousHash": "d3a52316dcf3978fed8b85029821a410543d5c06a032077bc0b8ae0f3ee39b98",
+    "hash": "294e58e8be68e8d09eddccf0bf02c92f4cea640c6d88df27ff0c3fb828835ed6"
+  },
+  {
+    "id": "aud_1787392776694_f8c8a059",
+    "timestamp": "2026-08-22T09:59:36.695Z",
+    "action": "TEAM_MEMBER_DELETED",
+    "actor": "iannC69",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "targetId": "user_e88ca0b4c008bda646d0b02e79c00938"
+    },
+    "previousHash": "92aa109c896e00a868e31bd5e2c6226c07af32263341483ae0a934ac507256ab",
+    "hash": "d3a52316dcf3978fed8b85029821a410543d5c06a032077bc0b8ae0f3ee39b98"
+  },
+  {
     "id": "aud_1787392334537_e1f52961",
     "timestamp": "2026-08-22T09:52:14.537Z",
     "action": "DOC_VERSION_SAVE",

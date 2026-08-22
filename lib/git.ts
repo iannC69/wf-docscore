@@ -152,15 +152,7 @@ export function getAuthorProfile(name: string, email: string): ResolvedAuthorPro
   };
 }
 
-/**
- * Executes a git command safely with fallbacks.
- * Results are cached in-memory so each unique command runs only once per server instance.
- */
-const _gitCommandCache = new Map<string, string | null>();
-
 function runGitCommand(cmd: string): string | null {
-  if (_gitCommandCache.has(cmd)) return _gitCommandCache.get(cmd)!;
-
   const gitPaths = [
     "git",
     "\"C:\\Program Files\\Git\\cmd\\git.exe\"",
@@ -177,7 +169,6 @@ function runGitCommand(cmd: string): string | null {
         timeout: 3000,
       });
       if (output) {
-        _gitCommandCache.set(cmd, output.trim());
         return output.trim();
       }
     } catch {
@@ -185,33 +176,22 @@ function runGitCommand(cmd: string): string | null {
     }
   }
 
-  _gitCommandCache.set(cmd, null);
   return null;
 }
 
 /**
  * Invalidate all git info caches (called after doc saves).
  */
-export function invalidateGitCache(filePath?: string): void {
-  if (filePath) {
-    _gitInfoCache.delete(filePath);
-    _firstCommitCache.delete(filePath);
-  } else {
-    _gitInfoCache.clear();
-    _firstCommitCache.clear();
-  }
-  _gitCommandCache.clear();
+export function invalidateGitCache(_filePath?: string): void {
+  _firstCommitCache.clear();
   _recentDocsCache = null;
 }
 
 /**
  * Get latest git commit info for a specific file.
- * Cached per file path — runs git only once per server instance.
+ * Queries Git live so the latest committer is always immediately reflected.
  */
-const _gitInfoCache = new Map<string, GitCommitInfo>();
-
 export function getFileGitInfo(filePath: string): GitCommitInfo {
-  if (_gitInfoCache.has(filePath)) return _gitInfoCache.get(filePath)!;
   // Relative path from repo root
   const relPath = path.relative(process.cwd(), filePath).replace(/\\/g, "/");
 
@@ -244,7 +224,6 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
         commitMessage,
         commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/commit/${commitHash}`,
       };
-      _gitInfoCache.set(filePath, result);
       return result;
     }
   }
@@ -271,7 +250,6 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
       commitMessage: "Documentation update",
       commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`,
     };
-    _gitInfoCache.set(filePath, fallback);
     return fallback;
   } catch {
     const profile = getAuthorProfile(DEFAULT_AUTHOR, DEFAULT_EMAIL);
@@ -291,7 +269,6 @@ export function getFileGitInfo(filePath: string): GitCommitInfo {
       commitMessage: "Documentation update",
       commitUrl: `https://github.com/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}`,
     };
-    _gitInfoCache.set(filePath, err);
     return err;
   }
 }

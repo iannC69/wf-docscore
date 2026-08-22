@@ -14,9 +14,9 @@
     },
     "informatii/about": {
       "slug": "informatii/about",
-      "total_views": 6,
-      "today_views": 6,
-      "last_viewed_at": "2026-08-21T19:54:46.006Z"
+      "total_views": 7,
+      "today_views": 7,
+      "last_viewed_at": "2026-08-22T10:14:08.874Z"
     },
     "informatii/getting-started": {
       "slug": "informatii/getting-started",
@@ -110,9 +110,9 @@
     },
     "currency/credits": {
       "slug": "currency/credits",
-      "total_views": 1,
-      "today_views": 1,
-      "last_viewed_at": "2026-08-22T09:53:57.124Z"
+      "total_views": 2,
+      "today_views": 2,
+      "last_viewed_at": "2026-08-22T10:07:22.053Z"
     }
   },
   "feedbacks": [
@@ -162,7 +162,7 @@
       "ip_hash": "Ojox"
     }
   ],
-  "updatedAt": "2026-08-22T09:53:57.124Z",
+  "updatedAt": "2026-08-22T10:14:08.875Z",
   "reports": [],
   "tasks": [
     {
@@ -205,7 +205,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T22:00:20.184Z",
       "metadata": {
@@ -221,7 +222,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T22:00:19.517Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -237,7 +240,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T21:59:55.805Z",
       "metadata": {
@@ -253,7 +257,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:59:54.541Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -268,7 +274,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:59:52.757Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -283,7 +291,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:58:35.446Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -298,7 +308,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:57:57.678Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -313,7 +325,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:56:07.131Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -328,7 +342,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:54:47.861Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -343,7 +359,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:52:54.298Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1"
@@ -359,7 +377,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T21:52:30.967Z",
       "metadata": {
@@ -375,7 +394,9 @@
       "category": "task",
       "severity": "urgent",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T21:52:30.959Z",
       "metadata": {
         "taskId": "task_1787349150940_441c1",
@@ -392,7 +413,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T21:38:48.385Z",
       "metadata": {
@@ -409,7 +431,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T21:38:35.606Z",
       "metadata": {
@@ -426,7 +449,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T21:38:18.529Z",
       "metadata": {
@@ -442,7 +466,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T20:45:33.763Z",
       "metadata": {
         "taskId": "task_1787345133738_4jq9r",
@@ -459,7 +485,8 @@
       "link": "/admin/tasks",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T20:32:20.789Z",
       "metadata": {
@@ -494,7 +521,8 @@
       "link": "/admin/database",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T20:26:35.741Z",
       "metadata": {
@@ -513,7 +541,8 @@
       "link": "/docs/systems/other/c4-planter",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T20:26:31.533Z",
       "metadata": {
@@ -538,7 +567,8 @@
       "link": "/docs/systems/other/c4-planter",
       "readBy": [
         "iannC69",
-        "Yakuza"
+        "Yakuza",
+        "V1ccX"
       ],
       "createdAt": "2026-08-21T20:26:29.803Z",
       "metadata": {
@@ -578,7 +608,9 @@
       "category": "task",
       "severity": "info",
       "link": "/admin/tasks",
-      "readBy": [],
+      "readBy": [
+        "V1ccX"
+      ],
       "createdAt": "2026-08-21T17:07:05.623Z",
       "metadata": {
         "taskId": "task_seed_2"

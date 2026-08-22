@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { username, displayName, email, role, password, customPermissions, customTitle, avatarUrl, discord, steamId, bio, responsibilities } = body;
+    const { username, displayName, email, role, password, customPermissions, customTitle, avatarUrl, discord, steamId, githubUsername, bio, responsibilities } = body;
 
     if (!username || !password) {
       return NextResponse.json(
@@ -119,6 +119,7 @@ export async function POST(req: NextRequest) {
       avatarUrl: resolvedAvatarUrl,
       discord,
       steamId,
+      githubUsername,
       bio,
       responsibilities,
     });
@@ -176,6 +177,7 @@ export async function PUT(req: NextRequest) {
       bio,
       discord,
       steamId,
+      githubUsername,
       responsibilities,
       badges,
       docsModifiedCount,
@@ -197,11 +199,11 @@ export async function PUT(req: NextRequest) {
       password,
       customTitle,
       avatarUrl: resolvedAvatarUrl,
-
       avatarColor,
       bio,
       discord,
       steamId,
+      githubUsername,
       responsibilities,
       badges,
       docsModifiedCount: typeof docsModifiedCount === "number" ? docsModifiedCount : undefined,

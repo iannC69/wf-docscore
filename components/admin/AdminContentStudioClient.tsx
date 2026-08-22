@@ -414,6 +414,10 @@ export function AdminContentStudioClient() {
   // Versions dropdown ref for click-outside
   const versionsMenuRef = useRef<HTMLDivElement>(null);
 
+  // User session state (Root Isolation for revisions & rollback)
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const isRoot = Boolean(currentUser?.isRoot);
+
   // ── Click-outside: close versions dropdown ──────────────────────────────
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -457,6 +461,7 @@ export function AdminContentStudioClient() {
         if (res.status === 401) { window.location.href = "/admin/login"; return; }
         const data = await res.json();
         setDocs(data.docs || []);
+        if (data.currentUser) setCurrentUser(data.currentUser);
         if (!selectedSlug && data.docs && data.docs.length > 0 && !isCreatingNew) {
           setSelectedSlug(data.docs[0].slug);
         }
@@ -480,6 +485,7 @@ export function AdminContentStudioClient() {
       try {
         const res = await fetch(`/api/admin/doc?slug=${encodeURIComponent(selectedSlug)}`);
         const data = await res.json();
+        if (data.currentUser) setCurrentUser(data.currentUser);
         if (data.content) {
           setContent(data.content);
           setOriginalContent(data.content);
@@ -494,9 +500,18 @@ export function AdminContentStudioClient() {
           }
         }
 
-        const vRes = await fetch(`/api/admin/doc/versions?slug=${encodeURIComponent(selectedSlug)}`);
-        const vData = await vRes.json();
-        setVersions(vData.versions || []);
+        const userIsRoot = Boolean(data.currentUser?.isRoot ?? currentUser?.isRoot);
+        if (userIsRoot) {
+          const vRes = await fetch(`/api/admin/doc/versions?slug=${encodeURIComponent(selectedSlug)}`);
+          if (vRes.ok) {
+            const vData = await vRes.json();
+            setVersions(vData.versions || []);
+          } else {
+            setVersions([]);
+          }
+        } else {
+          setVersions([]);
+        }
       } catch (err) {
         console.error("Failed to load content", err);
       } finally {
@@ -788,54 +803,56 @@ export function AdminContentStudioClient() {
             <span>{isDraft ? "DRAFT (ASCUNS)" : "PUBLISHED (PUBLIC)"}</span>
           </button>
 
-          {/* Versions History Dropdown */}
-          <div className="relative inline-block" ref={versionsMenuRef}>
-            <button
-              type="button"
-              onClick={() => setShowVersionsMenu(!showVersionsMenu)}
-              className="admin-btn admin-btn--secondary"
-              title="Vezi reviziile anterioare ale acestui document"
-            >
-              <History size={14} />
-              <span>Revizii ({versions.length})</span>
-            </button>
+          {/* Versions History Dropdown — Strict Root Super Admin Only */}
+          {isRoot && (
+            <div className="relative inline-block" ref={versionsMenuRef}>
+              <button
+                type="button"
+                onClick={() => setShowVersionsMenu(!showVersionsMenu)}
+                className="admin-btn admin-btn--secondary"
+                title="Vezi reviziile anterioare ale acestui document"
+              >
+                <History size={14} />
+                <span>Revizii ({versions.length})</span>
+              </button>
 
-            {showVersionsMenu && (
-              <div className="admin-versions-dropdown-menu">
-                <div className="admin-versions-dropdown-header">
-                  <span>ISTORIC REVIZII SALVATE</span>
-                </div>
-                {versions.length === 0 ? (
-                  <div className="p-3 text-xs text-[var(--color-text-tertiary)] text-center">
-                    Nicio revizie salvată anterior pentru acest articol.
+              {showVersionsMenu && (
+                <div className="admin-versions-dropdown-menu">
+                  <div className="admin-versions-dropdown-header">
+                    <span>ISTORIC REVIZII SALVATE</span>
                   </div>
-                ) : (
-                  <div className="admin-versions-list">
-                    {versions.map((ver) => (
-                      <div key={ver.id} className="admin-version-entry">
-                        <div className="admin-version-entry-info">
-                          <span className="admin-version-author">{ver.savedBy}</span>
-                          <span className="admin-version-time">
-                            {new Date(ver.timestamp).toLocaleString("ro-RO")}
-                          </span>
-                          <span className="admin-version-chars">{ver.charCount} caractere</span>
+                  {versions.length === 0 ? (
+                    <div className="p-3 text-xs text-[var(--color-text-tertiary)] text-center">
+                      Nicio revizie salvată anterior pentru acest articol.
+                    </div>
+                  ) : (
+                    <div className="admin-versions-list">
+                      {versions.map((ver) => (
+                        <div key={ver.id} className="admin-version-entry">
+                          <div className="admin-version-entry-info">
+                            <span className="admin-version-author">{ver.savedBy}</span>
+                            <span className="admin-version-time">
+                              {new Date(ver.timestamp).toLocaleString("ro-RO")}
+                            </span>
+                            <span className="admin-version-chars">{ver.charCount} caractere</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRollback(ver)}
+                            className="admin-version-rollback-btn"
+                            title="Restaurează această variantă"
+                          >
+                            <RotateCcw size={12} />
+                            <span>Rollback</span>
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRollback(ver)}
-                          className="admin-version-rollback-btn"
-                          title="Restaurează această variantă"
-                        >
-                          <RotateCcw size={12} />
-                          <span>Rollback</span>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Bulk Mode Toggle */}
           <button
@@ -1056,8 +1073,8 @@ export function AdminContentStudioClient() {
                                     {isSelected && (
                                       <span className="admin-doc-word-badge">{wordCount}w</span>
                                     )}
-                                    {/* #1 Revisions count */}
-                                    {isSelected && versions.length > 0 && (
+                                    {/* #1 Revisions count (Root only) */}
+                                    {isRoot && isSelected && versions.length > 0 && (
                                       <span className="admin-doc-rev-badge">
                                         <History size={9} />
                                         {versions.length}

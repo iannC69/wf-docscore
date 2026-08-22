@@ -65,10 +65,10 @@
       "VERIFIED GUIDE"
     ],
     "discord": "778170514036228097",
-    "docsModifiedCount": 1,
+    "docsModifiedCount": 2,
     "githubUsername": "Yakuza2377",
-    "passwordHash": "7eb8b52585353bfe6826730d4627ed5915015709603d0ad3c37ec734120038e140b9da8c6ee5f87a55a500b1b2025cda2514f80006cb80beaab2eae07413b854",
-    "salt": "salt_c5c81a592f35bf933b792f34",
+    "passwordHash": "f824a42578d0586e470a99ef629c5f6d2f34afffcdab78de9b204d69ebc541ae57ffac9b43a6495fba81c01b56b4e601979b9916259acb41350e8929d3aa8b4f",
+    "salt": "salt_a33fb9bd2f803c2ee297b267",
     "permissions": {
       "canEditDocs": true,
       "canDeleteDocs": false,
@@ -84,32 +84,22 @@
     "status": "active",
     "isRoot": false,
     "createdAt": "2026-08-21T14:15:00.610Z",
-    "lastLoginAt": "2026-08-22T09:51:33.474Z",
+    "lastLoginAt": "2026-08-22T10:11:39.115Z",
     "steamId": "https://steamcommunity.com/id/YakuzaTheImmortal"
   },
   {
-    "id": "user_e88ca0b4c008bda646d0b02e79c00938",
+    "id": "user_5d1bd9841e1a0968998b302637aaced5",
     "username": "V1ccX",
     "displayName": "V1ccX",
-    "email": "ceva@wildfire.ro",
+    "email": "",
     "role": "content_editor",
-    "customTitle": "Documentation Contributor",
     "avatarUrl": "https://avatars.akamai.steamstatic.com/4963bca91b1b3edf88de548e459b2092a35312e7_full.jpg",
-    "avatarColor": "#3b82f6",
-    "bio": "Contribuie la actualizarea mecanicilor, formularelor și documentelor informative pentru comunitate.",
-    "responsibilities": [
-      "Ghiduri Informative",
-      "Mecanici Joc",
-      "Actualizări Conținut"
-    ],
-    "badges": [
-      "CONTRIBUTOR"
-    ],
+    "avatarColor": "#06b6d4",
     "discord": "996796351587287100",
-    "docsModifiedCount": 0,
-    "githubUsername": "Vicc09",
-    "passwordHash": "e97ac2d631e47628fddf311740a8d7e0d38a44f674db11e41f470685cc0fbddbbb7b6bbaaa92d07d420ccfd65ee1eb0bbad76b4611ad6d10cd9b8fa2ff1903b5",
-    "salt": "salt_da53b79e2fc003caa5c29ccd",
+    "steamId": "https://steamcommunity.com/profiles/76561199698821208",
+    "docsModifiedCount": 1,
+    "passwordHash": "c810c36660abfc164e50b2b51190f34053d36f5968688e20d66f0caa232fb8c74b253bcbd737cd9db82f40db6ae3ba1deb1f749b9941a5eb5c1abb93fa391fab",
+    "salt": "salt_de422ae09bb5e473ead94425",
     "permissions": {
       "canEditDocs": true,
       "canDeleteDocs": false,
@@ -124,8 +114,12 @@
     },
     "status": "active",
     "isRoot": false,
-    "createdAt": "2026-08-17T18:21:41.322Z",
-    "lastLoginAt": "2026-08-17T18:23:23.628Z",
-    "steamId": "https://steamcommunity.com/profiles/76561199698821208"
+    "createdAt": "2026-08-22T10:01:24.486Z",
+    "customTitle": "Senior Content Editor",
+    "bio": "",
+    "responsibilities": [],
+    "badges": [],
+    "lastLoginAt": "2026-08-22T10:04:56.749Z",
+    "githubUsername": "Vicc09"
   }
 ]

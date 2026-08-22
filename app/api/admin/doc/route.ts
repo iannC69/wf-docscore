@@ -77,6 +77,12 @@ export async function GET(req: NextRequest) {
       category: match.category,
       title: match.title,
       content,
+      currentUser: {
+        username: session.username,
+        displayName: session.displayName,
+        role: session.role,
+        isRoot: session.isRoot,
+      },
     });
   }
 
@@ -89,6 +95,12 @@ export async function GET(req: NextRequest) {
       category: d.category,
       title: d.title,
     })),
+    currentUser: {
+      username: session.username,
+      displayName: session.displayName,
+      role: session.role,
+      isRoot: session.isRoot,
+    },
   });
 }
 

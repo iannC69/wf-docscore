@@ -261,6 +261,7 @@ export function createTeamMember(params: {
   avatarUrl?: string;
   discord?: string;
   steamId?: string;
+  githubUsername?: string;
   bio?: string;
   responsibilities?: string[];
 }): { success: boolean; error?: string; member?: TeamMember } {
@@ -301,6 +302,7 @@ export function createTeamMember(params: {
     bio: params.bio?.trim(),
     discord: params.discord?.trim(),
     steamId: params.steamId?.trim(),
+    githubUsername: params.githubUsername?.trim() || undefined,
     responsibilities: params.responsibilities,
     docsModifiedCount: 0,
     passwordHash: hash,
