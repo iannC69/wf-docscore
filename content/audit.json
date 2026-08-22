@@ -1,5 +1,20 @@
 [
   {
+    "id": "aud_1787409876023_12f23693",
+    "timestamp": "2026-08-22T14:44:36.023Z",
+    "action": "DOC_UPDATE",
+    "actor": "umpy",
+    "ip": "::1",
+    "userAgent": "Internal Engine",
+    "details": {
+      "slug": "currency/credits",
+      "path": "currency/credits.md",
+      "action": "update"
+    },
+    "previousHash": "e87747939247a3f98985f4cd7a1cbab4c7fbf29fd47ae818d50a8606f15b474b",
+    "hash": "fb76ce099f9ff96a3ad1bd42275a3abf818886527fbee13651066dddb488b28f"
+  },
+  {
     "id": "aud_1787408622128_838346af",
     "timestamp": "2026-08-22T14:23:42.128Z",
     "action": "AUTH_LOGIN_FAILURE",

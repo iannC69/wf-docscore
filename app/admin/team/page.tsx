@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Users,
   ShieldCheck,
@@ -226,6 +226,32 @@ export default function AdminTeamPage() {
   useEffect(() => {
     fetchTeam();
   }, []);
+
+  // Unified list of contributors (Active GitHub Committers + Registered Team GitHub Profiles)
+  const unifiedContributors = useMemo(() => {
+    const list = [...githubGraphContributors];
+    const presentLogins = new Set(list.map((gc) => (gc.login || "").toLowerCase()));
+
+    // Add team members with GitHub handle that are not yet in the GitHub Graph committer list
+    for (const m of members) {
+      const gh = ((m as any).githubUsername?.trim() || m.username?.trim() || "");
+      if (gh && !presentLogins.has(gh.toLowerCase()) && !presentLogins.has((m.username || "").toLowerCase())) {
+        presentLogins.add(gh.toLowerCase());
+        list.push({
+          login: (m as any).githubUsername || m.username,
+          avatarUrl: (m as any).githubUsername ? `https://github.com/${(m as any).githubUsername}.png` : m.avatarUrl || "",
+          profileUrl: `https://github.com/${(m as any).githubUsername || m.username}`,
+          totalCommits: repoStats[m.username.toLowerCase()]?.totalCommits || 0,
+          totalAdditions: 0,
+          totalDeletions: 0,
+          weeks: [],
+          activeWeeksCount: 0,
+        });
+      }
+    }
+
+    return list;
+  }, [githubGraphContributors, members, repoStats]);
 
   const openInspector = (member: TeamMember) => {
     setSelectedMember(member);
@@ -551,7 +577,7 @@ export default function AdminTeamPage() {
       </div>
 
       {/* ── GitHub Contributors Graph Reconciliation Panel ── */}
-      {githubGraphContributors.length > 0 && (
+      {unifiedContributors.length > 0 && (
         <div className="admin-github-sync-panel">
           <div className="admin-github-sync-header">
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -585,7 +611,7 @@ export default function AdminTeamPage() {
           </div>
 
           <div className="admin-github-sync-grid">
-            {githubGraphContributors.map((gc) => {
+            {unifiedContributors.map((gc) => {
               const matchedMember = members.find(
                 (m) =>
                   ((m as any).githubUsername && (m as any).githubUsername.toLowerCase() === gc.login.toLowerCase()) ||
@@ -600,11 +626,16 @@ export default function AdminTeamPage() {
                       src={gc.avatarUrl || `https://github.com/${gc.login}.png`}
                       alt={gc.login}
                       className="admin-github-sync-avatar"
+                      onError={(e) => {
+                        if (matchedMember?.avatarUrl) {
+                          (e.currentTarget as HTMLImageElement).src = matchedMember.avatarUrl;
+                        }
+                      }}
                     />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span className="admin-github-sync-username">@{gc.login}</span>
-                        <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "hsl(215 90% 65%)", fontFamily: "var(--font-mono, monospace)" }}>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, color: gc.totalCommits > 0 ? "hsl(215 90% 65%)" : "var(--color-text-muted)", fontFamily: "var(--font-mono, monospace)" }}>
                           {gc.totalCommits} commits
                         </span>
                       </div>
@@ -628,6 +659,9 @@ export default function AdminTeamPage() {
                     )}
                     {gc.totalDeletions > 0 && (
                       <span style={{ color: "hsl(0 84% 65%)", display: "block" }}>-{gc.totalDeletions.toLocaleString()}</span>
+                    )}
+                    {gc.totalCommits === 0 && (
+                      <span style={{ color: "var(--color-text-muted)", fontSize: "0.65rem", display: "block" }}>Profil Conectat</span>
                     )}
                   </div>
                 </div>

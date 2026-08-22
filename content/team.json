@@ -69,7 +69,7 @@
     "discord": "650621084223275010",
     "steamId": "https://steamcommunity.com/profiles/76561198974838451",
     "githubUsername": "umpy04",
-    "docsModifiedCount": 1,
+    "docsModifiedCount": 2,
     "passwordHash": "0b57988adf856ec70b4e8169d8490688e91ee3f90651d24979f85b9556841857d1a027d9e8fb0cd956a11cffc066e6c40ef1f52a586e5a8e4e256c156418b014",
     "salt": "salt_c16cf562e0342585fe8445c2",
     "permissions": {
@@ -93,7 +93,7 @@
     "status": "active",
     "isRoot": false,
     "createdAt": "2026-08-22T12:00:00.000Z",
-    "lastLoginAt": "2026-08-22T12:00:00.000Z"
+    "lastLoginAt": "2026-08-22T14:44:07.178Z"
   },
   {
     "id": "user_83750fc6a71f918f089d8f783542baf9",
