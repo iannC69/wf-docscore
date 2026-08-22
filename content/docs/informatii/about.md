@@ -115,7 +115,7 @@ MVP-urile sunt animatii speciale care apar la sfarsitul rundei pentru jucatorul 
 
 ### Sank Sounds
 
-Scrie cuvinte-cheie in chat si se reda un sunet pentru toata lumea de pe server. Sistemul de **Sank Sounds** are sute de sunete disponibile — de la meme-uri clasice la efecte sonore amuzante. Fiecare zi are un **Sound of the Day** recomandat.
+Scrie cuvinte-cheie in chat si se reda un sunet pentru toata lumea de pe server `!sm`. Sistemul de **Sank Sounds** are sute de sunete disponibile — de la meme-uri clasice la efecte sonore amuzante. Fiecare zi are un **Sound of the Day** recomandat.
 
 ![Sistemul de Sank Sounds in actiune](/sank/sank_gif_1.gif)
 
